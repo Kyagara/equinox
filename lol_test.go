@@ -8,7 +8,7 @@ import (
 )
 
 func TestFreeChampionsRotation(t *testing.T) {
-	c := NewClient(os.Getenv("RIOT-API-KEY"))
+	c := NewClient(os.Getenv("RIOT_API_KEY"))
 
 	res, err := c.LOL.Champion.FreeRotation(BR1)
 
