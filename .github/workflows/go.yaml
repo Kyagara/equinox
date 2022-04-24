@@ -17,6 +17,12 @@ jobs:
         with:
           go-version: 1.18
 
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Run go vet
+        run: go vet ./...
+
       - name: Test
         run: go test ./... -v
         env:

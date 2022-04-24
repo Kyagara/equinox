@@ -6,16 +6,28 @@ import (
 )
 
 type Equinox struct {
-	*internal.InternalClient
-	LOL *lol.LOLClient
+	internalClient *internal.InternalClient
+	LOL            *lol.LOLClient
 }
 
 // Creates a new Equinox client
 func NewClient(key string) *Equinox {
-	internalClient := internal.NewClient(key)
+	internalClient := internal.NewInternalClient(key, false)
 
 	client := &Equinox{
-		InternalClient: internalClient,
+		internalClient: internalClient,
+		LOL:            lol.NewLOLClient(internalClient),
+	}
+
+	return client
+}
+
+// Creates a new Equinox client with debug
+func NewClientWithDebug(key string) *Equinox {
+	internalClient := internal.NewInternalClient(key, true)
+
+	client := &Equinox{
+		internalClient: internalClient,
 		LOL:            lol.NewLOLClient(internalClient),
 	}
 

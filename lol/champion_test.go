@@ -4,15 +4,18 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Kyagara/equinox"
+	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/lol"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFreeChampionsRotation(t *testing.T) {
-	client := equinox.NewClient(os.Getenv("RIOT_API_KEY"))
+	internalClient := internal.NewInternalClient(os.Getenv("RIOT_API_KEY"), true)
 
-	res, err := client.LOL.Champion.FreeRotation(lol.BR1)
+	client := lol.NewLOLClient(internalClient)
+
+	res, err := client.Champion.FreeRotation(api.LOLRegionBR1)
 
 	assert.Nil(t, err, "expecting nil error")
 

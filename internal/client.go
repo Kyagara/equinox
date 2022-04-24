@@ -4,19 +4,24 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
 type InternalClient struct {
-	apiKey string
-	http   *http.Client
+	key   string
+	debug bool
+	http  *http.Client
+	log   *Logger
 }
 
 // Returns a new client using the API key provided
-func NewClient(key string) *InternalClient {
+func NewInternalClient(key string, debug bool) *InternalClient {
 	return &InternalClient{
-		apiKey: key,
-		http:   &http.Client{Timeout: time.Minute},
+		key:   key,
+		debug: debug,
+		http:  &http.Client{Timeout: 5 * time.Second},
+		log:   NewLogger(),
 	}
 }
 
@@ -27,10 +32,13 @@ type ErrorResponse struct {
 	} `json:"status"`
 }
 
-func (c *InternalClient) SendRequest(req *http.Request, v interface{}) error {
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+func (c *InternalClient) SendRequest(req *http.Request, method string, v interface{}) error {
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	req.Header.Set("X-Riot-Token", c.apiKey)
+	req.Header.Set("X-Riot-Token", c.key)
+
+	if c.debug {
+		c.log.Info.Printf("[Method: %s | Query: %s] Requesting", method, req.URL.Query())
+	}
 
 	res, err := c.http.Do(req)
 
@@ -39,6 +47,24 @@ func (c *InternalClient) SendRequest(req *http.Request, v interface{}) error {
 	}
 
 	defer res.Body.Close()
+
+	if res.StatusCode == http.StatusTooManyRequests {
+		retryAfter := res.Header.Get("Retry-After")
+
+		seconds, err := strconv.Atoi(retryAfter)
+
+		if err != nil {
+			return err
+		}
+
+		if c.debug {
+			c.log.Error.Printf("[Method: '%s' | Query: %+v] Too many requests, retrying in %ds", method, req.URL.Query(), seconds)
+		}
+
+		time.Sleep(time.Duration(seconds) * time.Second)
+
+		return c.SendRequest(req, method, v)
+	}
 
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
 		var errRes ErrorResponse
@@ -52,6 +78,10 @@ func (c *InternalClient) SendRequest(req *http.Request, v interface{}) error {
 
 	if err = json.NewDecoder(res.Body).Decode(&v); err != nil {
 		return err
+	}
+
+	if c.debug {
+		c.log.Info.Printf("[Method: '%s' | Query: %+v] Request successful", method, req.URL.Query())
 	}
 
 	return nil

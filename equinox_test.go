@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewClient(t *testing.T) {
-	client := equinox.NewClient(os.Getenv("RIOT_API_KEY"))
+func TestNewEquinoxClient(t *testing.T) {
+	client := equinox.NewClientWithDebug(os.Getenv("RIOT_API_KEY"))
 
-	require.NotNil(t, client, "expecting non-nil client")
+	require.NotNil(t, client, "expecting non-nil Equinox client")
 }

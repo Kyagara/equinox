@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 )
 
 type ChampionEndpoint struct {
-	*internal.InternalClient
+	internalClient *internal.InternalClient
 }
 
 type FreeChampionsRotation struct {
@@ -18,8 +19,8 @@ type FreeChampionsRotation struct {
 }
 
 // Get Free Champions Rotation
-func (c *ChampionEndpoint) FreeRotation(region Region) (*FreeChampionsRotation, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("https://%s.api.riotgames.com%s%s", region, LOLBaseURL, ChampionEndpointURL), nil)
+func (c *ChampionEndpoint) FreeRotation(region api.Region) (*FreeChampionsRotation, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf(LOLBaseURLFormat, region, ChampionEndpointURL), nil)
 
 	if err != nil {
 		return nil, err
@@ -27,7 +28,7 @@ func (c *ChampionEndpoint) FreeRotation(region Region) (*FreeChampionsRotation, 
 
 	res := FreeChampionsRotation{}
 
-	if err := c.SendRequest(req, &res); err != nil {
+	if err := c.internalClient.SendRequest(req, ChampionEndpointURL, &res); err != nil {
 		return nil, err
 	}
 
