@@ -1,4 +1,4 @@
-package equinox
+package internal
 
 import (
 	"encoding/json"
@@ -7,24 +7,17 @@ import (
 	"time"
 )
 
-type Equinox struct {
-	apikey string
+type InternalClient struct {
+	apiKey string
 	http   *http.Client
-	LOL    *LOLClient
 }
 
-// Returns a new Equinox client using the API key provided
-func NewClient(key string) *Equinox {
-	client := &Equinox{
-		apikey: key,
+// Returns a new client using the API key provided
+func NewClient(key string) *InternalClient {
+	return &InternalClient{
+		apiKey: key,
 		http:   &http.Client{Timeout: time.Minute},
 	}
-
-	// Is there a better way to pass the clients fields without doing this?
-	// I am passing the client to the LOLClient struct, this way I can call the sendRequest method inside endpoint methods
-	client.LOL = NewLOLClient(client)
-
-	return client
 }
 
 type ErrorResponse struct {
@@ -34,10 +27,10 @@ type ErrorResponse struct {
 	} `json:"status"`
 }
 
-func (c *Equinox) sendRequest(req *http.Request, v interface{}) error {
+func (c *InternalClient) SendRequest(req *http.Request, v interface{}) error {
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	req.Header.Set("X-Riot-Token", c.apikey)
+	req.Header.Set("X-Riot-Token", c.apiKey)
 
 	res, err := c.http.Do(req)
 

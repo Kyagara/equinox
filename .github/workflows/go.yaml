@@ -18,6 +18,6 @@ jobs:
           go-version: 1.18
 
       - name: Test
-        run: go test -v
+        run: go test ./... -v
         env:
           RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
