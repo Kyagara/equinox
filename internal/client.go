@@ -15,6 +15,10 @@ type InternalClient struct {
 	log   *Logger
 }
 
+const (
+	LogRequestFormat = "[Method: '%s' | Query: '%v'] %s"
+)
+
 // Returns a new client using the API key provided
 func NewInternalClient(key string, debug bool) *InternalClient {
 	return &InternalClient{
@@ -37,7 +41,7 @@ func (c *InternalClient) SendRequest(req *http.Request, method string, v interfa
 	req.Header.Set("X-Riot-Token", c.key)
 
 	if c.debug {
-		c.log.Info.Printf("[Method: %s | Query: %s] Requesting", method, req.URL.Query())
+		c.log.Info.Printf(LogRequestFormat, method, req.URL.Query(), "Requesting")
 	}
 
 	res, err := c.http.Do(req)
@@ -58,7 +62,7 @@ func (c *InternalClient) SendRequest(req *http.Request, method string, v interfa
 		}
 
 		if c.debug {
-			c.log.Error.Printf("[Method: '%s' | Query: %+v] Too many requests, retrying in %ds", method, req.URL.Query(), seconds)
+			c.log.Error.Printf(LogRequestFormat, method, req.URL.Query(), fmt.Sprintf("Too many requests, retrying in %ds", seconds))
 		}
 
 		time.Sleep(time.Duration(seconds) * time.Second)
@@ -81,7 +85,7 @@ func (c *InternalClient) SendRequest(req *http.Request, method string, v interfa
 	}
 
 	if c.debug {
-		c.log.Info.Printf("[Method: '%s' | Query: %+v] Request successful", method, req.URL.Query())
+		c.log.Info.Printf(LogRequestFormat, method, req.URL.Query(), "Request successful")
 	}
 
 	return nil
