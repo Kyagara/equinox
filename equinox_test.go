@@ -5,11 +5,13 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewEquinoxClient(t *testing.T) {
-	client := equinox.NewClientWithDebug(os.Getenv("RIOT_API_KEY"))
+	client, err := equinox.NewClientWithDebug(os.Getenv("RIOT_API_KEY"))
 
-	require.NotNil(t, client, "expecting non-nil Equinox client")
+	assert.Nil(t, err, "expecting nil error")
+
+	assert.NotNil(t, client, "expecting non-nil Equinox client")
 }

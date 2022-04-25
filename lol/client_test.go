@@ -6,7 +6,7 @@ import (
 
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/lol"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewLOLClient(t *testing.T) {
@@ -14,5 +14,5 @@ func TestNewLOLClient(t *testing.T) {
 
 	client := lol.NewLOLClient(internalClient)
 
-	require.NotNil(t, client, "expecting non-nil LOLClient")
+	assert.NotNil(t, client, "expecting non-nil LOLClient")
 }

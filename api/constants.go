@@ -4,7 +4,7 @@ type Region string
 
 const (
 	// Base API URL format
-	BaseURLFormat = "https://%s.api.riotgames.com/"
+	BaseURLFormat = "https://%s.api.riotgames.com"
 )
 
 // Riot API routes
