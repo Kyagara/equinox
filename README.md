@@ -1,4 +1,7 @@
-## Equinox
+# Equinox
+
+[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/Kyagara/equinox)
+[![Test Status](https://github.com/Kyagara/equinox/workflows/Tests/badge.svg)](https://github.com/Kyagara/equinox/actions?query=workflow%3Atests)
 
 This shouldn't be used in any production environment, this is just a practice tool for me to learn CI/CD using Github Actions and tests in golang.
 
@@ -19,7 +22,8 @@ import (
 )
 
 func main() {
-	// Or you can use NewClientWithDebug() to enable debugging, this will print requests before and after they are sent
+	// Or you can use NewClientWithDebug() to enable debugging,
+	// this will print requests before and after they are sent
 	client, err := equinox.NewClient("RIOT_API_KEY")
 
 	if err != nil {
@@ -27,7 +31,7 @@ func main() {
 		return
 	}
 
-	// Get the Free Champions rotation
+	// Get Free Champion rotation
 	champions, err := client.LOL.Champion.FreeRotation(api.LOLRegionBR1)
 
 	if err != nil {
