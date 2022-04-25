@@ -12,11 +12,7 @@ func TestNewLogger(t *testing.T) {
 
 	require.NotNil(t, logger, "expecting non-nil Logger")
 
-	type Object struct {
-		Text string
-	}
-
-	logger.Info.Printf("Info logger with object %+v", Object{Text: "a string"})
+	logger.Info.Println("Info logger")
 
 	logger.Warn.Println("Warn logger")
 

@@ -16,7 +16,7 @@ type InternalClient struct {
 }
 
 const (
-	LogRequestFormat = "[Method: '%s' | Query: '%v'] %s"
+	LogRequestFormat = "[%s '%s'] %s"
 )
 
 // Returns a new client using the API key provided
@@ -36,12 +36,15 @@ type ErrorResponse struct {
 	} `json:"status"`
 }
 
-func (c *InternalClient) SendRequest(req *http.Request, method string, v interface{}) error {
-	req.Header.Set("Accept", "application/json; charset=utf-8")
-	req.Header.Set("X-Riot-Token", c.key)
+func (c *InternalClient) SendRequest(method string, url string, endpoint string, v interface{}) error {
+	req, err := c.NewRequest(method, fmt.Sprintf("%s%s", url, endpoint))
+
+	if err != nil {
+		return err
+	}
 
 	if c.debug {
-		c.log.Info.Printf(LogRequestFormat, method, req.URL.Query(), "Requesting")
+		c.log.Info.Printf(LogRequestFormat, method, endpoint, "Requesting")
 	}
 
 	res, err := c.http.Do(req)
@@ -62,12 +65,12 @@ func (c *InternalClient) SendRequest(req *http.Request, method string, v interfa
 		}
 
 		if c.debug {
-			c.log.Error.Printf(LogRequestFormat, method, req.URL.Query(), fmt.Sprintf("Too many requests, retrying in %ds", seconds))
+			c.log.Error.Printf(LogRequestFormat, method, endpoint, fmt.Sprintf("Too many requests, retrying in %ds", seconds))
 		}
 
 		time.Sleep(time.Duration(seconds) * time.Second)
 
-		return c.SendRequest(req, method, v)
+		return c.SendRequest(method, url, endpoint, v)
 	}
 
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
@@ -85,8 +88,21 @@ func (c *InternalClient) SendRequest(req *http.Request, method string, v interfa
 	}
 
 	if c.debug {
-		c.log.Info.Printf(LogRequestFormat, method, req.URL.Query(), "Request successful")
+		c.log.Info.Printf(LogRequestFormat, method, endpoint, "Request successful")
 	}
 
 	return nil
+}
+
+func (c *InternalClient) NewRequest(method string, url string) (*http.Request, error) {
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Accept", "application/json; charset=utf-8")
+	req.Header.Set("X-Riot-Token", c.key)
+
+	return req, nil
 }
