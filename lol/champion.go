@@ -21,7 +21,7 @@ type ChampionInfo struct {
 func (c *ChampionEndpoint) FreeRotation(region api.Region) (*ChampionInfo, error) {
 	res := ChampionInfo{}
 
-	if err := c.internalClient.SendRequest("GET", fmt.Sprintf(LOLBaseURLFormat, region), ChampionEndpointURL, &res); err != nil {
+	if err := c.internalClient.SendRequest("GET", fmt.Sprintf(api.BaseURLFormat, region), ChampionEndpointURL, &res); err != nil {
 		return nil, err
 	}
 

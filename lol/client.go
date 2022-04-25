@@ -6,9 +6,8 @@ import (
 
 // League of Legends endpoints
 const (
-	LOLBaseURLFormat    = "https://%s.api.riotgames.com/lol"
-	ChampionEndpointURL = "/platform/v3/champion-rotations"
-	StatusEndpointURL   = "/status/v4/platform-data"
+	ChampionEndpointURL = "/lol/platform/v3/champion-rotations"
+	StatusEndpointURL   = "/lol/status/v4/platform-data"
 )
 
 type LOLClient struct {

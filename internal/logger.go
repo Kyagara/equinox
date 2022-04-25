@@ -17,7 +17,7 @@ func NewLogger() *Logger {
 
 	return &Logger{
 		Info:  log.New(os.Stderr, "INFO: ", flags),
-		Warn:  log.New(os.Stderr, "WARN: ", flags),
+		Warn:  log.New(os.Stderr, "WARNING: ", flags),
 		Error: log.New(os.Stderr, "ERROR: ", flags),
 	}
 }

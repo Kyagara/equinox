@@ -2,6 +2,10 @@ package api
 
 type Region string
 
+const (
+	BaseURLFormat = "https://%s.api.riotgames.com/"
+)
+
 // Riot API routes
 const (
 	RiotRouteAmericas Region = "americas"

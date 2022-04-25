@@ -51,7 +51,7 @@ type StatusDto struct {
 func (c *StatusEndpoint) Status(region api.Region) (*PlatformDataDto, error) {
 	res := PlatformDataDto{}
 
-	if err := c.internalClient.SendRequest("GET", fmt.Sprintf(LOLBaseURLFormat, region), StatusEndpointURL, &res); err != nil {
+	if err := c.internalClient.SendRequest("GET", fmt.Sprintf(api.BaseURLFormat, region), StatusEndpointURL, &res); err != nil {
 		return nil, err
 	}
 
