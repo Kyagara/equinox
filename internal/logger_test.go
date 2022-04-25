@@ -14,7 +14,7 @@ func TestNewLogger(t *testing.T) {
 
 	logger.Info.Println("Info logger")
 
-	logger.Warn.Println("Warn logger")
+	logger.Warn.Println("Warning logger")
 
 	logger.Error.Println("Error logger")
 }

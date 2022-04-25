@@ -3,6 +3,7 @@ package api
 type Region string
 
 const (
+	// Base API URL format
 	BaseURLFormat = "https://%s.api.riotgames.com/"
 )
 

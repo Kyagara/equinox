@@ -36,8 +36,10 @@ type ErrorResponse struct {
 	} `json:"status"`
 }
 
+// Creates and sends a request using the parameters specified
 func (c *InternalClient) SendRequest(method string, url string, endpoint string, v interface{}) error {
-	req, err := c.NewRequest(method, fmt.Sprintf("%s%s", url, endpoint))
+	// Creating a new *http.Request
+	req, err := c.newRequest(method, fmt.Sprintf("%s%s", url, endpoint))
 
 	if err != nil {
 		return err
@@ -47,6 +49,7 @@ func (c *InternalClient) SendRequest(method string, url string, endpoint string,
 		c.log.Info.Printf(LogRequestFormat, method, endpoint, "Requesting")
 	}
 
+	// Sending request
 	res, err := c.http.Do(req)
 
 	if err != nil {
@@ -55,6 +58,7 @@ func (c *InternalClient) SendRequest(method string, url string, endpoint string,
 
 	defer res.Body.Close()
 
+	// If the API returns with a 429, get the Retry-After header and retry after the specified time has passed
 	if res.StatusCode == http.StatusTooManyRequests {
 		retryAfter := res.Header.Get("Retry-After")
 
@@ -73,6 +77,7 @@ func (c *InternalClient) SendRequest(method string, url string, endpoint string,
 		return c.SendRequest(method, url, endpoint, v)
 	}
 
+	// If the status code is lower than 200 or higher than 400
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
 		var errRes ErrorResponse
 
@@ -83,6 +88,7 @@ func (c *InternalClient) SendRequest(method string, url string, endpoint string,
 		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
 	}
 
+	// Decoding the json into the endpoint method response object
 	if err = json.NewDecoder(res.Body).Decode(&v); err != nil {
 		return err
 	}
@@ -94,7 +100,8 @@ func (c *InternalClient) SendRequest(method string, url string, endpoint string,
 	return nil
 }
 
-func (c *InternalClient) NewRequest(method string, url string) (*http.Request, error) {
+// Creates a new *http.request and sets headers
+func (c *InternalClient) newRequest(method string, url string) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, nil)
 
 	if err != nil {

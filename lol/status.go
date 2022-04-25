@@ -47,7 +47,7 @@ type StatusDto struct {
 	MaintenanceStatus string       `json:"maintenance_status"`
 }
 
-// Get Free Champions Rotation
+// Get Status
 func (c *StatusEndpoint) Status(region api.Region) (*PlatformDataDto, error) {
 	res := PlatformDataDto{}
 
