@@ -16,7 +16,7 @@ type InternalClient struct {
 }
 
 const (
-	LogRequestFormat = "[%s '%s'] %s"
+	LogRequestFormat = "[%s '%s'] %s\n"
 )
 
 // Returns a new client using the API key provided
