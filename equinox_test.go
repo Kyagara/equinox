@@ -1,15 +1,15 @@
 package equinox_test
 
 import (
-	"os"
 	"testing"
 
 	"github.com/Kyagara/equinox"
+	"github.com/Kyagara/equinox/api"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewEquinoxClient(t *testing.T) {
-	client, err := equinox.NewClientWithDebug(os.Getenv("RIOT_API_KEY"))
+	client, err := equinox.NewClientWithConfig(api.NewTestEquinoxConfig())
 
 	assert.Nil(t, err, "expecting nil error")
 

@@ -1,7 +1,6 @@
 package lol_test
 
 import (
-	"os"
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
@@ -11,7 +10,7 @@ import (
 )
 
 func TestFreeChampionsRotation(t *testing.T) {
-	internalClient := internal.NewInternalClient(os.Getenv("RIOT_API_KEY"), true)
+	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
