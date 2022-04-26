@@ -31,7 +31,7 @@ func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 		debug:      config.Debug,
 		retry:      config.Retry,
 		retryCount: config.RetryCount,
-		http:       &http.Client{Timeout: config.Timeout},
+		http:       &http.Client{Timeout: config.Timeout * time.Second},
 		log:        NewLogger(),
 	}
 }
@@ -83,8 +83,12 @@ func (c *InternalClient) sendRequest(req *http.Request, method string, endpoint 
 
 	defer res.Body.Close()
 
-	if res.StatusCode == http.StatusUnauthorized || res.StatusCode == http.StatusForbidden {
-		return nil, c.newErrorResponse(res)
+	if res.StatusCode == http.StatusForbidden {
+		if c.debug {
+			c.log.Error.Printf(LogRequestFormat, method, endpoint, "Forbidden")
+		}
+
+		return nil, api.ForbiddenError
 	}
 
 	// If the API returns a 429 code
