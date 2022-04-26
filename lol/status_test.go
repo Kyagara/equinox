@@ -1,7 +1,6 @@
 package lol_test
 
 import (
-	"os"
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
@@ -10,12 +9,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestStatus(t *testing.T) {
-	internalClient := internal.NewInternalClient(os.Getenv("RIOT_API_KEY"), true)
+func TestGetStatus(t *testing.T) {
+	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
-	res, err := client.Status.Status(api.LOLRegionNA1)
+	res, err := client.Status.GetStatus(api.LOLRegionNA1)
 
 	assert.Nil(t, err, "expecting nil error")
 

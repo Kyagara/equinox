@@ -22,8 +22,8 @@ import (
 )
 
 func main() {
-	// Or you can use NewClientWithDebug() to enable debugging,
-	// this will print requests before and after they are sent
+	// For custom configurations, you can use NewClientWithConfig(),
+	// you will need to provide an api.EquinoxConfig{} object
 	client, err := equinox.NewClient("RIOT_API_KEY")
 
 	if err != nil {
@@ -45,10 +45,16 @@ func main() {
 
 ## TODO
 
-### Tests
+### Improve tests
 
 I am not sure if tests are 'good enough', I am just checking if errors are `Nil` and the response is `NotNil` using `testify`.
 
-### Logging
+Sometimes an endpoint method might return a valid 404 error, for example, getting an active game by a summoner's ID, this might not find a game for a valid summoner, returning a 404. I am unsure what the best solution for this problem might be.
+
+### Improve Requests api
+
+At the moment `GET` and other methods needs to go through the same function, InternalClient.Do(). It would be better to have specific functions for each http method.
+
+### Improve Logging
 
 I don't believe the current logging and 'debugging mode' is done right or that its 'done' at all to be honest, there might be places where I should be logging something but I am not.

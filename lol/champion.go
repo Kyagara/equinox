@@ -1,7 +1,7 @@
 package lol
 
 import (
-	"fmt"
+	"net/http"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -11,17 +11,19 @@ type ChampionEndpoint struct {
 	internalClient *internal.InternalClient
 }
 
-type ChampionInfo struct {
-	FreeChampionIds              []int `json:"freeChampionIds"`
-	FreeChampionIdsForNewPlayers []int `json:"freeChampionIdsForNewPlayers"`
-	MaxNewPlayerLevel            int   `json:"maxNewPlayerLevel"`
+type ChampionInfoDTO struct {
+	FreeChampionIds              []int16 `json:"freeChampionIds"`
+	FreeChampionIdsForNewPlayers []int16 `json:"freeChampionIdsForNewPlayers"`
+	MaxNewPlayerLevel            uint8   `json:"maxNewPlayerLevel"`
 }
 
 // Get Free Champions Rotation
-func (c *ChampionEndpoint) FreeRotation(region api.Region) (*ChampionInfo, error) {
-	res := ChampionInfo{}
+func (c *ChampionEndpoint) FreeRotation(region api.Region) (*ChampionInfoDTO, error) {
+	res := ChampionInfoDTO{}
 
-	if err := c.internalClient.SendRequest("GET", fmt.Sprintf(api.BaseURLFormat, region), ChampionEndpointURL, &res); err != nil {
+	err := c.internalClient.Do(http.MethodGet, region, ChampionEndpointURL, &res)
+
+	if err != nil {
 		return nil, err
 	}
 
