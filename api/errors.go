@@ -22,4 +22,11 @@ var (
 			StatusCode: http.StatusNotFound,
 		},
 	}
+
+	ForbiddenError = ErrorResponse{
+		Status: Status{
+			Message:    "Forbidden",
+			StatusCode: http.StatusForbidden,
+		},
+	}
 )

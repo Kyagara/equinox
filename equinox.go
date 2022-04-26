@@ -17,7 +17,7 @@ type Equinox struct {
 	Creates a new Equinox client with a default configuration
 
 		- `Debug`      : false
-		- `Timeout`    : 2000
+		- `Timeout`    : 2
 		- `Retry`      : true
 		- `RetryCount` : 1
 */
@@ -29,7 +29,7 @@ func NewClient(key string) (*Equinox, error) {
 	config := &api.EquinoxConfig{
 		Key:        key,
 		Debug:      false,
-		Timeout:    2000,
+		Timeout:    2,
 		Retry:      true,
 		RetryCount: 1,
 	}

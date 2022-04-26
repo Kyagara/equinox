@@ -11,7 +11,7 @@ type EquinoxConfig struct {
 	Key string
 	// Debug mode. Default: false
 	Debug bool
-	// Timeout for http.Request in milliseconds, 0 disables it. Default: 2000 milliseconds
+	// Timeout for http.Request in seconds, 0 disables it. Default: 2 seconds
 	Timeout time.Duration
 	// Retry request if it returns a 429 status code. Default: true
 	Retry bool
@@ -24,7 +24,7 @@ func NewTestEquinoxConfig() *EquinoxConfig {
 	return &EquinoxConfig{
 		Key:        os.Getenv("RIOT_API_KEY"),
 		Debug:      true,
-		Timeout:    2000,
+		Timeout:    2,
 		Retry:      true,
 		RetryCount: 1,
 	}
