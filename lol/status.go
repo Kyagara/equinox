@@ -68,11 +68,11 @@ type PlatformDataDTO struct {
 	} `json:"incidents"`
 }
 
-// Get Status
-func (c *StatusEndpoint) GetStatus(region api.Region) (*PlatformDataDTO, error) {
+// Get League of Legends status for the given platform.
+func (c *StatusEndpoint) PlatformStatus(region api.Region) (*PlatformDataDTO, error) {
 	res := PlatformDataDTO{}
 
-	err := c.internalClient.Do(http.MethodGet, region, StatusEndpointURL, &res)
+	err := c.internalClient.Do(http.MethodGet, region, StatusURL, nil, &res)
 
 	if err != nil {
 		return nil, err

@@ -11,7 +11,7 @@ type Logger struct {
 	Error *log.Logger
 }
 
-// Returns a new Logger
+// Returns a new Logger.
 func NewLogger() *Logger {
 	flags := log.LstdFlags
 

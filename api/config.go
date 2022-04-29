@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-// An config object for the EquinoxClient
+// An config object for the EquinoxClient.
 type EquinoxConfig struct {
-	// Riot API Key
+	// Riot API Key.
 	Key string
 	// Debug mode. Default: false
 	Debug bool
-	// Timeout for http.Request in seconds, 0 disables it. Default: 2 seconds
+	// Timeout for http.Request in seconds, 0 disables it. Default: 10
 	Timeout time.Duration
 	// Retry request if it returns a 429 status code. Default: true
 	Retry bool
@@ -19,12 +19,12 @@ type EquinoxConfig struct {
 	RetryCount int8
 }
 
-// Creates an EquinoxConfig for tests
+// Creates an EquinoxConfig for tests.
 func NewTestEquinoxConfig() *EquinoxConfig {
 	return &EquinoxConfig{
 		Key:        os.Getenv("RIOT_API_KEY"),
 		Debug:      true,
-		Timeout:    2,
+		Timeout:    10,
 		Retry:      true,
 		RetryCount: 1,
 	}

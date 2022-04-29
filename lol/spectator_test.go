@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestFeaturedGames(t *testing.T) {
+func TestSpectatorFeaturedGames(t *testing.T) {
 	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -22,12 +22,12 @@ func TestFeaturedGames(t *testing.T) {
 	assert.NotNil(t, res, "expecting non-nil response")
 }
 
-func TestActiveGameBySummonerID(t *testing.T) {
+func TestSpectatorCurrentGame(t *testing.T) {
 	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
-	res, err := client.Spectator.ActiveGameBySummonerID(api.LOLRegionBR1, "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A")
+	res, err := client.Spectator.CurrentGame(api.LOLRegionBR1, "mqk6ubCanzRDH9PPSLMNhIi1PAvjAYh9hTip8daGU2aACQ")
 
 	// What should be done in cases where a 404 is a valid response?
 

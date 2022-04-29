@@ -43,7 +43,7 @@ type FeaturedGamesDTO struct {
 	ClientRefreshInterval int `json:"clientRefreshInterval"`
 }
 
-type ActiveGameBySummonerID struct {
+type CurrentGameInfoDTO struct {
 	GameID            int    `json:"gameId"`
 	MapID             int    `json:"mapId"`
 	GameMode          string `json:"gameMode"`
@@ -81,11 +81,11 @@ type ActiveGameBySummonerID struct {
 	GameLength    int `json:"gameLength"`
 }
 
-// Get featured games in a region
+// Get featured games in a region.
 func (c *SpectatorEndpoint) FeaturedGames(region api.Region) (*FeaturedGamesDTO, error) {
 	res := FeaturedGamesDTO{}
 
-	err := c.internalClient.Do(http.MethodGet, region, SpectatorEndpointURL, &res)
+	err := c.internalClient.Do(http.MethodGet, region, SpectatorURL, nil, &res)
 
 	if err != nil {
 		return nil, err
@@ -94,11 +94,11 @@ func (c *SpectatorEndpoint) FeaturedGames(region api.Region) (*FeaturedGamesDTO,
 	return &res, nil
 }
 
-// Get an active game by summoner ID
-func (c *SpectatorEndpoint) ActiveGameBySummonerID(region api.Region, summonerId string) (*ActiveGameBySummonerID, error) {
-	res := ActiveGameBySummonerID{}
+// Get the current game information for the given summoner ID.
+func (c *SpectatorEndpoint) CurrentGame(region api.Region, summonerID string) (*CurrentGameInfoDTO, error) {
+	res := CurrentGameInfoDTO{}
 
-	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorBySummonerEndpointURL, summonerId), &res)
+	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorBySummonerURL, summonerID), nil, &res)
 
 	if err != nil {
 		return nil, err
