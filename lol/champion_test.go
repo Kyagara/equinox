@@ -9,12 +9,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFreeChampionsRotation(t *testing.T) {
+func TestChampionRotations(t *testing.T) {
 	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
-	res, err := client.Champion.FreeRotation(api.LOLRegionBR1)
+	res, err := client.Champion.Rotations(api.LOLRegionBR1)
 
 	assert.Nil(t, err, "expecting nil error")
 

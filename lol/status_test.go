@@ -9,12 +9,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetStatus(t *testing.T) {
+func TestPlatformStatus(t *testing.T) {
 	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
-	res, err := client.Status.GetStatus(api.LOLRegionNA1)
+	res, err := client.Status.PlatformStatus(api.LOLRegionNA1)
 
 	assert.Nil(t, err, "expecting nil error")
 

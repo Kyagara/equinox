@@ -11,17 +11,17 @@ type ChampionEndpoint struct {
 	internalClient *internal.InternalClient
 }
 
-type ChampionInfoDTO struct {
+type ChampionRotationsDTO struct {
 	FreeChampionIds              []int `json:"freeChampionIds"`
 	FreeChampionIdsForNewPlayers []int `json:"freeChampionIdsForNewPlayers"`
 	MaxNewPlayerLevel            int   `json:"maxNewPlayerLevel"`
 }
 
-// Get Free Champions Rotation
-func (c *ChampionEndpoint) FreeRotation(region api.Region) (*ChampionInfoDTO, error) {
-	res := ChampionInfoDTO{}
+// Get champion rotations, including free-to-play and low-level free-to-play rotations.
+func (c *ChampionEndpoint) Rotations(region api.Region) (*ChampionRotationsDTO, error) {
+	res := ChampionRotationsDTO{}
 
-	err := c.internalClient.Do(http.MethodGet, region, ChampionEndpointURL, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, ChampionURL, nil, &res)
 
 	if err != nil {
 		return nil, err

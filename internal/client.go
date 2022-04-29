@@ -25,7 +25,7 @@ const (
 	LogRequestFormat = "[%s '%s'] %s\n"
 )
 
-// Returns a new client using the API key provided
+// Returns a new client using the API key provided.
 func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
 		key:        config.Key,
@@ -37,25 +37,25 @@ func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	}
 }
 
-// Executes a http request
+// Executes a http request.
 func (c *InternalClient) Do(method string, region api.Region, endpoint string, body interface{}, object interface{}) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, region)
 
-	// Creating a new *http.Request
+	// Creating a new *http.Request.
 	req, err := c.newRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), body)
 
 	if err != nil {
 		return err
 	}
 
-	// Sending http request and returning the response
+	// Sending http request and returning the response.
 	res, err := c.sendRequest(req, 0)
 
 	if err != nil {
 		return err
 	}
 
-	// Decoding the body into the endpoint method response object
+	// Decoding the body into the endpoint method response object.
 	if err = json.Unmarshal(res, &object); err != nil {
 		return err
 	}
@@ -63,7 +63,7 @@ func (c *InternalClient) Do(method string, region api.Region, endpoint string, b
 	return nil
 }
 
-// Sends a http request
+// Sends a http request.
 func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte, error) {
 	if c.retry && retryCount >= c.retryCount {
 		msg := fmt.Sprintf(LogRequestFormat, req.Method, req.URL.Path, fmt.Sprintf("Failed %d times, stopping", retryCount))
@@ -75,7 +75,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte
 		c.log.Info.Printf(LogRequestFormat, req.Method, req.URL.Path, "Requesting")
 	}
 
-	// Sending request
+	// Sending request.
 	res, err := c.http.Do(req)
 
 	if err != nil {
@@ -92,20 +92,20 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte
 		return nil, api.ForbiddenError
 	}
 
-	// If the API returns a 429 code
+	// If the API returns a 429 code.
 	if res.StatusCode == http.StatusTooManyRequests {
 		if c.debug {
 			c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Too many requests")
 		}
 
-		// If Retry is disabled just return an error
+		// If Retry is disabled just return an error.
 		if !c.retry {
 			return nil, c.newErrorResponse(res)
 		}
 
 		retryAfter := res.Header.Get("Retry-After")
 
-		// If the header isn't found, don't retry and return error
+		// If the header isn't found, don't retry and return error.
 		if retryAfter == "" {
 			if c.debug {
 				c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Retry-After header not found, not retrying")
@@ -129,7 +129,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte
 		return c.sendRequest(req, retryCount+1)
 	}
 
-	// If the API returns a 404 code, return an error
+	// If the API returns a 404 code, return an error.
 	if res.StatusCode == http.StatusNotFound {
 		if c.debug {
 			c.log.Warn.Printf(LogRequestFormat, req.Method, req.URL.Path, "Not Found")
@@ -160,7 +160,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte
 	return body, nil
 }
 
-// Creates a new *http.Request and sets headers
+// Creates a new *http.Request and sets headers.
 func (c *InternalClient) newRequest(method string, url string, body interface{}) (*http.Request, error) {
 	if c.key == "" {
 		return nil, fmt.Errorf("API Key not provided")
@@ -184,7 +184,7 @@ func (c *InternalClient) newRequest(method string, url string, body interface{})
 	return req, nil
 }
 
-// Returns an error from the *http.Response provided
+// Returns an error from the *http.Response provided.
 func (c *InternalClient) newErrorResponse(res *http.Response) error {
 	var errRes api.ErrorResponse
 

@@ -3,9 +3,11 @@
 [![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/Kyagara/equinox)
 [![Test Status](https://github.com/Kyagara/equinox/workflows/Tests/badge.svg)](https://github.com/Kyagara/equinox/actions?query=workflow%3Atests)
 
-This shouldn't be used in any production environment, this is just a practice tool for me to learn CI/CD using Github Actions and tests in golang.
+This library is NOT production ready, expect breaking changes.
 
-I was recommended [Alex Pliutau](https://www.youtube.com/watch?v=evorkFq3Y5k)'s video on youtube and got curious about learning other things, I decided to make a client for the Riot Games API since I am more familiar with it.
+Only some League of Legends endpoints are currently implemented.
+
+This project is a first for me since I don't have much experience in publishing a library, this project is pretty much a practice tool for me to improve my knowledge in CI/CD using Github Actions, golang and tests in golang.
 
 I am avoiding using other packages like [resty](https://github.com/go-resty/resty) instead of the `net/http` package go provides to improve my golang knowledge, currently just using [testify](https://github.com/stretchr/testify) for tests.
 
@@ -23,38 +25,46 @@ import (
 
 func main() {
 	// For custom configurations, you can use NewClientWithConfig(),
-	// you will need to provide an api.EquinoxConfig{} object
+	// you will need to provide an api.EquinoxConfig{} object.
 	client, err := equinox.NewClient("RIOT_API_KEY")
 
 	if err != nil {
-		fmt.Println("error creating client,", err)
+		fmt.Println("error creating client", err)
 		return
 	}
 
-	// Get Free Champion rotation
-	champions, err := client.LOL.Champion.FreeRotation(api.LOLRegionBR1)
+	// Get champion rotations.
+	rotation, err := client.LOL.Champion.Rotations(api.LOLRegionBR1)
 
 	if err != nil {
-		fmt.Println("error retrieving champions,", err)
+		fmt.Println("error retrieving champion rotations", err)
 		return
 	}
 
-	fmt.Printf("%+v\n", champions)
+	fmt.Printf("%+v\n", rotation)
 }
 ```
 
 ## TODO
 
-### Improve tests
+#### DTOs
+
+DTOs are found inside their respective endpoint implementation, however, in some cases where an endpoint has multiple methods, the files quickly become a mess as the DTOs occupy a large portion of the file, maybe they could be implemented in another module, however I am not sure on how to organize them since I plan to support other endpoints from other Riot games.
+
+#### Improve tests
 
 I am not sure if tests are 'good enough', I am just checking if errors are `Nil` and the response is `NotNil` using `testify`.
 
 Sometimes an endpoint method might return a valid 404 error, for example, getting an active game by a summoner's ID, this might not find a game for a valid summoner, returning a 404. I am unsure what the best solution for this problem might be.
 
-### Improve Requests api
+#### Improve Requests api
 
 At the moment `GET` and other methods needs to go through the same function, InternalClient.Do(). It would be better to have specific functions for each http method.
 
-### Improve Logging
+#### Improve Logging
 
 I don't believe the current logging and 'debugging mode' is done right or that its 'done' at all to be honest, there might be places where I should be logging something but I am not.
+
+## Disclaimer
+
+Equinox isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
