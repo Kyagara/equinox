@@ -85,7 +85,7 @@ type ActiveGameBySummonerID struct {
 func (c *SpectatorEndpoint) FeaturedGames(region api.Region) (*FeaturedGamesDTO, error) {
 	res := FeaturedGamesDTO{}
 
-	err := c.internalClient.Do(http.MethodGet, region, SpectatorEndpointURL, &res)
+	err := c.internalClient.Do(http.MethodGet, region, SpectatorEndpointURL, nil, &res)
 
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func (c *SpectatorEndpoint) FeaturedGames(region api.Region) (*FeaturedGamesDTO,
 func (c *SpectatorEndpoint) ActiveGameBySummonerID(region api.Region, summonerId string) (*ActiveGameBySummonerID, error) {
 	res := ActiveGameBySummonerID{}
 
-	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorBySummonerEndpointURL, summonerId), &res)
+	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorBySummonerEndpointURL, summonerId), nil, &res)
 
 	if err != nil {
 		return nil, err

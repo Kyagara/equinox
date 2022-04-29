@@ -72,7 +72,7 @@ type PlatformDataDTO struct {
 func (c *StatusEndpoint) GetStatus(region api.Region) (*PlatformDataDTO, error) {
 	res := PlatformDataDTO{}
 
-	err := c.internalClient.Do(http.MethodGet, region, StatusEndpointURL, &res)
+	err := c.internalClient.Do(http.MethodGet, region, StatusEndpointURL, nil, &res)
 
 	if err != nil {
 		return nil, err
