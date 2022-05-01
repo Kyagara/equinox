@@ -69,7 +69,7 @@ type PlatformDataDTO struct {
 }
 
 // Get League of Legends status for the given platform.
-func (c *StatusEndpoint) PlatformStatus(region api.Region) (*PlatformDataDTO, error) {
+func (c *StatusEndpoint) PlatformStatus(region api.LOLRegion) (*PlatformDataDTO, error) {
 	res := PlatformDataDTO{}
 
 	err := c.internalClient.Do(http.MethodGet, region, StatusURL, nil, &res)

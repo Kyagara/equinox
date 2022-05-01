@@ -1,6 +1,8 @@
 package lol_test
 
 import (
+	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
@@ -8,14 +10,22 @@ import (
 	"github.com/Kyagara/equinox/lol"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/h2non/gock.v1"
 )
 
 func TestSpectatorFeaturedGames(t *testing.T) {
-	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
+	defer gock.Off()
+
+	gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+		Get(lol.SpectatorURL).
+		Reply(200).
+		JSON(&lol.FeaturedGamesDTO{})
+
+	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
-	res, err := client.Spectator.FeaturedGames(api.LOLRegionNA1)
+	res, err := client.Spectator.FeaturedGames(api.LOLRegionBR1)
 
 	assert.Nil(t, err, "expecting nil error")
 
@@ -23,22 +33,44 @@ func TestSpectatorFeaturedGames(t *testing.T) {
 }
 
 func TestSpectatorCurrentGame(t *testing.T) {
-	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
+	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
-	res, err := client.Spectator.CurrentGame(api.LOLRegionBR1, "mqk6ubCanzRDH9PPSLMNhIi1PAvjAYh9hTip8daGU2aACQ")
-
-	// What should be done in cases where a 404 is a valid response?
-
-	// If there's an error, it could be that no summoner was in a match when this was called.
-
-	// How can we test this?
-	if err != nil && err == api.NotFoundError {
-		require.NotNil(t, err, "expecting non-nil error")
+	tests := []struct {
+		name    string
+		code    int
+		want    *lol.CurrentGameInfoDTO
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: http.StatusOK,
+			want: &lol.CurrentGameInfoDTO{},
+		},
+		{
+			name:    "not found",
+			code:    http.StatusNotFound,
+			wantErr: api.NotFoundError,
+		},
 	}
 
-	if err == nil {
-		require.NotNil(t, res, "expecting non-nil response")
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer gock.Off()
+
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+				Get(fmt.Sprintf(lol.SpectatorCurrentGameURL, "summonerID")).
+				Reply(test.code).
+				JSON(test.want)
+
+			gotData, gotErr := client.Spectator.CurrentGame(api.LOLRegionBR1, "summonerID")
+
+			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, gotData, test.want)
+			}
+		})
 	}
 }

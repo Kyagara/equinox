@@ -13,7 +13,7 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
-func TestMatchList(t *testing.T) {
+func TestSummonerByAccountID(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -21,13 +21,13 @@ func TestMatchList(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    []string
+		want    *lol.SummonerDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: []string{},
+			want: &lol.SummonerDTO{},
 		},
 		{
 			name:    "not found",
@@ -40,17 +40,12 @@ func TestMatchList(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.RouteAmericas)).
-				Get(fmt.Sprintf(lol.MatchlistURL, "PUUID")).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+				Get(fmt.Sprintf(lol.SummonerByAccountIDURL, "accountID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			options := lol.MatchlistOptions{
-				Start: 0,
-				Count: 20,
-			}
-
-			gotData, gotErr := client.Match.List(api.RouteAmericas, "PUUID", &options)
+			gotData, gotErr := client.Summoner.ByAccountID(api.LOLRegionBR1, "accountID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -61,7 +56,7 @@ func TestMatchList(t *testing.T) {
 	}
 }
 
-func TestMatchByID(t *testing.T) {
+func TestSummonerByName(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -69,13 +64,13 @@ func TestMatchByID(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.MatchDTO
+		want    *lol.SummonerDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.MatchDTO{},
+			want: &lol.SummonerDTO{},
 		},
 		{
 			name:    "not found",
@@ -88,12 +83,12 @@ func TestMatchByID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.RouteAmericas)).
-				Get(fmt.Sprintf(lol.MatchURL, "matchID")).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+				Get(fmt.Sprintf(lol.SummonerByNameURL, "summonerName")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.ByID(api.RouteAmericas, "matchID")
+			gotData, gotErr := client.Summoner.ByName(api.LOLRegionBR1, "summonerName")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -104,7 +99,7 @@ func TestMatchByID(t *testing.T) {
 	}
 }
 
-func TestMatchTimeline(t *testing.T) {
+func TestSummonerByPUUID(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -112,13 +107,13 @@ func TestMatchTimeline(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.MatchTimelineDTO
+		want    *lol.SummonerDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.MatchTimelineDTO{},
+			want: &lol.SummonerDTO{},
 		},
 		{
 			name:    "not found",
@@ -131,12 +126,55 @@ func TestMatchTimeline(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.RouteAmericas)).
-				Get(fmt.Sprintf(lol.MatchTimelineURL, "matchID")).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+				Get(fmt.Sprintf(lol.SummonerByPUUIDURL, "PUUID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.Timeline(api.RouteAmericas, "matchID")
+			gotData, gotErr := client.Summoner.ByPUUID(api.LOLRegionBR1, "PUUID")
+
+			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, gotData, test.want)
+			}
+		})
+	}
+}
+
+func TestSummonerByID(t *testing.T) {
+	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	client := lol.NewLOLClient(internalClient)
+
+	tests := []struct {
+		name    string
+		code    int
+		want    *lol.SummonerDTO
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: http.StatusOK,
+			want: &lol.SummonerDTO{},
+		},
+		{
+			name:    "not found",
+			code:    http.StatusNotFound,
+			wantErr: api.NotFoundError,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer gock.Off()
+
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+				Get(fmt.Sprintf(lol.SummonerByID, "summonerID")).
+				Reply(test.code).
+				JSON(test.want)
+
+			gotData, gotErr := client.Summoner.ByID(api.LOLRegionBR1, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

@@ -19,7 +19,6 @@ type Equinox struct {
 		- `Debug`      : false
 		- `Timeout`    : 10
 		- `Retry`      : true
-		- `RetryCount` : 1
 */
 func NewClient(key string) (*Equinox, error) {
 	if key == "" {
@@ -27,11 +26,10 @@ func NewClient(key string) (*Equinox, error) {
 	}
 
 	config := &api.EquinoxConfig{
-		Key:        key,
-		Debug:      false,
-		Timeout:    10,
-		Retry:      true,
-		RetryCount: 1,
+		Key:     key,
+		Debug:   false,
+		Timeout: 10,
+		Retry:   true,
 	}
 
 	internalClient := internal.NewInternalClient(config)
@@ -52,10 +50,6 @@ func NewClient(key string) (*Equinox, error) {
 func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	if config.Key == "" {
 		return nil, fmt.Errorf("API Key not provided")
-	}
-
-	if config.Retry && config.RetryCount < 1 {
-		config.RetryCount = 1
 	}
 
 	internalClient := internal.NewInternalClient(config)

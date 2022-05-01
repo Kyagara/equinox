@@ -26,10 +26,12 @@ type ChampionMasteryDTO struct {
 }
 
 // Get all champion mastery entries sorted by number of champion points descending.
-func (c *ChampionMasteryEndpoint) BySummonerID(region api.Region, summonerID string) (*[]ChampionMasteryDTO, error) {
+func (c *ChampionMasteryEndpoint) BySummonerID(region api.LOLRegion, summonerID string) (*[]ChampionMasteryDTO, error) {
+	url := fmt.Sprintf(ChampionMasteriesURL, summonerID)
+
 	res := []ChampionMasteryDTO{}
 
-	err := c.internalClient.Do(http.MethodGet, region, ChampionMasteriesURL, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
 
 	if err != nil {
 		return nil, err
@@ -39,7 +41,7 @@ func (c *ChampionMasteryEndpoint) BySummonerID(region api.Region, summonerID str
 }
 
 // Get a champion mastery by player ID and champion ID.
-func (c *ChampionMasteryEndpoint) ChampionScore(region api.Region, summonerID string, championID int) (*ChampionMasteryDTO, error) {
+func (c *ChampionMasteryEndpoint) ChampionScore(region api.LOLRegion, summonerID string, championID int) (*ChampionMasteryDTO, error) {
 	url := fmt.Sprintf(ChampionMasteriesByChampionURL, summonerID, championID)
 
 	res := ChampionMasteryDTO{}
@@ -54,7 +56,7 @@ func (c *ChampionMasteryEndpoint) ChampionScore(region api.Region, summonerID st
 }
 
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
-func (c *ChampionMasteryEndpoint) MasteryScore(region api.Region, summonerID string) (int, error) {
+func (c *ChampionMasteryEndpoint) MasteryScore(region api.LOLRegion, summonerID string) (int, error) {
 	url := fmt.Sprintf(ChampionMasteriesScoresURL, summonerID)
 
 	res := 0

@@ -15,7 +15,11 @@ const (
 	MatchURL                       = "/lol/match/v5/matches/%s"
 	MatchTimelineURL               = "/lol/match/v5/matches/%s/timeline"
 	SpectatorURL                   = "/lol/spectator/v4/featured-games"
-	SpectatorBySummonerURL         = "/lol/spectator/v4/active-games/by-summoner/%s"
+	SpectatorCurrentGameURL        = "/lol/spectator/v4/active-games/by-summoner/%s"
+	SummonerByAccountIDURL         = "/lol/summoner/v4/summoners/by-account/%s"
+	SummonerByNameURL              = "/lol/summoner/v4/summoners/by-name/%s"
+	SummonerByPUUIDURL             = "/lol/summoner/v4/summoners/by-puuid/%s"
+	SummonerByID                   = "/lol/summoner/v4/summoners/%s"
 )
 
 type LOLClient struct {
@@ -25,6 +29,7 @@ type LOLClient struct {
 	Match             *MatchEndpoint
 	Status            *StatusEndpoint
 	Spectator         *SpectatorEndpoint
+	Summoner          *SummonerEndpoint
 }
 
 // Creates a new LOLClient using an InternalClient provided.
@@ -36,5 +41,6 @@ func NewLOLClient(client *internal.InternalClient) *LOLClient {
 		Match:             &MatchEndpoint{internalClient: client},
 		Status:            &StatusEndpoint{internalClient: client},
 		Spectator:         &SpectatorEndpoint{internalClient: client},
+		Summoner:          &SummonerEndpoint{internalClient: client},
 	}
 }
