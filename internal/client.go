@@ -155,7 +155,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte
 	}
 
 	// If the status code is lower than 200 or higher than 400, return an error.
-	if res.StatusCode < http.StatusOK || res.StatusCode > http.StatusBadRequest {
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
 		if c.debug {
 			c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Returned an error")
 		}
@@ -194,6 +194,7 @@ func (c *InternalClient) newRequest(method string, url string, body interface{})
 		return nil, err
 	}
 
+	req.Header.Set("Content-type", "application/json; charset=utf8")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
 	req.Header.Set("X-Riot-Token", c.key)
 
