@@ -29,4 +29,11 @@ var (
 			StatusCode: http.StatusForbidden,
 		},
 	}
+
+	UnauthorizedError = ErrorResponse{
+		Status: Status{
+			Message:    "Unauthorized",
+			StatusCode: http.StatusUnauthorized,
+		},
+	}
 )

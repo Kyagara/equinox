@@ -303,7 +303,7 @@ type MatchlistOptions struct {
 }
 
 // Get a list of match IDs by PUUID.
-func (c *MatchEndpoint) List(region api.Region, PUUID string, options *MatchlistOptions) ([]string, error) {
+func (c *MatchEndpoint) List(region api.Route, PUUID string, options *MatchlistOptions) ([]string, error) {
 	if options != nil {
 		options.Start = 0
 		options.Count = 20
@@ -355,7 +355,7 @@ func (c *MatchEndpoint) List(region api.Region, PUUID string, options *Matchlist
 }
 
 // Get a match by match ID.
-func (c *MatchEndpoint) ByID(region api.Region, matchID string) (*MatchDTO, error) {
+func (c *MatchEndpoint) ByID(region api.Route, matchID string) (*MatchDTO, error) {
 	url := fmt.Sprintf(MatchURL, matchID)
 
 	res := MatchDTO{}
@@ -370,7 +370,7 @@ func (c *MatchEndpoint) ByID(region api.Region, matchID string) (*MatchDTO, erro
 }
 
 // Get a match timeline by match ID.
-func (c *MatchEndpoint) Timeline(region api.Region, matchID string) (*MatchTimelineDTO, error) {
+func (c *MatchEndpoint) Timeline(region api.Route, matchID string) (*MatchTimelineDTO, error) {
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
 
 	res := MatchTimelineDTO{}

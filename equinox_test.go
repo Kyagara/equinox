@@ -18,11 +18,10 @@ func TestEquinoxClient(t *testing.T) {
 
 func TestEquinoxClientWithConfig(t *testing.T) {
 	config := &api.EquinoxConfig{
-		Key:        "RIOT_API_KEY",
-		Debug:      true,
-		Timeout:    10,
-		Retry:      true,
-		RetryCount: 1,
+		Key:     "RIOT_API_KEY",
+		Debug:   true,
+		Timeout: 10,
+		Retry:   true,
 	}
 
 	client, err := equinox.NewClientWithConfig(config)

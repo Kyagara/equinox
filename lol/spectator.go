@@ -82,7 +82,7 @@ type CurrentGameInfoDTO struct {
 }
 
 // Get featured games in a region.
-func (c *SpectatorEndpoint) FeaturedGames(region api.Region) (*FeaturedGamesDTO, error) {
+func (c *SpectatorEndpoint) FeaturedGames(region api.LOLRegion) (*FeaturedGamesDTO, error) {
 	res := FeaturedGamesDTO{}
 
 	err := c.internalClient.Do(http.MethodGet, region, SpectatorURL, nil, &res)
@@ -95,7 +95,7 @@ func (c *SpectatorEndpoint) FeaturedGames(region api.Region) (*FeaturedGamesDTO,
 }
 
 // Get the current game information for the given summoner ID.
-func (c *SpectatorEndpoint) CurrentGame(region api.Region, summonerID string) (*CurrentGameInfoDTO, error) {
+func (c *SpectatorEndpoint) CurrentGame(region api.LOLRegion, summonerID string) (*CurrentGameInfoDTO, error) {
 	res := CurrentGameInfoDTO{}
 
 	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), nil, &res)

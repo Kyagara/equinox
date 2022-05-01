@@ -18,7 +18,7 @@ type ChampionRotationsDTO struct {
 }
 
 // Get champion rotations, including free-to-play and low-level free-to-play rotations.
-func (c *ChampionEndpoint) Rotations(region api.Region) (*ChampionRotationsDTO, error) {
+func (c *ChampionEndpoint) Rotations(region api.LOLRegion) (*ChampionRotationsDTO, error) {
 	res := ChampionRotationsDTO{}
 
 	err := c.internalClient.Do(http.MethodGet, region, ChampionURL, nil, &res)

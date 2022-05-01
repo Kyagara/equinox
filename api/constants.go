@@ -5,36 +5,28 @@ const (
 	BaseURLFormat = "https://%s.api.riotgames.com"
 )
 
-type Region string
+type Route string
 
 // Riot API routes
 const (
-	RiotRouteAmericas Region = "americas"
-	RiotRouteEurope   Region = "europe"
-	RiotRouteAsia     Region = "asia"
+	RouteAmericas Route = "americas"
+	RouteEurope   Route = "europe"
+	RouteAsia     Route = "asia"
 )
+
+type LOLRegion string
 
 // League of Legends and Teamfight Tactics regions
 const (
-	LOLRegionBR1  Region = "br1"
-	LOLRegionEUN1 Region = "eun1"
-	LOLRegionEUW1 Region = "euw1"
-	LOLRegionJP1  Region = "jp1"
-	LOLRegionKR   Region = "kr"
-	LOLRegionLA1  Region = "la1"
-	LOLRegionLA2  Region = "la2"
-	LOLRegionNA1  Region = "na1"
-	LOLRegionOC1  Region = "oc1"
-	LOLRegionRU   Region = "ru"
-	LOLRegionTR1  Region = "tr1"
-)
-
-// Valorant regions
-const (
-	VALRegionAP    Region = "ap"
-	VALRegionBR    Region = "br"
-	VALRegionEU    Region = "eu"
-	VALRegionKR    Region = "kr"
-	VALRegionLATAM Region = "latam"
-	VALRegionNA    Region = "na"
+	LOLRegionBR1  LOLRegion = "br1"
+	LOLRegionEUN1 LOLRegion = "eun1"
+	LOLRegionEUW1 LOLRegion = "euw1"
+	LOLRegionJP1  LOLRegion = "jp1"
+	LOLRegionKR   LOLRegion = "kr"
+	LOLRegionLA1  LOLRegion = "la1"
+	LOLRegionLA2  LOLRegion = "la2"
+	LOLRegionNA1  LOLRegion = "na1"
+	LOLRegionOC1  LOLRegion = "oc1"
+	LOLRegionRU   LOLRegion = "ru"
+	LOLRegionTR1  LOLRegion = "tr1"
 )

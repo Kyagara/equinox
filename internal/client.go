@@ -13,12 +13,11 @@ import (
 )
 
 type InternalClient struct {
-	key        string
-	debug      bool
-	retry      bool
-	retryCount int8
-	http       *http.Client
-	log        *Logger
+	key   string
+	debug bool
+	retry bool
+	http  *http.Client
+	log   *Logger
 }
 
 const (
@@ -28,29 +27,27 @@ const (
 // Creates an EquinoxConfig for tests.
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
-		Key:        "RIOT_API_KEY",
-		Debug:      true,
-		Timeout:    10,
-		Retry:      true,
-		RetryCount: 1,
+		Key:     "RIOT_API_KEY",
+		Debug:   true,
+		Timeout: 10,
+		Retry:   true,
 	}
 }
 
 // Returns a new client using the API key provided.
 func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
-		key:        config.Key,
-		debug:      config.Debug,
-		retry:      config.Retry,
-		retryCount: config.RetryCount,
-		http:       &http.Client{Timeout: config.Timeout * time.Second},
-		log:        NewLogger(),
+		key:   config.Key,
+		debug: config.Debug,
+		retry: config.Retry,
+		http:  &http.Client{Timeout: config.Timeout * time.Second},
+		log:   NewLogger(),
 	}
 }
 
 // Executes a http request.
-func (c *InternalClient) Do(method string, region api.Region, endpoint string, body interface{}, object interface{}) error {
-	baseUrl := fmt.Sprintf(api.BaseURLFormat, region)
+func (c *InternalClient) Do(method string, route interface{}, endpoint string, body interface{}, object interface{}) error {
+	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new *http.Request.
 	req, err := c.newRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), body)
@@ -76,8 +73,8 @@ func (c *InternalClient) Do(method string, region api.Region, endpoint string, b
 
 // Sends a http request.
 func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte, error) {
-	if c.retry && retryCount >= c.retryCount {
-		msg := fmt.Sprintf(LogRequestFormat, req.Method, req.URL.Path, fmt.Sprintf("Failed %d times, stopping", retryCount))
+	if c.retry && retryCount == 1 {
+		msg := fmt.Sprintf(LogRequestFormat, req.Method, req.URL.Path, fmt.Sprintf("Failed %d time, stopping", retryCount))
 
 		return nil, fmt.Errorf(msg)
 	}
@@ -94,6 +91,14 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte
 	}
 
 	defer res.Body.Close()
+
+	if res.StatusCode == http.StatusUnauthorized {
+		if c.debug {
+			c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Unauthorized")
+		}
+
+		return nil, api.UnauthorizedError
+	}
 
 	if res.StatusCode == http.StatusForbidden {
 		if c.debug {
@@ -152,7 +157,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte
 	// If the status code is lower than 200 or higher than 400, return an error.
 	if res.StatusCode < http.StatusOK || res.StatusCode > http.StatusBadRequest {
 		if c.debug {
-			c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Retrying")
+			c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Returned an error")
 		}
 
 		return nil, c.newErrorResponse(res)
