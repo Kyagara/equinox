@@ -15,7 +15,7 @@ const (
 	MatchURL                       = "/lol/match/v5/matches/%s"
 	MatchTimelineURL               = "/lol/match/v5/matches/%s/timeline"
 	SpectatorURL                   = "/lol/spectator/v4/featured-games"
-	SpectatorBySummonerURL         = "/lol/spectator/v4/active-games/by-summoner/%s"
+	SpectatorCurrentGameURL        = "/lol/spectator/v4/active-games/by-summoner/%s"
 )
 
 type LOLClient struct {

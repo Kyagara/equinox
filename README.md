@@ -7,9 +7,9 @@ This library is NOT production ready, expect breaking changes.
 
 Only some League of Legends endpoints are currently implemented.
 
-This project is a first for me since I don't have much experience in publishing a library, this project is pretty much a practice tool for me to improve my knowledge in CI/CD using Github Actions, golang and tests in golang.
+This project is a first for me since I don't have much experience in publishing a library, this is pretty much a practice tool for me to improve my knowledge in CI/CD using Github Actions, golang and tests.
 
-I am avoiding using other packages like [resty](https://github.com/go-resty/resty) instead of the `net/http` package go provides to improve my golang knowledge, currently just using [testify](https://github.com/stretchr/testify) for tests.
+I am avoiding using other packages like [resty](https://github.com/go-resty/resty) instead of the `net/http` package go provides to improve my golang knowledge, currently using [testify](https://github.com/stretchr/testify) and [gock](https://github.com/h2non/gock) for tests.
 
 ## Example
 
@@ -53,13 +53,9 @@ DTOs are found inside their respective endpoint implementation, however, in some
 
 #### Improve tests
 
-I am not sure if tests are 'good enough', I am just checking if errors are `Nil` and the response is `NotNil` using `testify`.
+First time doings mocks so I decided to use [gock](https://github.com/h2non/gock) just to get things out of the ground, not sure if this implementation of tests with mocks is good.
 
-Sometimes an endpoint method might return a valid 404 error, for example, getting an active game by a summoner's ID, this might not find a game for a valid summoner, returning a 404. I am unsure what the best solution for this problem might be.
-
-#### Improve Requests api
-
-At the moment `GET` and other methods needs to go through the same function, InternalClient.Do(). It would be better to have specific functions for each http method.
+Tests could benefit from using Parallel().
 
 #### Improve Logging
 

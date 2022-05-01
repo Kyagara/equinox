@@ -1,7 +1,6 @@
 package api
 
 import (
-	"os"
 	"time"
 )
 
@@ -17,15 +16,4 @@ type EquinoxConfig struct {
 	Retry bool
 	// Retry count. Default: 1
 	RetryCount int8
-}
-
-// Creates an EquinoxConfig for tests.
-func NewTestEquinoxConfig() *EquinoxConfig {
-	return &EquinoxConfig{
-		Key:        os.Getenv("RIOT_API_KEY"),
-		Debug:      true,
-		Timeout:    10,
-		Retry:      true,
-		RetryCount: 1,
-	}
 }

@@ -1,16 +1,25 @@
 package lol_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/lol"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/h2non/gock.v1"
 )
 
 func TestChampionRotations(t *testing.T) {
-	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
+	defer gock.Off()
+
+	gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+		Get(lol.ChampionURL).
+		Reply(200).
+		JSON(&lol.ChampionRotationsDTO{})
+
+	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 

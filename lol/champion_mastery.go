@@ -27,9 +27,11 @@ type ChampionMasteryDTO struct {
 
 // Get all champion mastery entries sorted by number of champion points descending.
 func (c *ChampionMasteryEndpoint) BySummonerID(region api.Region, summonerID string) (*[]ChampionMasteryDTO, error) {
+	url := fmt.Sprintf(ChampionMasteriesURL, summonerID)
+
 	res := []ChampionMasteryDTO{}
 
-	err := c.internalClient.Do(http.MethodGet, region, ChampionMasteriesURL, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
 
 	if err != nil {
 		return nil, err

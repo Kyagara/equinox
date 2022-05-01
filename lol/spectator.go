@@ -98,7 +98,7 @@ func (c *SpectatorEndpoint) FeaturedGames(region api.Region) (*FeaturedGamesDTO,
 func (c *SpectatorEndpoint) CurrentGame(region api.Region, summonerID string) (*CurrentGameInfoDTO, error) {
 	res := CurrentGameInfoDTO{}
 
-	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorBySummonerURL, summonerID), nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), nil, &res)
 
 	if err != nil {
 		return nil, err

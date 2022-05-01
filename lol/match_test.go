@@ -1,78 +1,148 @@
 package lol_test
 
 import (
+	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/lol"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/h2non/gock.v1"
 )
 
 func TestMatchList(t *testing.T) {
-	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
+	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
-	options := lol.MatchlistOptions{
-		Start: 0,
-		Count: 20,
+	tests := []struct {
+		name    string
+		code    int
+		want    []string
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: http.StatusOK,
+			want: []string{},
+		},
+		{
+			name:    "not found",
+			code:    http.StatusNotFound,
+			wantErr: api.NotFoundError,
+		},
 	}
 
-	res, err := client.Match.List(api.LOLRegionBR1, "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ", &options)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer gock.Off()
 
-	// What should be done in cases where a 404 is a valid response?
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+				Get(fmt.Sprintf(lol.MatchlistURL, "PUUID")).
+				Reply(test.code).
+				JSON(test.want)
 
-	// If there's an error, it could be that no summoner was in a match when this was called.
+			options := lol.MatchlistOptions{
+				Start: 0,
+				Count: 20,
+			}
 
-	// How can we test this?
-	if err != nil && err == api.NotFoundError {
-		require.NotNil(t, err, "expecting non-nil error")
-	}
+			gotData, gotErr := client.Match.List(api.LOLRegionBR1, "PUUID", &options)
 
-	if err == nil {
-		require.NotNil(t, res, "expecting non-nil response")
+			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, gotData, test.want)
+			}
+		})
 	}
 }
 
 func TestMatchByID(t *testing.T) {
-	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
+	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
-	res, err := client.Match.ByID(api.LOLRegionBR1, "BR1_2499919790")
-
-	// What should be done in cases where a 404 is a valid response?
-
-	// If there's an error, it could be that no summoner was in a match when this was called.
-
-	// How can we test this?
-	if err != nil && err == api.NotFoundError {
-		require.NotNil(t, err, "expecting non-nil error")
+	tests := []struct {
+		name    string
+		code    int
+		want    *lol.MatchDTO
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: http.StatusOK,
+			want: &lol.MatchDTO{},
+		},
+		{
+			name:    "not found",
+			code:    http.StatusNotFound,
+			wantErr: api.NotFoundError,
+		},
 	}
 
-	if err == nil {
-		require.NotNil(t, res, "expecting non-nil response")
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer gock.Off()
+
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+				Get(fmt.Sprintf(lol.MatchURL, "matchID")).
+				Reply(test.code).
+				JSON(test.want)
+
+			gotData, gotErr := client.Match.ByID(api.LOLRegionBR1, "matchID")
+
+			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, gotData, test.want)
+			}
+		})
 	}
 }
 
 func TestMatchTimeline(t *testing.T) {
-	internalClient := internal.NewInternalClient(api.NewTestEquinoxConfig())
+	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
-	res, err := client.Match.Timeline(api.LOLRegionBR1, "BR1_2499919790")
-
-	// What should be done in cases where a 404 is a valid response?
-
-	// If there's an error, it could be that no summoner was in a match when this was called.
-
-	// How can we test this?
-	if err != nil && err == api.NotFoundError {
-		require.NotNil(t, err, "expecting non-nil error")
+	tests := []struct {
+		name    string
+		code    int
+		want    *lol.MatchTimelineDTO
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: http.StatusOK,
+			want: &lol.MatchTimelineDTO{},
+		},
+		{
+			name:    "not found",
+			code:    http.StatusNotFound,
+			wantErr: api.NotFoundError,
+		},
 	}
 
-	if err == nil {
-		require.NotNil(t, res, "expecting non-nil response")
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer gock.Off()
+
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+				Get(fmt.Sprintf(lol.MatchTimelineURL, "matchID")).
+				Reply(test.code).
+				JSON(test.want)
+
+			gotData, gotErr := client.Match.Timeline(api.LOLRegionBR1, "matchID")
+
+			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, gotData, test.want)
+			}
+		})
 	}
 }

@@ -25,6 +25,17 @@ const (
 	LogRequestFormat = "[%s '%s'] %s\n"
 )
 
+// Creates an EquinoxConfig for tests.
+func NewTestEquinoxConfig() *api.EquinoxConfig {
+	return &api.EquinoxConfig{
+		Key:        "RIOT_API_KEY",
+		Debug:      true,
+		Timeout:    10,
+		Retry:      true,
+		RetryCount: 1,
+	}
+}
+
 // Returns a new client using the API key provided.
 func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
