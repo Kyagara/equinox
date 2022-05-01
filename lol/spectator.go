@@ -63,7 +63,7 @@ type CurrentGameInfoDTO struct {
 			Content  string `json:"content"`
 		} `json:"gameCustomizationObjects"`
 		Perks struct {
-			PerkIds      []int `json:"perkIds"`
+			PerkIDs      []int `json:"perkIds"`
 			PerkStyle    int   `json:"perkStyle"`
 			PerkSubStyle int   `json:"perkSubStyle"`
 		} `json:"perks"`

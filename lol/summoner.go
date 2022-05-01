@@ -15,7 +15,7 @@ type SummonerEndpoint struct {
 type SummonerDTO struct {
 	ID            string `json:"id"`
 	AccountID     string `json:"accountId"`
-	Puuid         string `json:"puuid"`
+	PUUID         string `json:"puuid"`
 	Name          string `json:"name"`
 	ProfileIconID int    `json:"profileIconId"`
 	RevisionDate  int64  `json:"revisionDate"`

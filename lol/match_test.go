@@ -13,7 +13,7 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
-func TestMatchList(t *testing.T) {
+func TestMatchlist(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -50,7 +50,7 @@ func TestMatchList(t *testing.T) {
 				Count: 20,
 			}
 
-			gotData, gotErr := client.Match.List(api.RouteAmericas, "PUUID", &options)
+			gotData, gotErr := client.Match.ListByPUUID(api.RouteAmericas, "PUUID", &options)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

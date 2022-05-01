@@ -270,18 +270,18 @@ type MatchTimelineDTO struct {
 		GameID       int `json:"gameId"`
 		Participants []struct {
 			ParticipantID int    `json:"participantId"`
-			Puuid         string `json:"puuid"`
+			PUUID         string `json:"puuid"`
 		} `json:"participants"`
 	} `json:"info"`
 }
 
-type MatchType string
+type LOLMatchType string
 
 const (
-	RankedMatchType   MatchType = "ranked"
-	NormalMatchType   MatchType = "normal"
-	TourneyMatchType  MatchType = "tourney"
-	TutorialMatchType MatchType = "tutorial"
+	RankedMatchType   LOLMatchType = "ranked"
+	NormalMatchType   LOLMatchType = "normal"
+	TourneyMatchType  LOLMatchType = "tourney"
+	TutorialMatchType LOLMatchType = "tutorial"
 )
 
 type MatchlistOptions struct {
@@ -295,7 +295,7 @@ type MatchlistOptions struct {
 	Queue int `json:"queue"`
 	// Filter the list of match ids by the type of match.
 	// This filter is mutually inclusive of the queue filter meaning any match ids returned must match both the queue and type filters.
-	Type MatchType `json:"type"`
+	Type LOLMatchType `json:"type"`
 	// Defaults to 0. Start index.
 	Start int `json:"start"`
 	// Defaults to 20. Valid values: 0 to 100. Number of match ids to return.
@@ -303,17 +303,12 @@ type MatchlistOptions struct {
 }
 
 // Get a list of match IDs by PUUID.
-func (c *MatchEndpoint) List(region api.Route, PUUID string, options *MatchlistOptions) ([]string, error) {
-	if options != nil {
-		options.Start = 0
-		options.Count = 20
+func (c *MatchEndpoint) ListByPUUID(region api.Route, PUUID string, options *MatchlistOptions) ([]string, error) {
+	if options == nil {
+		options = &MatchlistOptions{Start: 0, Count: 20}
 	}
 
-	if options.Count > 100 {
-		options.Count = 100
-	}
-
-	if options.Count == 0 {
+	if options.Count > 100 || options.Count < 1 {
 		options.Count = 20
 	}
 
