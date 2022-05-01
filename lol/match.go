@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"time"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -22,16 +21,16 @@ type MatchDTO struct {
 		Participants []string `json:"participants"`
 	} `json:"metadata"`
 	Info struct {
-		GameCreation       time.Time `json:"gameCreation"`
-		GameDuration       int       `json:"gameDuration"`
-		GameEndTimestamp   time.Time `json:"gameEndTimestamp"`
-		GameID             int       `json:"gameId"`
-		GameMode           string    `json:"gameMode"`
-		GameName           string    `json:"gameName"`
-		GameStartTimestamp time.Time `json:"gameStartTimestamp"`
-		GameType           string    `json:"gameType"`
-		GameVersion        string    `json:"gameVersion"`
-		MapID              int       `json:"mapId"`
+		GameCreation       int64  `json:"gameCreation"`
+		GameDuration       int    `json:"gameDuration"`
+		GameEndTimestamp   int64  `json:"gameEndTimestamp"`
+		GameID             int    `json:"gameId"`
+		GameMode           string `json:"gameMode"`
+		GameName           string `json:"gameName"`
+		GameStartTimestamp int64  `json:"gameStartTimestamp"`
+		GameType           string `json:"gameType"`
+		GameVersion        string `json:"gameVersion"`
+		MapID              int    `json:"mapId"`
 		Participants       []struct {
 			Assists                     int    `json:"assists"`
 			BaronKills                  int    `json:"baronKills"`
@@ -203,9 +202,9 @@ type MatchTimelineDTO struct {
 		FrameInterval int `json:"frameInterval"`
 		Frames        []struct {
 			Events []struct {
-				RealTimestamp time.Time `json:"realTimestamp"`
-				Timestamp     int       `json:"timestamp"`
-				Type          string    `json:"type"`
+				RealTimestamp int64  `json:"realTimestamp"`
+				Timestamp     int    `json:"timestamp"`
+				Type          string `json:"type"`
 			} `json:"events"`
 			ParticipantFrames struct {
 				Num1 struct {
