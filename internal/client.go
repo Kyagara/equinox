@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -46,7 +45,7 @@ func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 }
 
 // Executes a http request.
-func (c *InternalClient) Do(method string, route interface{}, endpoint string, body interface{}, object interface{}) error {
+func (c *InternalClient) Do(method string, route interface{}, endpoint string, body io.Reader, into interface{}) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new *http.Request.
@@ -64,7 +63,7 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, b
 	}
 
 	// Decoding the body into the endpoint method response object.
-	if err = json.Unmarshal(res, &object); err != nil {
+	if err := json.NewDecoder(res.Body).Decode(&into); err != nil {
 		return err
 	}
 
@@ -72,7 +71,7 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, b
 }
 
 // Sends a http request.
-func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte, error) {
+func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.Response, error) {
 	if c.retry && retryCount == 1 {
 		msg := fmt.Sprintf(LogRequestFormat, req.Method, req.URL.Path, fmt.Sprintf("Failed %d time, stopping", retryCount))
 
@@ -89,8 +88,6 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte
 	if err != nil {
 		return nil, err
 	}
-
-	defer res.Body.Close()
 
 	if res.StatusCode == http.StatusUnauthorized {
 		if c.debug {
@@ -167,35 +164,22 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) ([]byte
 		c.log.Info.Printf(LogRequestFormat, req.Method, req.URL.Path, "Request successful")
 	}
 
-	body, err := io.ReadAll(res.Body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
+	return res, nil
 }
 
 // Creates a new *http.Request and sets headers.
-func (c *InternalClient) newRequest(method string, url string, body interface{}) (*http.Request, error) {
+func (c *InternalClient) newRequest(method string, url string, body io.Reader) (*http.Request, error) {
 	if c.key == "" {
 		return nil, fmt.Errorf("API Key not provided")
 	}
 
-	jsonBody, err := json.Marshal(body)
+	req, err := http.NewRequest(method, url, body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonBody))
-
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Content-type", "application/json; charset=utf8")
-	req.Header.Set("Accept", "application/json; charset=utf-8")
+	req.Header.Set("Accept", "application/json")
 	req.Header.Set("X-Riot-Token", c.key)
 
 	return req, nil

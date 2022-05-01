@@ -3,7 +3,6 @@ package lol
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -14,15 +13,15 @@ type ChampionMasteryEndpoint struct {
 }
 
 type ChampionMasteryDTO struct {
-	ChampionID                   int       `json:"championId"`
-	ChampionLevel                int       `json:"championLevel"`
-	ChampionPoints               int       `json:"championPoints"`
-	LastPlayTime                 time.Time `json:"lastPlayTime"`
-	ChampionPointsSinceLastLevel int       `json:"championPointsSinceLastLevel"`
-	ChampionPointsUntilNextLevel int       `json:"championPointsUntilNextLevel"`
-	ChestGranted                 bool      `json:"chestGranted"`
-	TokensEarned                 int       `json:"tokensEarned"`
-	SummonerID                   string    `json:"summonerId"`
+	ChampionID                   int    `json:"championId"`
+	ChampionLevel                int    `json:"championLevel"`
+	ChampionPoints               int    `json:"championPoints"`
+	LastPlayTime                 int64  `json:"lastPlayTime"`
+	ChampionPointsSinceLastLevel int    `json:"championPointsSinceLastLevel"`
+	ChampionPointsUntilNextLevel int    `json:"championPointsUntilNextLevel"`
+	ChestGranted                 bool   `json:"chestGranted"`
+	TokensEarned                 int    `json:"tokensEarned"`
+	SummonerID                   string `json:"summonerId"`
 }
 
 // Get all champion mastery entries sorted by number of champion points descending.
