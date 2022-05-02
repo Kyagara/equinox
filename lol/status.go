@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 )
 
@@ -51,7 +50,7 @@ type UpdateDTO struct {
 }
 
 // Get League of Legends status for the given platform.
-func (c *StatusEndpoint) PlatformStatus(region api.LOLRegion) (*PlatformDataDTO, error) {
+func (c *StatusEndpoint) PlatformStatus(region Region) (*PlatformDataDTO, error) {
 	res := PlatformDataDTO{}
 
 	err := c.internalClient.Do(http.MethodGet, region, StatusURL, nil, &res)

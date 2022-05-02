@@ -21,12 +21,12 @@ func TestInternalClient(t *testing.T) {
 func TestInternalClientRetries(t *testing.T) {
 	defer gock.Off()
 
-	gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 		Get(lol.StatusURL).
 		Reply(429).SetHeader("Retry-After", "1").
 		JSON(&lol.PlatformDataDTO{})
 
-	gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 		Get(lol.StatusURL).
 		Reply(200).
 		JSON(&lol.PlatformDataDTO{})
@@ -43,7 +43,7 @@ func TestInternalClientRetries(t *testing.T) {
 	res := lol.PlatformDataDTO{}
 
 	// This will take 1 second
-	err := client.Do(http.MethodGet, api.LOLRegionBR1, lol.StatusURL, nil, &res)
+	err := client.Do(http.MethodGet, lol.BR1, lol.StatusURL, nil, &res)
 
 	assert.Nil(t, err, "expecting nil error")
 

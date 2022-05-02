@@ -13,7 +13,7 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
-func TestMatchList(t *testing.T) {
+func TestTournamentCreateCodes(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -41,16 +41,18 @@ func TestMatchList(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.RouteAmericas)).
-				Get(fmt.Sprintf(lol.MatchListURL, "PUUID")).
+				Post(lol.TournamentStubCodesURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			options := lol.MatchlistOptions{
-				Start: 0,
-				Count: 20,
+			options := lol.TournamentCodeParameters{
+				MapType:       lol.SummonersRiftMap,
+				PickType:      lol.TournamentDraftPick,
+				SpectatorType: lol.AllSpectator,
+				TeamSize:      5,
 			}
 
-			gotData, gotErr := client.Match.List(api.RouteAmericas, "PUUID", &options)
+			gotData, gotErr := client.TournamentStub.CreateCodes(1, 1, options)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -61,7 +63,7 @@ func TestMatchList(t *testing.T) {
 	}
 }
 
-func TestMatchByID(t *testing.T) {
+func TestTournamentLobbyEvents(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -69,13 +71,13 @@ func TestMatchByID(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.MatchDTO
+		want    *lol.LobbyEventDTOWrapper
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.MatchDTO{},
+			want: &lol.LobbyEventDTOWrapper{},
 		},
 		{
 			name:    "not found",
@@ -89,11 +91,11 @@ func TestMatchByID(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.RouteAmericas)).
-				Get(fmt.Sprintf(lol.MatchURL, "matchID")).
+				Get(fmt.Sprintf(lol.TournamentStubLobbyEventsURL, "tournamentCode")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.ByID(api.RouteAmericas, "matchID")
+			gotData, gotErr := client.TournamentStub.LobbyEvents("tournamentCode")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -104,7 +106,7 @@ func TestMatchByID(t *testing.T) {
 	}
 }
 
-func TestMatchTimeline(t *testing.T) {
+func TestTournamentCreateTournament(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -112,13 +114,13 @@ func TestMatchTimeline(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.MatchTimelineDTO
+		want    int
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.MatchTimelineDTO{},
+			want: 0,
 		},
 		{
 			name:    "not found",
@@ -132,11 +134,54 @@ func TestMatchTimeline(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.RouteAmericas)).
-				Get(fmt.Sprintf(lol.MatchTimelineURL, "matchID")).
+				Post(lol.TournamentStubURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.Timeline(api.RouteAmericas, "matchID")
+			gotData, gotErr := client.TournamentStub.CreateTournament(1, "name")
+
+			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, gotData, test.want)
+			}
+		})
+	}
+}
+
+func TestTournamentCreateTournamentProvider(t *testing.T) {
+	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	client := lol.NewLOLClient(internalClient)
+
+	tests := []struct {
+		name    string
+		code    int
+		want    int
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: http.StatusOK,
+			want: 0,
+		},
+		{
+			name:    "not found",
+			code:    http.StatusNotFound,
+			wantErr: api.NotFoundError,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer gock.Off()
+
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.RouteAmericas)).
+				Post(lol.TournamentStubProvidersURL).
+				Reply(test.code).
+				JSON(test.want)
+
+			gotData, gotErr := client.TournamentStub.CreateTournamentProvider("name", "http://localhost:80")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

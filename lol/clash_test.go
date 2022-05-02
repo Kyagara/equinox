@@ -40,12 +40,12 @@ func TestClashTournaments(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(lol.ClashURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Clash.Tournaments(api.LOLRegionBR1)
+			gotData, gotErr := client.Clash.Tournaments(lol.BR1)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -83,12 +83,12 @@ func TestClashSummonerEntries(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.ClashPlayersBySummonerIDURL, "summonerID")).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(fmt.Sprintf(lol.ClashSummonerEntriesURL, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Clash.SummonerEntries(api.LOLRegionBR1, "summonerID")
+			gotData, gotErr := client.Clash.SummonerEntries(lol.BR1, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -126,12 +126,12 @@ func TestClashTournamentTeamByID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.ClashTeamByIDURL, "teamID")).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(fmt.Sprintf(lol.ClashTournamentTeamByIDURL, "teamID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Clash.TournamentTeamByID(api.LOLRegionBR1, "teamID")
+			gotData, gotErr := client.Clash.TournamentTeamByID(lol.BR1, "teamID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -169,12 +169,12 @@ func TestClashByID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.ClashTournamentByIDURL, "tournamentID")).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(fmt.Sprintf(lol.ClashByIDURL, "tournamentID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Clash.ByID(api.LOLRegionBR1, "tournamentID")
+			gotData, gotErr := client.Clash.ByID(lol.BR1, "tournamentID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -212,12 +212,12 @@ func TestClashByTeamID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.ClashTournamentByTeamIDURL, "teamID")).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(fmt.Sprintf(lol.ClashByTeamIDURL, "teamID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Clash.ByTeamID(api.LOLRegionBR1, "teamID")
+			gotData, gotErr := client.Clash.ByTeamID(lol.BR1, "teamID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 )
 
@@ -30,26 +29,26 @@ type SummonerDTO struct {
 }
 
 // Get a summoner by summoner name.
-func (c *SummonerEndpoint) ByName(region api.LOLRegion, summonerName string) (*SummonerDTO, error) {
+func (c *SummonerEndpoint) ByName(region Region, summonerName string) (*SummonerDTO, error) {
 	return c.getSummoner(SummonerByNameURL, region, summonerName)
 }
 
 // Get a summoner by summoner account ID.
-func (c *SummonerEndpoint) ByAccountID(region api.LOLRegion, accountID string) (*SummonerDTO, error) {
+func (c *SummonerEndpoint) ByAccountID(region Region, accountID string) (*SummonerDTO, error) {
 	return c.getSummoner(SummonerByAccountIDURL, region, accountID)
 }
 
 // Get a summoner by summoner PUUID.
-func (c *SummonerEndpoint) ByPUUID(region api.LOLRegion, PUUID string) (*SummonerDTO, error) {
+func (c *SummonerEndpoint) ByPUUID(region Region, PUUID string) (*SummonerDTO, error) {
 	return c.getSummoner(SummonerByPUUIDURL, region, PUUID)
 }
 
 // Get a summoner by summoner ID.
-func (c *SummonerEndpoint) ByID(region api.LOLRegion, PUUID string) (*SummonerDTO, error) {
+func (c *SummonerEndpoint) ByID(region Region, PUUID string) (*SummonerDTO, error) {
 	return c.getSummoner(SummonerByID, region, PUUID)
 }
 
-func (c *SummonerEndpoint) getSummoner(method string, region api.LOLRegion, summoner string) (*SummonerDTO, error) {
+func (c *SummonerEndpoint) getSummoner(method string, region Region, summoner string) (*SummonerDTO, error) {
 	url := fmt.Sprintf(method, summoner)
 
 	res := SummonerDTO{}

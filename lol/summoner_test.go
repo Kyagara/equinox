@@ -40,12 +40,12 @@ func TestSummonerByAccountID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.SummonerByAccountIDURL, "accountID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Summoner.ByAccountID(api.LOLRegionBR1, "accountID")
+			gotData, gotErr := client.Summoner.ByAccountID(lol.BR1, "accountID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -83,12 +83,12 @@ func TestSummonerByName(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.SummonerByNameURL, "summonerName")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Summoner.ByName(api.LOLRegionBR1, "summonerName")
+			gotData, gotErr := client.Summoner.ByName(lol.BR1, "summonerName")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -126,12 +126,12 @@ func TestSummonerByPUUID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.SummonerByPUUIDURL, "PUUID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Summoner.ByPUUID(api.LOLRegionBR1, "PUUID")
+			gotData, gotErr := client.Summoner.ByPUUID(lol.BR1, "PUUID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -169,12 +169,12 @@ func TestSummonerByID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.SummonerByID, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Summoner.ByID(api.LOLRegionBR1, "summonerID")
+			gotData, gotErr := client.Summoner.ByID(lol.BR1, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

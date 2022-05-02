@@ -40,12 +40,12 @@ func TestLeagueEntries(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.LeagueURL, api.I, api.LOLTierGold, api.RankedFlexSRQueueType)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(fmt.Sprintf(lol.LeagueEntriesURL, api.I, lol.GoldTier, lol.Solo5x5Queue)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.Entries(api.LOLRegionBR1, api.I, api.LOLTierGold, api.RankedFlexSRQueueType, 1)
+			gotData, gotErr := client.League.Entries(lol.BR1, api.I, lol.GoldTier, lol.Solo5x5Queue, 1)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -83,12 +83,12 @@ func TestLeagueByID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.LeagueByID, "leagueID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.ByID(api.LOLRegionBR1, "leagueID")
+			gotData, gotErr := client.League.ByID(lol.BR1, "leagueID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -126,12 +126,12 @@ func TestLeagueSummonerEntries(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.LeagueEntriesBySummonerURL, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.SummonerEntries(api.LOLRegionBR1, "summonerID")
+			gotData, gotErr := client.League.SummonerEntries(lol.BR1, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -169,12 +169,12 @@ func TestLeagueChallengerByQueue(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.LeagueChallengerURL, api.RankedFlexSRQueueType)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(fmt.Sprintf(lol.LeagueChallengerURL, lol.Solo5x5Queue)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.ChallengerByQueue(api.LOLRegionBR1, api.RankedFlexSRQueueType)
+			gotData, gotErr := client.League.ChallengerByQueue(lol.BR1, lol.Solo5x5Queue)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -212,12 +212,12 @@ func TestLeagueGrandmasterByQueue(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.LeagueGrandmasterURL, api.RankedFlexSRQueueType)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(fmt.Sprintf(lol.LeagueGrandmasterURL, lol.Solo5x5Queue)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.GrandmasterByQueue(api.LOLRegionBR1, api.RankedFlexSRQueueType)
+			gotData, gotErr := client.League.GrandmasterByQueue(lol.BR1, lol.Solo5x5Queue)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -255,12 +255,12 @@ func TestLeagueMasterByQueue(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.LeagueMasterURL, api.RankedFlexSRQueueType)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(fmt.Sprintf(lol.LeagueMasterURL, lol.Solo5x5Queue)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.MasterByQueue(api.LOLRegionBR1, api.RankedFlexSRQueueType)
+			gotData, gotErr := client.League.MasterByQueue(lol.BR1, lol.Solo5x5Queue)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

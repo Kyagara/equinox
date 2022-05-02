@@ -40,12 +40,12 @@ func TestSpectatorFeaturedGames(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(lol.SpectatorURL).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(lol.SpectatorFeaturedGamesURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Spectator.FeaturedGames(api.LOLRegionBR1)
+			gotData, gotErr := client.Spectator.FeaturedGames(lol.BR1)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -83,12 +83,12 @@ func TestSpectatorCurrentGame(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.SpectatorCurrentGameURL, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Spectator.CurrentGame(api.LOLRegionBR1, "summonerID")
+			gotData, gotErr := client.Spectator.CurrentGame(lol.BR1, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

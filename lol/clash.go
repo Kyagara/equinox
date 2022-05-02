@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 )
 
@@ -51,7 +50,7 @@ type TournamentPlayerDTO struct {
 }
 
 // Get all active or upcoming tournaments.
-func (c *ClashEndpoint) Tournaments(region api.LOLRegion) (*[]TournamentDTO, error) {
+func (c *ClashEndpoint) Tournaments(region Region) (*[]TournamentDTO, error) {
 	res := []TournamentDTO{}
 
 	err := c.internalClient.Do(http.MethodGet, region, ClashURL, nil, &res)
@@ -66,8 +65,8 @@ func (c *ClashEndpoint) Tournaments(region api.LOLRegion) (*[]TournamentDTO, err
 // Get players by summoner ID.
 //
 // This endpoint returns a list of active Clash players for a given summoner ID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
-func (c *ClashEndpoint) SummonerEntries(region api.LOLRegion, summonerID string) (*[]TournamentPlayerDTO, error) {
-	url := fmt.Sprintf(ClashPlayersBySummonerIDURL, summonerID)
+func (c *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]TournamentPlayerDTO, error) {
+	url := fmt.Sprintf(ClashSummonerEntriesURL, summonerID)
 
 	res := []TournamentPlayerDTO{}
 
@@ -81,8 +80,8 @@ func (c *ClashEndpoint) SummonerEntries(region api.LOLRegion, summonerID string)
 }
 
 // Get team by ID.
-func (c *ClashEndpoint) TournamentTeamByID(region api.LOLRegion, teamID string) (*TournamentTeamDto, error) {
-	url := fmt.Sprintf(ClashTeamByIDURL, teamID)
+func (c *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*TournamentTeamDto, error) {
+	url := fmt.Sprintf(ClashTournamentTeamByIDURL, teamID)
 
 	res := TournamentTeamDto{}
 
@@ -96,16 +95,16 @@ func (c *ClashEndpoint) TournamentTeamByID(region api.LOLRegion, teamID string) 
 }
 
 // Get tournament by ID.
-func (c *ClashEndpoint) ByID(region api.LOLRegion, tournamentID string) (*TournamentDTO, error) {
-	return c.getClash(ClashTournamentByIDURL, region, tournamentID)
+func (c *ClashEndpoint) ByID(region Region, tournamentID string) (*TournamentDTO, error) {
+	return c.getClash(ClashByIDURL, region, tournamentID)
 }
 
 // Get tournament by team ID.
-func (c *ClashEndpoint) ByTeamID(region api.LOLRegion, teamID string) (*TournamentDTO, error) {
-	return c.getClash(ClashTournamentByTeamIDURL, region, teamID)
+func (c *ClashEndpoint) ByTeamID(region Region, teamID string) (*TournamentDTO, error) {
+	return c.getClash(ClashByTeamIDURL, region, teamID)
 }
 
-func (c *ClashEndpoint) getClash(method string, region api.LOLRegion, id string) (*TournamentDTO, error) {
+func (c *ClashEndpoint) getClash(method string, region Region, id string) (*TournamentDTO, error) {
 	url := fmt.Sprintf(method, id)
 
 	res := TournamentDTO{}
