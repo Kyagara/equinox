@@ -35,17 +35,19 @@ type LeagueEntryDTO struct {
 	// Winning team on Summoners Rift.
 	Wins int `json:"wins"`
 	// Losing team on Summoners Rift.
-	Losses     int  `json:"losses"`
-	Veteran    bool `json:"veteran"`
-	Inactive   bool `json:"inactive"`
-	FreshBlood bool `json:"freshBlood"`
-	HotStreak  bool `json:"hotStreak"`
-	MiniSeries struct {
-		Progress string `json:"progress"`
-		Losses   int    `json:"losses"`
-		Target   int    `json:"target"`
-		Wins     int    `json:"wins"`
-	} `json:"miniSeries,omitempty"`
+	Losses     int           `json:"losses"`
+	Veteran    bool          `json:"veteran"`
+	Inactive   bool          `json:"inactive"`
+	FreshBlood bool          `json:"freshBlood"`
+	HotStreak  bool          `json:"hotStreak"`
+	MiniSeries MiniSeriesDTO `json:"miniSeries,omitempty"`
+}
+
+type MiniSeriesDTO struct {
+	Progress string `json:"progress"`
+	Losses   int    `json:"losses"`
+	Target   int    `json:"target"`
+	Wins     int    `json:"wins"`
 }
 
 // Get all the league entries. Page defaults to 1.
