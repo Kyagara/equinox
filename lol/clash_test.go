@@ -13,7 +13,7 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
-func TestLeagueEntries(t *testing.T) {
+func TestClashTournaments(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -21,13 +21,13 @@ func TestLeagueEntries(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *[]lol.LeagueEntryDTO
+		want    *[]lol.TournamentDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &[]lol.LeagueEntryDTO{},
+			want: &[]lol.TournamentDTO{},
 		},
 		{
 			name:    "not found",
@@ -41,11 +41,11 @@ func TestLeagueEntries(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.LeagueURL, api.I, api.LOLTierGold, api.RankedFlexSRQueueType)).
+				Get(lol.ClashURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.Entries(api.LOLRegionBR1, api.I, api.LOLTierGold, api.RankedFlexSRQueueType, 1)
+			gotData, gotErr := client.Clash.Tournaments(api.LOLRegionBR1)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -56,7 +56,7 @@ func TestLeagueEntries(t *testing.T) {
 	}
 }
 
-func TestLeagueByID(t *testing.T) {
+func TestClashSummonerEntries(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -64,13 +64,13 @@ func TestLeagueByID(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.LeagueListDTO
+		want    *[]lol.TournamentPlayerDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
+			want: &[]lol.TournamentPlayerDTO{},
 		},
 		{
 			name:    "not found",
@@ -84,11 +84,11 @@ func TestLeagueByID(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.LeagueByID, "leagueID")).
+				Get(fmt.Sprintf(lol.ClashPlayersBySummonerIDURL, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.ByID(api.LOLRegionBR1, "leagueID")
+			gotData, gotErr := client.Clash.SummonerEntries(api.LOLRegionBR1, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -99,7 +99,7 @@ func TestLeagueByID(t *testing.T) {
 	}
 }
 
-func TestLeagueSummonerEntries(t *testing.T) {
+func TestClashTournamentTeamByID(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -107,13 +107,13 @@ func TestLeagueSummonerEntries(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *[]lol.LeagueEntryDTO
+		want    *lol.TournamentTeamDto
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &[]lol.LeagueEntryDTO{},
+			want: &lol.TournamentTeamDto{},
 		},
 		{
 			name:    "not found",
@@ -127,11 +127,11 @@ func TestLeagueSummonerEntries(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.LeagueEntriesBySummonerURL, "summonerID")).
+				Get(fmt.Sprintf(lol.ClashTeamByIDURL, "teamID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.SummonerEntries(api.LOLRegionBR1, "summonerID")
+			gotData, gotErr := client.Clash.TournamentTeamByID(api.LOLRegionBR1, "teamID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -142,7 +142,7 @@ func TestLeagueSummonerEntries(t *testing.T) {
 	}
 }
 
-func TestLeagueChallengerByQueue(t *testing.T) {
+func TestClashByID(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -150,13 +150,13 @@ func TestLeagueChallengerByQueue(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.LeagueListDTO
+		want    *lol.TournamentDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
+			want: &lol.TournamentDTO{},
 		},
 		{
 			name:    "not found",
@@ -170,11 +170,11 @@ func TestLeagueChallengerByQueue(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.LeagueChallengerURL, api.RankedFlexSRQueueType)).
+				Get(fmt.Sprintf(lol.ClashTournamentByIDURL, "tournamentID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.ChallengerByQueue(api.LOLRegionBR1, api.RankedFlexSRQueueType)
+			gotData, gotErr := client.Clash.ByID(api.LOLRegionBR1, "tournamentID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -185,7 +185,7 @@ func TestLeagueChallengerByQueue(t *testing.T) {
 	}
 }
 
-func TestLeagueGrandmasterByQueue(t *testing.T) {
+func TestClashByTeamID(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -193,13 +193,13 @@ func TestLeagueGrandmasterByQueue(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.LeagueListDTO
+		want    *lol.TournamentDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
+			want: &lol.TournamentDTO{},
 		},
 		{
 			name:    "not found",
@@ -213,54 +213,11 @@ func TestLeagueGrandmasterByQueue(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.LeagueGrandmasterURL, api.RankedFlexSRQueueType)).
+				Get(fmt.Sprintf(lol.ClashTournamentByTeamIDURL, "teamID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.GrandmasterByQueue(api.LOLRegionBR1, api.RankedFlexSRQueueType)
-
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
-			}
-		})
-	}
-}
-
-func TestLeagueMasterByQueue(t *testing.T) {
-	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
-	client := lol.NewLOLClient(internalClient)
-
-	tests := []struct {
-		name    string
-		code    int
-		want    *lol.LeagueListDTO
-		wantErr error
-	}{
-		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-				Get(fmt.Sprintf(lol.LeagueMasterURL, api.RankedFlexSRQueueType)).
-				Reply(test.code).
-				JSON(test.want)
-
-			gotData, gotErr := client.League.MasterByQueue(api.LOLRegionBR1, api.RankedFlexSRQueueType)
+			gotData, gotErr := client.Clash.ByTeamID(api.LOLRegionBR1, "teamID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

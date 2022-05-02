@@ -12,6 +12,12 @@ const (
 	ChampionMasteriesByChampionURL = "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/by-champion/%d"
 	ChampionMasteriesScoresURL     = "/lol/champion-mastery/v4/scores/by-summoner/%s"
 
+	ClashURL                    = "/lol/clash/v1/tournaments"
+	ClashTeamByIDURL            = "/lol/clash/v1/teams/%s"
+	ClashPlayersBySummonerIDURL = "/lol/clash/v1/players/by-summoner/%s"
+	ClashTournamentByTeamIDURL  = "/lol/clash/v1/tournaments/by-team/%s"
+	ClashTournamentByIDURL      = "/lol/clash/v1/tournaments/%s"
+
 	StatusURL = "/lol/status/v4/platform-data"
 
 	MatchlistURL     = "/lol/match/v5/matches/by-puuid/%s/ids"
@@ -38,6 +44,7 @@ type LOLClient struct {
 	internalClient    *internal.InternalClient
 	Champion          *ChampionEndpoint
 	ChampionMasteries *ChampionMasteryEndpoint
+	Clash             *ClashEndpoint
 	Match             *MatchEndpoint
 	Status            *StatusEndpoint
 	Spectator         *SpectatorEndpoint
@@ -51,6 +58,7 @@ func NewLOLClient(client *internal.InternalClient) *LOLClient {
 		internalClient:    client,
 		Champion:          &ChampionEndpoint{internalClient: client},
 		ChampionMasteries: &ChampionMasteryEndpoint{internalClient: client},
+		Clash:             &ClashEndpoint{internalClient: client},
 		Match:             &MatchEndpoint{internalClient: client},
 		Status:            &StatusEndpoint{internalClient: client},
 		Spectator:         &SpectatorEndpoint{internalClient: client},

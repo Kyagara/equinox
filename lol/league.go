@@ -89,7 +89,7 @@ func (c *LeagueEndpoint) ByID(region api.LOLRegion, leagueID string) (*LeagueLis
 }
 
 // Get league entries in all queues for a given summoner ID.
-func (c *LeagueEndpoint) EntriesBySummonerID(region api.LOLRegion, summonerID string) (*[]LeagueEntryDTO, error) {
+func (c *LeagueEndpoint) SummonerEntries(region api.LOLRegion, summonerID string) (*[]LeagueEntryDTO, error) {
 	url := fmt.Sprintf(LeagueEntriesBySummonerURL, summonerID)
 
 	res := []LeagueEntryDTO{}
