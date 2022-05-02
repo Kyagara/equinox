@@ -72,8 +72,8 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, b
 
 // Sends a http request.
 func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.Response, error) {
-	if c.retry && retryCount == 1 {
-		msg := fmt.Sprintf(LogRequestFormat, req.Method, req.URL.Path, fmt.Sprintf("Failed %d time, stopping", retryCount))
+	if c.retry && retryCount > 1 {
+		msg := fmt.Sprintf(LogRequestFormat, req.Method, req.URL.Path, fmt.Sprintf("Failed %d times, stopping", retryCount))
 
 		return nil, fmt.Errorf(msg)
 	}

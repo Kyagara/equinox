@@ -26,6 +26,11 @@ func TestInternalClientRetries(t *testing.T) {
 		Reply(429).SetHeader("Retry-After", "1").
 		JSON(&lol.PlatformDataDTO{})
 
+	gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+		Get(lol.StatusURL).
+		Reply(200).
+		JSON(&lol.PlatformDataDTO{})
+
 	config := &api.EquinoxConfig{
 		Key:     "RIOT_API_KEY",
 		Debug:   true,
@@ -40,5 +45,7 @@ func TestInternalClientRetries(t *testing.T) {
 	// This will take 1 second
 	err := client.Do(http.MethodGet, api.LOLRegionBR1, lol.StatusURL, nil, &res)
 
-	assert.NotNil(t, err, "expecting non-nil error")
+	assert.Nil(t, err, "expecting nil error")
+
+	assert.NotNil(t, res, "expecting non-nil response")
 }
