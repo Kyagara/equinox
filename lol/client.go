@@ -6,20 +6,32 @@ import (
 
 // League of Legends endpoints URLs
 const (
-	ChampionURL                    = "/lol/platform/v3/champion-rotations"
+	ChampionURL = "/lol/platform/v3/champion-rotations"
+
 	ChampionMasteriesURL           = "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s"
 	ChampionMasteriesByChampionURL = "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/by-champion/%d"
 	ChampionMasteriesScoresURL     = "/lol/champion-mastery/v4/scores/by-summoner/%s"
-	StatusURL                      = "/lol/status/v4/platform-data"
-	MatchlistURL                   = "/lol/match/v5/matches/by-puuid/%s/ids"
-	MatchURL                       = "/lol/match/v5/matches/%s"
-	MatchTimelineURL               = "/lol/match/v5/matches/%s/timeline"
-	SpectatorURL                   = "/lol/spectator/v4/featured-games"
-	SpectatorCurrentGameURL        = "/lol/spectator/v4/active-games/by-summoner/%s"
-	SummonerByAccountIDURL         = "/lol/summoner/v4/summoners/by-account/%s"
-	SummonerByNameURL              = "/lol/summoner/v4/summoners/by-name/%s"
-	SummonerByPUUIDURL             = "/lol/summoner/v4/summoners/by-puuid/%s"
-	SummonerByID                   = "/lol/summoner/v4/summoners/%s"
+
+	StatusURL = "/lol/status/v4/platform-data"
+
+	MatchlistURL     = "/lol/match/v5/matches/by-puuid/%s/ids"
+	MatchURL         = "/lol/match/v5/matches/%s"
+	MatchTimelineURL = "/lol/match/v5/matches/%s/timeline"
+
+	SpectatorURL            = "/lol/spectator/v4/featured-games"
+	SpectatorCurrentGameURL = "/lol/spectator/v4/active-games/by-summoner/%s"
+
+	SummonerByAccountIDURL = "/lol/summoner/v4/summoners/by-account/%s"
+	SummonerByNameURL      = "/lol/summoner/v4/summoners/by-name/%s"
+	SummonerByPUUIDURL     = "/lol/summoner/v4/summoners/by-puuid/%s"
+	SummonerByID           = "/lol/summoner/v4/summoners/%s"
+
+	LeagueEntriesBySummonerURL = "/lol/league/v4/entries/by-summoner/%s"
+	LeagueURL                  = "/lol/league/v4/entries/%s/%s/%s"
+	LeagueChallengerURL        = "/lol/league/v4/challengerleagues/by-queue/%s"
+	LeagueGrandmasterURL       = "/lol/league/v4/grandmasterleagues/by-queue/%s"
+	LeagueMasterURL            = "/lol/league/v4/masterleagues/by-queue/%s"
+	LeagueByID                 = "/lol/league/v4/leagues/%s"
 )
 
 type LOLClient struct {
@@ -30,6 +42,7 @@ type LOLClient struct {
 	Status            *StatusEndpoint
 	Spectator         *SpectatorEndpoint
 	Summoner          *SummonerEndpoint
+	League            *LeagueEndpoint
 }
 
 // Creates a new LOLClient using an InternalClient provided.
@@ -42,5 +55,6 @@ func NewLOLClient(client *internal.InternalClient) *LOLClient {
 		Status:            &StatusEndpoint{internalClient: client},
 		Spectator:         &SpectatorEndpoint{internalClient: client},
 		Summoner:          &SummonerEndpoint{internalClient: client},
+		League:            &LeagueEndpoint{internalClient: client},
 	}
 }

@@ -13,15 +13,24 @@ type ChampionMasteryEndpoint struct {
 }
 
 type ChampionMasteryDTO struct {
-	ChampionID                   int    `json:"championId"`
-	ChampionLevel                int    `json:"championLevel"`
-	ChampionPoints               int    `json:"championPoints"`
-	LastPlayTime                 int64  `json:"lastPlayTime"`
-	ChampionPointsSinceLastLevel int    `json:"championPointsSinceLastLevel"`
-	ChampionPointsUntilNextLevel int    `json:"championPointsUntilNextLevel"`
-	ChestGranted                 bool   `json:"chestGranted"`
-	TokensEarned                 int    `json:"tokensEarned"`
-	SummonerID                   string `json:"summonerId"`
+	// Champion ID for this entry.
+	ChampionID int `json:"championId"`
+	// Champion level for specified player and champion combination.
+	ChampionLevel int `json:"championLevel"`
+	// Total number of champion points for this player and champion combination - they are used to determine championLevel.
+	ChampionPoints int `json:"championPoints"`
+	// Last time this champion was played by this player - in Unix milliseconds time format.
+	LastPlayTime int64 `json:"lastPlayTime"`
+	// Number of points earned since current level has been achieved.
+	ChampionPointsSinceLastLevel int `json:"championPointsSinceLastLevel"`
+	// Number of points needed to achieve next level. Zero if player reached maximum champion level for this champion.
+	ChampionPointsUntilNextLevel int `json:"championPointsUntilNextLevel"`
+	// Is chest granted for this champion or not in current season.
+	ChestGranted bool `json:"chestGranted"`
+	// The token earned for this champion at the current championLevel. When the championLevel is advanced the tokensEarned resets to 0.
+	TokensEarned int `json:"tokensEarned"`
+	// Summoner ID for this entry. (Encrypted)
+	SummonerID string `json:"summonerId"`
 }
 
 // Get all champion mastery entries sorted by number of champion points descending.

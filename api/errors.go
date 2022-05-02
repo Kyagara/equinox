@@ -23,17 +23,17 @@ var (
 		},
 	}
 
-	ForbiddenError = ErrorResponse{
-		Status: Status{
-			Message:    "Forbidden",
-			StatusCode: http.StatusForbidden,
-		},
-	}
-
 	UnauthorizedError = ErrorResponse{
 		Status: Status{
 			Message:    "Unauthorized",
 			StatusCode: http.StatusUnauthorized,
+		},
+	}
+
+	ForbiddenError = ErrorResponse{
+		Status: Status{
+			Message:    "Forbidden",
+			StatusCode: http.StatusForbidden,
 		},
 	}
 )
