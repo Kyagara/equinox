@@ -14,22 +14,46 @@ import (
 )
 
 func TestSpectatorFeaturedGames(t *testing.T) {
-	defer gock.Off()
-
-	gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
-		Get(lol.SpectatorURL).
-		Reply(200).
-		JSON(&lol.FeaturedGamesDTO{})
-
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
 
-	res, err := client.Spectator.FeaturedGames(api.LOLRegionBR1)
+	tests := []struct {
+		name    string
+		code    int
+		want    *lol.FeaturedGamesDTO
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: http.StatusOK,
+			want: &lol.FeaturedGamesDTO{},
+		},
+		{
+			name:    "not found",
+			code:    http.StatusNotFound,
+			wantErr: api.NotFoundError,
+		},
+	}
 
-	assert.Nil(t, err, "expecting nil error")
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer gock.Off()
 
-	assert.NotNil(t, res, "expecting non-nil response")
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+				Get(lol.SpectatorURL).
+				Reply(test.code).
+				JSON(test.want)
+
+			gotData, gotErr := client.Spectator.FeaturedGames(api.LOLRegionBR1)
+
+			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, gotData, test.want)
+			}
+		})
+	}
 }
 
 func TestSpectatorCurrentGame(t *testing.T) {

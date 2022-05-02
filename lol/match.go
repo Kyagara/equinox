@@ -317,7 +317,7 @@ type MatchlistOptions struct {
 }
 
 // Get a list of match IDs by PUUID. Default query: start: 0, count: 20
-func (c *MatchEndpoint) ListByPUUID(region api.RiotRoute, PUUID string, options *MatchlistOptions) ([]string, error) {
+func (c *MatchEndpoint) List(region api.RiotRoute, PUUID string, options *MatchlistOptions) ([]string, error) {
 	if options == nil {
 		options = &MatchlistOptions{Start: 0, Count: 20}
 	}

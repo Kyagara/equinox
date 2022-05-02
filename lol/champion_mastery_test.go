@@ -13,7 +13,7 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
-func TestChampionMasteriesBySummonerID(t *testing.T) {
+func TestChampionMasterySummonerMasteries(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -45,7 +45,7 @@ func TestChampionMasteriesBySummonerID(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.ChampionMasteries.BySummonerID(api.LOLRegionBR1, "summonerID")
+			gotData, gotErr := client.ChampionMasteries.SummonerMasteries(api.LOLRegionBR1, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -56,7 +56,7 @@ func TestChampionMasteriesBySummonerID(t *testing.T) {
 	}
 }
 
-func TestChampionMasteriesChampionScore(t *testing.T) {
+func TestChampionMasteryChampionScore(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -99,7 +99,7 @@ func TestChampionMasteriesChampionScore(t *testing.T) {
 	}
 }
 
-func TestChampionMasteriesMasteryScore(t *testing.T) {
+func TestChampionMasteryMasteryScoreSum(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	client := lol.NewLOLClient(internalClient)
@@ -131,7 +131,7 @@ func TestChampionMasteriesMasteryScore(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.ChampionMasteries.MasteryScore(api.LOLRegionBR1, "summonerID")
+			gotData, gotErr := client.ChampionMasteries.MasteryScoreSum(api.LOLRegionBR1, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
