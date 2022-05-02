@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 )
 
@@ -140,10 +139,10 @@ type Perks struct {
 }
 
 // Get featured games in a region.
-func (c *SpectatorEndpoint) FeaturedGames(region api.LOLRegion) (*FeaturedGamesDTO, error) {
+func (c *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, error) {
 	res := FeaturedGamesDTO{}
 
-	err := c.internalClient.Do(http.MethodGet, region, SpectatorURL, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, SpectatorFeaturedGamesURL, nil, &res)
 
 	if err != nil {
 		return nil, err
@@ -153,7 +152,7 @@ func (c *SpectatorEndpoint) FeaturedGames(region api.LOLRegion) (*FeaturedGamesD
 }
 
 // Get the current game information for the given summoner ID.
-func (c *SpectatorEndpoint) CurrentGame(region api.LOLRegion, summonerID string) (*CurrentGameInfoDTO, error) {
+func (c *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*CurrentGameInfoDTO, error) {
 	res := CurrentGameInfoDTO{}
 
 	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), nil, &res)

@@ -51,7 +51,7 @@ type MiniSeriesDTO struct {
 }
 
 // Get all the league entries. Page defaults to 1.
-func (c *LeagueEndpoint) Entries(region api.LOLRegion, division api.Division, tier api.LOLTier, queue api.LOLQueueType, page int) (*[]LeagueEntryDTO, error) {
+func (c *LeagueEndpoint) Entries(region Region, division api.Division, tier Tier, queue QueueType, page int) (*[]LeagueEntryDTO, error) {
 	query := url.Values{}
 
 	if page < 1 {
@@ -60,7 +60,7 @@ func (c *LeagueEndpoint) Entries(region api.LOLRegion, division api.Division, ti
 
 	query.Set("page", strconv.Itoa(page))
 
-	method := fmt.Sprintf(LeagueURL, division, tier, queue)
+	method := fmt.Sprintf(LeagueEntriesURL, division, tier, queue)
 
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
@@ -76,7 +76,7 @@ func (c *LeagueEndpoint) Entries(region api.LOLRegion, division api.Division, ti
 }
 
 // Get league with given ID, including inactive entries.
-func (c *LeagueEndpoint) ByID(region api.LOLRegion, leagueID string) (*LeagueListDTO, error) {
+func (c *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, error) {
 	url := fmt.Sprintf(LeagueByID, leagueID)
 
 	res := LeagueListDTO{}
@@ -91,7 +91,7 @@ func (c *LeagueEndpoint) ByID(region api.LOLRegion, leagueID string) (*LeagueLis
 }
 
 // Get league entries in all queues for a given summoner ID.
-func (c *LeagueEndpoint) SummonerEntries(region api.LOLRegion, summonerID string) (*[]LeagueEntryDTO, error) {
+func (c *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]LeagueEntryDTO, error) {
 	url := fmt.Sprintf(LeagueEntriesBySummonerURL, summonerID)
 
 	res := []LeagueEntryDTO{}
@@ -106,21 +106,21 @@ func (c *LeagueEndpoint) SummonerEntries(region api.LOLRegion, summonerID string
 }
 
 // Get the challenger league for given queue.
-func (c *LeagueEndpoint) ChallengerByQueue(region api.LOLRegion, queueType api.LOLQueueType) (*LeagueListDTO, error) {
+func (c *LeagueEndpoint) ChallengerByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
 	return c.getLeague(LeagueChallengerURL, region, queueType)
 }
 
 // Get the grandmaster league for given queue.
-func (c *LeagueEndpoint) GrandmasterByQueue(region api.LOLRegion, queueType api.LOLQueueType) (*LeagueListDTO, error) {
+func (c *LeagueEndpoint) GrandmasterByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
 	return c.getLeague(LeagueGrandmasterURL, region, queueType)
 }
 
 // Get the master league for given queue.
-func (c *LeagueEndpoint) MasterByQueue(region api.LOLRegion, queueType api.LOLQueueType) (*LeagueListDTO, error) {
+func (c *LeagueEndpoint) MasterByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
 	return c.getLeague(LeagueMasterURL, region, queueType)
 }
 
-func (c *LeagueEndpoint) getLeague(method string, region api.LOLRegion, queueType api.LOLQueueType) (*LeagueListDTO, error) {
+func (c *LeagueEndpoint) getLeague(method string, region Region, queueType QueueType) (*LeagueListDTO, error) {
 	url := fmt.Sprintf(method, queueType)
 
 	res := LeagueListDTO{}

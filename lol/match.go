@@ -309,7 +309,7 @@ type MatchlistOptions struct {
 	Queue int `json:"queue"`
 	// Filter the list of match ids by the type of match.
 	// This filter is mutually inclusive of the queue filter meaning any match ids returned must match both the queue and type filters.
-	Type api.LOLMatchType `json:"type"`
+	Type MatchType `json:"type"`
 	// Defaults to 0. Start index.
 	Start int `json:"start"`
 	// Defaults to 20. Valid values: 0 to 100. Number of match ids to return.
@@ -348,7 +348,7 @@ func (c *MatchEndpoint) List(region api.RiotRoute, PUUID string, options *Matchl
 
 	query.Set("count", strconv.Itoa(options.Count))
 
-	method := fmt.Sprintf(MatchlistURL, PUUID)
+	method := fmt.Sprintf(MatchListURL, PUUID)
 
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 

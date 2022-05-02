@@ -40,12 +40,12 @@ func TestChampionMasterySummonerMasteries(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.ChampionMasteriesURL, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.ChampionMasteries.SummonerMasteries(api.LOLRegionBR1, "summonerID")
+			gotData, gotErr := client.ChampionMasteries.SummonerMasteries(lol.BR1, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -83,12 +83,12 @@ func TestChampionMasteryChampionScore(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.ChampionMasteriesByChampionURL, "summonerID", 59)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.ChampionMasteries.ChampionScore(api.LOLRegionBR1, "summonerID", 59)
+			gotData, gotErr := client.ChampionMasteries.ChampionScore(lol.BR1, "summonerID", 59)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -126,12 +126,12 @@ func TestChampionMasteryMasteryScoreSum(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.LOLRegionBR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.ChampionMasteriesScoresURL, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.ChampionMasteries.MasteryScoreSum(api.LOLRegionBR1, "summonerID")
+			gotData, gotErr := client.ChampionMasteries.MasteryScoreSum(lol.BR1, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

@@ -20,7 +20,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox"
-	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/lol"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	// Get champion rotations.
-	rotation, err := client.LOL.Champion.Rotations(api.LOLRegionBR1)
+	rotation, err := client.LOL.Champion.Rotations(lol.BR1)
 
 	if err != nil {
 		fmt.Println("error retrieving champion rotations: ", err)
@@ -46,12 +46,6 @@ func main() {
 ```
 
 ## TODO
-
-#### DTOs
-
-DTOs are found inside their respective endpoint implementation, however, in some cases where an endpoint has multiple methods, the files quickly become a mess as the DTOs occupy a large portion of the file, maybe they could be implemented in another module, however I am not sure on how to organize them since I plan to support other endpoints from other Riot games.
-
-At the moment they are really coupled together, they should be separated instead of being just one big struct.
 
 #### Improve tests
 

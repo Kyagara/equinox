@@ -12,32 +12,37 @@ const (
 	ChampionMasteriesByChampionURL = "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s/by-champion/%d"
 	ChampionMasteriesScoresURL     = "/lol/champion-mastery/v4/scores/by-summoner/%s"
 
-	ClashURL                    = "/lol/clash/v1/tournaments"
-	ClashTeamByIDURL            = "/lol/clash/v1/teams/%s"
-	ClashPlayersBySummonerIDURL = "/lol/clash/v1/players/by-summoner/%s"
-	ClashTournamentByTeamIDURL  = "/lol/clash/v1/tournaments/by-team/%s"
-	ClashTournamentByIDURL      = "/lol/clash/v1/tournaments/%s"
+	ClashURL                   = "/lol/clash/v1/tournaments"
+	ClashTournamentTeamByIDURL = "/lol/clash/v1/teams/%s"
+	ClashSummonerEntriesURL    = "/lol/clash/v1/players/by-summoner/%s"
+	ClashByTeamIDURL           = "/lol/clash/v1/tournaments/by-team/%s"
+	ClashByIDURL               = "/lol/clash/v1/tournaments/%s"
 
 	StatusURL = "/lol/status/v4/platform-data"
 
-	MatchlistURL     = "/lol/match/v5/matches/by-puuid/%s/ids"
+	MatchListURL     = "/lol/match/v5/matches/by-puuid/%s/ids"
 	MatchURL         = "/lol/match/v5/matches/%s"
 	MatchTimelineURL = "/lol/match/v5/matches/%s/timeline"
 
-	SpectatorURL            = "/lol/spectator/v4/featured-games"
-	SpectatorCurrentGameURL = "/lol/spectator/v4/active-games/by-summoner/%s"
+	SpectatorFeaturedGamesURL = "/lol/spectator/v4/featured-games"
+	SpectatorCurrentGameURL   = "/lol/spectator/v4/active-games/by-summoner/%s"
 
-	SummonerByAccountIDURL = "/lol/summoner/v4/summoners/by-account/%s"
+	SummonerByID           = "/lol/summoner/v4/summoners/%s"
 	SummonerByNameURL      = "/lol/summoner/v4/summoners/by-name/%s"
 	SummonerByPUUIDURL     = "/lol/summoner/v4/summoners/by-puuid/%s"
-	SummonerByID           = "/lol/summoner/v4/summoners/%s"
+	SummonerByAccountIDURL = "/lol/summoner/v4/summoners/by-account/%s"
 
+	LeagueEntriesURL           = "/lol/league/v4/entries/%s/%s/%s"
 	LeagueEntriesBySummonerURL = "/lol/league/v4/entries/by-summoner/%s"
-	LeagueURL                  = "/lol/league/v4/entries/%s/%s/%s"
+	LeagueByID                 = "/lol/league/v4/leagues/%s"
 	LeagueChallengerURL        = "/lol/league/v4/challengerleagues/by-queue/%s"
 	LeagueGrandmasterURL       = "/lol/league/v4/grandmasterleagues/by-queue/%s"
 	LeagueMasterURL            = "/lol/league/v4/masterleagues/by-queue/%s"
-	LeagueByID                 = "/lol/league/v4/leagues/%s"
+
+	TournamentStubLobbyEventsURL = "/lol/tournament-stub/v4/lobby-events/by-code/%s"
+	TournamentStubCodesURL       = "/lol/tournament-stub/v4/codes"
+	TournamentStubProvidersURL   = "/lol/tournament-stub/v4/providers"
+	TournamentStubURL            = "/lol/tournament-stub/v4/tournaments"
 )
 
 type LOLClient struct {
@@ -50,6 +55,7 @@ type LOLClient struct {
 	Spectator         *SpectatorEndpoint
 	Summoner          *SummonerEndpoint
 	League            *LeagueEndpoint
+	TournamentStub    *TournamentStubEndpoint
 }
 
 // Creates a new LOLClient using an InternalClient provided.
@@ -64,5 +70,6 @@ func NewLOLClient(client *internal.InternalClient) *LOLClient {
 		Spectator:         &SpectatorEndpoint{internalClient: client},
 		Summoner:          &SummonerEndpoint{internalClient: client},
 		League:            &LeagueEndpoint{internalClient: client},
+		TournamentStub:    &TournamentStubEndpoint{internalClient: client},
 	}
 }

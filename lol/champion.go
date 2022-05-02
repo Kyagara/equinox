@@ -3,7 +3,6 @@ package lol
 import (
 	"net/http"
 
-	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 )
 
@@ -21,7 +20,7 @@ type ChampionRotationsDTO struct {
 }
 
 // Get champion rotations, including free-to-play and low-level free-to-play rotations.
-func (c *ChampionEndpoint) Rotations(region api.LOLRegion) (*ChampionRotationsDTO, error) {
+func (c *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, error) {
 	res := ChampionRotationsDTO{}
 
 	err := c.internalClient.Do(http.MethodGet, region, ChampionURL, nil, &res)
