@@ -15,49 +15,64 @@ type MatchEndpoint struct {
 }
 
 type MatchDTO struct {
+	// Match metadata.
 	Metadata struct {
-		DataVersion  string   `json:"dataVersion"`
-		MatchID      string   `json:"matchId"`
+		// Match data version.
+		DataVersion string `json:"dataVersion"`
+		// Match id.
+		MatchID string `json:"matchId"`
+		// A list of participant PUUIDs.
 		Participants []string `json:"participants"`
 	} `json:"metadata"`
+	// Match info.
 	Info struct {
-		GameCreation       int64  `json:"gameCreation"`
-		GameDuration       int    `json:"gameDuration"`
-		GameEndTimestamp   int64  `json:"gameEndTimestamp"`
-		GameID             int    `json:"gameId"`
-		GameMode           string `json:"gameMode"`
-		GameName           string `json:"gameName"`
+		// Unix timestamp for when the game is created on the game server (i.e., the loading screen).
+		GameCreation int64 `json:"gameCreation"`
+		// Prior to patch 11.20, this field returns the game length in milliseconds calculated from gameEndTimestamp - gameStartTimestamp. Post patch 11.20, this field returns the max timePlayed of any participant in the game in seconds, which makes the behavior of this field consistent with that of match-v4. The best way to handling the change in this field is to treat the value as milliseconds if the gameEndTimestamp field isn't in the response and to treat the value as seconds if gameEndTimestamp is in the response.
+		GameDuration int `json:"gameDuration"`
+		// Unix timestamp for when match ends on the game server. This timestamp can occasionally be significantly longer than when the match "ends". The most reliable way of determining the timestamp for the end of the match would be to add the max time played of any participant to the gameStartTimestamp. This field was added to match-v5 in patch 11.20 on Oct 5th, 2021.
+		GameEndTimestamp int64 `json:"gameEndTimestamp"`
+		GameID           int   `json:"gameId"`
+		// Refer to the Game Constants documentation.
+		GameMode string `json:"gameMode"`
+		GameName string `json:"gameName"`
+		// Unix timestamp for when match starts on the game server.
 		GameStartTimestamp int64  `json:"gameStartTimestamp"`
 		GameType           string `json:"gameType"`
-		GameVersion        string `json:"gameVersion"`
-		MapID              int    `json:"mapId"`
-		Participants       []struct {
-			Assists                     int    `json:"assists"`
-			BaronKills                  int    `json:"baronKills"`
-			BountyLevel                 int    `json:"bountyLevel"`
-			ChampExperience             int    `json:"champExperience"`
-			ChampLevel                  int    `json:"champLevel"`
-			ChampionID                  int    `json:"championId"`
-			ChampionName                string `json:"championName"`
-			ChampionTransform           int    `json:"championTransform"`
-			ConsumablesPurchased        int    `json:"consumablesPurchased"`
-			DamageDealtToBuildings      int    `json:"damageDealtToBuildings"`
-			DamageDealtToObjectives     int    `json:"damageDealtToObjectives"`
-			DamageDealtToTurrets        int    `json:"damageDealtToTurrets"`
-			DamageSelfMitigated         int    `json:"damageSelfMitigated"`
-			Deaths                      int    `json:"deaths"`
-			DetectorWardsPlaced         int    `json:"detectorWardsPlaced"`
-			DoubleKills                 int    `json:"doubleKills"`
-			DragonKills                 int    `json:"dragonKills"`
-			EligibleForProgression      bool   `json:"eligibleForProgression"`
-			FirstBloodAssist            bool   `json:"firstBloodAssist"`
-			FirstBloodKill              bool   `json:"firstBloodKill"`
-			FirstTowerAssist            bool   `json:"firstTowerAssist"`
-			FirstTowerKill              bool   `json:"firstTowerKill"`
-			GameEndedInEarlySurrender   bool   `json:"gameEndedInEarlySurrender"`
-			GameEndedInSurrender        bool   `json:"gameEndedInSurrender"`
-			GoldEarned                  int    `json:"goldEarned"`
-			GoldSpent                   int    `json:"goldSpent"`
+		// The first two parts can be used to determine the patch a game was played on.
+		GameVersion string `json:"gameVersion"`
+		// Refer to the Game Constants documentation.
+		MapID        int `json:"mapId"`
+		Participants []struct {
+			Assists         int `json:"assists"`
+			BaronKills      int `json:"baronKills"`
+			BountyLevel     int `json:"bountyLevel"`
+			ChampExperience int `json:"champExperience"`
+			ChampLevel      int `json:"champLevel"`
+			// Prior to patch 11.4, on Feb 18th, 2021, this field returned invalid championIds. We recommend determining the champion based on the championName field for matches played prior to patch 11.4.
+			ChampionID   int    `json:"championId"`
+			ChampionName string `json:"championName"`
+			// This field is currently only utilized for Kayn's transformations. (Legal values: 0 - None, 1 - Slayer, 2 - Assassin)
+			ChampionTransform         int  `json:"championTransform"`
+			ConsumablesPurchased      int  `json:"consumablesPurchased"`
+			DamageDealtToBuildings    int  `json:"damageDealtToBuildings"`
+			DamageDealtToObjectives   int  `json:"damageDealtToObjectives"`
+			DamageDealtToTurrets      int  `json:"damageDealtToTurrets"`
+			DamageSelfMitigated       int  `json:"damageSelfMitigated"`
+			Deaths                    int  `json:"deaths"`
+			DetectorWardsPlaced       int  `json:"detectorWardsPlaced"`
+			DoubleKills               int  `json:"doubleKills"`
+			DragonKills               int  `json:"dragonKills"`
+			EligibleForProgression    bool `json:"eligibleForProgression"`
+			FirstBloodAssist          bool `json:"firstBloodAssist"`
+			FirstBloodKill            bool `json:"firstBloodKill"`
+			FirstTowerAssist          bool `json:"firstTowerAssist"`
+			FirstTowerKill            bool `json:"firstTowerKill"`
+			GameEndedInEarlySurrender bool `json:"gameEndedInEarlySurrender"`
+			GameEndedInSurrender      bool `json:"gameEndedInSurrender"`
+			GoldEarned                int  `json:"goldEarned"`
+			GoldSpent                 int  `json:"goldSpent"`
+			// Both individualPosition and teamPosition are computed by the game server and are different versions of the most likely position played by a player. The individualPosition is the best guess for which position the player actually played in isolation of anything else. The teamPosition is the best guess for which position the player actually played if we add the constraint that each team must have one top player, one jungle, one middle, etc. Generally the recommendation is to use the teamPosition field over the individualPosition field.
 			IndividualPosition          string `json:"individualPosition"`
 			InhibitorKills              int    `json:"inhibitorKills"`
 			InhibitorTakedowns          int    `json:"inhibitorTakedowns"`
@@ -109,7 +124,7 @@ type MatchDTO struct {
 			PhysicalDamageDealtToChampions int    `json:"physicalDamageDealtToChampions"`
 			PhysicalDamageTaken            int    `json:"physicalDamageTaken"`
 			ProfileIcon                    int    `json:"profileIcon"`
-			Puuid                          string `json:"puuid"`
+			PUUID                          string `json:"puuid"`
 			QuadraKills                    int    `json:"quadraKills"`
 			RiotIDName                     string `json:"riotIdName"`
 			RiotIDTagline                  string `json:"riotIdTagline"`
@@ -128,6 +143,7 @@ type MatchDTO struct {
 			SummonerName                   string `json:"summonerName"`
 			TeamEarlySurrendered           bool   `json:"teamEarlySurrendered"`
 			TeamID                         int    `json:"teamId"`
+			// Both individualPosition and teamPosition are computed by the game server and are different versions of the most likely position played by a player. The individualPosition is the best guess for which position the player actually played in isolation of anything else. The teamPosition is the best guess for which position the player actually played if we add the constraint that each team must have one top player, one jungle, one middle, etc. Generally the recommendation is to use the teamPosition field over the individualPosition field.
 			TeamPosition                   string `json:"teamPosition"`
 			TimeCCingOthers                int    `json:"timeCCingOthers"`
 			TimePlayed                     int    `json:"timePlayed"`
@@ -155,9 +171,11 @@ type MatchDTO struct {
 			WardsPlaced                    int    `json:"wardsPlaced"`
 			Win                            bool   `json:"win"`
 		} `json:"participants"`
+		// Platform where the match was played.
 		PlatformID string `json:"platformId"`
-		QueueID    int    `json:"queueId"`
-		Teams      []struct {
+		// Refer to the Game Constants documentation.
+		QueueID int `json:"queueId"`
+		Teams   []struct {
 			Bans       []interface{} `json:"bans"`
 			Objectives struct {
 				Baron struct {
@@ -188,16 +206,22 @@ type MatchDTO struct {
 			TeamID int  `json:"teamId"`
 			Win    bool `json:"win"`
 		} `json:"teams"`
+		// Tournament code used to generate the match. This field was added to match-v5 in patch 11.13 on June 23rd, 2021.
 		TournamentCode string `json:"tournamentCode"`
 	} `json:"info"`
 }
 
 type MatchTimelineDTO struct {
+	// Match metadata.
 	Metadata struct {
-		DataVersion  string   `json:"dataVersion"`
-		MatchID      string   `json:"matchId"`
+		// Match data version.
+		DataVersion string `json:"dataVersion"`
+		// Match id.
+		MatchID string `json:"matchId"`
+		// A list of participant PUUIDs.
 		Participants []string `json:"participants"`
 	} `json:"metadata"`
+	// Match info.
 	Info struct {
 		FrameInterval int `json:"frameInterval"`
 		Frames        []struct {
@@ -274,15 +298,6 @@ type MatchTimelineDTO struct {
 	} `json:"info"`
 }
 
-type LOLMatchType string
-
-const (
-	RankedMatchType   LOLMatchType = "ranked"
-	NormalMatchType   LOLMatchType = "normal"
-	TourneyMatchType  LOLMatchType = "tourney"
-	TutorialMatchType LOLMatchType = "tutorial"
-)
-
 type MatchlistOptions struct {
 	// The matchlist started storing timestamps on June 16th, 2021.
 	// Any matches played before June 16th, 2021 won't be included in the results if the startTime filter is set.
@@ -294,15 +309,15 @@ type MatchlistOptions struct {
 	Queue int `json:"queue"`
 	// Filter the list of match ids by the type of match.
 	// This filter is mutually inclusive of the queue filter meaning any match ids returned must match both the queue and type filters.
-	Type LOLMatchType `json:"type"`
+	Type api.LOLMatchType `json:"type"`
 	// Defaults to 0. Start index.
 	Start int `json:"start"`
 	// Defaults to 20. Valid values: 0 to 100. Number of match ids to return.
 	Count int `json:"count"`
 }
 
-// Get a list of match IDs by PUUID.
-func (c *MatchEndpoint) ListByPUUID(region api.Route, PUUID string, options *MatchlistOptions) ([]string, error) {
+// Get a list of match IDs by PUUID. Default query: start: 0, count: 20
+func (c *MatchEndpoint) ListByPUUID(region api.RiotRoute, PUUID string, options *MatchlistOptions) ([]string, error) {
 	if options == nil {
 		options = &MatchlistOptions{Start: 0, Count: 20}
 	}
@@ -333,9 +348,9 @@ func (c *MatchEndpoint) ListByPUUID(region api.Route, PUUID string, options *Mat
 
 	query.Set("count", strconv.Itoa(options.Count))
 
-	endpoint := fmt.Sprintf(MatchlistURL, PUUID)
+	method := fmt.Sprintf(MatchlistURL, PUUID)
 
-	url := fmt.Sprintf("%s?%s", endpoint, query.Encode())
+	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
 	res := []string{}
 
@@ -349,7 +364,7 @@ func (c *MatchEndpoint) ListByPUUID(region api.Route, PUUID string, options *Mat
 }
 
 // Get a match by match ID.
-func (c *MatchEndpoint) ByID(region api.Route, matchID string) (*MatchDTO, error) {
+func (c *MatchEndpoint) ByID(region api.RiotRoute, matchID string) (*MatchDTO, error) {
 	url := fmt.Sprintf(MatchURL, matchID)
 
 	res := MatchDTO{}
@@ -364,7 +379,7 @@ func (c *MatchEndpoint) ByID(region api.Route, matchID string) (*MatchDTO, error
 }
 
 // Get a match timeline by match ID.
-func (c *MatchEndpoint) Timeline(region api.Route, matchID string) (*MatchTimelineDTO, error) {
+func (c *MatchEndpoint) Timeline(region api.RiotRoute, matchID string) (*MatchTimelineDTO, error) {
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
 
 	res := MatchTimelineDTO{}
