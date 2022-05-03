@@ -36,4 +36,11 @@ var (
 			StatusCode: http.StatusForbidden,
 		},
 	}
+
+	RateLimitedError = ErrorResponse{
+		Status: Status{
+			Message:    "Rate limited",
+			StatusCode: http.StatusTooManyRequests,
+		},
+	}
 )

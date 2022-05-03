@@ -3,9 +3,15 @@
 [![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/Kyagara/equinox)
 [![Test Status](https://github.com/Kyagara/equinox/workflows/Tests/badge.svg)](https://github.com/Kyagara/equinox/actions?query=workflow%3Atests)
 
-This library is NOT production ready, expect breaking changes.
+Equinox is a Riot Games API client written in golang with the goal of providing an easy to use interface to interact with all of the [Riot Games API](https://developer.riotgames.com/apis) endpoints.
 
-At the moment, only League of Legends endpoints are currently implemented.
+#### Endpoints implemented:
+
+-   [ ] Account endpoint
+-   [x] League of Legends
+-   [ ] Teamfight Tactics
+-   [ ] Valorant
+-   [ ] Legends of Runeterra
 
 ## Example
 
@@ -29,7 +35,7 @@ func main() {
 		return
 	}
 
-	// Get champion rotations.
+	// Get this week's champion rotations.
 	rotation, err := client.LOL.Champion.Rotations(lol.BR1)
 
 	if err != nil {
@@ -38,16 +44,11 @@ func main() {
 	}
 
 	fmt.Printf("%+v\n", rotation)
+	// &{FreeChampionIDs:[17 43 56 62 67 79 85 90 133 145 147 157 201 203 245 518]
+	// FreeChampionIDsForNewPlayers:[222 254 427 82 131 147 54 17 18 37]
+	// MaxNewPlayerLevel:10}
 }
 ```
-
-## TODO
-
-#### Improve tests
-
-First time doings mocks so I decided to use [gock](https://github.com/h2non/gock) just to get things out of the ground, not sure if this implementation of tests with mocks is good.
-
-Tests could benefit from using Parallel().
 
 ## Disclaimer
 

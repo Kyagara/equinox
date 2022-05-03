@@ -109,7 +109,7 @@ func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 		// If Retry is disabled just return an error.
 		if !i.retry {
-			return nil, i.newErrorResponse(res)
+			return nil, api.RateLimitedError
 		}
 
 		retryAfter := res.Header.Get("Retry-After")
@@ -143,7 +143,15 @@ func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
 		logger.Warn("Endpoint returned an error")
 
-		return nil, i.newErrorResponse(res)
+		var errRes api.ErrorResponse
+
+		err := json.NewDecoder(res.Body).Decode(&errRes)
+
+		if err != nil {
+			return nil, fmt.Errorf("error decoding response: %v, with status code %d", err, res.StatusCode)
+		}
+
+		return nil, errRes
 	}
 
 	logger.Debug("Request successful")
@@ -167,17 +175,4 @@ func (i *InternalClient) newRequest(method string, url string, body io.Reader) (
 	req.Header.Set("X-Riot-Token", i.key)
 
 	return req, nil
-}
-
-// Returns an error from the *http.Response provided.
-func (i *InternalClient) newErrorResponse(res *http.Response) error {
-	var errRes api.ErrorResponse
-
-	err := json.NewDecoder(res.Body).Decode(&errRes)
-
-	if err != nil {
-		return errRes
-	}
-
-	return errRes
 }
