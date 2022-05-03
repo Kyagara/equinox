@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"time"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -27,7 +26,7 @@ type LobbyEventDTO struct {
 	// The type of event that was triggered
 	EventType string `json:"eventType"`
 	// Timestamp from the event
-	Timestamp time.Time `json:"timestamp"`
+	Timestamp string `json:"timestamp"`
 }
 
 type TournamentCodeParameters struct {
