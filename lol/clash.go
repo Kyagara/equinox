@@ -11,7 +11,7 @@ type ClashEndpoint struct {
 	internalClient *internal.InternalClient
 }
 
-type TournamentDTO struct {
+type ClashTournamentDTO struct {
 	ID               int    `json:"id"`
 	ThemeID          int    `json:"themeId"`
 	NameKey          string `json:"nameKey"`
@@ -50,70 +50,82 @@ type TournamentPlayerDTO struct {
 }
 
 // Get all active or upcoming tournaments.
-func (c *ClashEndpoint) Tournaments(region Region) (*[]TournamentDTO, error) {
-	res := []TournamentDTO{}
+func (c *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error) {
+	logger := c.internalClient.Logger().With("endpoint", "clash", "method", "Tournaments")
 
-	err := c.internalClient.Do(http.MethodGet, region, ClashURL, nil, &res)
+	var tournaments *[]ClashTournamentDTO
+
+	err := c.internalClient.Do(http.MethodGet, region, ClashURL, nil, &tournaments)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return tournaments, nil
 }
 
 // Get players by summoner ID.
 //
 // This endpoint returns a list of active Clash players for a given summoner ID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
 func (c *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]TournamentPlayerDTO, error) {
+	logger := c.internalClient.Logger().With("endpoint", "clash", "method", "SummonerEntries")
+
 	url := fmt.Sprintf(ClashSummonerEntriesURL, summonerID)
 
-	res := []TournamentPlayerDTO{}
+	var players *[]TournamentPlayerDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &players)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return players, nil
 }
 
 // Get team by ID.
 func (c *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*TournamentTeamDto, error) {
+	logger := c.internalClient.Logger().With("endpoint", "clash", "method", "TournamentTeamByID")
+
 	url := fmt.Sprintf(ClashTournamentTeamByIDURL, teamID)
 
-	res := TournamentTeamDto{}
+	var team *TournamentTeamDto
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &team)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return team, nil
 }
 
 // Get tournament by ID.
-func (c *ClashEndpoint) ByID(region Region, tournamentID string) (*TournamentDTO, error) {
-	return c.getClash(ClashByIDURL, region, tournamentID)
+func (c *ClashEndpoint) ByID(region Region, tournamentID string) (*ClashTournamentDTO, error) {
+	return c.getClash(ClashByIDURL, region, tournamentID, "ByID")
 }
 
 // Get tournament by team ID.
-func (c *ClashEndpoint) ByTeamID(region Region, teamID string) (*TournamentDTO, error) {
-	return c.getClash(ClashByTeamIDURL, region, teamID)
+func (c *ClashEndpoint) ByTeamID(region Region, teamID string) (*ClashTournamentDTO, error) {
+	return c.getClash(ClashByTeamIDURL, region, teamID, "ByTeamID")
 }
 
-func (c *ClashEndpoint) getClash(method string, region Region, id string) (*TournamentDTO, error) {
-	url := fmt.Sprintf(method, id)
+func (c *ClashEndpoint) getClash(endpointMethod string, region Region, id string, methodName string) (*ClashTournamentDTO, error) {
+	logger := c.internalClient.Logger().With("endpoint", "clash", "method", methodName)
 
-	res := TournamentDTO{}
+	url := fmt.Sprintf(endpointMethod, id)
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
+	var tournament *ClashTournamentDTO
+
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &tournament)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return tournament, nil
 }

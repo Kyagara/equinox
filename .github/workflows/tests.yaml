@@ -1,13 +1,9 @@
 name: Tests
 
-on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+on: [push, pull_request]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -25,5 +21,3 @@ jobs:
 
       - name: Test
         run: go test ./... -v
-        env:
-          RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}

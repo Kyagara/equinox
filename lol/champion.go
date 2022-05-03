@@ -21,13 +21,16 @@ type ChampionRotationsDTO struct {
 
 // Get champion rotations, including free-to-play and low-level free-to-play rotations.
 func (c *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, error) {
-	res := ChampionRotationsDTO{}
+	logger := c.internalClient.Logger().With("endpoint", "champion", "method", "Rotations")
 
-	err := c.internalClient.Do(http.MethodGet, region, ChampionURL, nil, &res)
+	var rotations *ChampionRotationsDTO
+
+	err := c.internalClient.Do(http.MethodGet, region, ChampionURL, nil, &rotations)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return rotations, nil
 }

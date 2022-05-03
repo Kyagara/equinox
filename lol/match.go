@@ -318,6 +318,8 @@ type MatchlistOptions struct {
 
 // Get a list of match IDs by PUUID. Default query: start: 0, count: 20
 func (c *MatchEndpoint) List(region api.RiotRoute, PUUID string, options *MatchlistOptions) ([]string, error) {
+	logger := c.internalClient.Logger().With("endpoint", "match", "method", "List")
+
 	if options == nil {
 		options = &MatchlistOptions{Start: 0, Count: 20}
 	}
@@ -352,43 +354,50 @@ func (c *MatchEndpoint) List(region api.RiotRoute, PUUID string, options *Matchl
 
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
-	res := []string{}
+	var list []string
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &list)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return res, nil
+	return list, nil
 }
 
 // Get a match by match ID.
 func (c *MatchEndpoint) ByID(region api.RiotRoute, matchID string) (*MatchDTO, error) {
+	logger := c.internalClient.Logger().With("endpoint", "match", "method", "ByID")
+
 	url := fmt.Sprintf(MatchURL, matchID)
 
-	res := MatchDTO{}
+	var match *MatchDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &match)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return match, nil
 }
 
 // Get a match timeline by match ID.
 func (c *MatchEndpoint) Timeline(region api.RiotRoute, matchID string) (*MatchTimelineDTO, error) {
+	logger := c.internalClient.Logger().With("endpoint", "match", "method", "Timeline")
+
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
 
-	res := MatchTimelineDTO{}
+	var timeline *MatchTimelineDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &timeline)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return timeline, nil
 }

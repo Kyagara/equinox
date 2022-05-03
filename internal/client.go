@@ -9,38 +9,35 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox/api"
+	"go.uber.org/zap"
 )
 
 type InternalClient struct {
-	key   string
-	debug bool
-	retry bool
-	http  *http.Client
-	log   *Logger
+	key      string
+	logLevel api.LogLevel
+	retry    bool
+	http     *http.Client
+	logger   *zap.SugaredLogger
 }
-
-const (
-	LogRequestFormat = "[%s '%s'] %s\n"
-)
 
 // Creates an EquinoxConfig for tests.
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
-		Key:     "RIOT_API_KEY",
-		Debug:   true,
-		Timeout: 10,
-		Retry:   true,
+		Key:      "RIOT_API_KEY",
+		LogLevel: api.DebugLevel,
+		Timeout:  10,
+		Retry:    true,
 	}
 }
 
 // Returns a new client using the API key provided.
 func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
-		key:   config.Key,
-		debug: config.Debug,
-		retry: config.Retry,
-		http:  &http.Client{Timeout: config.Timeout * time.Second},
-		log:   NewLogger(),
+		key:      config.Key,
+		logLevel: config.LogLevel,
+		retry:    config.Retry,
+		http:     &http.Client{Timeout: config.Timeout * time.Second},
+		logger:   NewLogger(config),
 	}
 }
 
@@ -62,6 +59,11 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, b
 		return err
 	}
 
+	// In case of a PUT request
+	if res.Request.Method == http.MethodPut {
+		return nil
+	}
+
 	// Decoding the body into the endpoint method response object.
 	if err := json.NewDecoder(res.Body).Decode(&into); err != nil {
 		return err
@@ -72,15 +74,15 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, b
 
 // Sends a http request.
 func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.Response, error) {
+	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.Path)
+
 	if c.retry && retryCount > 1 {
-		msg := fmt.Sprintf(LogRequestFormat, req.Method, req.URL.Path, fmt.Sprintf("Failed %d times, stopping", retryCount))
+		logger.Debug(fmt.Sprintf("Retried %d times, stopping", retryCount))
 
-		return nil, fmt.Errorf(msg)
+		return nil, fmt.Errorf(fmt.Sprintf("Retried %d times, stopping", retryCount))
 	}
 
-	if c.debug {
-		c.log.Info.Printf(LogRequestFormat, req.Method, req.URL.Path, "Requesting")
-	}
+	logger.Debug("Making request")
 
 	// Sending request.
 	res, err := c.http.Do(req)
@@ -90,26 +92,16 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 	}
 
 	if res.StatusCode == http.StatusUnauthorized {
-		if c.debug {
-			c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Unauthorized")
-		}
-
 		return nil, api.UnauthorizedError
 	}
 
 	if res.StatusCode == http.StatusForbidden {
-		if c.debug {
-			c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Forbidden")
-		}
-
 		return nil, api.ForbiddenError
 	}
 
 	// If the API returns a 429 code.
 	if res.StatusCode == http.StatusTooManyRequests {
-		if c.debug {
-			c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Too many requests")
-		}
+		logger.Warn("Too many requests")
 
 		// If Retry is disabled just return an error.
 		if !c.retry {
@@ -120,11 +112,9 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 		// If the header isn't found, don't retry and return error.
 		if retryAfter == "" {
-			if c.debug {
-				c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Retry-After header not found, not retrying")
-			}
+			logger.Warn("Retry-After header not found, not retrying")
 
-			return nil, fmt.Errorf("rate limited, status code 429")
+			return nil, fmt.Errorf("rate limited but no Retry-After header was found, stopping")
 		}
 
 		seconds, err := strconv.Atoi(retryAfter)
@@ -133,9 +123,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 			return nil, err
 		}
 
-		if c.debug {
-			c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, fmt.Sprintf("Retrying in %ds", seconds))
-		}
+		logger.Debug(fmt.Sprintf("Retrying request in %ds", seconds))
 
 		time.Sleep(time.Duration(seconds) * time.Second)
 
@@ -144,25 +132,17 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 	// If the API returns a 404 code, return an error.
 	if res.StatusCode == http.StatusNotFound {
-		if c.debug {
-			c.log.Warn.Printf(LogRequestFormat, req.Method, req.URL.Path, "Not Found")
-		}
-
 		return nil, api.NotFoundError
 	}
 
 	// If the status code is lower than 200 or higher than 400, return an error.
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
-		if c.debug {
-			c.log.Error.Printf(LogRequestFormat, req.Method, req.URL.Path, "Returned an error")
-		}
+		logger.Warn("Endpoint returned an error")
 
 		return nil, c.newErrorResponse(res)
 	}
 
-	if c.debug {
-		c.log.Info.Printf(LogRequestFormat, req.Method, req.URL.Path, "Request successful")
-	}
+	logger.Debug("Request successful")
 
 	return res, nil
 }
