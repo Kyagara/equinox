@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/internal"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -13,8 +14,16 @@ func TestNewLogger(t *testing.T) {
 	require.NotNil(t, logger, "expecting non-nil Logger")
 
 	logger.Info("Info logger")
+}
 
-	logger.Warn("Warning logger")
+func TestLogger(t *testing.T) {
+	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	logger.Error("Error logger")
+	require.NotNil(t, client, "expecting non-nil InternalClient")
+
+	logger := client.Logger()
+
+	assert.NotNil(t, logger, "expecting non-nil Logger")
+
+	logger.Info("Info logger")
 }
