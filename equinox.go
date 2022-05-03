@@ -13,23 +13,21 @@ type Equinox struct {
 	LOL            *lol.LOLClient
 }
 
-/*
-	Creates a new Equinox client with a default configuration
-
-		- `Debug`      : false
-		- `Timeout`    : 10
-		- `Retry`      : true
-*/
+//	Creates a new Equinox client with a default configuration
+//
+//		- `LogLevel`   : api.FatalLevel
+//		- `Timeout`    : 10
+//		- `Retry`      : true
 func NewClient(key string) (*Equinox, error) {
 	if key == "" {
 		return nil, fmt.Errorf("API Key not provided")
 	}
 
 	config := &api.EquinoxConfig{
-		Key:     key,
-		Debug:   false,
-		Timeout: 10,
-		Retry:   true,
+		Key:      key,
+		LogLevel: api.FatalLevel,
+		Timeout:  10,
+		Retry:    true,
 	}
 
 	internalClient := internal.NewInternalClient(config)
@@ -42,11 +40,9 @@ func NewClient(key string) (*Equinox, error) {
 	return client, nil
 }
 
-/*
-	Creates a new Equinox client using a custom configuration.
-
-	If you don't specify a Timeout this will disable the timeout for the http.Client.
-*/
+//	Creates a new Equinox client using a custom configuration.
+//
+//	If you don't specify a Timeout this will disable the timeout for the http.Client.
 func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	if config.Key == "" {
 		return nil, fmt.Errorf("API Key not provided")

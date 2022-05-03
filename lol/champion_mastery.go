@@ -34,45 +34,54 @@ type ChampionMasteryDTO struct {
 
 // Get all champion mastery entries sorted by number of champion points descending.
 func (c *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID string) (*[]ChampionMasteryDTO, error) {
+	logger := c.internalClient.Logger().With("endpoint", "champion-mastery", "method", "SummonerMasteries")
+
 	url := fmt.Sprintf(ChampionMasteriesURL, summonerID)
 
-	res := []ChampionMasteryDTO{}
+	var masteries *[]ChampionMasteryDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &masteries)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return masteries, nil
 }
 
 // Get a champion mastery by player ID and champion ID.
 func (c *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string, championID int) (*ChampionMasteryDTO, error) {
+	logger := c.internalClient.Logger().With("endpoint", "champion-mastery", "method", "ChampionScore")
+
 	url := fmt.Sprintf(ChampionMasteriesByChampionURL, summonerID, championID)
 
-	res := ChampionMasteryDTO{}
+	var score *ChampionMasteryDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &score)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return score, nil
 }
 
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
 func (c *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID string) (int, error) {
+	logger := c.internalClient.Logger().With("endpoint", "champion-mastery", "method", "MasteryScoreSum")
+
 	url := fmt.Sprintf(ChampionMasteriesScoresURL, summonerID)
 
-	res := 0
+	var sum int
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &res)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &sum)
 
 	if err != nil {
+		logger.Warn(err)
 		return -1, err
 	}
 
-	return res, nil
+	return sum, nil
 }

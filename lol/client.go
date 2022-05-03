@@ -39,6 +39,12 @@ const (
 	LeagueGrandmasterURL       = "/lol/league/v4/grandmasterleagues/by-queue/%s"
 	LeagueMasterURL            = "/lol/league/v4/masterleagues/by-queue/%s"
 
+	TournamentLobbyEventsURL = "/lol/tournament/v4/lobby-events/by-code/%s"
+	TournamentCodesURL       = "/lol/tournament/v4/codes"
+	TournamentByCodeURL      = "/lol/tournament/v4/codes/%s"
+	TournamentProvidersURL   = "/lol/tournament/v4/providers"
+	TournamentURL            = "/lol/tournament/v4/tournaments"
+
 	TournamentStubLobbyEventsURL = "/lol/tournament-stub/v4/lobby-events/by-code/%s"
 	TournamentStubCodesURL       = "/lol/tournament-stub/v4/codes"
 	TournamentStubProvidersURL   = "/lol/tournament-stub/v4/providers"
@@ -55,6 +61,7 @@ type LOLClient struct {
 	Spectator         *SpectatorEndpoint
 	Summoner          *SummonerEndpoint
 	League            *LeagueEndpoint
+	Tournament        *TournamentEndpoint
 	TournamentStub    *TournamentStubEndpoint
 }
 
@@ -70,6 +77,7 @@ func NewLOLClient(client *internal.InternalClient) *LOLClient {
 		Spectator:         &SpectatorEndpoint{internalClient: client},
 		Summoner:          &SummonerEndpoint{internalClient: client},
 		League:            &LeagueEndpoint{internalClient: client},
+		Tournament:        &TournamentEndpoint{internalClient: client},
 		TournamentStub:    &TournamentStubEndpoint{internalClient: client},
 	}
 }

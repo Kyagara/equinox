@@ -140,26 +140,32 @@ type Perks struct {
 
 // Get featured games in a region.
 func (c *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, error) {
-	res := FeaturedGamesDTO{}
+	logger := c.internalClient.Logger().With("endpoint", "spectator", "method", "FeaturedGames")
 
-	err := c.internalClient.Do(http.MethodGet, region, SpectatorFeaturedGamesURL, nil, &res)
+	var games *FeaturedGamesDTO
+
+	err := c.internalClient.Do(http.MethodGet, region, SpectatorFeaturedGamesURL, nil, &games)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return games, nil
 }
 
 // Get the current game information for the given summoner ID.
 func (c *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*CurrentGameInfoDTO, error) {
-	res := CurrentGameInfoDTO{}
+	logger := c.internalClient.Logger().With("endpoint", "spectator", "method", "FeaturedGames")
 
-	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), nil, &res)
+	var game *CurrentGameInfoDTO
+
+	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), nil, &game)
 
 	if err != nil {
+		logger.Warn(err)
 		return nil, err
 	}
 
-	return &res, nil
+	return game, nil
 }

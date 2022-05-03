@@ -31,14 +31,7 @@ func TestInternalClientRetries(t *testing.T) {
 		Reply(200).
 		JSON(&lol.PlatformDataDTO{})
 
-	config := &api.EquinoxConfig{
-		Key:     "RIOT_API_KEY",
-		Debug:   true,
-		Timeout: 10,
-		Retry:   true,
-	}
-
-	client := internal.NewInternalClient(config)
+	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	res := lol.PlatformDataDTO{}
 

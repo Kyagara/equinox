@@ -2,22 +2,31 @@ package internal
 
 import (
 	"log"
-	"os"
+
+	"github.com/Kyagara/equinox/api"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-type Logger struct {
-	Info  *log.Logger
-	Warn  *log.Logger
-	Error *log.Logger
+func NewLogger(config *api.EquinoxConfig) *zap.SugaredLogger {
+	zapConfig := zap.NewProductionConfig()
+
+	options := &api.EquinoxConfig{
+		Retry:   config.Retry,
+		Timeout: config.Timeout,
+	}
+
+	zapConfig.Level = zap.NewAtomicLevelAt(zapcore.Level(config.LogLevel))
+
+	logger, err := zapConfig.Build(zap.Fields(zap.Object("equinox", options)))
+
+	if err != nil {
+		log.Fatalf("failed to initialize logger: %v", err)
+	}
+
+	return logger.Sugar()
 }
 
-// Returns a new Logger.
-func NewLogger() *Logger {
-	flags := log.LstdFlags
-
-	return &Logger{
-		Info:  log.New(os.Stderr, "INFO: ", flags),
-		Warn:  log.New(os.Stderr, "WARNING: ", flags),
-		Error: log.New(os.Stderr, "ERROR: ", flags),
-	}
+func (c *InternalClient) Logger() *zap.SugaredLogger {
+	return c.logger
 }

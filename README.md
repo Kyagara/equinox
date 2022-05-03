@@ -5,11 +5,7 @@
 
 This library is NOT production ready, expect breaking changes.
 
-Only some League of Legends endpoints are currently implemented.
-
-This project is a first for me since I don't have much experience in publishing a library, this is pretty much a practice tool for me to improve my knowledge in CI/CD using Github Actions, golang and tests.
-
-I am avoiding using other packages like [resty](https://github.com/go-resty/resty) instead of the `net/http` package go provides to improve my golang knowledge, currently using [testify](https://github.com/stretchr/testify) and [gock](https://github.com/h2non/gock) for tests.
+At the moment, only League of Legends endpoints are currently implemented.
 
 ## Example
 
@@ -52,10 +48,6 @@ func main() {
 First time doings mocks so I decided to use [gock](https://github.com/h2non/gock) just to get things out of the ground, not sure if this implementation of tests with mocks is good.
 
 Tests could benefit from using Parallel().
-
-#### Improve Logging
-
-I don't believe the current logging and 'debugging mode' is done right or that its 'done' at all to be honest, there might be places where I should be logging something but I am not.
 
 ## Disclaimer
 

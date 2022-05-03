@@ -21,13 +21,13 @@ func TestClashTournaments(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *[]lol.TournamentDTO
+		want    *[]lol.ClashTournamentDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &[]lol.TournamentDTO{},
+			want: &[]lol.ClashTournamentDTO{},
 		},
 		{
 			name:    "not found",
@@ -150,13 +150,13 @@ func TestClashByID(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.TournamentDTO
+		want    *lol.ClashTournamentDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.TournamentDTO{},
+			want: &lol.ClashTournamentDTO{},
 		},
 		{
 			name:    "not found",
@@ -193,13 +193,13 @@ func TestClashByTeamID(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.TournamentDTO
+		want    *lol.ClashTournamentDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.TournamentDTO{},
+			want: &lol.ClashTournamentDTO{},
 		},
 		{
 			name:    "not found",
