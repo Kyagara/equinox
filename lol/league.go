@@ -51,8 +51,8 @@ type MiniSeriesDTO struct {
 }
 
 // Get all the league entries. Page defaults to 1.
-func (c *LeagueEndpoint) Entries(region Region, division api.Division, tier Tier, queue QueueType, page int) (*[]LeagueEntryDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "league", "method", "Entries")
+func (l *LeagueEndpoint) Entries(region Region, division api.Division, tier Tier, queue QueueType, page int) (*[]LeagueEntryDTO, error) {
+	logger := l.internalClient.Logger().With("endpoint", "league", "method", "Entries")
 
 	query := url.Values{}
 
@@ -68,7 +68,7 @@ func (c *LeagueEndpoint) Entries(region Region, division api.Division, tier Tier
 
 	var entries *[]LeagueEntryDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &entries)
+	err := l.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -79,19 +79,19 @@ func (c *LeagueEndpoint) Entries(region Region, division api.Division, tier Tier
 }
 
 // Get league with given ID, including inactive entries.
-func (c *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, error) {
-	return c.getLeague(LeagueByID, region, QueueType(leagueID), "ByID")
+func (l *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, error) {
+	return l.getLeague(LeagueByID, region, QueueType(leagueID), "ByID")
 }
 
 // Get league entries in all queues for a given summoner ID.
-func (c *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]LeagueEntryDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "league", "method", "SummonerEntries")
+func (l *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]LeagueEntryDTO, error) {
+	logger := l.internalClient.Logger().With("endpoint", "league", "method", "SummonerEntries")
 
 	url := fmt.Sprintf(LeagueEntriesBySummonerURL, summonerID)
 
 	var entries *[]LeagueEntryDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &entries)
+	err := l.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -102,28 +102,28 @@ func (c *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]L
 }
 
 // Get the challenger league for given queue.
-func (c *LeagueEndpoint) ChallengerByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
-	return c.getLeague(LeagueChallengerURL, region, queueType, "ChallengerByQueue")
+func (l *LeagueEndpoint) ChallengerByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
+	return l.getLeague(LeagueChallengerURL, region, queueType, "ChallengerByQueue")
 }
 
 // Get the grandmaster league for given queue.
-func (c *LeagueEndpoint) GrandmasterByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
-	return c.getLeague(LeagueGrandmasterURL, region, queueType, "GrandmasterByQueue")
+func (l *LeagueEndpoint) GrandmasterByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
+	return l.getLeague(LeagueGrandmasterURL, region, queueType, "GrandmasterByQueue")
 }
 
 // Get the master league for given queue.
-func (c *LeagueEndpoint) MasterByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
-	return c.getLeague(LeagueMasterURL, region, queueType, "MasterByQueue")
+func (l *LeagueEndpoint) MasterByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
+	return l.getLeague(LeagueMasterURL, region, queueType, "MasterByQueue")
 }
 
-func (c *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueType QueueType, methodName string) (*LeagueListDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "league", "method", methodName)
+func (l *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueType QueueType, methodName string) (*LeagueListDTO, error) {
+	logger := l.internalClient.Logger().With("endpoint", "league", "method", methodName)
 
 	url := fmt.Sprintf(endpointMethod, queueType)
 
 	var league *LeagueListDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &league)
+	err := l.internalClient.Do(http.MethodGet, region, url, nil, &league, "")
 
 	if err != nil {
 		logger.Warn(err)

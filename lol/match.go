@@ -317,8 +317,8 @@ type MatchlistOptions struct {
 }
 
 // Get a list of match IDs by PUUID. Default query: start: 0, count: 20
-func (c *MatchEndpoint) List(region api.RiotRoute, PUUID string, options *MatchlistOptions) ([]string, error) {
-	logger := c.internalClient.Logger().With("endpoint", "match", "method", "List")
+func (m *MatchEndpoint) List(region api.RiotRoute, PUUID string, options *MatchlistOptions) ([]string, error) {
+	logger := m.internalClient.Logger().With("endpoint", "match", "method", "List")
 
 	if options == nil {
 		options = &MatchlistOptions{Start: 0, Count: 20}
@@ -356,7 +356,7 @@ func (c *MatchEndpoint) List(region api.RiotRoute, PUUID string, options *Matchl
 
 	var list []string
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &list)
+	err := m.internalClient.Do(http.MethodGet, region, url, nil, &list, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -367,14 +367,14 @@ func (c *MatchEndpoint) List(region api.RiotRoute, PUUID string, options *Matchl
 }
 
 // Get a match by match ID.
-func (c *MatchEndpoint) ByID(region api.RiotRoute, matchID string) (*MatchDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "match", "method", "ByID")
+func (m *MatchEndpoint) ByID(region api.RiotRoute, matchID string) (*MatchDTO, error) {
+	logger := m.internalClient.Logger().With("endpoint", "match", "method", "ByID")
 
 	url := fmt.Sprintf(MatchURL, matchID)
 
 	var match *MatchDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &match)
+	err := m.internalClient.Do(http.MethodGet, region, url, nil, &match, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -385,14 +385,14 @@ func (c *MatchEndpoint) ByID(region api.RiotRoute, matchID string) (*MatchDTO, e
 }
 
 // Get a match timeline by match ID.
-func (c *MatchEndpoint) Timeline(region api.RiotRoute, matchID string) (*MatchTimelineDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "match", "method", "Timeline")
+func (m *MatchEndpoint) Timeline(region api.RiotRoute, matchID string) (*MatchTimelineDTO, error) {
+	logger := m.internalClient.Logger().With("endpoint", "match", "method", "Timeline")
 
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
 
 	var timeline *MatchTimelineDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &timeline)
+	err := m.internalClient.Do(http.MethodGet, region, url, nil, &timeline, "")
 
 	if err != nil {
 		logger.Warn(err)

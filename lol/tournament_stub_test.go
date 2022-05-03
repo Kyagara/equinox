@@ -45,7 +45,7 @@ func TestTournamentStubCreateCodes(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			options := lol.TournamentCodeParameters{
+			options := lol.TournamentCodeParametersDTO{
 				MapType:       lol.SummonersRiftMap,
 				PickType:      lol.TournamentDraftPick,
 				SpectatorType: lol.AllSpectator,
