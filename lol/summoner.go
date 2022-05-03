@@ -29,33 +29,33 @@ type SummonerDTO struct {
 }
 
 // Get a summoner by summoner name.
-func (c *SummonerEndpoint) ByName(region Region, summonerName string) (*SummonerDTO, error) {
-	return c.getSummoner(SummonerByNameURL, region, summonerName, "ByName")
+func (s *SummonerEndpoint) ByName(region Region, summonerName string) (*SummonerDTO, error) {
+	return s.getSummoner(SummonerByNameURL, region, summonerName, "ByName")
 }
 
 // Get a summoner by summoner account ID.
-func (c *SummonerEndpoint) ByAccountID(region Region, accountID string) (*SummonerDTO, error) {
-	return c.getSummoner(SummonerByAccountIDURL, region, accountID, "ByAccountID")
+func (s *SummonerEndpoint) ByAccountID(region Region, accountID string) (*SummonerDTO, error) {
+	return s.getSummoner(SummonerByAccountIDURL, region, accountID, "ByAccountID")
 }
 
 // Get a summoner by summoner PUUID.
-func (c *SummonerEndpoint) ByPUUID(region Region, PUUID string) (*SummonerDTO, error) {
-	return c.getSummoner(SummonerByPUUIDURL, region, PUUID, "ByPUUID")
+func (s *SummonerEndpoint) ByPUUID(region Region, PUUID string) (*SummonerDTO, error) {
+	return s.getSummoner(SummonerByPUUIDURL, region, PUUID, "ByPUUID")
 }
 
 // Get a summoner by summoner ID.
-func (c *SummonerEndpoint) ByID(region Region, PUUID string) (*SummonerDTO, error) {
-	return c.getSummoner(SummonerByID, region, PUUID, "ByID")
+func (s *SummonerEndpoint) ByID(region Region, PUUID string) (*SummonerDTO, error) {
+	return s.getSummoner(SummonerByID, region, PUUID, "ByID")
 }
 
-func (c *SummonerEndpoint) getSummoner(endpointMethod string, region Region, id string, methodName string) (*SummonerDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "summoner", "method", methodName)
+func (s *SummonerEndpoint) getSummoner(endpointMethod string, region Region, id string, methodName string) (*SummonerDTO, error) {
+	logger := s.internalClient.Logger().With("endpoint", "summoner", "method", methodName)
 
 	url := fmt.Sprintf(endpointMethod, id)
 
 	var summoner *SummonerDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &summoner)
+	err := s.internalClient.Do(http.MethodGet, region, url, nil, &summoner, "")
 
 	if err != nil {
 		logger.Warn(err)

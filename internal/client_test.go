@@ -36,7 +36,7 @@ func TestInternalClientRetries(t *testing.T) {
 	res := lol.PlatformDataDTO{}
 
 	// This will take 1 second
-	err := client.Do(http.MethodGet, lol.BR1, lol.StatusURL, nil, &res)
+	err := client.Do(http.MethodGet, lol.BR1, lol.StatusURL, nil, &res, "")
 
 	assert.Nil(t, err, "expecting nil error")
 

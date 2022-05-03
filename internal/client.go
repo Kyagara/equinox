@@ -42,18 +42,22 @@ func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 }
 
 // Executes a http request.
-func (c *InternalClient) Do(method string, route interface{}, endpoint string, body io.Reader, into interface{}) error {
+func (i *InternalClient) Do(method string, route interface{}, endpoint string, requestBody io.Reader, object interface{}, authorizationHeader string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new *http.Request.
-	req, err := c.newRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), body)
+	req, err := i.newRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
 
 	if err != nil {
 		return err
 	}
 
+	if authorizationHeader != "" {
+		req.Header.Set("Authorization", authorizationHeader)
+	}
+
 	// Sending http request and returning the response.
-	res, err := c.sendRequest(req, 0)
+	res, err := i.sendRequest(req, 0)
 
 	if err != nil {
 		return err
@@ -65,7 +69,7 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, b
 	}
 
 	// Decoding the body into the endpoint method response object.
-	if err := json.NewDecoder(res.Body).Decode(&into); err != nil {
+	if err := json.NewDecoder(res.Body).Decode(&object); err != nil {
 		return err
 	}
 
@@ -73,10 +77,10 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, b
 }
 
 // Sends a http request.
-func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.Response, error) {
-	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.Path)
+func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.Response, error) {
+	logger := i.logger.With("httpMethod", req.Method, "path", req.URL.Path)
 
-	if c.retry && retryCount > 1 {
+	if i.retry && retryCount > 1 {
 		logger.Debug(fmt.Sprintf("Retried %d times, stopping", retryCount))
 
 		return nil, fmt.Errorf(fmt.Sprintf("Retried %d times, stopping", retryCount))
@@ -85,7 +89,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 	logger.Debug("Making request")
 
 	// Sending request.
-	res, err := c.http.Do(req)
+	res, err := i.http.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -104,8 +108,8 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 		logger.Warn("Too many requests")
 
 		// If Retry is disabled just return an error.
-		if !c.retry {
-			return nil, c.newErrorResponse(res)
+		if !i.retry {
+			return nil, i.newErrorResponse(res)
 		}
 
 		retryAfter := res.Header.Get("Retry-After")
@@ -127,7 +131,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 		time.Sleep(time.Duration(seconds) * time.Second)
 
-		return c.sendRequest(req, retryCount+1)
+		return i.sendRequest(req, retryCount+1)
 	}
 
 	// If the API returns a 404 code, return an error.
@@ -139,7 +143,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
 		logger.Warn("Endpoint returned an error")
 
-		return nil, c.newErrorResponse(res)
+		return nil, i.newErrorResponse(res)
 	}
 
 	logger.Debug("Request successful")
@@ -148,8 +152,8 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 }
 
 // Creates a new *http.Request and sets headers.
-func (c *InternalClient) newRequest(method string, url string, body io.Reader) (*http.Request, error) {
-	if c.key == "" {
+func (i *InternalClient) newRequest(method string, url string, body io.Reader) (*http.Request, error) {
+	if i.key == "" {
 		return nil, fmt.Errorf("API Key not provided")
 	}
 
@@ -160,13 +164,13 @@ func (c *InternalClient) newRequest(method string, url string, body io.Reader) (
 	}
 
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("X-Riot-Token", c.key)
+	req.Header.Set("X-Riot-Token", i.key)
 
 	return req, nil
 }
 
 // Returns an error from the *http.Response provided.
-func (c *InternalClient) newErrorResponse(res *http.Response) error {
+func (i *InternalClient) newErrorResponse(res *http.Response) error {
 	var errRes api.ErrorResponse
 
 	err := json.NewDecoder(res.Body).Decode(&errRes)

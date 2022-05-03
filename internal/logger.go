@@ -11,14 +11,14 @@ import (
 func NewLogger(config *api.EquinoxConfig) *zap.SugaredLogger {
 	zapConfig := zap.NewProductionConfig()
 
-	options := &api.EquinoxConfig{
+	equinoxOptions := &api.EquinoxConfig{
 		Retry:   config.Retry,
 		Timeout: config.Timeout,
 	}
 
 	zapConfig.Level = zap.NewAtomicLevelAt(zapcore.Level(config.LogLevel))
 
-	logger, err := zapConfig.Build(zap.Fields(zap.Object("equinox", options)))
+	logger, err := zapConfig.Build(zap.Fields(zap.Object("equinox", equinoxOptions)))
 
 	if err != nil {
 		log.Fatalf("failed to initialize logger: %v", err)

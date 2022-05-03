@@ -30,14 +30,14 @@ func NewClient(key string) (*Equinox, error) {
 		Retry:    true,
 	}
 
-	internalClient := internal.NewInternalClient(config)
+	client := internal.NewInternalClient(config)
 
-	client := &Equinox{
-		internalClient: internalClient,
-		LOL:            lol.NewLOLClient(internalClient),
+	equinox := &Equinox{
+		internalClient: client,
+		LOL:            lol.NewLOLClient(client),
 	}
 
-	return client, nil
+	return equinox, nil
 }
 
 //	Creates a new Equinox client using a custom configuration.
@@ -48,12 +48,12 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 		return nil, fmt.Errorf("API Key not provided")
 	}
 
-	internalClient := internal.NewInternalClient(config)
+	client := internal.NewInternalClient(config)
 
-	client := &Equinox{
-		internalClient: internalClient,
-		LOL:            lol.NewLOLClient(internalClient),
+	equinox := &Equinox{
+		internalClient: client,
+		LOL:            lol.NewLOLClient(client),
 	}
 
-	return client, nil
+	return equinox, nil
 }

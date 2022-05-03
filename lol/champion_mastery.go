@@ -40,7 +40,7 @@ func (c *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID st
 
 	var masteries *[]ChampionMasteryDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &masteries)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &masteries, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -58,7 +58,7 @@ func (c *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 
 	var score *ChampionMasteryDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &score)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &score, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -76,7 +76,7 @@ func (c *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID stri
 
 	var sum int
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &sum)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &sum, "")
 
 	if err != nil {
 		logger.Warn(err)

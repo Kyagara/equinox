@@ -20,6 +20,15 @@ type LobbyEventDTOWrapper struct {
 	EventList []LobbyEventDTO `json:"eventList"`
 }
 
+type LobbyEventDTO struct {
+	// The summonerId that triggered the event (Encrypted)
+	SummonerID string `json:"summonerId"`
+	// The type of event that was triggered
+	EventType string `json:"eventType"`
+	// Timestamp from the event
+	Timestamp string `json:"timestamp"`
+}
+
 type TournamentCodeDTO struct {
 	// The tournament code.
 	Code string
@@ -49,16 +58,7 @@ type TournamentCodeDTO struct {
 	Participants []string
 }
 
-type LobbyEventDTO struct {
-	// The summonerId that triggered the event (Encrypted)
-	SummonerID string `json:"summonerId"`
-	// The type of event that was triggered
-	EventType string `json:"eventType"`
-	// Timestamp from the event
-	Timestamp string `json:"timestamp"`
-}
-
-type TournamentCodeParameters struct {
+type TournamentCodeParametersDTO struct {
 	// Optional list of encrypted summonerIds in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
 	AllowedSummonerIds []string `json:"allowedSummonerIds,omitempty"`
 	// The map type of the game. (Legal values: SUMMONERS_RIFT, TWISTED_TREELINE, HOWLING_ABYSS)
@@ -73,7 +73,7 @@ type TournamentCodeParameters struct {
 	TeamSize int `json:"teamSize"`
 }
 
-type TournamentCodeUpdateParameters struct {
+type TournamentCodeUpdateParametersDTO struct {
 	// Optional list of encrypted summonerIds in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
 	AllowedSummonerIds []string `json:"allowedSummonerIds,omitempty"`
 	// The map type of the game. (Legal values: SUMMONERS_RIFT, TWISTED_TREELINE, HOWLING_ABYSS)
@@ -85,8 +85,8 @@ type TournamentCodeUpdateParameters struct {
 }
 
 // Create a mock tournament code for the given tournament. Count defaults to 20 (max 1000).
-func (c *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options TournamentCodeParameters) ([]string, error) {
-	logger := c.internalClient.Logger().With("endpoint", "tournament", "method", "CreateCodes")
+func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options TournamentCodeParametersDTO) ([]string, error) {
+	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "CreateCodes")
 
 	if count < 0 {
 		count = 0
@@ -119,7 +119,7 @@ func (c *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options 
 
 	var codes []string
 
-	err = c.internalClient.Do(http.MethodPost, api.RouteAmericas, url, bytes.NewBuffer(body), &codes)
+	err = t.internalClient.Do(http.MethodPost, api.RouteAmericas, url, bytes.NewBuffer(body), &codes, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -130,14 +130,14 @@ func (c *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options 
 }
 
 // Returns the tournament code DTO associated with a tournament code string.
-func (c *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "tournament", "method", "ByCode")
+func (t *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, error) {
+	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "ByCode")
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
 	var tournament *TournamentCodeDTO
 
-	err := c.internalClient.Do(http.MethodGet, api.RouteAmericas, url, nil, &tournament)
+	err := t.internalClient.Do(http.MethodGet, api.RouteAmericas, url, nil, &tournament, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -148,10 +148,10 @@ func (c *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 }
 
 // Returns the tournament code DTO associated with a tournament code string.
-func (c *TournamentEndpoint) Update(tournamentCode string, options TournamentCodeUpdateParameters) error {
-	logger := c.internalClient.Logger().With("endpoint", "tournament", "method", "Update")
+func (t *TournamentEndpoint) Update(tournamentCode string, parameters TournamentCodeUpdateParametersDTO) error {
+	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "Update")
 
-	body, err := json.Marshal(options)
+	body, err := json.Marshal(parameters)
 
 	if err != nil {
 		logger.Error(err)
@@ -160,7 +160,7 @@ func (c *TournamentEndpoint) Update(tournamentCode string, options TournamentCod
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
-	err = c.internalClient.Do(http.MethodPut, api.RouteAmericas, url, bytes.NewBuffer(body), nil)
+	err = t.internalClient.Do(http.MethodPut, api.RouteAmericas, url, bytes.NewBuffer(body), nil, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -171,14 +171,14 @@ func (c *TournamentEndpoint) Update(tournamentCode string, options TournamentCod
 }
 
 // Gets a mock list of lobby events by tournament code.
-func (c *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
-	logger := c.internalClient.Logger().With("endpoint", "tournament", "method", "LobbyEvents")
+func (t *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
+	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "LobbyEvents")
 
 	url := fmt.Sprintf(TournamentLobbyEventsURL, tournamentCode)
 
 	var lobbyEvents *LobbyEventDTOWrapper
 
-	err := c.internalClient.Do(http.MethodGet, api.RouteAmericas, url, nil, &lobbyEvents)
+	err := t.internalClient.Do(http.MethodGet, api.RouteAmericas, url, nil, &lobbyEvents, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -195,8 +195,8 @@ func (c *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 // The region in which the provider will be running tournaments. (Legal values: BR, EUNE, EUW, JP, LAN, LAS, NA, OCE, PBE, RU, TR)
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
-func (c *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {
-	logger := c.internalClient.Logger().With("endpoint", "tournament", "method", "CreateProvider")
+func (t *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {
+	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "CreateProvider")
 
 	_, err := url.ParseRequestURI(callbackURL)
 
@@ -219,7 +219,7 @@ func (c *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 
 	var provider int
 
-	err = c.internalClient.Do(http.MethodPost, api.RouteAmericas, TournamentProvidersURL, bytes.NewBuffer(body), &provider)
+	err = t.internalClient.Do(http.MethodPost, api.RouteAmericas, TournamentProvidersURL, bytes.NewBuffer(body), &provider, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -234,8 +234,8 @@ func (c *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 // The provider ID to specify the regional registered provider data to associate this tournament.
 //
 // The optional name of the tournament.
-func (c *TournamentEndpoint) Create(providerID int, name string) (int, error) {
-	logger := c.internalClient.Logger().With("endpoint", "tournament", "method", "Create")
+func (t *TournamentEndpoint) Create(providerID int, name string) (int, error) {
+	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "Create")
 
 	options := struct {
 		Name       string `json:"name"`
@@ -251,7 +251,7 @@ func (c *TournamentEndpoint) Create(providerID int, name string) (int, error) {
 
 	var tournament int
 
-	err = c.internalClient.Do(http.MethodPost, api.RouteAmericas, TournamentURL, bytes.NewBuffer(body), &tournament)
+	err = t.internalClient.Do(http.MethodPost, api.RouteAmericas, TournamentURL, bytes.NewBuffer(body), &tournament, "")
 
 	if err != nil {
 		logger.Warn(err)

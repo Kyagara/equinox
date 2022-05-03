@@ -25,7 +25,7 @@ func (c *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, erro
 
 	var rotations *ChampionRotationsDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, ChampionURL, nil, &rotations)
+	err := c.internalClient.Do(http.MethodGet, region, ChampionURL, nil, &rotations, "")
 
 	if err != nil {
 		logger.Warn(err)

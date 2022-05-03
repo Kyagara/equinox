@@ -45,7 +45,7 @@ func TestTournamentCreateCodes(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			options := lol.TournamentCodeParameters{
+			options := lol.TournamentCodeParametersDTO{
 				MapType:       lol.SummonersRiftMap,
 				PickType:      lol.TournamentDraftPick,
 				SpectatorType: lol.AllSpectator,
@@ -135,7 +135,7 @@ func TestTournamentUpdate(t *testing.T) {
 				Put(fmt.Sprintf(lol.TournamentByCodeURL, "tournamentCode")).
 				Reply(test.code)
 
-			options := lol.TournamentCodeUpdateParameters{
+			options := lol.TournamentCodeUpdateParametersDTO{
 				MapType: lol.SummonersRiftMap,
 			}
 

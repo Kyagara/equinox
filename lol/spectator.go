@@ -119,7 +119,7 @@ type CurrentGameParticipantDTO struct {
 	// List of Game Customizations.
 	GameCustomizationObjects []GameCustomizationObject `json:"gameCustomizationObjects"`
 	// Perks/Runes Reforged Information.
-	Perks `json:"perks"`
+	Perks Perks `json:"perks"`
 }
 
 type GameCustomizationObject struct {
@@ -139,12 +139,12 @@ type Perks struct {
 }
 
 // Get featured games in a region.
-func (c *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "spectator", "method", "FeaturedGames")
+func (s *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, error) {
+	logger := s.internalClient.Logger().With("endpoint", "spectator", "method", "FeaturedGames")
 
 	var games *FeaturedGamesDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, SpectatorFeaturedGamesURL, nil, &games)
+	err := s.internalClient.Do(http.MethodGet, region, SpectatorFeaturedGamesURL, nil, &games, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -155,12 +155,12 @@ func (c *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, err
 }
 
 // Get the current game information for the given summoner ID.
-func (c *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*CurrentGameInfoDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "spectator", "method", "FeaturedGames")
+func (s *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*CurrentGameInfoDTO, error) {
+	logger := s.internalClient.Logger().With("endpoint", "spectator", "method", "FeaturedGames")
 
 	var game *CurrentGameInfoDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), nil, &game)
+	err := s.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), nil, &game, "")
 
 	if err != nil {
 		logger.Warn(err)

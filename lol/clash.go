@@ -55,7 +55,7 @@ func (c *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error
 
 	var tournaments *[]ClashTournamentDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, ClashURL, nil, &tournaments)
+	err := c.internalClient.Do(http.MethodGet, region, ClashURL, nil, &tournaments, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -75,7 +75,7 @@ func (c *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]To
 
 	var players *[]TournamentPlayerDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &players)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &players, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -93,7 +93,7 @@ func (c *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*Tourn
 
 	var team *TournamentTeamDto
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &team)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &team, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -120,7 +120,7 @@ func (c *ClashEndpoint) getClash(endpointMethod string, region Region, id string
 
 	var tournament *ClashTournamentDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &tournament)
+	err := c.internalClient.Do(http.MethodGet, region, url, nil, &tournament, "")
 
 	if err != nil {
 		logger.Warn(err)
