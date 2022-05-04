@@ -7,12 +7,14 @@ import (
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/lol"
 	"github.com/Kyagara/equinox/riot"
+	"github.com/Kyagara/equinox/tft"
 )
 
 type Equinox struct {
 	internalClient *internal.InternalClient
 	Riot           *riot.RiotClient
 	LOL            *lol.LOLClient
+	TFT            *tft.TFTClient
 }
 
 //	Creates a new Equinox client with a default configuration
@@ -40,6 +42,7 @@ func NewClient(key string) (*Equinox, error) {
 		internalClient: client,
 		Riot:           riot.NewRiotClient(client),
 		LOL:            lol.NewLOLClient(client),
+		TFT:            tft.NewTFTClient(client),
 	}
 
 	return equinox, nil
@@ -59,6 +62,7 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 		internalClient: client,
 		Riot:           riot.NewRiotClient(client),
 		LOL:            lol.NewLOLClient(client),
+		TFT:            tft.NewTFTClient(client),
 	}
 
 	return equinox, nil
