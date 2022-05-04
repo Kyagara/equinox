@@ -51,7 +51,7 @@ func (t *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 
 	var codes []string
 
-	err = t.internalClient.Do(http.MethodPost, api.RouteAmericas, url, bytes.NewBuffer(body), &codes, "")
+	err = t.internalClient.Do(http.MethodPost, api.Americas, url, bytes.NewBuffer(body), &codes, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -69,7 +69,7 @@ func (t *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEvent
 
 	var lobbyEvents *LobbyEventDTOWrapper
 
-	err := t.internalClient.Do(http.MethodGet, api.RouteAmericas, url, nil, &lobbyEvents, "")
+	err := t.internalClient.Do(http.MethodGet, api.Americas, url, nil, &lobbyEvents, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -110,7 +110,7 @@ func (t *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 
 	var provider int
 
-	err = t.internalClient.Do(http.MethodPost, api.RouteAmericas, TournamentStubProvidersURL, bytes.NewBuffer(body), &provider, "")
+	err = t.internalClient.Do(http.MethodPost, api.Americas, TournamentStubProvidersURL, bytes.NewBuffer(body), &provider, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -142,7 +142,7 @@ func (t *TournamentStubEndpoint) Create(providerID int, name string) (int, error
 
 	var tournament int
 
-	err = t.internalClient.Do(http.MethodPost, api.RouteAmericas, TournamentStubURL, bytes.NewBuffer(body), &tournament, "")
+	err = t.internalClient.Do(http.MethodPost, api.Americas, TournamentStubURL, bytes.NewBuffer(body), &tournament, "")
 
 	if err != nil {
 		logger.Warn(err)

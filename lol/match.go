@@ -317,8 +317,12 @@ type MatchlistOptions struct {
 }
 
 // Get a list of match IDs by PUUID. Default query: start: 0, count: 20
-func (m *MatchEndpoint) List(region api.RiotRoute, PUUID string, options *MatchlistOptions) ([]string, error) {
+func (m *MatchEndpoint) List(region api.Cluster, PUUID string, options *MatchlistOptions) ([]string, error) {
 	logger := m.internalClient.Logger().With("endpoint", "match", "method", "List")
+
+	if region == api.Esports {
+		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
+	}
 
 	if options == nil {
 		options = &MatchlistOptions{Start: 0, Count: 20}
@@ -367,8 +371,12 @@ func (m *MatchEndpoint) List(region api.RiotRoute, PUUID string, options *Matchl
 }
 
 // Get a match by match ID.
-func (m *MatchEndpoint) ByID(region api.RiotRoute, matchID string) (*MatchDTO, error) {
+func (m *MatchEndpoint) ByID(region api.Cluster, matchID string) (*MatchDTO, error) {
 	logger := m.internalClient.Logger().With("endpoint", "match", "method", "ByID")
+
+	if region == api.Esports {
+		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
+	}
 
 	url := fmt.Sprintf(MatchURL, matchID)
 
@@ -385,8 +393,12 @@ func (m *MatchEndpoint) ByID(region api.RiotRoute, matchID string) (*MatchDTO, e
 }
 
 // Get a match timeline by match ID.
-func (m *MatchEndpoint) Timeline(region api.RiotRoute, matchID string) (*MatchTimelineDTO, error) {
+func (m *MatchEndpoint) Timeline(region api.Cluster, matchID string) (*MatchTimelineDTO, error) {
 	logger := m.internalClient.Logger().With("endpoint", "match", "method", "Timeline")
+
+	if region == api.Esports {
+		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
+	}
 
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
 

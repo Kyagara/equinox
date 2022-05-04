@@ -1,4 +1,4 @@
-package lol_test
+package riot_test
 
 import (
 	"fmt"
@@ -7,27 +7,27 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/Kyagara/equinox/lol"
+	"github.com/Kyagara/equinox/riot"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
 
-func TestTournamentStubCreateCodes(t *testing.T) {
+func TestAccountPlayerActiveShard(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	client := lol.NewLOLClient(internalClient)
+	client := riot.NewRiotClient(internalClient)
 
 	tests := []struct {
 		name    string
 		code    int
-		want    []string
+		want    *riot.ActiveShardDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: []string{},
+			want: &riot.ActiveShardDTO{},
 		},
 		{
 			name:    "not found",
@@ -41,18 +41,11 @@ func TestTournamentStubCreateCodes(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
-				Post(lol.TournamentStubCodesURL).
+				Get(fmt.Sprintf(riot.AccountActiveShardURL, api.VAL, "PUUID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			options := lol.TournamentCodeParametersDTO{
-				MapType:       lol.SummonersRiftMap,
-				PickType:      lol.TournamentDraftPick,
-				SpectatorType: lol.AllSpectator,
-				TeamSize:      5,
-			}
-
-			gotData, gotErr := client.TournamentStub.CreateCodes(1, 1, options)
+			gotData, gotErr := client.Account.PlayerActiveShard("PUUID", api.VAL)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -63,21 +56,21 @@ func TestTournamentStubCreateCodes(t *testing.T) {
 	}
 }
 
-func TestTournamentStubLobbyEvents(t *testing.T) {
+func TestAccountByPUUID(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	client := lol.NewLOLClient(internalClient)
+	client := riot.NewRiotClient(internalClient)
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.LobbyEventDTOWrapper
+		want    *riot.AccountDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.LobbyEventDTOWrapper{},
+			want: &riot.AccountDTO{},
 		},
 		{
 			name:    "not found",
@@ -91,11 +84,11 @@ func TestTournamentStubLobbyEvents(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
-				Get(fmt.Sprintf(lol.TournamentStubLobbyEventsURL, "tournamentCode")).
+				Get(fmt.Sprintf(riot.AccountByPUUIDURL, "PUUID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.TournamentStub.LobbyEvents("tournamentCode")
+			gotData, gotErr := client.Account.ByPUUID("PUUID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -106,21 +99,21 @@ func TestTournamentStubLobbyEvents(t *testing.T) {
 	}
 }
 
-func TestTournamentStubCreate(t *testing.T) {
+func TestAccountByID(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	client := lol.NewLOLClient(internalClient)
+	client := riot.NewRiotClient(internalClient)
 
 	tests := []struct {
 		name    string
 		code    int
-		want    int
+		want    *riot.AccountDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: 0,
+			want: &riot.AccountDTO{},
 		},
 		{
 			name:    "not found",
@@ -134,11 +127,11 @@ func TestTournamentStubCreate(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
-				Post(lol.TournamentStubURL).
+				Get(fmt.Sprintf(riot.AccountByRiotIDURL, "gameName", "tagLine")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.TournamentStub.Create(1, "name")
+			gotData, gotErr := client.Account.ByID("gameName", "tagLine")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -149,21 +142,21 @@ func TestTournamentStubCreate(t *testing.T) {
 	}
 }
 
-func TestTournamentStubCreateProvider(t *testing.T) {
+func TestAccountByAccessToken(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	client := lol.NewLOLClient(internalClient)
+	client := riot.NewRiotClient(internalClient)
 
 	tests := []struct {
 		name    string
 		code    int
-		want    int
+		want    *riot.AccountDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: 0,
+			want: &riot.AccountDTO{},
 		},
 		{
 			name:    "not found",
@@ -177,11 +170,11 @@ func TestTournamentStubCreateProvider(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
-				Post(lol.TournamentStubProvidersURL).
+				Get(riot.AccountByAccessTokenURL).
 				Reply(test.code).
-				JSON(test.want)
+				JSON(test.want).SetHeader("Authorization", "accessToken")
 
-			gotData, gotErr := client.TournamentStub.CreateProvider("name", "http://localhost:80")
+			gotData, gotErr := client.Account.ByAccessToken("accessToken")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

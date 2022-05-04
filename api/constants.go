@@ -5,13 +5,21 @@ const (
 	BaseURLFormat = "https://%s.api.riotgames.com"
 )
 
-type RiotRoute string
+type Game string
 
-// Riot API routes
 const (
-	RouteAmericas RiotRoute = "americas"
-	RouteEurope   RiotRoute = "europe"
-	RouteAsia     RiotRoute = "asia"
+	LOR Game = "lor"
+	VAL Game = "val"
+)
+
+type Cluster string
+
+// Riot API clusters
+const (
+	Americas Cluster = "americas"
+	Europe   Cluster = "europe"
+	Esports  Cluster = "esports"
+	Asia     Cluster = "asia"
 )
 
 type LogLevel int8

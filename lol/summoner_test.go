@@ -170,11 +170,54 @@ func TestSummonerByID(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.SummonerByID, "summonerID")).
+				Get(fmt.Sprintf(lol.SummonerByIDURL, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
 			gotData, gotErr := client.Summoner.ByID(lol.BR1, "summonerID")
+
+			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, gotData, test.want)
+			}
+		})
+	}
+}
+
+func TestSummonerByAccessToken(t *testing.T) {
+	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	client := lol.NewLOLClient(internalClient)
+
+	tests := []struct {
+		name    string
+		code    int
+		want    *lol.SummonerDTO
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: http.StatusOK,
+			want: &lol.SummonerDTO{},
+		},
+		{
+			name:    "not found",
+			code:    http.StatusNotFound,
+			wantErr: api.NotFoundError,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer gock.Off()
+
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(lol.SummonerByAccessTokenURL).
+				Reply(test.code).
+				JSON(test.want).SetHeader("Authorization", "accessToken")
+
+			gotData, gotErr := client.Summoner.ByAccessToken(lol.BR1, "accessToken")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

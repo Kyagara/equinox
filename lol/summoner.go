@@ -30,32 +30,35 @@ type SummonerDTO struct {
 
 // Get a summoner by summoner name.
 func (s *SummonerEndpoint) ByName(region Region, summonerName string) (*SummonerDTO, error) {
-	return s.getSummoner(SummonerByNameURL, region, summonerName, "ByName")
+	return s.getSummoner(fmt.Sprintf(SummonerByNameURL, summonerName), region, "", "ByName")
 }
 
 // Get a summoner by summoner account ID.
 func (s *SummonerEndpoint) ByAccountID(region Region, accountID string) (*SummonerDTO, error) {
-	return s.getSummoner(SummonerByAccountIDURL, region, accountID, "ByAccountID")
+	return s.getSummoner(fmt.Sprintf(SummonerByAccountIDURL, accountID), region, "", "ByAccountID")
 }
 
 // Get a summoner by summoner PUUID.
 func (s *SummonerEndpoint) ByPUUID(region Region, PUUID string) (*SummonerDTO, error) {
-	return s.getSummoner(SummonerByPUUIDURL, region, PUUID, "ByPUUID")
+	return s.getSummoner(fmt.Sprintf(SummonerByPUUIDURL, PUUID), region, "", "ByPUUID")
 }
 
 // Get a summoner by summoner ID.
 func (s *SummonerEndpoint) ByID(region Region, PUUID string) (*SummonerDTO, error) {
-	return s.getSummoner(SummonerByID, region, PUUID, "ByID")
+	return s.getSummoner(fmt.Sprintf(SummonerByIDURL, PUUID), region, "", "ByID")
 }
 
-func (s *SummonerEndpoint) getSummoner(endpointMethod string, region Region, id string, methodName string) (*SummonerDTO, error) {
-	logger := s.internalClient.Logger().With("endpoint", "summoner", "method", methodName)
+// Get a summoner by access token.
+func (s *SummonerEndpoint) ByAccessToken(region Region, accessToken string) (*SummonerDTO, error) {
+	return s.getSummoner(SummonerByAccessTokenURL, region, accessToken, "ByAccessToken")
+}
 
-	url := fmt.Sprintf(endpointMethod, id)
+func (s *SummonerEndpoint) getSummoner(url string, region Region, accessToken string, methodName string) (*SummonerDTO, error) {
+	logger := s.internalClient.Logger().With("endpoint", "summoner", "method", methodName)
 
 	var summoner *SummonerDTO
 
-	err := s.internalClient.Do(http.MethodGet, region, url, nil, &summoner, "")
+	err := s.internalClient.Do(http.MethodGet, region, url, nil, &summoner, accessToken)
 
 	if err != nil {
 		logger.Warn(err)

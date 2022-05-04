@@ -84,7 +84,7 @@ func TestLeagueByID(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.LeagueByID, "leagueID")).
+				Get(fmt.Sprintf(lol.LeagueByIDURL, "leagueID")).
 				Reply(test.code).
 				JSON(test.want)
 

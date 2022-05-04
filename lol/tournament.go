@@ -119,7 +119,7 @@ func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options 
 
 	var codes []string
 
-	err = t.internalClient.Do(http.MethodPost, api.RouteAmericas, url, bytes.NewBuffer(body), &codes, "")
+	err = t.internalClient.Do(http.MethodPost, api.Americas, url, bytes.NewBuffer(body), &codes, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -137,7 +137,7 @@ func (t *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 
 	var tournament *TournamentCodeDTO
 
-	err := t.internalClient.Do(http.MethodGet, api.RouteAmericas, url, nil, &tournament, "")
+	err := t.internalClient.Do(http.MethodGet, api.Americas, url, nil, &tournament, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -160,7 +160,7 @@ func (t *TournamentEndpoint) Update(tournamentCode string, parameters Tournament
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
-	err = t.internalClient.Do(http.MethodPut, api.RouteAmericas, url, bytes.NewBuffer(body), nil, "")
+	err = t.internalClient.Do(http.MethodPut, api.Americas, url, bytes.NewBuffer(body), nil, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -178,7 +178,7 @@ func (t *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 
 	var lobbyEvents *LobbyEventDTOWrapper
 
-	err := t.internalClient.Do(http.MethodGet, api.RouteAmericas, url, nil, &lobbyEvents, "")
+	err := t.internalClient.Do(http.MethodGet, api.Americas, url, nil, &lobbyEvents, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -219,7 +219,7 @@ func (t *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 
 	var provider int
 
-	err = t.internalClient.Do(http.MethodPost, api.RouteAmericas, TournamentProvidersURL, bytes.NewBuffer(body), &provider, "")
+	err = t.internalClient.Do(http.MethodPost, api.Americas, TournamentProvidersURL, bytes.NewBuffer(body), &provider, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -251,7 +251,7 @@ func (t *TournamentEndpoint) Create(providerID int, name string) (int, error) {
 
 	var tournament int
 
-	err = t.internalClient.Do(http.MethodPost, api.RouteAmericas, TournamentURL, bytes.NewBuffer(body), &tournament, "")
+	err = t.internalClient.Do(http.MethodPost, api.Americas, TournamentURL, bytes.NewBuffer(body), &tournament, "")
 
 	if err != nil {
 		logger.Warn(err)
