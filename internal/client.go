@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -68,6 +69,28 @@ func (i *InternalClient) Do(method string, route interface{}, endpoint string, r
 
 	// In case of a PUT request
 	if res.Request.Method == http.MethodPut {
+		return nil
+	}
+
+	// In case of a post request returning just a single, non JSON value.
+	// This has a Post requirement because at the momento only one post request returns a plain text response
+	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type assertion
+	// This implementation looks horrible, I don't know another way of decoding any non JSON value to the &object
+	if res.Request.Method == http.MethodPost && res.Header.Get("Content-Type") == "" {
+		value, err := ioutil.ReadAll(res.Body)
+
+		if err != nil {
+			return err
+		}
+
+		body := []byte(fmt.Sprintf(`{"response":"%s"}`, string(value)))
+
+		err = json.Unmarshal(body, &object)
+
+		if err != nil {
+			return err
+		}
+
 		return nil
 	}
 

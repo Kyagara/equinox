@@ -11,6 +11,10 @@ type Status struct {
 	StatusCode int    `json:"status_code"`
 }
 
+type PlainTextResponse struct {
+	Response any `json:"response"`
+}
+
 func (e ErrorResponse) Error() string {
 	return e.Status.Message
 }
