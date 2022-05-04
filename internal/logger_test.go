@@ -21,7 +21,7 @@ func TestLogger(t *testing.T) {
 
 	require.NotNil(t, client, "expecting non-nil InternalClient")
 
-	logger := client.Logger()
+	logger := client.Logger("logger")
 
 	assert.NotNil(t, logger, "expecting non-nil Logger")
 

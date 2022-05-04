@@ -86,7 +86,7 @@ type TournamentCodeUpdateParametersDTO struct {
 
 // Create a mock tournament code for the given tournament. Count defaults to 20 (max 1000).
 func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options TournamentCodeParametersDTO) ([]string, error) {
-	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "CreateCodes")
+	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateCodes")
 
 	if count < 0 {
 		count = 0
@@ -131,7 +131,7 @@ func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options 
 
 // Returns the tournament code DTO associated with a tournament code string.
 func (t *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, error) {
-	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "ByCode")
+	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "ByCode")
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
@@ -149,7 +149,7 @@ func (t *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 
 // Returns the tournament code DTO associated with a tournament code string.
 func (t *TournamentEndpoint) Update(tournamentCode string, parameters TournamentCodeUpdateParametersDTO) error {
-	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "Update")
+	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "Update")
 
 	body, err := json.Marshal(parameters)
 
@@ -172,7 +172,7 @@ func (t *TournamentEndpoint) Update(tournamentCode string, parameters Tournament
 
 // Gets a mock list of lobby events by tournament code.
 func (t *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
-	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "LobbyEvents")
+	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "LobbyEvents")
 
 	url := fmt.Sprintf(TournamentLobbyEventsURL, tournamentCode)
 
@@ -196,7 +196,7 @@ func (t *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
 func (t *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {
-	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "CreateProvider")
+	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateProvider")
 
 	_, err := url.ParseRequestURI(callbackURL)
 
@@ -235,7 +235,7 @@ func (t *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 //
 // The optional name of the tournament.
 func (t *TournamentEndpoint) Create(providerID int, name string) (int, error) {
-	logger := t.internalClient.Logger().With("endpoint", "tournament", "method", "Create")
+	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "Create")
 
 	options := struct {
 		Name       string `json:"name"`

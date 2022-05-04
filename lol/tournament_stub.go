@@ -18,7 +18,7 @@ type TournamentStubEndpoint struct {
 
 // Create a mock tournament code for the given tournament. Count defaults to 20 (max 1000).
 func (t *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, parameters TournamentCodeParametersDTO) ([]string, error) {
-	logger := t.internalClient.Logger().With("endpoint", "tournament-stub", "method", "CreateCodes")
+	logger := t.internalClient.Logger("lol").With("endpoint", "tournament-stub", "method", "CreateCodes")
 
 	if count < 0 {
 		count = 0
@@ -63,7 +63,7 @@ func (t *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 
 // Gets a mock list of lobby events by tournament code.
 func (t *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
-	logger := t.internalClient.Logger().With("endpoint", "tournament-stub", "method", "LobbyEvents")
+	logger := t.internalClient.Logger("lol").With("endpoint", "tournament-stub", "method", "LobbyEvents")
 
 	url := fmt.Sprintf(TournamentStubLobbyEventsURL, tournamentCode)
 
@@ -87,7 +87,7 @@ func (t *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEvent
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
 func (t *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {
-	logger := t.internalClient.Logger().With("endpoint", "tournament-stub", "method", "CreateProvider")
+	logger := t.internalClient.Logger("lol").With("endpoint", "tournament-stub", "method", "CreateProvider")
 
 	_, err := url.ParseRequestURI(callbackURL)
 
@@ -126,7 +126,7 @@ func (t *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 //
 // The optional name of the tournament.
 func (t *TournamentStubEndpoint) Create(providerID int, name string) (int, error) {
-	logger := t.internalClient.Logger().With("endpoint", "tournament-stub", "method", "Create")
+	logger := t.internalClient.Logger("lol").With("endpoint", "tournament-stub", "method", "Create")
 
 	options := struct {
 		Name       string `json:"name"`

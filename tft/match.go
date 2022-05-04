@@ -30,7 +30,7 @@ type Metadata struct {
 	Participants []string `json:"participants"`
 }
 
-type Companion struct {
+type CompanionDTO struct {
 	ContentID string `json:"content_ID"`
 	SkinID    int    `json:"skin_ID"`
 	Species   string `json:"species"`
@@ -62,13 +62,13 @@ type UnitsDTO struct {
 	// Unit tier.
 	Tier int `json:"tier"`
 	// If a unit is chosen as part of the Fates set mechanic, the chosen trait will be indicated by this field. Otherwise this field is excluded from the response.
-	Chosen string `json:"chosen"`
+	Chosen string `json:"chosen,omitempty"`
 }
 
 type ParticipantsDTO struct {
 	Augments []string `json:"augments"`
 	// Participant's companion.
-	Companion Companion `json:"companion"`
+	Companion CompanionDTO `json:"companion"`
 	// Gold left after participant was eliminated.
 	GoldLeft int `json:"gold_left"`
 	// The round the participant was eliminated in. Note: If the player was eliminated in stage 2-1 their last_round would be 5.
@@ -102,14 +102,14 @@ type InfoDTO struct {
 	Participants []ParticipantsDTO `json:"participants"`
 	// Please refer to the League of Legends documentation.
 	QueueID     int    `json:"queue_id"`
-	TFTGameType string `json:"tft_game_type"`
+	TFTGameType string `json:"tft_game_type,omitempty"`
 	// Teamfight Tactics set number.
 	TFTSetNumber int `json:"tft_set_number"`
 }
 
 // Get a list of match IDs by PUUID. Default query: count: 20
 func (m *MatchEndpoint) List(region api.Cluster, PUUID string, count int) ([]string, error) {
-	logger := m.internalClient.Logger().With("endpoint", "match", "method", "List")
+	logger := m.internalClient.Logger("tft").With("endpoint", "match", "method", "List")
 
 	if region == api.Esports {
 		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
@@ -141,7 +141,7 @@ func (m *MatchEndpoint) List(region api.Cluster, PUUID string, count int) ([]str
 
 // Get a match by match ID.
 func (m *MatchEndpoint) ByID(region api.Cluster, matchID string) (*MatchDTO, error) {
-	logger := m.internalClient.Logger().With("endpoint", "match", "method", "ByID")
+	logger := m.internalClient.Logger("tft").With("endpoint", "match", "method", "ByID")
 
 	if region == api.Esports {
 		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")

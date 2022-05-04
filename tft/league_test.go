@@ -1,4 +1,4 @@
-package lol_test
+package tft_test
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/lol"
+	"github.com/Kyagara/equinox/tft"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
@@ -16,18 +17,18 @@ import (
 func TestLeagueEntries(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	client := lol.NewLOLClient(internalClient)
+	client := tft.NewTFTClient(internalClient)
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *[]lol.LeagueEntryDTO
+		want    *[]tft.LeagueEntryDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &[]lol.LeagueEntryDTO{},
+			want: &[]tft.LeagueEntryDTO{},
 		},
 		{
 			name:    "not found",
@@ -41,11 +42,11 @@ func TestLeagueEntries(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.LeagueEntriesURL, lol.Solo5x5Queue, lol.GoldTier, api.I)).
+				Get(fmt.Sprintf(tft.LeagueEntriesURL, lol.GoldTier, api.I)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.Entries(lol.BR1, lol.Solo5x5Queue, lol.GoldTier, api.I, 1)
+			gotData, gotErr := client.League.Entries(lol.BR1, lol.GoldTier, api.I, 1)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -59,18 +60,18 @@ func TestLeagueEntries(t *testing.T) {
 func TestLeagueByID(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	client := lol.NewLOLClient(internalClient)
+	client := tft.NewTFTClient(internalClient)
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.LeagueListDTO
+		want    *tft.LeagueListDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
+			want: &tft.LeagueListDTO{},
 		},
 		{
 			name:    "not found",
@@ -84,7 +85,7 @@ func TestLeagueByID(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.LeagueByIDURL, "leagueID")).
+				Get(fmt.Sprintf(tft.LeagueByIDURL, "leagueID")).
 				Reply(test.code).
 				JSON(test.want)
 
@@ -99,21 +100,21 @@ func TestLeagueByID(t *testing.T) {
 	}
 }
 
-func TestLeagueSummonerEntries(t *testing.T) {
+func TestLeagueTopRatedLadder(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	client := lol.NewLOLClient(internalClient)
+	client := tft.NewTFTClient(internalClient)
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *[]lol.LeagueEntryDTO
+		want    *[]tft.TopRatedLadderEntryDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &[]lol.LeagueEntryDTO{},
+			want: &[]tft.TopRatedLadderEntryDTO{},
 		},
 		{
 			name:    "not found",
@@ -127,7 +128,50 @@ func TestLeagueSummonerEntries(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.LeagueEntriesBySummonerURL, "summonerID")).
+				Get(fmt.Sprintf(tft.LeagueRatedLaddersURL, "queue")).
+				Reply(test.code).
+				JSON(test.want)
+
+			gotData, gotErr := client.League.TopRatedLadder(lol.BR1, "queue")
+
+			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, gotData, test.want)
+			}
+		})
+	}
+}
+
+func TestLeagueSummonerEntries(t *testing.T) {
+	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	client := tft.NewTFTClient(internalClient)
+
+	tests := []struct {
+		name    string
+		code    int
+		want    *[]tft.LeagueEntryDTO
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: http.StatusOK,
+			want: &[]tft.LeagueEntryDTO{},
+		},
+		{
+			name:    "not found",
+			code:    http.StatusNotFound,
+			wantErr: api.NotFoundError,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			defer gock.Off()
+
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+				Get(fmt.Sprintf(tft.LeagueEntriesBySummonerURL, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
@@ -142,21 +186,21 @@ func TestLeagueSummonerEntries(t *testing.T) {
 	}
 }
 
-func TestLeagueChallengerByQueue(t *testing.T) {
+func TestLeagueChallenger(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	client := lol.NewLOLClient(internalClient)
+	client := tft.NewTFTClient(internalClient)
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.LeagueListDTO
+		want    *tft.LeagueListDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
+			want: &tft.LeagueListDTO{},
 		},
 		{
 			name:    "not found",
@@ -170,11 +214,11 @@ func TestLeagueChallengerByQueue(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.LeagueChallengerURL, lol.Solo5x5Queue)).
+				Get(tft.LeagueChallengerURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.ChallengerByQueue(lol.BR1, lol.Solo5x5Queue)
+			gotData, gotErr := client.League.Challenger(lol.BR1)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -185,21 +229,21 @@ func TestLeagueChallengerByQueue(t *testing.T) {
 	}
 }
 
-func TestLeagueGrandmasterByQueue(t *testing.T) {
+func TestLeagueGrandmaster(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	client := lol.NewLOLClient(internalClient)
+	client := tft.NewTFTClient(internalClient)
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.LeagueListDTO
+		want    *tft.LeagueListDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
+			want: &tft.LeagueListDTO{},
 		},
 		{
 			name:    "not found",
@@ -213,11 +257,11 @@ func TestLeagueGrandmasterByQueue(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.LeagueGrandmasterURL, lol.Solo5x5Queue)).
+				Get(tft.LeagueGrandmasterURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.GrandmasterByQueue(lol.BR1, lol.Solo5x5Queue)
+			gotData, gotErr := client.League.Grandmaster(lol.BR1)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -228,21 +272,21 @@ func TestLeagueGrandmasterByQueue(t *testing.T) {
 	}
 }
 
-func TestLeagueMasterByQueue(t *testing.T) {
+func TestLeagueMaster(t *testing.T) {
 	internalClient := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	client := lol.NewLOLClient(internalClient)
+	client := tft.NewTFTClient(internalClient)
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.LeagueListDTO
+		want    *tft.LeagueListDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
+			want: &tft.LeagueListDTO{},
 		},
 		{
 			name:    "not found",
@@ -256,11 +300,11 @@ func TestLeagueMasterByQueue(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.LeagueMasterURL, lol.Solo5x5Queue)).
+				Get(tft.LeagueMasterURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.MasterByQueue(lol.BR1, lol.Solo5x5Queue)
+			gotData, gotErr := client.League.Master(lol.BR1)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

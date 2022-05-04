@@ -51,7 +51,7 @@ type TournamentPlayerDTO struct {
 
 // Get all active or upcoming tournaments.
 func (c *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "clash", "method", "Tournaments")
+	logger := c.internalClient.Logger("lol").With("endpoint", "clash", "method", "Tournaments")
 
 	var tournaments *[]ClashTournamentDTO
 
@@ -69,7 +69,7 @@ func (c *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error
 //
 // This endpoint returns a list of active Clash players for a given summoner ID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
 func (c *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]TournamentPlayerDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "clash", "method", "SummonerEntries")
+	logger := c.internalClient.Logger("lol").With("endpoint", "clash", "method", "SummonerEntries")
 
 	url := fmt.Sprintf(ClashSummonerEntriesURL, summonerID)
 
@@ -87,7 +87,7 @@ func (c *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]To
 
 // Get team by ID.
 func (c *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*TournamentTeamDto, error) {
-	logger := c.internalClient.Logger().With("endpoint", "clash", "method", "TournamentTeamByID")
+	logger := c.internalClient.Logger("lol").With("endpoint", "clash", "method", "TournamentTeamByID")
 
 	url := fmt.Sprintf(ClashTournamentTeamByIDURL, teamID)
 
@@ -114,7 +114,7 @@ func (c *ClashEndpoint) ByTeamID(region Region, teamID string) (*ClashTournament
 }
 
 func (c *ClashEndpoint) getClash(endpointMethod string, region Region, id string, methodName string) (*ClashTournamentDTO, error) {
-	logger := c.internalClient.Logger().With("endpoint", "clash", "method", methodName)
+	logger := c.internalClient.Logger("lol").With("endpoint", "clash", "method", methodName)
 
 	url := fmt.Sprintf(endpointMethod, id)
 

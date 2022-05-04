@@ -10,7 +10,7 @@ Equinox is a Riot Games API client written in golang with the goal of providing 
 -   [ ] Data Dragon
 -   [x] Riot Account
 -   [x] League of Legends
--   [ ] Teamfight Tactics
+-   [x] Teamfight Tactics
 -   [ ] Valorant
 -   [ ] Legends of Runeterra
 
