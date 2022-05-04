@@ -50,7 +50,9 @@ type MiniSeriesDTO struct {
 	Wins     int    `json:"wins"`
 }
 
-// Get all the league entries. Page defaults to 1.
+// Get all the league entries.
+//
+// Page defaults to 1.
 func (l *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
 	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", "Entries")
 
