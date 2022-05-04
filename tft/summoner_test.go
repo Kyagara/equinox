@@ -22,13 +22,13 @@ func TestSummonerByAccountID(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *tft.SummonerDTO
+		want    *lol.SummonerDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &tft.SummonerDTO{},
+			want: &lol.SummonerDTO{},
 		},
 		{
 			name:    "not found",
@@ -65,13 +65,13 @@ func TestSummonerByName(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *tft.SummonerDTO
+		want    *lol.SummonerDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &tft.SummonerDTO{},
+			want: &lol.SummonerDTO{},
 		},
 		{
 			name:    "not found",
@@ -108,13 +108,13 @@ func TestSummonerByPUUID(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *tft.SummonerDTO
+		want    *lol.SummonerDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &tft.SummonerDTO{},
+			want: &lol.SummonerDTO{},
 		},
 		{
 			name:    "not found",
@@ -151,13 +151,13 @@ func TestSummonerByID(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *tft.SummonerDTO
+		want    *lol.SummonerDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &tft.SummonerDTO{},
+			want: &lol.SummonerDTO{},
 		},
 		{
 			name:    "not found",
@@ -194,13 +194,13 @@ func TestSummonerByAccessToken(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *tft.SummonerDTO
+		want    *lol.SummonerDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &tft.SummonerDTO{},
+			want: &lol.SummonerDTO{},
 		},
 		{
 			name:    "not found",

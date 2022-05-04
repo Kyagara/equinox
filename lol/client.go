@@ -21,7 +21,7 @@ const (
 	StatusURL = "/lol/status/v4/platform-data"
 
 	MatchListURL     = "/lol/match/v5/matches/by-puuid/%s/ids"
-	MatchURL         = "/lol/match/v5/matches/%s"
+	MatchByIDURL     = "/lol/match/v5/matches/%s"
 	MatchTimelineURL = "/lol/match/v5/matches/%s/timeline"
 
 	SpectatorFeaturedGamesURL = "/lol/spectator/v4/featured-games"
