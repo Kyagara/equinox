@@ -84,7 +84,9 @@ type TournamentCodeUpdateParametersDTO struct {
 	SpectatorType SpectatorType `json:"spectatorType,omitempty"`
 }
 
-// Create a mock tournament code for the given tournament. Count defaults to 20 (max 1000).
+// Create a mock tournament code for the given tournament.
+//
+// Count defaults to 20 (max 1000).
 func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options TournamentCodeParametersDTO) ([]string, error) {
 	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateCodes")
 

@@ -18,7 +18,7 @@ type MatchDTO struct {
 	Metadata struct {
 		// Match data version.
 		DataVersion string `json:"dataVersion"`
-		// Match id.
+		// Match ID.
 		MatchID string `json:"matchId"`
 		// A list of participant PUUIDs.
 		Participants []string `json:"participants"`
@@ -215,7 +215,7 @@ type MatchTimelineDTO struct {
 	Metadata struct {
 		// Match data version.
 		DataVersion string `json:"dataVersion"`
-		// Match id.
+		// Match ID.
 		MatchID string `json:"matchId"`
 		// A list of participant PUUIDs.
 		Participants []string `json:"participants"`
@@ -303,7 +303,7 @@ type MatchlistOptions struct {
 	StartTime int `json:"startTime"`
 	// Epoch timestamp in seconds.
 	EndTime int `json:"endTime"`
-	// Filter the list of match ids by a specific queue id.
+	// Filter the list of match ids by a specific queue ID.
 	// This filter is mutually inclusive of the type filter meaning any match ids returned must match both the queue and type filters.
 	Queue int `json:"queue"`
 	// Filter the list of match ids by the type of match.
@@ -315,7 +315,11 @@ type MatchlistOptions struct {
 	Count int `json:"count"`
 }
 
-// Get a list of match IDs by PUUID. Default query: start: 0, count: 20
+// Get a list of match IDs by PUUID.
+
+// Start defaults to 0.
+//
+// Count defaults to 20.
 func (m *MatchEndpoint) List(PUUID string, options *MatchlistOptions) ([]string, error) {
 	logger := m.internalClient.Logger("lol").With("endpoint", "match", "method", "List")
 

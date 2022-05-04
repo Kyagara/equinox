@@ -23,7 +23,7 @@ type MatchDTO struct {
 type Metadata struct {
 	// Match data version.
 	DataVersion string `json:"data_version"`
-	// Match id.
+	// Match ID.
 	MatchID string `json:"match_id"`
 	// A list of participant PUUIDs.
 	Participants []string `json:"participants"`
@@ -106,7 +106,9 @@ type InfoDTO struct {
 	TFTSetNumber int `json:"tft_set_number"`
 }
 
-// Get a list of match IDs by PUUID. Count defaults to 20
+// Get a list of match IDs by PUUID.
+//
+// Count defaults to 20.
 func (m *MatchEndpoint) List(PUUID string, count int) ([]string, error) {
 	logger := m.internalClient.Logger("tft").With("endpoint", "match", "method", "List")
 

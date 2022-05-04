@@ -16,7 +16,9 @@ type TournamentStubEndpoint struct {
 	internalClient *internal.InternalClient
 }
 
-// Create a mock tournament code for the given tournament. Count defaults to 20 (max 1000).
+// Create a mock tournament code for the given tournament.
+//
+// Count defaults to 20 (max 1000).
 func (t *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, parameters TournamentCodeParametersDTO) ([]string, error) {
 	logger := t.internalClient.Logger("lol").With("endpoint", "tournament-stub", "method", "CreateCodes")
 
