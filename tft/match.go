@@ -41,8 +41,8 @@ type TraitsDTO struct {
 	Name string `json:"name"`
 	// Number of units with this trait.
 	NumUnits int `json:"num_units"`
-	// Current style for this trait. (0 = No style, 1 = Bronze, 2 = Silver, 3 = Gold, 4 = Chromatic)
-	Style int `json:"style"`
+	// Current style for this trait.
+	Style Style `json:"style"`
 	// Current active tier for the trait.
 	TierCurrent int `json:"tier_current"`
 	// Total tiers for the trait.
@@ -107,12 +107,12 @@ type InfoDTO struct {
 	TFTSetNumber int `json:"tft_set_number"`
 }
 
-// Get a list of match IDs by PUUID. Default query: count: 20
+// Get a list of match IDs by PUUID. Count defaults to 20
 func (m *MatchEndpoint) List(region api.Cluster, PUUID string, count int) ([]string, error) {
 	logger := m.internalClient.Logger("tft").With("endpoint", "match", "method", "List")
 
 	if region == api.Esports {
-		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
+		return nil, fmt.Errorf("the Esports cluster is not available for Teamfight Tactics related endpoints")
 	}
 
 	if count > 100 || count < 1 {

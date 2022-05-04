@@ -15,19 +15,19 @@ type LeagueEndpoint struct {
 }
 
 type LeagueListDTO struct {
-	Tier     string           `json:"tier"`
+	Tier     Tier             `json:"tier"`
 	LeagueID string           `json:"leagueId"`
-	Queue    string           `json:"queue"`
+	Queue    QueueType        `json:"queue"`
 	Name     string           `json:"name"`
 	Entries  []LeagueEntryDTO `json:"entries"`
 }
 
 type LeagueEntryDTO struct {
-	LeagueID  string `json:"leagueId"`
-	QueueType string `json:"queueType"`
-	Tier      string `json:"tier"`
+	LeagueID  string    `json:"leagueId"`
+	QueueType QueueType `json:"queueType"`
+	Tier      Tier      `json:"tier"`
 	// The player's division within a tier.
-	Rank string `json:"rank"`
+	Rank api.Division `json:"rank"`
 	// Player's encrypted summonerId.
 	SummonerID   string `json:"summonerId"`
 	SummonerName string `json:"summonerName"`
@@ -53,6 +53,10 @@ type MiniSeriesDTO struct {
 // Get all the league entries. Page defaults to 1.
 func (l *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
 	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", "Entries")
+
+	if tier == MasterTier || tier == GrandmasterTier || tier == ChallengerTier {
+		return nil, fmt.Errorf("the tier specified is an apex tier, please use the corresponded method instead")
+	}
 
 	query := url.Values{}
 

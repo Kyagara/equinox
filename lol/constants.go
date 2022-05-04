@@ -3,12 +3,15 @@ package lol
 type Tier string
 
 const (
-	IronTier     Tier = "IRON"
-	BronzeTier   Tier = "BRONZE"
-	SilverTier   Tier = "SILVER"
-	GoldTier     Tier = "GOLD"
-	PlatinumTier Tier = "PLATINUM"
-	DiamondTier  Tier = "DIAMOND"
+	IronTier        Tier = "IRON"
+	BronzeTier      Tier = "BRONZE"
+	SilverTier      Tier = "SILVER"
+	GoldTier        Tier = "GOLD"
+	PlatinumTier    Tier = "PLATINUM"
+	DiamondTier     Tier = "DIAMOND"
+	MasterTier      Tier = "MASTER"
+	GrandmasterTier Tier = "GRANDMASTER"
+	ChallengerTier  Tier = "CHALLENGER"
 )
 
 type Region string
@@ -83,4 +86,33 @@ const (
 	NoneSpectator      SpectatorType = "NONE"
 	LobbyOnlySpectator SpectatorType = "LOBBYONLY"
 	AllSpectator       SpectatorType = "ALL"
+)
+
+type GameType string
+
+const (
+	CustomGame   GameType = "CUSTOM_GAME"
+	MatchGame    GameType = "MATCHED_GAME"
+	TutorialGame GameType = "TUTORIAL_GAME"
+)
+
+type GameMode string
+
+const (
+	ClassicMode    GameMode = "CLASSIC"
+	OdinMode       GameMode = "ODIN"
+	AramMode       GameMode = "ARAM"
+	TutorialMode   GameMode = "TUTORIAL"
+	OneForAllMode  GameMode = "ONEFORALL"
+	AscensionMode  GameMode = "ASCENSION"
+	FirstBloodMode GameMode = "FIRSTBLOOD"
+	KingPoroMode   GameMode = "KINGPORO"
+)
+
+type ChampionTransformation int8
+
+const (
+	NoTransformation       ChampionTransformation = 0
+	SlayerTransformation   ChampionTransformation = 1
+	AssassinTransformation ChampionTransformation = 2
 )

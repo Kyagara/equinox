@@ -52,26 +52,26 @@ type MatchDTO struct {
 			// Prior to patch 11.4, on Feb 18th, 2021, this field returned invalid championIds. We recommend determining the champion based on the championName field for matches played prior to patch 11.4.
 			ChampionID   int    `json:"championId"`
 			ChampionName string `json:"championName"`
-			// This field is currently only utilized for Kayn's transformations. (Legal values: 0 - None, 1 - Slayer, 2 - Assassin)
-			ChampionTransform         int  `json:"championTransform"`
-			ConsumablesPurchased      int  `json:"consumablesPurchased"`
-			DamageDealtToBuildings    int  `json:"damageDealtToBuildings"`
-			DamageDealtToObjectives   int  `json:"damageDealtToObjectives"`
-			DamageDealtToTurrets      int  `json:"damageDealtToTurrets"`
-			DamageSelfMitigated       int  `json:"damageSelfMitigated"`
-			Deaths                    int  `json:"deaths"`
-			DetectorWardsPlaced       int  `json:"detectorWardsPlaced"`
-			DoubleKills               int  `json:"doubleKills"`
-			DragonKills               int  `json:"dragonKills"`
-			EligibleForProgression    bool `json:"eligibleForProgression"`
-			FirstBloodAssist          bool `json:"firstBloodAssist"`
-			FirstBloodKill            bool `json:"firstBloodKill"`
-			FirstTowerAssist          bool `json:"firstTowerAssist"`
-			FirstTowerKill            bool `json:"firstTowerKill"`
-			GameEndedInEarlySurrender bool `json:"gameEndedInEarlySurrender"`
-			GameEndedInSurrender      bool `json:"gameEndedInSurrender"`
-			GoldEarned                int  `json:"goldEarned"`
-			GoldSpent                 int  `json:"goldSpent"`
+			// This field is currently only utilized for Kayn's transformations.
+			ChampionTransform         ChampionTransformation `json:"championTransform"`
+			ConsumablesPurchased      int                    `json:"consumablesPurchased"`
+			DamageDealtToBuildings    int                    `json:"damageDealtToBuildings"`
+			DamageDealtToObjectives   int                    `json:"damageDealtToObjectives"`
+			DamageDealtToTurrets      int                    `json:"damageDealtToTurrets"`
+			DamageSelfMitigated       int                    `json:"damageSelfMitigated"`
+			Deaths                    int                    `json:"deaths"`
+			DetectorWardsPlaced       int                    `json:"detectorWardsPlaced"`
+			DoubleKills               int                    `json:"doubleKills"`
+			DragonKills               int                    `json:"dragonKills"`
+			EligibleForProgression    bool                   `json:"eligibleForProgression"`
+			FirstBloodAssist          bool                   `json:"firstBloodAssist"`
+			FirstBloodKill            bool                   `json:"firstBloodKill"`
+			FirstTowerAssist          bool                   `json:"firstTowerAssist"`
+			FirstTowerKill            bool                   `json:"firstTowerKill"`
+			GameEndedInEarlySurrender bool                   `json:"gameEndedInEarlySurrender"`
+			GameEndedInSurrender      bool                   `json:"gameEndedInSurrender"`
+			GoldEarned                int                    `json:"goldEarned"`
+			GoldSpent                 int                    `json:"goldSpent"`
 			// Both individualPosition and teamPosition are computed by the game server and are different versions of the most likely position played by a player. The individualPosition is the best guess for which position the player actually played in isolation of anything else. The teamPosition is the best guess for which position the player actually played if we add the constraint that each team must have one top player, one jungle, one middle, etc. Generally the recommendation is to use the teamPosition field over the individualPosition field.
 			IndividualPosition          string `json:"individualPosition"`
 			InhibitorKills              int    `json:"inhibitorKills"`
@@ -172,7 +172,7 @@ type MatchDTO struct {
 			Win                            bool   `json:"win"`
 		} `json:"participants"`
 		// Platform where the match was played.
-		PlatformID string `json:"platformId"`
+		PlatformID Region `json:"platformId"`
 		// Refer to the Game Constants documentation.
 		QueueID int `json:"queueId"`
 		Teams   []struct {

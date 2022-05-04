@@ -50,7 +50,7 @@ type TournamentCodeDTO struct {
 	TournamentID int
 	// The tournament code's ID.
 	ID int
-	// The tournament code's region. (Legal values: BR, EUNE, EUW, JP, LAN, LAS, NA, OCE, PBE, RU, TR)
+	// The tournament code's region.
 	Region TournamentRegion
 	// The game map for the tournament code game
 	Map MapType
@@ -61,13 +61,13 @@ type TournamentCodeDTO struct {
 type TournamentCodeParametersDTO struct {
 	// Optional list of encrypted summonerIds in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
 	AllowedSummonerIds []string `json:"allowedSummonerIds,omitempty"`
-	// The map type of the game. (Legal values: SUMMONERS_RIFT, TWISTED_TREELINE, HOWLING_ABYSS)
+	// The map type of the game.
 	MapType MapType `json:"mapType"`
 	// Optional string that may contain any data in any format, if specified at all. Used to denote any custom information about the game.
 	Metadata string `json:"metadata,omitempty"`
-	// The pick type of the game. (Legal values: BLIND_PICK, DRAFT_MODE, ALL_RANDOM, TOURNAMENT_DRAFT)
+	// The pick type of the game.
 	PickType PickType `json:"pickType"`
-	// The spectator type of the game. (Legal values: NONE, LOBBYONLY, ALL)
+	// The spectator type of the game.
 	SpectatorType SpectatorType `json:"spectatorType"`
 	// The team size of the game. Valid values are 1-5.
 	TeamSize int `json:"teamSize"`
@@ -76,11 +76,11 @@ type TournamentCodeParametersDTO struct {
 type TournamentCodeUpdateParametersDTO struct {
 	// Optional list of encrypted summonerIds in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
 	AllowedSummonerIds []string `json:"allowedSummonerIds,omitempty"`
-	// The map type of the game. (Legal values: SUMMONERS_RIFT, TWISTED_TREELINE, HOWLING_ABYSS)
+	// The map type of the game.
 	MapType MapType `json:"mapType,omitempty"`
-	// The pick type of the game. (Legal values: BLIND_PICK, DRAFT_MODE, ALL_RANDOM, TOURNAMENT_DRAFT)
+	// The pick type of the game.
 	PickType PickType `json:"pickType,omitempty"`
-	// The spectator type of the game. (Legal values: NONE, LOBBYONLY, ALL)
+	// The spectator type of the game.
 	SpectatorType SpectatorType `json:"spectatorType,omitempty"`
 }
 
@@ -93,12 +93,10 @@ func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options 
 	}
 
 	if options.TeamSize < 1 || options.TeamSize < 5 {
-		logger.Error(fmt.Sprintf("Invalid team size: %d, valid values are 1-5", options.TeamSize))
 		return nil, fmt.Errorf("invalid team size: %d, valid values are 1-5", options.TeamSize)
 	}
 
 	if options.MapType == "" && options.SpectatorType == "" && options.PickType == "" && len(options.AllowedSummonerIds) == 0 {
-		logger.Error("Required values are empty")
 		return nil, fmt.Errorf("required values are empty")
 	}
 
@@ -192,7 +190,7 @@ func (t *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 //
 // Providers will need to call this endpoint first to register their callback URL and their API key with the tournament system before any other tournament provider endpoints will work.
 //
-// The region in which the provider will be running tournaments. (Legal values: BR, EUNE, EUW, JP, LAN, LAS, NA, OCE, PBE, RU, TR)
+// The region in which the provider will be running tournaments.
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
 func (t *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {

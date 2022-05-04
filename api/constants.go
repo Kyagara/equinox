@@ -5,6 +5,36 @@ const (
 	BaseURLFormat = "https://%s.api.riotgames.com"
 )
 
+// (Legal values: riotclient, riotstatus, game)
+
+type PublishLocation string
+
+const (
+	RiotClientLocation PublishLocation = "riotclient"
+	RiotStatusLocation PublishLocation = "riotstatus"
+	GameLocation       PublishLocation = "game"
+)
+
+type Platform string
+
+const (
+	WindowsPlatform Platform = "windows"
+	MacOSPlatform   Platform = "macos"
+	AndroidPlatform Platform = "android"
+	IOSPlatform     Platform = "ios"
+	PS4Platform     Platform = "ps4"
+	XboxOnePlatform Platform = "xbone"
+	SwitchPlatform  Platform = "switch"
+)
+
+type IncidentSeverity string
+
+const (
+	InfoSeverity     IncidentSeverity = "info"
+	WarningSeverity  IncidentSeverity = "warning"
+	CriticalSeverity IncidentSeverity = "critical"
+)
+
 type Game string
 
 const (

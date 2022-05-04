@@ -24,16 +24,16 @@ func TestInternalClientRetries(t *testing.T) {
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 		Get(lol.StatusURL).
 		Reply(429).SetHeader("Retry-After", "1").
-		JSON(&lol.PlatformDataDTO{})
+		JSON(&api.PlatformDataDTO{})
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 		Get(lol.StatusURL).
 		Reply(200).
-		JSON(&lol.PlatformDataDTO{})
+		JSON(&api.PlatformDataDTO{})
 
 	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	res := lol.PlatformDataDTO{}
+	res := api.PlatformDataDTO{}
 
 	// This will take 1 second
 	err := client.Do(http.MethodGet, lol.BR1, lol.StatusURL, nil, &res, "")

@@ -24,14 +24,14 @@ type LeagueListDTO struct {
 }
 
 type LeagueEntryDTO struct {
-	LeagueID  string `json:"leagueId"`
-	QueueType string `json:"queueType"`
-	Tier      string `json:"tier"`
-	// Only included for the RANKED_TFT_TURBO queueType. (Legal values: ORANGE, PURPLE, BLUE, GREEN, GRAY)
-	RatedTier string `json:"ratedTier"`
+	LeagueID  string    `json:"leagueId"`
+	QueueType QueueType `json:"queueType"`
+	Tier      lol.Tier  `json:"tier"`
 	// Only included for the RANKED_TFT_TURBO queueType.
-	RatedRating string `json:"ratedRating"`
-	Rank        string `json:"rank"`
+	RatedTier RatedTier `json:"ratedTier"`
+	// Only included for the RANKED_TFT_TURBO queueType.
+	RatedRating string       `json:"ratedRating"`
+	Rank        api.Division `json:"rank"`
 	// Player's encrypted summonerId.
 	SummonerID   string `json:"summonerId"`
 	SummonerName string `json:"summonerName"`
@@ -55,17 +55,22 @@ type MiniSeriesDTO struct {
 }
 
 type TopRatedLadderEntryDTO struct {
-	SummonerID                   string `json:"summonerId"`
-	SummonerName                 string `json:"summonerName"`
-	RatedTier                    string `json:"ratedTier"`
-	RatedRating                  int    `json:"ratedRating"`
-	Wins                         int    `json:"wins"`
-	PreviousUpdateLadderPosition int    `json:"previousUpdateLadderPosition"`
+	SummonerID   string    `json:"summonerId"`
+	SummonerName string    `json:"summonerName"`
+	RatedTier    RatedTier `json:"ratedTier"`
+	RatedRating  int       `json:"ratedRating"`
+	// First placement.
+	Wins                         int `json:"wins"`
+	PreviousUpdateLadderPosition int `json:"previousUpdateLadderPosition"`
 }
 
 // Get all the league entries. Page defaults to 1.
 func (l *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
 	logger := l.internalClient.Logger("tft").With("endpoint", "league", "method", "Entries")
+
+	if tier == lol.MasterTier || tier == lol.GrandmasterTier || tier == lol.ChallengerTier {
+		return nil, fmt.Errorf("the tier specified is an apex tier, please use the corresponded method instead")
+	}
 
 	query := url.Values{}
 
@@ -115,8 +120,12 @@ func (l *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (
 }
 
 // Get the top rated ladder for given queue.
-func (l *LeagueEndpoint) TopRatedLadder(region lol.Region, queue string) (*[]TopRatedLadderEntryDTO, error) {
+func (l *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]TopRatedLadderEntryDTO, error) {
 	logger := l.internalClient.Logger("tft").With("endpoint", "league", "method", "TopRatedLadder")
+
+	if queue == RankedTFT {
+		return nil, fmt.Errorf("the queue specified is not available for the top rated ladder endpoint, please use the RankedTFTTurbo queue")
+	}
 
 	url := fmt.Sprintf(LeagueRatedLaddersURL, queue)
 
