@@ -36,6 +36,10 @@ type ChampionMasteryDTO struct {
 func (c *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID string) (*[]ChampionMasteryDTO, error) {
 	logger := c.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "SummonerMasteries")
 
+	if region == PBE1 {
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
+	}
+
 	url := fmt.Sprintf(ChampionMasteriesURL, summonerID)
 
 	var masteries *[]ChampionMasteryDTO
@@ -54,6 +58,10 @@ func (c *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID st
 func (c *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string, championID int) (*ChampionMasteryDTO, error) {
 	logger := c.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "ChampionScore")
 
+	if region == PBE1 {
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
+	}
+
 	url := fmt.Sprintf(ChampionMasteriesByChampionURL, summonerID, championID)
 
 	var score *ChampionMasteryDTO
@@ -71,6 +79,10 @@ func (c *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
 func (c *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID string) (int, error) {
 	logger := c.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "MasteryScoreSum")
+
+	if region == PBE1 {
+		return -1, fmt.Errorf("the region PBE1 is not available for this method")
+	}
 
 	url := fmt.Sprintf(ChampionMasteriesScoresURL, summonerID)
 

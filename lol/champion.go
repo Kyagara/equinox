@@ -1,6 +1,7 @@
 package lol
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
@@ -22,6 +23,10 @@ type ChampionRotationsDTO struct {
 // Get champion rotations, including free-to-play and low-level free-to-play rotations.
 func (c *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, error) {
 	logger := c.internalClient.Logger("lol").With("endpoint", "champion", "method", "Rotations")
+
+	if region == PBE1 {
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
+	}
 
 	var rotations *ChampionRotationsDTO
 
