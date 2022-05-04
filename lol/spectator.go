@@ -23,11 +23,11 @@ type FeaturedGameInfoDTO struct {
 	GameID int `json:"gameId"`
 	// The ID of the map.
 	MapID int `json:"mapId"`
-	// The game mode (Legal values: CLASSIC, ODIN, ARAM, TUTORIAL, ONEFORALL, ASCENSION, FIRSTBLOOD, KINGPORO).
-	GameMode string `json:"gameMode"`
-	// The game type (Legal values: CUSTOM_GAME, MATCHED_GAME, TUTORIAL_GAME).
-	GameType string `json:"gameType"`
-	// The queue type (queue types are documented on the Game Constants page).
+	// The game mode.
+	GameMode GameMode `json:"gameMode"`
+	// The game type.
+	GameType GameType `json:"gameType"`
+	// The queue type.
 	GameQueueConfigID int `json:"gameQueueConfigId"`
 	// The participant information.
 	Participants []ParticipantDTO `json:"participants"`
@@ -79,11 +79,11 @@ type CurrentGameInfoDTO struct {
 	GameID int `json:"gameId"`
 	// The ID of the map.
 	MapID int `json:"mapId"`
-	// The game mode (Legal values: CLASSIC, ODIN, ARAM, TUTORIAL, ONEFORALL, ASCENSION, FIRSTBLOOD, KINGPORO).
-	GameMode string `json:"gameMode"`
-	// The game type (Legal values: CUSTOM_GAME, MATCHED_GAME, TUTORIAL_GAME).
-	GameType string `json:"gameType"`
-	// The queue type (queue types are documented on the Game Constants page).
+	// The game mode.
+	GameMode GameMode `json:"gameMode"`
+	// The game type.
+	GameType GameType `json:"gameType"`
+	// The queue type
 	GameQueueConfigID int `json:"gameQueueConfigId"`
 	// The participant information.
 	Participants []CurrentGameParticipantDTO `json:"participants"`

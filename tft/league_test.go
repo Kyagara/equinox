@@ -128,11 +128,11 @@ func TestLeagueTopRatedLadder(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(tft.LeagueRatedLaddersURL, "queue")).
+				Get(fmt.Sprintf(tft.LeagueRatedLaddersURL, tft.RankedTFTTurbo)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.TopRatedLadder(lol.BR1, "queue")
+			gotData, gotErr := client.League.TopRatedLadder(lol.BR1, tft.RankedTFTTurbo)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

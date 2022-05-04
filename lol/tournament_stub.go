@@ -25,12 +25,10 @@ func (t *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 	}
 
 	if parameters.TeamSize < 1 || parameters.TeamSize < 5 {
-		logger.Error(fmt.Sprintf("Invalid team size: %d, valid values are 1-5", parameters.TeamSize))
 		return nil, fmt.Errorf("invalid team size: %d, valid values are 1-5", parameters.TeamSize)
 	}
 
 	if parameters.MapType == "" || parameters.SpectatorType == "" || parameters.PickType == "" {
-		logger.Error("Required values are empty")
 		return nil, fmt.Errorf("required values are empty")
 	}
 
@@ -83,7 +81,7 @@ func (t *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEvent
 //
 // Providers will need to call this endpoint first to register their callback URL and their API key with the tournament system before any other tournament provider endpoints will work.
 //
-// The region in which the provider will be running tournaments. (Legal values: BR, EUNE, EUW, JP, LAN, LAS, NA, OCE, PBE, RU, TR)
+// The region in which the provider will be running tournaments.
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
 func (t *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {

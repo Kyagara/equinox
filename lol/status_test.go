@@ -21,13 +21,13 @@ func TestPlatformStatus(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *lol.PlatformDataDTO
+		want    *api.PlatformDataDTO
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &lol.PlatformDataDTO{},
+			want: &api.PlatformDataDTO{},
 		},
 		{
 			name:    "not found",
