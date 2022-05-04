@@ -44,8 +44,8 @@ func (s *SummonerEndpoint) ByPUUID(region Region, PUUID string) (*SummonerDTO, e
 }
 
 // Get a summoner by summoner ID.
-func (s *SummonerEndpoint) ByID(region Region, PUUID string) (*SummonerDTO, error) {
-	return s.getSummoner(fmt.Sprintf(SummonerByIDURL, PUUID), region, "", "ByID")
+func (s *SummonerEndpoint) ByID(region Region, summonerID string) (*SummonerDTO, error) {
+	return s.getSummoner(fmt.Sprintf(SummonerByIDURL, summonerID), region, "", "ByID")
 }
 
 // Get a summoner by access token.
@@ -55,6 +55,10 @@ func (s *SummonerEndpoint) ByAccessToken(region Region, accessToken string) (*Su
 
 func (s *SummonerEndpoint) getSummoner(url string, region Region, accessToken string, methodName string) (*SummonerDTO, error) {
 	logger := s.internalClient.Logger("lol").With("endpoint", "summoner", "method", methodName)
+
+	if methodName == "ByAccessToken" && accessToken == "" {
+		return nil, fmt.Errorf("accessToken is required")
+	}
 
 	var summoner *SummonerDTO
 

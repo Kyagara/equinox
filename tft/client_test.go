@@ -11,5 +11,5 @@ import (
 func TestTFTClient(t *testing.T) {
 	client := tft.NewTFTClient(&internal.InternalClient{})
 
-	assert.NotNil(t, client, "expecting non-nil RiotClient")
+	assert.NotNil(t, client, "expecting non-nil TFTClient")
 }
