@@ -6,7 +6,6 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 )
 
@@ -317,12 +316,8 @@ type MatchlistOptions struct {
 }
 
 // Get a list of match IDs by PUUID. Default query: start: 0, count: 20
-func (m *MatchEndpoint) List(region api.Cluster, PUUID string, options *MatchlistOptions) ([]string, error) {
+func (m *MatchEndpoint) List(PUUID string, options *MatchlistOptions) ([]string, error) {
 	logger := m.internalClient.Logger("lol").With("endpoint", "match", "method", "List")
-
-	if region == api.Esports {
-		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
-	}
 
 	if options == nil {
 		options = &MatchlistOptions{Start: 0, Count: 20}
@@ -360,7 +355,7 @@ func (m *MatchEndpoint) List(region api.Cluster, PUUID string, options *Matchlis
 
 	var list []string
 
-	err := m.internalClient.Do(http.MethodGet, region, url, nil, &list, "")
+	err := m.internalClient.Do(http.MethodGet, m.internalClient.Cluster, url, nil, &list, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -371,18 +366,14 @@ func (m *MatchEndpoint) List(region api.Cluster, PUUID string, options *Matchlis
 }
 
 // Get a match by match ID.
-func (m *MatchEndpoint) ByID(region api.Cluster, matchID string) (*MatchDTO, error) {
+func (m *MatchEndpoint) ByID(matchID string) (*MatchDTO, error) {
 	logger := m.internalClient.Logger("lol").With("endpoint", "match", "method", "ByID")
-
-	if region == api.Esports {
-		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
-	}
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
 	var match *MatchDTO
 
-	err := m.internalClient.Do(http.MethodGet, region, url, nil, &match, "")
+	err := m.internalClient.Do(http.MethodGet, m.internalClient.Cluster, url, nil, &match, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -393,18 +384,14 @@ func (m *MatchEndpoint) ByID(region api.Cluster, matchID string) (*MatchDTO, err
 }
 
 // Get a match timeline by match ID.
-func (m *MatchEndpoint) Timeline(region api.Cluster, matchID string) (*MatchTimelineDTO, error) {
+func (m *MatchEndpoint) Timeline(matchID string) (*MatchTimelineDTO, error) {
 	logger := m.internalClient.Logger("lol").With("endpoint", "match", "method", "Timeline")
-
-	if region == api.Esports {
-		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
-	}
 
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
 
 	var timeline *MatchTimelineDTO
 
-	err := m.internalClient.Do(http.MethodGet, region, url, nil, &timeline, "")
+	err := m.internalClient.Do(http.MethodGet, m.internalClient.Cluster, url, nil, &timeline, "")
 
 	if err != nil {
 		logger.Warn(err)

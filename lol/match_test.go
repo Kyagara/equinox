@@ -50,7 +50,7 @@ func TestMatchList(t *testing.T) {
 				Count: 20,
 			}
 
-			gotData, gotErr := client.Match.List(api.Americas, "PUUID", &options)
+			gotData, gotErr := client.Match.List("PUUID", &options)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -93,7 +93,7 @@ func TestMatchByID(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.ByID(api.Americas, "matchID")
+			gotData, gotErr := client.Match.ByID("matchID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -136,7 +136,7 @@ func TestMatchTimeline(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.Timeline(api.Americas, "matchID")
+			gotData, gotErr := client.Match.Timeline("matchID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
