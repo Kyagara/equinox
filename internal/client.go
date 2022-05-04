@@ -13,6 +13,7 @@ import (
 )
 
 type InternalClient struct {
+	Cluster  api.Cluster
 	key      string
 	logLevel api.LogLevel
 	retry    bool
@@ -24,6 +25,7 @@ type InternalClient struct {
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
 		Key:      "RIOT_API_KEY",
+		Cluster:  api.Americas,
 		LogLevel: api.DebugLevel,
 		Timeout:  10,
 		Retry:    true,
@@ -33,6 +35,7 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 // Returns a new client using the API key provided.
 func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
+		Cluster:  config.Cluster,
 		key:      config.Key,
 		logLevel: config.LogLevel,
 		retry:    config.Retry,

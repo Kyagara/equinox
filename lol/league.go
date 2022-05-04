@@ -80,7 +80,7 @@ func (l *LeagueEndpoint) Entries(region Region, division api.Division, tier Tier
 
 // Get league with given ID, including inactive entries.
 func (l *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, error) {
-	return l.getLeague(LeagueByID, region, QueueType(leagueID), "ByID")
+	return l.getLeague(LeagueByIDURL, region, QueueType(leagueID), "ByID")
 }
 
 // Get league entries in all queues for a given summoner ID.

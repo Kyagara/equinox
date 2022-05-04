@@ -11,6 +11,8 @@ import (
 type EquinoxConfig struct {
 	// Riot API Key.
 	Key string
+	// Cluster name, using the nearest cluster to you is recommended.
+	Cluster Cluster
 	// Log level. Default: api.FatalLevel
 	LogLevel LogLevel
 	// Timeout for http.Request in seconds, 0 disables it. Default: 10

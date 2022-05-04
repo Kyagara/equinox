@@ -6,15 +6,18 @@ import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/lol"
+	"github.com/Kyagara/equinox/riot"
 )
 
 type Equinox struct {
 	internalClient *internal.InternalClient
+	Riot           *riot.RiotClient
 	LOL            *lol.LOLClient
 }
 
 //	Creates a new Equinox client with a default configuration
 //
+//		- `Cluster`    : api.Americas
 //		- `LogLevel`   : api.FatalLevel
 //		- `Timeout`    : 10
 //		- `Retry`      : true
@@ -24,6 +27,7 @@ func NewClient(key string) (*Equinox, error) {
 	}
 
 	config := &api.EquinoxConfig{
+		Cluster:  api.Americas,
 		Key:      key,
 		LogLevel: api.FatalLevel,
 		Timeout:  10,
@@ -34,6 +38,7 @@ func NewClient(key string) (*Equinox, error) {
 
 	equinox := &Equinox{
 		internalClient: client,
+		Riot:           riot.NewRiotClient(client),
 		LOL:            lol.NewLOLClient(client),
 	}
 
@@ -52,6 +57,7 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 
 	equinox := &Equinox{
 		internalClient: client,
+		Riot:           riot.NewRiotClient(client),
 		LOL:            lol.NewLOLClient(client),
 	}
 
