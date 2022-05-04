@@ -54,7 +54,7 @@ func (s *SummonerEndpoint) ByAccessToken(region Region, accessToken string) (*Su
 }
 
 func (s *SummonerEndpoint) getSummoner(url string, region Region, accessToken string, methodName string) (*SummonerDTO, error) {
-	logger := s.internalClient.Logger().With("endpoint", "summoner", "method", methodName)
+	logger := s.internalClient.Logger("lol").With("endpoint", "summoner", "method", methodName)
 
 	var summoner *SummonerDTO
 

@@ -318,7 +318,7 @@ type MatchlistOptions struct {
 
 // Get a list of match IDs by PUUID. Default query: start: 0, count: 20
 func (m *MatchEndpoint) List(region api.Cluster, PUUID string, options *MatchlistOptions) ([]string, error) {
-	logger := m.internalClient.Logger().With("endpoint", "match", "method", "List")
+	logger := m.internalClient.Logger("lol").With("endpoint", "match", "method", "List")
 
 	if region == api.Esports {
 		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
@@ -372,7 +372,7 @@ func (m *MatchEndpoint) List(region api.Cluster, PUUID string, options *Matchlis
 
 // Get a match by match ID.
 func (m *MatchEndpoint) ByID(region api.Cluster, matchID string) (*MatchDTO, error) {
-	logger := m.internalClient.Logger().With("endpoint", "match", "method", "ByID")
+	logger := m.internalClient.Logger("lol").With("endpoint", "match", "method", "ByID")
 
 	if region == api.Esports {
 		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
@@ -394,7 +394,7 @@ func (m *MatchEndpoint) ByID(region api.Cluster, matchID string) (*MatchDTO, err
 
 // Get a match timeline by match ID.
 func (m *MatchEndpoint) Timeline(region api.Cluster, matchID string) (*MatchTimelineDTO, error) {
-	logger := m.internalClient.Logger().With("endpoint", "match", "method", "Timeline")
+	logger := m.internalClient.Logger("lol").With("endpoint", "match", "method", "Timeline")
 
 	if region == api.Esports {
 		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")

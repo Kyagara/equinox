@@ -51,8 +51,8 @@ type MiniSeriesDTO struct {
 }
 
 // Get all the league entries. Page defaults to 1.
-func (l *LeagueEndpoint) Entries(region Region, division api.Division, tier Tier, queue QueueType, page int) (*[]LeagueEntryDTO, error) {
-	logger := l.internalClient.Logger().With("endpoint", "league", "method", "Entries")
+func (l *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
+	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", "Entries")
 
 	query := url.Values{}
 
@@ -62,7 +62,7 @@ func (l *LeagueEndpoint) Entries(region Region, division api.Division, tier Tier
 
 	query.Set("page", strconv.Itoa(page))
 
-	method := fmt.Sprintf(LeagueEntriesURL, division, tier, queue)
+	method := fmt.Sprintf(LeagueEntriesURL, queue, tier, division)
 
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
@@ -78,14 +78,9 @@ func (l *LeagueEndpoint) Entries(region Region, division api.Division, tier Tier
 	return entries, nil
 }
 
-// Get league with given ID, including inactive entries.
-func (l *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, error) {
-	return l.getLeague(LeagueByIDURL, region, QueueType(leagueID), "ByID")
-}
-
 // Get league entries in all queues for a given summoner ID.
 func (l *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]LeagueEntryDTO, error) {
-	logger := l.internalClient.Logger().With("endpoint", "league", "method", "SummonerEntries")
+	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", "SummonerEntries")
 
 	url := fmt.Sprintf(LeagueEntriesBySummonerURL, summonerID)
 
@@ -116,8 +111,13 @@ func (l *LeagueEndpoint) MasterByQueue(region Region, queueType QueueType) (*Lea
 	return l.getLeague(LeagueMasterURL, region, queueType, "MasterByQueue")
 }
 
-func (l *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueType QueueType, methodName string) (*LeagueListDTO, error) {
-	logger := l.internalClient.Logger().With("endpoint", "league", "method", methodName)
+// Get league with given ID, including inactive entries.
+func (l *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, error) {
+	return l.getLeague(LeagueByIDURL, region, leagueID, "ByID")
+}
+
+func (l *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueType interface{}, methodName string) (*LeagueListDTO, error) {
+	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", methodName)
 
 	url := fmt.Sprintf(endpointMethod, queueType)
 

@@ -140,7 +140,7 @@ type Perks struct {
 
 // Get featured games in a region.
 func (s *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, error) {
-	logger := s.internalClient.Logger().With("endpoint", "spectator", "method", "FeaturedGames")
+	logger := s.internalClient.Logger("lol").With("endpoint", "spectator", "method", "FeaturedGames")
 
 	var games *FeaturedGamesDTO
 
@@ -156,7 +156,7 @@ func (s *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, err
 
 // Get the current game information for the given summoner ID.
 func (s *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*CurrentGameInfoDTO, error) {
-	logger := s.internalClient.Logger().With("endpoint", "spectator", "method", "FeaturedGames")
+	logger := s.internalClient.Logger("lol").With("endpoint", "spectator", "method", "FeaturedGames")
 
 	var game *CurrentGameInfoDTO
 

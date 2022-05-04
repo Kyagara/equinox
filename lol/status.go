@@ -51,7 +51,7 @@ type UpdateDTO struct {
 
 // Get League of Legends status for the given platform.
 func (s *StatusEndpoint) PlatformStatus(region Region) (*PlatformDataDTO, error) {
-	logger := s.internalClient.Logger().With("endpoint", "status", "method", "PlatformStatus")
+	logger := s.internalClient.Logger("lol").With("endpoint", "status", "method", "PlatformStatus")
 
 	var status *PlatformDataDTO
 

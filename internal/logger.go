@@ -27,6 +27,6 @@ func NewLogger(config *api.EquinoxConfig) *zap.SugaredLogger {
 	return logger.Sugar()
 }
 
-func (c *InternalClient) Logger() *zap.SugaredLogger {
-	return c.logger
+func (c *InternalClient) Logger(client string) *zap.SugaredLogger {
+	return c.logger.With("client", client)
 }

@@ -28,7 +28,7 @@ type ActiveShardDTO struct {
 
 // Get active shard for a player.
 func (a *AccountEndpoint) PlayerActiveShard(PUUID string, game api.Game) (*ActiveShardDTO, error) {
-	logger := a.internalClient.Logger().With("endpoint", "account", "method", "PlayerActiveShard")
+	logger := a.internalClient.Logger("riot").With("endpoint", "account", "method", "PlayerActiveShard")
 
 	url := fmt.Sprintf(AccountActiveShardURL, game, PUUID)
 
@@ -60,7 +60,7 @@ func (a *AccountEndpoint) ByAccessToken(accessToken string) (*AccountDTO, error)
 }
 
 func (a *AccountEndpoint) getAccount(url string, accessToken string, methodName string) (*AccountDTO, error) {
-	logger := a.internalClient.Logger().With("endpoint", "account", "method", methodName)
+	logger := a.internalClient.Logger("riot").With("endpoint", "account", "method", methodName)
 
 	var account *AccountDTO
 
