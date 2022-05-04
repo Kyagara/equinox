@@ -54,6 +54,10 @@ type MiniSeriesDTO struct {
 func (l *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
 	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", "Entries")
 
+	if region == PBE1 {
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
+	}
+
 	if tier == MasterTier || tier == GrandmasterTier || tier == ChallengerTier {
 		return nil, fmt.Errorf("the tier specified is an apex tier, please use the corresponded method instead")
 	}
@@ -85,6 +89,10 @@ func (l *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 // Get league entries in all queues for a given summoner ID.
 func (l *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]LeagueEntryDTO, error) {
 	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", "SummonerEntries")
+
+	if region == PBE1 {
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
+	}
 
 	url := fmt.Sprintf(LeagueEntriesBySummonerURL, summonerID)
 
@@ -122,6 +130,10 @@ func (l *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, e
 
 func (l *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueType interface{}, methodName string) (*LeagueListDTO, error) {
 	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", methodName)
+
+	if region == PBE1 {
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
+	}
 
 	url := fmt.Sprintf(endpointMethod, queueType)
 

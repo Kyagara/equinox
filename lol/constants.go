@@ -26,6 +26,7 @@ const (
 	LA2  Region = "la2"
 	NA1  Region = "na1"
 	OC1  Region = "oc1"
+	PBE1 Region = "PBE1"
 	RU   Region = "ru"
 	TR1  Region = "tr1"
 )

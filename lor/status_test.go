@@ -40,12 +40,12 @@ func TestPlatformStatus(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lor.Americas)).
 				Get(lor.StatusURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Status.PlatformStatus()
+			gotData, gotErr := client.Status.PlatformStatus(lor.Americas)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
