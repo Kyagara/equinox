@@ -47,6 +47,10 @@ func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 
 // Executes a http request.
 func (i *InternalClient) Do(method string, route interface{}, endpoint string, requestBody io.Reader, object interface{}, authorizationHeader string) error {
+	if route == "" {
+		return fmt.Errorf("region is required")
+	}
+
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new *http.Request.
