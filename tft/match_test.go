@@ -45,7 +45,7 @@ func TestMatchList(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.List(api.Americas, "PUUID", 20)
+			gotData, gotErr := client.Match.List("PUUID", 20)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -88,7 +88,7 @@ func TestMatchByID(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.ByID(api.Americas, "matchID")
+			gotData, gotErr := client.Match.ByID("matchID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

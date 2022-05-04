@@ -48,7 +48,6 @@ type Cluster string
 const (
 	Americas Cluster = "americas"
 	Europe   Cluster = "europe"
-	Esports  Cluster = "esports"
 	Asia     Cluster = "asia"
 )
 
