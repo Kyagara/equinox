@@ -378,7 +378,7 @@ func (m *MatchEndpoint) ByID(region api.Cluster, matchID string) (*MatchDTO, err
 		return nil, fmt.Errorf("the Esports cluster is not available for League of Legends related endpoints")
 	}
 
-	url := fmt.Sprintf(MatchURL, matchID)
+	url := fmt.Sprintf(MatchByIDURL, matchID)
 
 	var match *MatchDTO
 
