@@ -77,7 +77,7 @@ func (i *InternalClient) Do(method string, route interface{}, endpoint string, r
 	}
 
 	// In case of a post request returning just a single, non JSON value.
-	// This has a Post requirement because at the momento only one post request returns a plain text response
+	// This has a Post requirement because at the moment only one post request returns a plain text response
 	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type assertion
 	// This implementation looks horrible, I don't know another way of decoding any non JSON value to the &object
 	if res.Request.Method == http.MethodPost && res.Header.Get("Content-Type") == "" {
@@ -169,19 +169,18 @@ func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 		return nil, api.NotFoundError
 	}
 
-	// If the status code is lower than 200 or higher than 400, return an error.
-	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
-		logger.Warn("Endpoint returned an error")
+	// If the status code is lower than 200 or higher than 300, return an error.
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices {
+		logger.Error("Endpoint method returned an error response")
 
-		var errRes api.ErrorResponse
-
-		err := json.NewDecoder(res.Body).Decode(&errRes)
-
-		if err != nil {
-			return nil, fmt.Errorf("error decoding response: %v, with status code %d", err, res.StatusCode)
+		err := api.ErrorResponse{
+			Status: api.Status{
+				Message:    "Unknown error",
+				StatusCode: res.StatusCode,
+			},
 		}
 
-		return nil, errRes
+		return nil, err
 	}
 
 	logger.Debug("Request successful")
@@ -191,10 +190,6 @@ func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 // Creates a new *http.Request and sets headers.
 func (i *InternalClient) newRequest(method string, url string, body io.Reader) (*http.Request, error) {
-	if i.key == "" {
-		return nil, fmt.Errorf("API Key not provided")
-	}
-
 	req, err := http.NewRequest(method, url, body)
 
 	if err != nil {

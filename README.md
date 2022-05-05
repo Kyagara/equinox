@@ -1,11 +1,13 @@
 # Equinox
 
+[![equinox release (latest SemVer)](https://img.shields.io/github/v/release/Kyagara/equinox?sort=semver)](https://github.com/Kyagara/equinox/releases)
 [![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/Kyagara/equinox)
 [![Test Status](https://github.com/Kyagara/equinox/workflows/Tests/badge.svg)](https://github.com/Kyagara/equinox/actions?query=workflow%3Atests)
+[![Test Coverage](https://codecov.io/gh/Kyagara/equinox/branch/master/graph/badge.svg)](https://codecov.io/gh/Kyagara/equinox)
 
-Equinox is a Riot Games API client written in golang with the goal of providing an easy to use interface to interact with all of the [Riot Games API](https://developer.riotgames.com/apis) endpoints.
+Equinox is a Riot Games API client written in golang with the goal of providing an easy to use interface to interact with all of the [Riot Games API](https://developer.riotgames.com/apis) endpoints and the Data Dragon service.
 
-#### Endpoints implemented:
+#### Implemented:
 
 -   [ ] Data Dragon
 -   [x] Riot Account

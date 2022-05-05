@@ -19,5 +19,10 @@ jobs:
       - name: Run go vet
         run: go vet ./...
 
-      - name: Test
-        run: go test ./... -v
+      - name: Run go test
+        run: go test ./... -v -coverprofile cover.txt -covermode atomic
+
+      - name: Upload coverage to Codecov
+      - uses: codecov/codecov-action@v2
+        with:
+          files: ./cover.txt
