@@ -23,16 +23,25 @@ func TestChampionMasterySummonerMasteries(t *testing.T) {
 		code    int
 		want    *[]lol.ChampionMasteryDTO
 		wantErr error
+		region  lol.Region
 	}{
 		{
-			name: "found",
-			code: http.StatusOK,
-			want: &[]lol.ChampionMasteryDTO{},
+			name:   "found",
+			code:   http.StatusOK,
+			want:   &[]lol.ChampionMasteryDTO{},
+			region: lol.BR1,
 		},
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
 			wantErr: api.NotFoundError,
+			region:  lol.BR1,
+		},
+		{
+			name:    "invalid region",
+			code:    http.StatusOK,
+			wantErr: fmt.Errorf("the region PBE1 is not available for this method"),
+			region:  lol.PBE1,
 		},
 	}
 
@@ -40,12 +49,12 @@ func TestChampionMasterySummonerMasteries(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(lol.ChampionMasteriesURL, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.ChampionMasteries.SummonerMasteries(lol.BR1, "summonerID")
+			gotData, gotErr := client.ChampionMasteries.SummonerMasteries(test.region, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -66,16 +75,25 @@ func TestChampionMasteryChampionScore(t *testing.T) {
 		code    int
 		want    *lol.ChampionMasteryDTO
 		wantErr error
+		region  lol.Region
 	}{
 		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.ChampionMasteryDTO{},
+			name:   "found",
+			code:   http.StatusOK,
+			want:   &lol.ChampionMasteryDTO{},
+			region: lol.BR1,
 		},
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
 			wantErr: api.NotFoundError,
+			region:  lol.BR1,
+		},
+		{
+			name:    "invalid region",
+			code:    http.StatusOK,
+			wantErr: fmt.Errorf("the region PBE1 is not available for this method"),
+			region:  lol.PBE1,
 		},
 	}
 
@@ -83,12 +101,12 @@ func TestChampionMasteryChampionScore(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(lol.ChampionMasteriesByChampionURL, "summonerID", 59)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.ChampionMasteries.ChampionScore(lol.BR1, "summonerID", 59)
+			gotData, gotErr := client.ChampionMasteries.ChampionScore(test.region, "summonerID", 59)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -109,16 +127,25 @@ func TestChampionMasteryMasteryScoreSum(t *testing.T) {
 		code    int
 		want    int
 		wantErr error
+		region  lol.Region
 	}{
 		{
-			name: "found",
-			code: http.StatusOK,
-			want: 0,
+			name:   "found",
+			code:   http.StatusOK,
+			want:   0,
+			region: lol.BR1,
 		},
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
 			wantErr: api.NotFoundError,
+			region:  lol.BR1,
+		},
+		{
+			name:    "invalid region",
+			code:    http.StatusOK,
+			wantErr: fmt.Errorf("the region PBE1 is not available for this method"),
+			region:  lol.PBE1,
 		},
 	}
 
@@ -126,12 +153,12 @@ func TestChampionMasteryMasteryScoreSum(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(lol.ChampionMasteriesScoresURL, "summonerID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.ChampionMasteries.MasteryScoreSum(lol.BR1, "summonerID")
+			gotData, gotErr := client.ChampionMasteries.MasteryScoreSum(test.region, "summonerID")
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

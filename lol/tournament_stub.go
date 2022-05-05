@@ -17,21 +17,27 @@ type TournamentStubEndpoint struct {
 }
 
 // Create a mock tournament code for the given tournament.
-//
-// Count defaults to 20 (max 1000).
-func (t *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, parameters TournamentCodeParametersDTO) ([]string, error) {
+func (t *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) ([]string, error) {
 	logger := t.internalClient.Logger("lol").With("endpoint", "tournament-stub", "method", "CreateCodes")
 
-	if count < 0 {
-		count = 0
+	if count < 1 || count > 1000 {
+		return nil, fmt.Errorf("count can't be less than 1 or more than 1000")
 	}
 
-	if parameters.TeamSize < 1 || parameters.TeamSize < 5 {
-		return nil, fmt.Errorf("invalid team size: %d, valid values are 1-5", parameters.TeamSize)
+	if parameters == nil {
+		return nil, fmt.Errorf("parameters are required")
+	}
+
+	if parameters.MapType == "" && parameters.SpectatorType == "" && parameters.PickType == "" {
+		return nil, fmt.Errorf("required values are empty")
 	}
 
 	if parameters.MapType == "" || parameters.SpectatorType == "" || parameters.PickType == "" {
-		return nil, fmt.Errorf("required values are empty")
+		return nil, fmt.Errorf("not all required values are set")
+	}
+
+	if parameters.TeamSize < 1 || parameters.TeamSize > 5 {
+		return nil, fmt.Errorf("invalid team size: %d, valid values are 1-5", parameters.TeamSize)
 	}
 
 	query := url.Values{}

@@ -19,20 +19,51 @@ func TestMatchList(t *testing.T) {
 	client := lol.NewLOLClient(internalClient)
 
 	tests := []struct {
-		name    string
-		code    int
-		want    []string
-		wantErr error
+		name       string
+		code       int
+		want       []string
+		wantErr    error
+		parameters *lol.MatchlistOptions
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
 			want: []string{},
+			parameters: &lol.MatchlistOptions{Start: 0,
+				Count: 20},
+		},
+		{
+			name:       "nil options",
+			code:       http.StatusOK,
+			want:       []string{},
+			parameters: nil,
+		},
+		{
+			name: "count > 100",
+			code: http.StatusOK,
+			want: []string{},
+			parameters: &lol.MatchlistOptions{Start: 0,
+				Count: 101},
+		},
+		{
+			name: "all optional fields set",
+			code: http.StatusOK,
+			want: []string{},
+			parameters: &lol.MatchlistOptions{
+				StartTime: 1,
+				EndTime:   1,
+				Queue:     420,
+				Type:      lol.RankedMatch,
+				Start:     1,
+				Count:     1,
+			},
 		},
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
 			wantErr: api.NotFoundError,
+			parameters: &lol.MatchlistOptions{Start: 0,
+				Count: 20},
 		},
 	}
 
@@ -45,12 +76,7 @@ func TestMatchList(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			options := lol.MatchlistOptions{
-				Start: 0,
-				Count: 20,
-			}
-
-			gotData, gotErr := client.Match.List("PUUID", &options)
+			gotData, gotErr := client.Match.List("PUUID", test.parameters)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

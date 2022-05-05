@@ -84,22 +84,28 @@ type TournamentCodeUpdateParametersDTO struct {
 	SpectatorType SpectatorType `json:"spectatorType,omitempty"`
 }
 
-// Create a mock tournament code for the given tournament.
-//
-// Count defaults to 20 (max 1000).
-func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options TournamentCodeParametersDTO) ([]string, error) {
+// Create a tournament code for the given tournament.
+func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) ([]string, error) {
 	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateCodes")
 
-	if count < 0 {
-		count = 0
+	if count < 1 || count > 1000 {
+		return nil, fmt.Errorf("count can't be less than 1 or more than 1000")
 	}
 
-	if options.TeamSize < 1 || options.TeamSize < 5 {
-		return nil, fmt.Errorf("invalid team size: %d, valid values are 1-5", options.TeamSize)
+	if parameters == nil {
+		return nil, fmt.Errorf("parameters are required")
 	}
 
-	if options.MapType == "" && options.SpectatorType == "" && options.PickType == "" && len(options.AllowedSummonerIds) == 0 {
+	if parameters.MapType == "" && parameters.SpectatorType == "" && parameters.PickType == "" {
 		return nil, fmt.Errorf("required values are empty")
+	}
+
+	if parameters.MapType == "" || parameters.SpectatorType == "" || parameters.PickType == "" {
+		return nil, fmt.Errorf("not all required values are set")
+	}
+
+	if parameters.TeamSize < 1 || parameters.TeamSize > 5 {
+		return nil, fmt.Errorf("invalid team size: %d, valid values are 1-5", parameters.TeamSize)
 	}
 
 	query := url.Values{}
@@ -110,7 +116,7 @@ func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, options 
 
 	url := fmt.Sprintf("%s?%s", TournamentCodesURL, query.Encode())
 
-	body, err := json.Marshal(options)
+	body, err := json.Marshal(parameters)
 
 	if err != nil {
 		logger.Error(err)
@@ -147,9 +153,13 @@ func (t *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 	return tournament, nil
 }
 
-// Returns the tournament code DTO associated with a tournament code string.
-func (t *TournamentEndpoint) Update(tournamentCode string, parameters TournamentCodeUpdateParametersDTO) error {
+// Update the pick type, map, spectator type, or allowed summoners for a code.
+func (t *TournamentEndpoint) Update(tournamentCode string, parameters *TournamentCodeUpdateParametersDTO) error {
 	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "Update")
+
+	if parameters == nil {
+		return fmt.Errorf("parameters are required")
+	}
 
 	body, err := json.Marshal(parameters)
 
@@ -170,7 +180,7 @@ func (t *TournamentEndpoint) Update(tournamentCode string, parameters Tournament
 	return nil
 }
 
-// Gets a mock list of lobby events by tournament code.
+// Gets a list of lobby events by tournament code.
 func (t *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
 	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "LobbyEvents")
 
@@ -188,7 +198,7 @@ func (t *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 	return lobbyEvents, nil
 }
 
-// Creates a mock tournament provider and returns its ID.
+// Creates a tournament provider and returns its ID.
 //
 // Providers will need to call this endpoint first to register their callback URL and their API key with the tournament system before any other tournament provider endpoints will work.
 //
@@ -229,7 +239,7 @@ func (t *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 	return provider, nil
 }
 
-// Creates a mock tournament and returns its ID.
+// Creates a tournament and returns its ID.
 //
 // The provider ID to specify the regional registered provider data to associate this tournament.
 //

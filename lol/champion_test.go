@@ -23,16 +23,25 @@ func TestChampionRotations(t *testing.T) {
 		code    int
 		want    *lol.ChampionRotationsDTO
 		wantErr error
+		region  lol.Region
 	}{
 		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.ChampionRotationsDTO{},
+			name:   "found",
+			code:   http.StatusOK,
+			want:   &lol.ChampionRotationsDTO{},
+			region: lol.BR1,
 		},
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
 			wantErr: api.NotFoundError,
+			region:  lol.BR1,
+		},
+		{
+			name:    "invalid region",
+			code:    http.StatusOK,
+			wantErr: fmt.Errorf("the region PBE1 is not available for this method"),
+			region:  lol.PBE1,
 		},
 	}
 
@@ -40,12 +49,12 @@ func TestChampionRotations(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(lol.ChampionURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Champion.Rotations(lol.BR1)
+			gotData, gotErr := client.Champion.Rotations(test.region)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
