@@ -171,14 +171,14 @@ type RoundResultDTO struct {
 }
 
 // Get matchlist for games played by PUUID.
-func (m *MatchEndpoint) List(region Region, PUUID string) (*MatchListDTO, error) {
-	logger := m.internalClient.Logger("val").With("endpoint", "match", "method", "List")
+func (e *MatchEndpoint) List(region Region, PUUID string) (*MatchListDTO, error) {
+	logger := e.internalClient.Logger("val").With("endpoint", "match", "method", "List")
 
 	url := fmt.Sprintf(MatchListURL, PUUID)
 
 	var list *MatchListDTO
 
-	err := m.internalClient.Do(http.MethodGet, region, url, nil, &list, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &list, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -189,14 +189,14 @@ func (m *MatchEndpoint) List(region Region, PUUID string) (*MatchListDTO, error)
 }
 
 // Get match by ID.
-func (m *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
-	logger := m.internalClient.Logger("val").With("endpoint", "match", "method", "ByID")
+func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
+	logger := e.internalClient.Logger("val").With("endpoint", "match", "method", "ByID")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
 	var match *MatchDTO
 
-	err := m.internalClient.Do(http.MethodGet, region, url, nil, &match, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &match, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -213,14 +213,14 @@ func (m *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 // NA/LATAM/BR share a match history deployment. As such, recent matches will return a combined list of matches from those three regions.
 //
 // Requests are load balanced so you may see some inconsistencies as matches are added/removed from the list.
-func (m *MatchEndpoint) Recent(region Region, queue Queue) (*RecentMatchesDTO, error) {
-	logger := m.internalClient.Logger("val").With("endpoint", "match", "method", "Recent")
+func (e *MatchEndpoint) Recent(region Region, queue Queue) (*RecentMatchesDTO, error) {
+	logger := e.internalClient.Logger("val").With("endpoint", "match", "method", "Recent")
 
 	url := fmt.Sprintf(MatchRecentURL, queue)
 
 	var recent *RecentMatchesDTO
 
-	err := m.internalClient.Do(http.MethodGet, region, url, nil, &recent, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &recent, "")
 
 	if err != nil {
 		logger.Warn(err)

@@ -67,8 +67,8 @@ type TopRatedLadderEntryDTO struct {
 // Get all the league entries.
 //
 // Page defaults to 1.
-func (l *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
-	logger := l.internalClient.Logger("tft").With("endpoint", "league", "method", "Entries")
+func (e *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
+	logger := e.internalClient.Logger("tft").With("endpoint", "league", "method", "Entries")
 
 	if tier == lol.MasterTier || tier == lol.GrandmasterTier || tier == lol.ChallengerTier {
 		return nil, fmt.Errorf("the tier specified is an apex tier, please use the corresponded method instead")
@@ -88,7 +88,7 @@ func (l *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.
 
 	var entries *[]LeagueEntryDTO
 
-	err := l.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -99,19 +99,19 @@ func (l *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.
 }
 
 // Get league with given ID, including inactive entries.
-func (l *LeagueEndpoint) ByID(region lol.Region, leagueID string) (*LeagueListDTO, error) {
-	return l.getLeague(fmt.Sprintf(LeagueByIDURL, leagueID), region, "ByID")
+func (e *LeagueEndpoint) ByID(region lol.Region, leagueID string) (*LeagueListDTO, error) {
+	return e.getLeague(fmt.Sprintf(LeagueByIDURL, leagueID), region, "ByID")
 }
 
 // Get league entries in all queues for a given summoner ID.
-func (l *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (*[]LeagueEntryDTO, error) {
-	logger := l.internalClient.Logger("tft").With("endpoint", "league", "method", "SummonerEntries")
+func (e *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (*[]LeagueEntryDTO, error) {
+	logger := e.internalClient.Logger("tft").With("endpoint", "league", "method", "SummonerEntries")
 
 	url := fmt.Sprintf(LeagueEntriesBySummonerURL, summonerID)
 
 	var entries *[]LeagueEntryDTO
 
-	err := l.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -122,8 +122,8 @@ func (l *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (
 }
 
 // Get the top rated ladder for given queue.
-func (l *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]TopRatedLadderEntryDTO, error) {
-	logger := l.internalClient.Logger("tft").With("endpoint", "league", "method", "TopRatedLadder")
+func (e *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]TopRatedLadderEntryDTO, error) {
+	logger := e.internalClient.Logger("tft").With("endpoint", "league", "method", "TopRatedLadder")
 
 	if queue == RankedTFTQueue {
 		return nil, fmt.Errorf("the queue specified is not available for the top rated ladder endpoint, please use the RankedTFTTurbo queue")
@@ -133,7 +133,7 @@ func (l *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]
 
 	var entries *[]TopRatedLadderEntryDTO
 
-	err := l.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -144,26 +144,26 @@ func (l *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]
 }
 
 // Get the challenger league.
-func (l *LeagueEndpoint) Challenger(region lol.Region) (*LeagueListDTO, error) {
-	return l.getLeague(LeagueChallengerURL, region, "Challenger")
+func (e *LeagueEndpoint) Challenger(region lol.Region) (*LeagueListDTO, error) {
+	return e.getLeague(LeagueChallengerURL, region, "Challenger")
 }
 
 // Get the grandmaster league.
-func (l *LeagueEndpoint) Grandmaster(region lol.Region) (*LeagueListDTO, error) {
-	return l.getLeague(LeagueGrandmasterURL, region, "Grandmaster")
+func (e *LeagueEndpoint) Grandmaster(region lol.Region) (*LeagueListDTO, error) {
+	return e.getLeague(LeagueGrandmasterURL, region, "Grandmaster")
 }
 
 // Get the master league.
-func (l *LeagueEndpoint) Master(region lol.Region) (*LeagueListDTO, error) {
-	return l.getLeague(LeagueMasterURL, region, "Master")
+func (e *LeagueEndpoint) Master(region lol.Region) (*LeagueListDTO, error) {
+	return e.getLeague(LeagueMasterURL, region, "Master")
 }
 
-func (l *LeagueEndpoint) getLeague(url string, region lol.Region, methodName string) (*LeagueListDTO, error) {
-	logger := l.internalClient.Logger("tft").With("endpoint", "league", "method", methodName)
+func (e *LeagueEndpoint) getLeague(url string, region lol.Region, methodName string) (*LeagueListDTO, error) {
+	logger := e.internalClient.Logger("tft").With("endpoint", "league", "method", methodName)
 
 	var league *LeagueListDTO
 
-	err := l.internalClient.Do(http.MethodGet, region, url, nil, &league, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &league, "")
 
 	if err != nil {
 		logger.Warn(err)

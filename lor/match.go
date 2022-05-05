@@ -49,14 +49,14 @@ type PlayersDTO struct {
 }
 
 // Get match by ID.
-func (m *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
-	logger := m.internalClient.Logger("lor").With("endpoint", "match", "method", "ByID")
+func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
+	logger := e.internalClient.Logger("lor").With("endpoint", "match", "method", "ByID")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
 	var match *MatchDTO
 
-	err := m.internalClient.Do(http.MethodGet, region, url, nil, &match, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &match, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -67,14 +67,14 @@ func (m *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 }
 
 // Get a list of match ids by PUUID.
-func (m *MatchEndpoint) List(region Region, PUUID string) ([]string, error) {
-	logger := m.internalClient.Logger("lor").With("endpoint", "match", "method", "List")
+func (e *MatchEndpoint) List(region Region, PUUID string) ([]string, error) {
+	logger := e.internalClient.Logger("lor").With("endpoint", "match", "method", "List")
 
 	url := fmt.Sprintf(MatchListURL, PUUID)
 
 	var list []string
 
-	err := m.internalClient.Do(http.MethodGet, region, url, nil, &list, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &list, "")
 
 	if err != nil {
 		logger.Warn(err)

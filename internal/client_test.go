@@ -3,6 +3,7 @@ package internal_test
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
@@ -104,7 +105,7 @@ func TestInternalClientDoRequest(t *testing.T) {
 }
 
 // Testing if the client can properly handle a status code not specified in the Riot API
-func TestInternalClientSendRequest(t *testing.T) {
+func TestInternalClientHandleErrorResponse(t *testing.T) {
 	defer gock.Off()
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
@@ -125,4 +126,53 @@ func TestInternalClientSendRequest(t *testing.T) {
 	}
 
 	require.Equal(t, wantErr, gotErr, fmt.Sprintf("want err %v, got %v", wantErr, gotErr))
+}
+
+func TestInternalClientNewRequest(t *testing.T) {
+	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	validReq, _ := client.NewRequest(http.MethodGet, "http://localhost:80", nil)
+
+	tests := []struct {
+		name    string
+		want    *http.Request
+		wantErr error
+		method  string
+		url     string
+	}{
+		{
+			name:   "success",
+			want:   validReq,
+			method: http.MethodGet,
+			url:    "http://localhost:80",
+		},
+		{
+			name:    "invalid method",
+			wantErr: fmt.Errorf("net/http: invalid method \"=\""),
+			method:  "=",
+			url:     "http://localhost:80",
+		},
+		{
+			name: "invalid url",
+			wantErr: &url.Error{
+				Op:  "parse",
+				URL: "\\:invalid:/=",
+				Err: fmt.Errorf("first path segment in URL cannot contain colon"),
+			},
+			method: http.MethodGet,
+			url:    "\\:invalid:/=",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			gotData, gotErr := client.NewRequest(test.method, test.url, nil)
+
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, test.want, gotData)
+			}
+		})
+	}
 }
