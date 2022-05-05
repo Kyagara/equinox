@@ -47,10 +47,10 @@ func TestDeckList(t *testing.T) {
 
 			gotData, gotErr := client.Deck.List(lor.Americas, "accessToken")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -89,10 +89,10 @@ func TestDeckCreate(t *testing.T) {
 
 			gotData, gotErr := client.Deck.Create(lor.Americas, "accessToken", "code", "name")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}

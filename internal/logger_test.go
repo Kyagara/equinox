@@ -3,13 +3,14 @@ package internal_test
 import (
 	"testing"
 
+	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewLogger(t *testing.T) {
-	logger := internal.NewLogger(internal.NewTestEquinoxConfig())
+	logger := internal.NewLogger(true, 10, api.DebugLevel)
 
 	require.NotNil(t, logger, "expecting non-nil Logger")
 

@@ -20,11 +20,11 @@ const (
 type GameType string
 
 const (
-	Ranked           GameType = "Ranked"
-	Normal           GameType = "Normal"
-	AI               GameType = "AI"
-	Tutorial         GameType = "Tutorial"
-	VanillaTrial     GameType = "VanillaTrial"
-	Singleton        GameType = "Singleton"
-	StandardGauntlet GameType = "StandardGauntlet"
+	RankedGame           GameType = "Ranked"
+	NormalGame           GameType = "Normal"
+	AIGame               GameType = "AI"
+	TutorialGame         GameType = "Tutorial"
+	VanillaTrialGame     GameType = "VanillaTrial"
+	SingletonGame        GameType = "Singleton"
+	StandardGauntletGame GameType = "StandardGauntlet"
 )

@@ -3,8 +3,8 @@ package tft
 type QueueType string
 
 const (
-	RankedTFTTurbo QueueType = "RANKED_TFT_TURBO"
-	RankedTFT      QueueType = "RANKED_TFT"
+	RankedTFTTurboQueue QueueType = "RANKED_TFT_TURBO"
+	RankedTFTQueue      QueueType = "RANKED_TFT"
 )
 
 type RatedTier string
@@ -20,9 +20,9 @@ const (
 type Style int8
 
 const (
-	NoStyle   Style = 0
-	Bronze    Style = 1
-	Silver    Style = 2
-	Gold      Style = 3
-	Chromatic Style = 4
+	NoStyle        Style = 0
+	BronzeStyle    Style = 1
+	SilverStyle    Style = 2
+	GoldStyle      Style = 3
+	ChromaticStyle Style = 4
 )

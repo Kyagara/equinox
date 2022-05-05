@@ -1,55 +1,103 @@
 package equinox_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/internal"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewEquinoxClient(t *testing.T) {
-	client, err := equinox.NewClient("RIOT_API_KEY")
+	tests := []struct {
+		name    string
+		want    *equinox.Equinox
+		wantErr error
+		key     string
+	}{
+		{
+			name: "success",
+			want: &equinox.Equinox{},
+			key:  "RIOT_API_KEY",
+		},
+		{
+			name:    "nil key",
+			wantErr: fmt.Errorf("API Key not provided"),
+			key:     "",
+		},
+	}
 
-	assert.Nil(t, err, "expecting nil error")
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			gotData, gotErr := equinox.NewClient(test.key)
 
-	assert.NotNil(t, client, "expecting non-nil Equinox client")
+			if test.name != "success" {
+				require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+				if test.wantErr == nil {
+					assert.Equal(t, test.want, gotData)
+				}
+			} else {
+				require.NotEmpty(t, gotData, "expecting not empty client")
+			}
+		})
+	}
 }
 
 func TestNewEquinoxClientWithConfig(t *testing.T) {
-	config := &api.EquinoxConfig{
-		Key:      "RIOT_API_KEY",
-		LogLevel: api.DebugLevel,
-		Timeout:  10,
-		Retry:    true,
+	tests := []struct {
+		name    string
+		want    *equinox.Equinox
+		wantErr error
+		config  *api.EquinoxConfig
+	}{
+		{
+			name:   "success",
+			want:   &equinox.Equinox{},
+			config: internal.NewTestEquinoxConfig(),
+		},
+		{
+			name:    "nil config",
+			wantErr: fmt.Errorf("equinox configuration not provided"),
+			config:  nil,
+		},
+		{
+			name:    "api key nil",
+			wantErr: fmt.Errorf("API Key not provided"),
+			config: &api.EquinoxConfig{
+				LogLevel: api.DebugLevel,
+				Timeout:  10,
+				Retry:    true,
+			},
+		},
+		{
+			name:    "cluster nil",
+			wantErr: fmt.Errorf("cluster not provided"),
+			config: &api.EquinoxConfig{
+				Key:      "RIOT_API_KEY",
+				LogLevel: api.DebugLevel,
+				Timeout:  10,
+				Retry:    true,
+			},
+		},
 	}
 
-	client, err := equinox.NewClientWithConfig(config)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			gotData, gotErr := equinox.NewClientWithConfig(test.config)
 
-	assert.Nil(t, err, "expecting nil error")
+			if test.name != "success" {
+				require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
-	assert.NotNil(t, client, "expecting non-nil Equinox client")
-}
-
-func TestNewEquinoxClientWithoutKey(t *testing.T) {
-	client, err := equinox.NewClient("")
-
-	assert.Nil(t, client, "expecting nil Equinox client")
-
-	assert.NotNil(t, err, "expecting non-nil error")
-}
-
-func TestNewEquinoxClientWithConfigWithoutKey(t *testing.T) {
-	config := &api.EquinoxConfig{
-		Key:      "",
-		LogLevel: api.DebugLevel,
-		Timeout:  10,
-		Retry:    true,
+				if test.wantErr == nil {
+					assert.Equal(t, test.want, gotData)
+				}
+			} else {
+				require.NotEmpty(t, gotData, "expecting not empty client")
+			}
+		})
 	}
-
-	client, err := equinox.NewClientWithConfig(config)
-
-	assert.Nil(t, client, "expecting nil Equinox client")
-
-	assert.NotNil(t, err, "expecting non-nil error")
 }

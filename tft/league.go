@@ -125,7 +125,7 @@ func (l *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (
 func (l *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]TopRatedLadderEntryDTO, error) {
 	logger := l.internalClient.Logger("tft").With("endpoint", "league", "method", "TopRatedLadder")
 
-	if queue == RankedTFT {
+	if queue == RankedTFTQueue {
 		return nil, fmt.Errorf("the queue specified is not available for the top rated ladder endpoint, please use the RankedTFTTurbo queue")
 	}
 

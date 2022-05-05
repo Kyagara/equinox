@@ -47,10 +47,10 @@ func TestMatchList(t *testing.T) {
 
 			gotData, gotErr := client.Match.List(val.BR, "PUUID")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -90,10 +90,10 @@ func TestMatchByID(t *testing.T) {
 
 			gotData, gotErr := client.Match.ByID(val.BR, "matchID")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -127,16 +127,16 @@ func TestMatchRecent(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, val.BR)).
-				Get(fmt.Sprintf(val.MatchRecentURL, val.Competitive)).
+				Get(fmt.Sprintf(val.MatchRecentURL, val.CompetitiveQueue)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.Recent(val.BR, val.Competitive)
+			gotData, gotErr := client.Match.Recent(val.BR, val.CompetitiveQueue)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}

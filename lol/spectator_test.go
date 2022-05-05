@@ -47,10 +47,10 @@ func TestSpectatorFeaturedGames(t *testing.T) {
 
 			gotData, gotErr := client.Spectator.FeaturedGames(lol.BR1)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -90,10 +90,10 @@ func TestSpectatorCurrentGame(t *testing.T) {
 
 			gotData, gotErr := client.Spectator.CurrentGame(lol.BR1, "summonerID")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}

@@ -56,10 +56,10 @@ func TestChampionMasterySummonerMasteries(t *testing.T) {
 
 			gotData, gotErr := client.ChampionMasteries.SummonerMasteries(test.region, "summonerID")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -108,10 +108,10 @@ func TestChampionMasteryChampionScore(t *testing.T) {
 
 			gotData, gotErr := client.ChampionMasteries.ChampionScore(test.region, "summonerID", 59)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -160,10 +160,10 @@ func TestChampionMasteryMasteryScoreSum(t *testing.T) {
 
 			gotData, gotErr := client.ChampionMasteries.MasteryScoreSum(test.region, "summonerID")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}

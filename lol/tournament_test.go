@@ -52,7 +52,7 @@ func TestTournamentCreateCodes(t *testing.T) {
 			},
 		},
 		{
-			name:       "count < 0",
+			name:       "default values",
 			count:      -1,
 			code:       http.StatusNotFound,
 			wantErr:    fmt.Errorf("count can't be less than 1 or more than 1000"),
@@ -101,10 +101,10 @@ func TestTournamentCreateCodes(t *testing.T) {
 
 			gotData, gotErr := client.Tournament.CreateCodes(1, test.count, test.parameters)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -144,10 +144,10 @@ func TestTournamentByCode(t *testing.T) {
 
 			gotData, gotErr := client.Tournament.ByCode("tournamentCode")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -193,10 +193,10 @@ func TestTournamentUpdate(t *testing.T) {
 
 			gotErr := client.Tournament.Update("tournamentCode", test.parameters)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotErr, nil)
+				assert.Equal(t, nil, gotErr)
 			}
 		})
 	}
@@ -236,10 +236,10 @@ func TestTournamentLobbyEvents(t *testing.T) {
 
 			gotData, gotErr := client.Tournament.LobbyEvents("tournamentCode")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -279,10 +279,10 @@ func TestTournamentCreate(t *testing.T) {
 
 			gotData, gotErr := client.Tournament.Create(1, "name")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -335,10 +335,10 @@ func TestTournamentCreateProvider(t *testing.T) {
 
 			gotData, gotErr := client.Tournament.CreateProvider("name", test.url)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
