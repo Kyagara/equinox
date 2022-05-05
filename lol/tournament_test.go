@@ -3,6 +3,7 @@ package lol_test
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
@@ -19,20 +20,73 @@ func TestTournamentCreateCodes(t *testing.T) {
 	client := lol.NewLOLClient(internalClient)
 
 	tests := []struct {
-		name    string
-		code    int
-		want    []string
-		wantErr error
+		name       string
+		code       int
+		want       []string
+		wantErr    error
+		count      int
+		parameters *lol.TournamentCodeParametersDTO
 	}{
 		{
-			name: "found",
-			code: http.StatusOK,
-			want: []string{},
+			name:  "found",
+			code:  http.StatusOK,
+			want:  []string{},
+			count: 1,
+			parameters: &lol.TournamentCodeParametersDTO{
+				MapType:       lol.SummonersRiftMap,
+				PickType:      lol.TournamentDraftPick,
+				SpectatorType: lol.AllSpectator,
+				TeamSize:      5,
+			},
 		},
 		{
 			name:    "not found",
+			count:   1,
 			code:    http.StatusNotFound,
 			wantErr: api.NotFoundError,
+			parameters: &lol.TournamentCodeParametersDTO{
+				MapType:       lol.SummonersRiftMap,
+				PickType:      lol.TournamentDraftPick,
+				SpectatorType: lol.AllSpectator,
+				TeamSize:      5,
+			},
+		},
+		{
+			name:       "count < 0",
+			count:      -1,
+			code:       http.StatusNotFound,
+			wantErr:    fmt.Errorf("count can't be less than 1 or more than 1000"),
+			parameters: nil,
+		},
+		{
+			name:       "parameters is nil",
+			count:      1,
+			code:       http.StatusNotFound,
+			wantErr:    fmt.Errorf("parameters are required"),
+			parameters: nil,
+		},
+		{
+			name:       "parameters with default value",
+			count:      1,
+			code:       http.StatusNotFound,
+			wantErr:    fmt.Errorf("required values are empty"),
+			parameters: &lol.TournamentCodeParametersDTO{},
+		},
+		{
+			name:    "options with invalid team size",
+			count:   1,
+			code:    http.StatusNotFound,
+			wantErr: fmt.Errorf("invalid team size: 0, valid values are 1-5"),
+			parameters: &lol.TournamentCodeParametersDTO{TeamSize: 0, MapType: lol.SummonersRiftMap,
+				PickType:      lol.TournamentDraftPick,
+				SpectatorType: lol.AllSpectator},
+		},
+		{
+			name:       "options with only one value set",
+			count:      1,
+			code:       http.StatusNotFound,
+			wantErr:    fmt.Errorf("not all required values are set"),
+			parameters: &lol.TournamentCodeParametersDTO{MapType: lol.SummonersRiftMap},
 		},
 	}
 
@@ -45,14 +99,7 @@ func TestTournamentCreateCodes(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			options := lol.TournamentCodeParametersDTO{
-				MapType:       lol.SummonersRiftMap,
-				PickType:      lol.TournamentDraftPick,
-				SpectatorType: lol.AllSpectator,
-				TeamSize:      5,
-			}
-
-			gotData, gotErr := client.Tournament.CreateCodes(1, 1, options)
+			gotData, gotErr := client.Tournament.CreateCodes(1, test.count, test.parameters)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -112,18 +159,27 @@ func TestTournamentUpdate(t *testing.T) {
 	client := lol.NewLOLClient(internalClient)
 
 	tests := []struct {
-		name    string
-		code    int
-		wantErr error
+		name       string
+		code       int
+		parameters *lol.TournamentCodeUpdateParametersDTO
+		wantErr    error
 	}{
 		{
-			name: "found",
-			code: http.StatusOK,
+			name:       "found",
+			code:       http.StatusOK,
+			parameters: &lol.TournamentCodeUpdateParametersDTO{},
 		},
 		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			name:       "not found",
+			code:       http.StatusNotFound,
+			wantErr:    api.NotFoundError,
+			parameters: &lol.TournamentCodeUpdateParametersDTO{},
+		},
+		{
+			name:       "parameters is nil",
+			code:       http.StatusOK,
+			wantErr:    fmt.Errorf("parameters are required"),
+			parameters: nil,
 		},
 	}
 
@@ -135,11 +191,7 @@ func TestTournamentUpdate(t *testing.T) {
 				Put(fmt.Sprintf(lol.TournamentByCodeURL, "tournamentCode")).
 				Reply(test.code)
 
-			options := lol.TournamentCodeUpdateParametersDTO{
-				MapType: lol.SummonersRiftMap,
-			}
-
-			gotErr := client.Tournament.Update("tournamentCode", options)
+			gotErr := client.Tournament.Update("tournamentCode", test.parameters)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -246,16 +298,29 @@ func TestTournamentCreateProvider(t *testing.T) {
 		code    int
 		want    int
 		wantErr error
+		url     string
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
 			want: 0,
+			url:  "http://localhost:80",
 		},
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
 			wantErr: api.NotFoundError,
+			url:     "http://localhost:80",
+		},
+		{
+			name: "invalid url",
+			code: http.StatusOK,
+			wantErr: &url.Error{
+				Op:  "parse",
+				URL: "invalidurl",
+				Err: fmt.Errorf("invalid URI for request"),
+			},
+			url: "invalidurl",
 		},
 	}
 
@@ -268,7 +333,7 @@ func TestTournamentCreateProvider(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Tournament.CreateProvider("name", "http://localhost:80")
+			gotData, gotErr := client.Tournament.CreateProvider("name", test.url)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

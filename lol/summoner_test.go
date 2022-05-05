@@ -191,20 +191,28 @@ func TestSummonerByAccessToken(t *testing.T) {
 	client := lol.NewLOLClient(internalClient)
 
 	tests := []struct {
-		name    string
-		code    int
-		want    *lol.SummonerDTO
-		wantErr error
+		name        string
+		code        int
+		want        *lol.SummonerDTO
+		wantErr     error
+		accessToken string
 	}{
 		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.SummonerDTO{},
+			name:        "found",
+			code:        http.StatusOK,
+			want:        &lol.SummonerDTO{},
+			accessToken: "accessToken",
 		},
 		{
-			name:    "not found",
+			name:        "not found",
+			code:        http.StatusNotFound,
+			wantErr:     api.NotFoundError,
+			accessToken: "accessToken",
+		},
+		{
+			name:    "accessToken empty",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: fmt.Errorf("accessToken is required"),
 		},
 	}
 
@@ -217,7 +225,7 @@ func TestSummonerByAccessToken(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want).SetHeader("Authorization", "accessToken")
 
-			gotData, gotErr := client.Summoner.ByAccessToken(lol.BR1, "accessToken")
+			gotData, gotErr := client.Summoner.ByAccessToken(lol.BR1, test.accessToken)
 
 			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
