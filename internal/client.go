@@ -41,7 +41,7 @@ func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 		logLevel: config.LogLevel,
 		retry:    config.Retry,
 		http:     &http.Client{Timeout: config.Timeout * time.Second},
-		logger:   NewLogger(config),
+		logger:   NewLogger(config.Retry, config.Timeout, config.LogLevel),
 	}
 }
 

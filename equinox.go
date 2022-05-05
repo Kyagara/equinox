@@ -58,8 +58,16 @@ func NewClient(key string) (*Equinox, error) {
 //
 //	If you don't specify a Timeout this will disable the timeout for the http.Client.
 func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
+	if config == nil {
+		return nil, fmt.Errorf("equinox configuration not provided")
+	}
+
 	if config.Key == "" {
 		return nil, fmt.Errorf("API Key not provided")
+	}
+
+	if config.Cluster == "" {
+		return nil, fmt.Errorf("cluster not provided")
 	}
 
 	client := internal.NewInternalClient(config)

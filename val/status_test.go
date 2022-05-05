@@ -23,16 +23,25 @@ func TestPlatformStatus(t *testing.T) {
 		code    int
 		want    *api.PlatformDataDTO
 		wantErr error
+		region  val.Region
 	}{
 		{
-			name: "found",
-			code: http.StatusOK,
-			want: &api.PlatformDataDTO{},
+			name:   "found",
+			code:   http.StatusOK,
+			want:   &api.PlatformDataDTO{},
+			region: val.BR,
 		},
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
 			wantErr: api.NotFoundError,
+			region:  val.BR,
+		},
+		{
+			name:    "invalid region",
+			code:    http.StatusNotFound,
+			wantErr: fmt.Errorf("the region ESPORTS is not available for this method"),
+			region:  val.ESPORTS,
 		},
 	}
 
@@ -40,17 +49,17 @@ func TestPlatformStatus(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, val.BR)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(val.StatusURL).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Status.PlatformStatus(val.BR)
+			gotData, gotErr := client.Status.PlatformStatus(test.region)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}

@@ -65,7 +65,7 @@ func (r *RankedEndpoint) LeaderboardsByActID(region Region, actID string, size u
 		return nil, fmt.Errorf("the region ESPORTS is not available for this method")
 	}
 
-	if size < 1 {
+	if size < 1 || size > 200 {
 		size = 200
 	}
 

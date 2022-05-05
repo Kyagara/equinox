@@ -48,10 +48,10 @@ func TestLeagueEntries(t *testing.T) {
 
 			gotData, gotErr := client.League.Entries(lol.BR1, lol.GoldTier, api.I, 1)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -91,10 +91,10 @@ func TestLeagueByID(t *testing.T) {
 
 			gotData, gotErr := client.League.ByID(lol.BR1, "leagueID")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -110,16 +110,25 @@ func TestLeagueTopRatedLadder(t *testing.T) {
 		code    int
 		want    *[]tft.TopRatedLadderEntryDTO
 		wantErr error
+		queue   tft.QueueType
 	}{
 		{
-			name: "found",
-			code: http.StatusOK,
-			want: &[]tft.TopRatedLadderEntryDTO{},
+			name:  "found",
+			code:  http.StatusOK,
+			want:  &[]tft.TopRatedLadderEntryDTO{},
+			queue: tft.RankedTFTTurboQueue,
 		},
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
 			wantErr: api.NotFoundError,
+			queue:   tft.RankedTFTTurboQueue,
+		},
+		{
+			name:    "invalid queue",
+			code:    http.StatusNotFound,
+			wantErr: fmt.Errorf("the queue specified is not available for the top rated ladder endpoint, please use the RankedTFTTurbo queue"),
+			queue:   tft.RankedTFTQueue,
 		},
 	}
 
@@ -128,16 +137,16 @@ func TestLeagueTopRatedLadder(t *testing.T) {
 			defer gock.Off()
 
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(tft.LeagueRatedLaddersURL, tft.RankedTFTTurbo)).
+				Get(fmt.Sprintf(tft.LeagueRatedLaddersURL, test.queue)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.League.TopRatedLadder(lol.BR1, tft.RankedTFTTurbo)
+			gotData, gotErr := client.League.TopRatedLadder(lol.BR1, test.queue)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -177,10 +186,10 @@ func TestLeagueSummonerEntries(t *testing.T) {
 
 			gotData, gotErr := client.League.SummonerEntries(lol.BR1, "summonerID")
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -220,10 +229,10 @@ func TestLeagueChallenger(t *testing.T) {
 
 			gotData, gotErr := client.League.Challenger(lol.BR1)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -263,10 +272,10 @@ func TestLeagueGrandmaster(t *testing.T) {
 
 			gotData, gotErr := client.League.Grandmaster(lol.BR1)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}
@@ -306,10 +315,10 @@ func TestLeagueMaster(t *testing.T) {
 
 			gotData, gotErr := client.League.Master(lol.BR1)
 
-			require.Equal(t, gotErr, test.wantErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, gotData, test.want)
+				assert.Equal(t, test.want, gotData)
 			}
 		})
 	}

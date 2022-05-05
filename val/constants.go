@@ -3,10 +3,10 @@ package val
 type Queue string
 
 const (
-	Competitive Queue = "competitive"
-	Unrated     Queue = "unrated"
-	SpikeRush   Queue = "spikerush"
-	Tournament  Queue = "tournamentmode"
+	CompetitiveQueue Queue = "competitive"
+	UnratedQueue     Queue = "unrated"
+	SpikeRushQueue   Queue = "spikerush"
+	TournamentQueue  Queue = "tournamentmode"
 )
 
 type Region string
