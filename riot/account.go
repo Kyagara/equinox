@@ -27,14 +27,14 @@ type ActiveShardDTO struct {
 }
 
 // Get active shard for a player.
-func (a *AccountEndpoint) PlayerActiveShard(PUUID string, game api.Game) (*ActiveShardDTO, error) {
-	logger := a.internalClient.Logger("riot").With("endpoint", "account", "method", "PlayerActiveShard")
+func (e *AccountEndpoint) PlayerActiveShard(PUUID string, game api.Game) (*ActiveShardDTO, error) {
+	logger := e.internalClient.Logger("riot").With("endpoint", "account", "method", "PlayerActiveShard")
 
 	url := fmt.Sprintf(AccountActiveShardURL, game, PUUID)
 
 	var shard *ActiveShardDTO
 
-	err := a.internalClient.Do(http.MethodGet, a.internalClient.Cluster, url, nil, &shard, "")
+	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &shard, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -45,26 +45,26 @@ func (a *AccountEndpoint) PlayerActiveShard(PUUID string, game api.Game) (*Activ
 }
 
 // Get account by PUUID.
-func (a *AccountEndpoint) ByPUUID(PUUID string) (*AccountDTO, error) {
-	return a.getAccount(fmt.Sprintf(AccountByPUUIDURL, PUUID), "", "ByPUUID")
+func (e *AccountEndpoint) ByPUUID(PUUID string) (*AccountDTO, error) {
+	return e.getAccount(fmt.Sprintf(AccountByPUUIDURL, PUUID), "", "ByPUUID")
 }
 
 // Get account by riot ID.
-func (a *AccountEndpoint) ByID(gameName string, tagLine string) (*AccountDTO, error) {
-	return a.getAccount(fmt.Sprintf(AccountByRiotIDURL, gameName, tagLine), "", "ByID")
+func (e *AccountEndpoint) ByID(gameName string, tagLine string) (*AccountDTO, error) {
+	return e.getAccount(fmt.Sprintf(AccountByRiotIDURL, gameName, tagLine), "", "ByID")
 }
 
 // Get account by access token.
-func (a *AccountEndpoint) ByAccessToken(accessToken string) (*AccountDTO, error) {
-	return a.getAccount(AccountByAccessTokenURL, accessToken, "ByAccessToken")
+func (e *AccountEndpoint) ByAccessToken(accessToken string) (*AccountDTO, error) {
+	return e.getAccount(AccountByAccessTokenURL, accessToken, "ByAccessToken")
 }
 
-func (a *AccountEndpoint) getAccount(url string, accessToken string, methodName string) (*AccountDTO, error) {
-	logger := a.internalClient.Logger("riot").With("endpoint", "account", "method", methodName)
+func (e *AccountEndpoint) getAccount(url string, accessToken string, methodName string) (*AccountDTO, error) {
+	logger := e.internalClient.Logger("riot").With("endpoint", "account", "method", methodName)
 
 	var account *AccountDTO
 
-	err := a.internalClient.Do(http.MethodGet, a.internalClient.Cluster, url, nil, &account, accessToken)
+	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &account, accessToken)
 
 	if err != nil {
 		logger.Warn(err)

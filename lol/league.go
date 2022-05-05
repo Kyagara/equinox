@@ -53,8 +53,8 @@ type MiniSeriesDTO struct {
 // Get all the league entries.
 //
 // Page defaults to 1.
-func (l *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
-	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", "Entries")
+func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "league", "method", "Entries")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -78,7 +78,7 @@ func (l *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 
 	var entries *[]LeagueEntryDTO
 
-	err := l.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -89,8 +89,8 @@ func (l *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 }
 
 // Get league entries in all queues for a given summoner ID.
-func (l *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]LeagueEntryDTO, error) {
-	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", "SummonerEntries")
+func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]LeagueEntryDTO, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "league", "method", "SummonerEntries")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -100,7 +100,7 @@ func (l *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]L
 
 	var entries *[]LeagueEntryDTO
 
-	err := l.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -111,27 +111,27 @@ func (l *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]L
 }
 
 // Get the challenger league for given queue.
-func (l *LeagueEndpoint) ChallengerByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
-	return l.getLeague(LeagueChallengerURL, region, queueType, "ChallengerByQueue")
+func (e *LeagueEndpoint) ChallengerByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
+	return e.getLeague(LeagueChallengerURL, region, queueType, "ChallengerByQueue")
 }
 
 // Get the grandmaster league for given queue.
-func (l *LeagueEndpoint) GrandmasterByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
-	return l.getLeague(LeagueGrandmasterURL, region, queueType, "GrandmasterByQueue")
+func (e *LeagueEndpoint) GrandmasterByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
+	return e.getLeague(LeagueGrandmasterURL, region, queueType, "GrandmasterByQueue")
 }
 
 // Get the master league for given queue.
-func (l *LeagueEndpoint) MasterByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
-	return l.getLeague(LeagueMasterURL, region, queueType, "MasterByQueue")
+func (e *LeagueEndpoint) MasterByQueue(region Region, queueType QueueType) (*LeagueListDTO, error) {
+	return e.getLeague(LeagueMasterURL, region, queueType, "MasterByQueue")
 }
 
 // Get league with given ID, including inactive entries.
-func (l *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, error) {
-	return l.getLeague(LeagueByIDURL, region, leagueID, "ByID")
+func (e *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, error) {
+	return e.getLeague(LeagueByIDURL, region, leagueID, "ByID")
 }
 
-func (l *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueType interface{}, methodName string) (*LeagueListDTO, error) {
-	logger := l.internalClient.Logger("lol").With("endpoint", "league", "method", methodName)
+func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueType interface{}, methodName string) (*LeagueListDTO, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "league", "method", methodName)
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -141,7 +141,7 @@ func (l *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueTy
 
 	var league *LeagueListDTO
 
-	err := l.internalClient.Do(http.MethodGet, region, url, nil, &league, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &league, "")
 
 	if err != nil {
 		logger.Warn(err)

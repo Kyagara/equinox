@@ -16,7 +16,7 @@ Equinox is a Riot Games API client written in golang with the goal of providing 
 -   [x] Valorant
 -   [x] Legends of Runeterra
 
-## Installation ##
+## Installation
 
 To install equinox you can either import it in a package:
 

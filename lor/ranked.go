@@ -25,12 +25,12 @@ type LeaderboardPlayersDTO struct {
 // Get the players in Master tier.
 //
 // The leaderboard is updated once an hour.
-func (r *RankedEndpoint) Leaderboards(region Region) (*LeaderboardDTO, error) {
-	logger := r.internalClient.Logger("lor").With("endpoint", "ranked", "method", "Leaderboards")
+func (e *RankedEndpoint) Leaderboards(region Region) (*LeaderboardDTO, error) {
+	logger := e.internalClient.Logger("lor").With("endpoint", "ranked", "method", "Leaderboards")
 
 	var leaderboard *LeaderboardDTO
 
-	err := r.internalClient.Do(http.MethodGet, region, RankedURL, nil, &leaderboard, "")
+	err := e.internalClient.Do(http.MethodGet, region, RankedURL, nil, &leaderboard, "")
 
 	if err != nil {
 		logger.Warn(err)

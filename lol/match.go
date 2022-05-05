@@ -320,8 +320,8 @@ type MatchlistOptions struct {
 // Start defaults to 0.
 //
 // Count defaults to 20.
-func (m *MatchEndpoint) List(PUUID string, options *MatchlistOptions) ([]string, error) {
-	logger := m.internalClient.Logger("lol").With("endpoint", "match", "method", "List")
+func (e *MatchEndpoint) List(PUUID string, options *MatchlistOptions) ([]string, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "match", "method", "List")
 
 	if options == nil {
 		options = &MatchlistOptions{Start: 0, Count: 20}
@@ -359,7 +359,7 @@ func (m *MatchEndpoint) List(PUUID string, options *MatchlistOptions) ([]string,
 
 	var list []string
 
-	err := m.internalClient.Do(http.MethodGet, m.internalClient.Cluster, url, nil, &list, "")
+	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &list, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -370,14 +370,14 @@ func (m *MatchEndpoint) List(PUUID string, options *MatchlistOptions) ([]string,
 }
 
 // Get a match by match ID.
-func (m *MatchEndpoint) ByID(matchID string) (*MatchDTO, error) {
-	logger := m.internalClient.Logger("lol").With("endpoint", "match", "method", "ByID")
+func (e *MatchEndpoint) ByID(matchID string) (*MatchDTO, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "match", "method", "ByID")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
 	var match *MatchDTO
 
-	err := m.internalClient.Do(http.MethodGet, m.internalClient.Cluster, url, nil, &match, "")
+	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &match, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -388,14 +388,14 @@ func (m *MatchEndpoint) ByID(matchID string) (*MatchDTO, error) {
 }
 
 // Get a match timeline by match ID.
-func (m *MatchEndpoint) Timeline(matchID string) (*MatchTimelineDTO, error) {
-	logger := m.internalClient.Logger("lol").With("endpoint", "match", "method", "Timeline")
+func (e *MatchEndpoint) Timeline(matchID string) (*MatchTimelineDTO, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "match", "method", "Timeline")
 
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
 
 	var timeline *MatchTimelineDTO
 
-	err := m.internalClient.Do(http.MethodGet, m.internalClient.Cluster, url, nil, &timeline, "")
+	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &timeline, "")
 
 	if err != nil {
 		logger.Warn(err)

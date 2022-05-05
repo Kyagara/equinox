@@ -33,8 +33,8 @@ type ChampionMasteryDTO struct {
 }
 
 // Get all champion mastery entries sorted by number of champion points descending.
-func (c *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID string) (*[]ChampionMasteryDTO, error) {
-	logger := c.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "SummonerMasteries")
+func (e *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID string) (*[]ChampionMasteryDTO, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "SummonerMasteries")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -44,7 +44,7 @@ func (c *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID st
 
 	var masteries *[]ChampionMasteryDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &masteries, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &masteries, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -55,8 +55,8 @@ func (c *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID st
 }
 
 // Get a champion mastery by player ID and champion ID.
-func (c *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string, championID int) (*ChampionMasteryDTO, error) {
-	logger := c.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "ChampionScore")
+func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string, championID int) (*ChampionMasteryDTO, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "ChampionScore")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -66,7 +66,7 @@ func (c *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 
 	var score *ChampionMasteryDTO
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &score, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &score, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -77,8 +77,8 @@ func (c *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 }
 
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
-func (c *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID string) (int, error) {
-	logger := c.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "MasteryScoreSum")
+func (e *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID string) (int, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "MasteryScoreSum")
 
 	if region == PBE1 {
 		return -1, fmt.Errorf("the region PBE1 is not available for this method")
@@ -88,7 +88,7 @@ func (c *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID stri
 
 	var sum int
 
-	err := c.internalClient.Do(http.MethodGet, region, url, nil, &sum, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &sum, "")
 
 	if err != nil {
 		logger.Warn(err)

@@ -246,8 +246,8 @@ type LocalizedContentDTO struct {
 // Get content filtered by locale.
 //
 // Locale defaults to en-US.
-func (s *ContentEndpoint) ByLocale(region Region, locale Locale) (*LocalizedContentDTO, error) {
-	logger := s.internalClient.Logger("val").With("endpoint", "content", "method", "ByLocale")
+func (e *ContentEndpoint) ByLocale(region Region, locale Locale) (*LocalizedContentDTO, error) {
+	logger := e.internalClient.Logger("val").With("endpoint", "content", "method", "ByLocale")
 
 	if locale != "" {
 		locale = EnglishUS
@@ -257,7 +257,7 @@ func (s *ContentEndpoint) ByLocale(region Region, locale Locale) (*LocalizedCont
 
 	var content *LocalizedContentDTO
 
-	err := s.internalClient.Do(http.MethodGet, region, url, nil, &content, "")
+	err := e.internalClient.Do(http.MethodGet, region, url, nil, &content, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -268,12 +268,12 @@ func (s *ContentEndpoint) ByLocale(region Region, locale Locale) (*LocalizedCont
 }
 
 // Get content with all available locales.
-func (s *ContentEndpoint) AllLocales(region Region) (*ContentDTO, error) {
-	logger := s.internalClient.Logger("val").With("endpoint", "content", "method", "AllLocales")
+func (e *ContentEndpoint) AllLocales(region Region) (*ContentDTO, error) {
+	logger := e.internalClient.Logger("val").With("endpoint", "content", "method", "AllLocales")
 
 	var content *ContentDTO
 
-	err := s.internalClient.Do(http.MethodGet, region, ContentURL, nil, &content, "")
+	err := e.internalClient.Do(http.MethodGet, region, ContentURL, nil, &content, "")
 
 	if err != nil {
 		logger.Warn(err)

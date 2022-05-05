@@ -20,12 +20,12 @@ type DeckDTO struct {
 }
 
 // Get a list of the calling user's decks.
-func (d *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, error) {
-	logger := d.internalClient.Logger("lor").With("endpoint", "deck", "method", "List")
+func (e *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, error) {
+	logger := e.internalClient.Logger("lor").With("endpoint", "deck", "method", "List")
 
 	var deck *[]DeckDTO
 
-	err := d.internalClient.Do(http.MethodGet, region, DeckURL, nil, &deck, accessToken)
+	err := e.internalClient.Do(http.MethodGet, region, DeckURL, nil, &deck, accessToken)
 
 	if err != nil {
 		logger.Warn(err)
@@ -36,8 +36,8 @@ func (d *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, erro
 }
 
 // Create a new deck for the calling user.
-func (d *DeckEndpoint) Create(region Region, accessToken string, code string, name string) (string, error) {
-	logger := d.internalClient.Logger("lor").With("endpoint", "deck", "method", "List")
+func (e *DeckEndpoint) Create(region Region, accessToken string, code string, name string) (string, error) {
+	logger := e.internalClient.Logger("lor").With("endpoint", "deck", "method", "List")
 
 	options := struct {
 		Code string `json:"code"`
@@ -53,7 +53,7 @@ func (d *DeckEndpoint) Create(region Region, accessToken string, code string, na
 
 	var deck api.PlainTextResponse
 
-	err = d.internalClient.Do(http.MethodPost, region, DeckURL, bytes.NewBuffer(body), &deck, accessToken)
+	err = e.internalClient.Do(http.MethodPost, region, DeckURL, bytes.NewBuffer(body), &deck, accessToken)
 
 	if err != nil {
 		logger.Warn(err)

@@ -85,8 +85,8 @@ type TournamentCodeUpdateParametersDTO struct {
 }
 
 // Create a tournament code for the given tournament.
-func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) ([]string, error) {
-	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateCodes")
+func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) ([]string, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateCodes")
 
 	if count < 1 || count > 1000 {
 		return nil, fmt.Errorf("count can't be less than 1 or more than 1000")
@@ -125,7 +125,7 @@ func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 
 	var codes []string
 
-	err = t.internalClient.Do(http.MethodPost, api.Americas, url, bytes.NewBuffer(body), &codes, "")
+	err = e.internalClient.Do(http.MethodPost, api.Americas, url, bytes.NewBuffer(body), &codes, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -136,14 +136,14 @@ func (t *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 }
 
 // Returns the tournament code DTO associated with a tournament code string.
-func (t *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, error) {
-	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "ByCode")
+func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "ByCode")
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
 	var tournament *TournamentCodeDTO
 
-	err := t.internalClient.Do(http.MethodGet, api.Americas, url, nil, &tournament, "")
+	err := e.internalClient.Do(http.MethodGet, api.Americas, url, nil, &tournament, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -154,8 +154,8 @@ func (t *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 }
 
 // Update the pick type, map, spectator type, or allowed summoners for a code.
-func (t *TournamentEndpoint) Update(tournamentCode string, parameters *TournamentCodeUpdateParametersDTO) error {
-	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "Update")
+func (e *TournamentEndpoint) Update(tournamentCode string, parameters *TournamentCodeUpdateParametersDTO) error {
+	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "Update")
 
 	if parameters == nil {
 		return fmt.Errorf("parameters are required")
@@ -170,7 +170,7 @@ func (t *TournamentEndpoint) Update(tournamentCode string, parameters *Tournamen
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
-	err = t.internalClient.Do(http.MethodPut, api.Americas, url, bytes.NewBuffer(body), nil, "")
+	err = e.internalClient.Do(http.MethodPut, api.Americas, url, bytes.NewBuffer(body), nil, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -181,14 +181,14 @@ func (t *TournamentEndpoint) Update(tournamentCode string, parameters *Tournamen
 }
 
 // Gets a list of lobby events by tournament code.
-func (t *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
-	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "LobbyEvents")
+func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "LobbyEvents")
 
 	url := fmt.Sprintf(TournamentLobbyEventsURL, tournamentCode)
 
 	var lobbyEvents *LobbyEventDTOWrapper
 
-	err := t.internalClient.Do(http.MethodGet, api.Americas, url, nil, &lobbyEvents, "")
+	err := e.internalClient.Do(http.MethodGet, api.Americas, url, nil, &lobbyEvents, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -205,8 +205,8 @@ func (t *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 // The region in which the provider will be running tournaments.
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
-func (t *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {
-	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateProvider")
+func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateProvider")
 
 	_, err := url.ParseRequestURI(callbackURL)
 
@@ -229,7 +229,7 @@ func (t *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 
 	var provider int
 
-	err = t.internalClient.Do(http.MethodPost, api.Americas, TournamentProvidersURL, bytes.NewBuffer(body), &provider, "")
+	err = e.internalClient.Do(http.MethodPost, api.Americas, TournamentProvidersURL, bytes.NewBuffer(body), &provider, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -244,8 +244,8 @@ func (t *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 // The provider ID to specify the regional registered provider data to associate this tournament.
 //
 // The optional name of the tournament.
-func (t *TournamentEndpoint) Create(providerID int, name string) (int, error) {
-	logger := t.internalClient.Logger("lol").With("endpoint", "tournament", "method", "Create")
+func (e *TournamentEndpoint) Create(providerID int, name string) (int, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "Create")
 
 	options := struct {
 		Name       string `json:"name"`
@@ -261,7 +261,7 @@ func (t *TournamentEndpoint) Create(providerID int, name string) (int, error) {
 
 	var tournament int
 
-	err = t.internalClient.Do(http.MethodPost, api.Americas, TournamentURL, bytes.NewBuffer(body), &tournament, "")
+	err = e.internalClient.Do(http.MethodPost, api.Americas, TournamentURL, bytes.NewBuffer(body), &tournament, "")
 
 	if err != nil {
 		logger.Warn(err)

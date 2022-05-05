@@ -54,7 +54,7 @@ func (i *InternalClient) Do(method string, route interface{}, endpoint string, r
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new *http.Request.
-	req, err := i.newRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
+	req, err := i.NewRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
 
 	if err != nil {
 		return err
@@ -189,7 +189,7 @@ func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 }
 
 // Creates a new *http.Request and sets headers.
-func (i *InternalClient) newRequest(method string, url string, body io.Reader) (*http.Request, error) {
+func (i *InternalClient) NewRequest(method string, url string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, body)
 
 	if err != nil {

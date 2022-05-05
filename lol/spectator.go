@@ -139,12 +139,12 @@ type Perks struct {
 }
 
 // Get featured games in a region.
-func (s *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, error) {
-	logger := s.internalClient.Logger("lol").With("endpoint", "spectator", "method", "FeaturedGames")
+func (e *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "spectator", "method", "FeaturedGames")
 
 	var games *FeaturedGamesDTO
 
-	err := s.internalClient.Do(http.MethodGet, region, SpectatorFeaturedGamesURL, nil, &games, "")
+	err := e.internalClient.Do(http.MethodGet, region, SpectatorFeaturedGamesURL, nil, &games, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -155,12 +155,12 @@ func (s *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, err
 }
 
 // Get the current game information for the given summoner ID.
-func (s *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*CurrentGameInfoDTO, error) {
-	logger := s.internalClient.Logger("lol").With("endpoint", "spectator", "method", "FeaturedGames")
+func (e *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*CurrentGameInfoDTO, error) {
+	logger := e.internalClient.Logger("lol").With("endpoint", "spectator", "method", "FeaturedGames")
 
 	var game *CurrentGameInfoDTO
 
-	err := s.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), nil, &game, "")
+	err := e.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), nil, &game, "")
 
 	if err != nil {
 		logger.Warn(err)

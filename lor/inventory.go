@@ -16,12 +16,12 @@ type CardDTO struct {
 }
 
 // Return a list of cards owned by the calling user.
-func (i *InventoryEndpoint) Cards(region Region, accessToken string) (*[]CardDTO, error) {
-	logger := i.internalClient.Logger("lor").With("endpoint", "inventory", "method", "Cards")
+func (e *InventoryEndpoint) Cards(region Region, accessToken string) (*[]CardDTO, error) {
+	logger := e.internalClient.Logger("lor").With("endpoint", "inventory", "method", "Cards")
 
 	var cards *[]CardDTO
 
-	err := i.internalClient.Do(http.MethodGet, region, InventoryURL, nil, &cards, accessToken)
+	err := e.internalClient.Do(http.MethodGet, region, InventoryURL, nil, &cards, accessToken)
 
 	if err != nil {
 		logger.Warn(err)
