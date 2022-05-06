@@ -1,11 +1,18 @@
 package api
 
+// Base API URL format.
 const (
-	// Base API URL format
 	BaseURLFormat = "https://%s.api.riotgames.com"
 )
 
-// (Legal values: riotclient, riotstatus, game)
+type Cluster string
+
+// Riot API clusters.
+const (
+	Americas Cluster = "americas"
+	Europe   Cluster = "europe"
+	Asia     Cluster = "asia"
+)
 
 type PublishLocation string
 
@@ -40,15 +47,6 @@ type Game string
 const (
 	LOR Game = "lor"
 	VAL Game = "val"
-)
-
-type Cluster string
-
-// Riot API clusters
-const (
-	Americas Cluster = "americas"
-	Europe   Cluster = "europe"
-	Asia     Cluster = "asia"
 )
 
 type LogLevel int8

@@ -2,6 +2,10 @@ package api
 
 import "net/http"
 
+type PlainTextResponse struct {
+	Response any `json:"response"`
+}
+
 type ErrorResponse struct {
 	Status Status `json:"status"`
 }
@@ -11,22 +15,11 @@ type Status struct {
 	StatusCode int    `json:"status_code"`
 }
 
-type PlainTextResponse struct {
-	Response any `json:"response"`
-}
-
 func (e ErrorResponse) Error() string {
 	return e.Status.Message
 }
 
 var (
-	NotFoundError = ErrorResponse{
-		Status: Status{
-			Message:    "Not Found",
-			StatusCode: http.StatusNotFound,
-		},
-	}
-
 	UnauthorizedError = ErrorResponse{
 		Status: Status{
 			Message:    "Unauthorized",
@@ -38,6 +31,13 @@ var (
 		Status: Status{
 			Message:    "Forbidden",
 			StatusCode: http.StatusForbidden,
+		},
+	}
+
+	NotFoundError = ErrorResponse{
+		Status: Status{
+			Message:    "Not Found",
+			StatusCode: http.StatusNotFound,
 		},
 	}
 

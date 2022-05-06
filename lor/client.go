@@ -2,7 +2,7 @@ package lor
 
 import "github.com/Kyagara/equinox/internal"
 
-// Legends of Runeterra endpoints
+// Legends of Runeterra endpoint URLs.
 const (
 	DeckURL = "/lor/deck/v1/decks/me"
 
@@ -25,7 +25,7 @@ type LORClient struct {
 	Status         *StatusEndpoint
 }
 
-// Returns a new client using the API key provided.
+// Returns a new LORClient using the InternalClient provided.
 func NewLORClient(client *internal.InternalClient) *LORClient {
 	return &LORClient{
 		internalClient: client,

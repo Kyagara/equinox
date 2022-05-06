@@ -23,16 +23,25 @@ func TestMatchList(t *testing.T) {
 		code    int
 		want    []string
 		wantErr error
+		count   int
 	}{
 		{
-			name: "found",
-			code: http.StatusOK,
-			want: []string{},
+			name:  "found",
+			code:  http.StatusOK,
+			want:  []string{},
+			count: 1,
 		},
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
 			wantErr: api.NotFoundError,
+			count:   1,
+		},
+		{
+			name:  "default values",
+			code:  http.StatusOK,
+			want:  []string{},
+			count: 0,
 		},
 	}
 
@@ -45,7 +54,7 @@ func TestMatchList(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.List("PUUID", 20)
+			gotData, gotErr := client.Match.List("PUUID", test.code)
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

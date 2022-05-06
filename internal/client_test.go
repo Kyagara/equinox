@@ -37,7 +37,7 @@ func TestInternalClientRetries(t *testing.T) {
 
 	res := api.PlatformDataDTO{}
 
-	// This will take 1 second
+	// This will take 1 second.
 	err := client.Do(http.MethodGet, lol.BR1, lol.StatusURL, nil, &res, "")
 
 	assert.Nil(t, err, "expecting nil error")
@@ -60,6 +60,7 @@ func TestInternalClientFailingRetry(t *testing.T) {
 
 	var object api.PlainTextResponse
 
+	// This will take 2 seconds.
 	gotErr := client.Do(http.MethodGet, "tests", "/", nil, &object, "")
 
 	wantErr := fmt.Errorf("Retried 2 times, stopping")
@@ -85,7 +86,7 @@ func TestInternalClientRetryHeader(t *testing.T) {
 	require.Equal(t, wantErr, gotErr, fmt.Sprintf("want err %v, got %v", wantErr, gotErr))
 }
 
-// Testing if the Do() method can properly decode a plain text response
+// Testing if InternalClient.Do() can properly decode a plain text response.
 func TestInternalClientDoRequest(t *testing.T) {
 	defer gock.Off()
 
@@ -104,7 +105,7 @@ func TestInternalClientDoRequest(t *testing.T) {
 	assert.NotNil(t, object, "expecting non-nil response")
 }
 
-// Testing if the client can properly handle a status code not specified in the Riot API
+// Testing if the InternalClient can properly handle a status code not specified in the Riot API.
 func TestInternalClientHandleErrorResponse(t *testing.T) {
 	defer gock.Off()
 
@@ -173,6 +174,84 @@ func TestInternalClientNewRequest(t *testing.T) {
 			if test.wantErr == nil {
 				assert.Equal(t, test.want, gotData)
 			}
+		})
+	}
+}
+
+func TestInternalClientErrorResponses(t *testing.T) {
+	defer gock.Off()
+
+	tests := []struct {
+		name    string
+		wantErr error
+		setup   func()
+		region  string
+	}{
+		{
+			name:    "not found",
+			wantErr: api.NotFoundError,
+			setup: func() {
+				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
+					Get("/").
+					Reply(404)
+			},
+			region: "tests",
+		},
+		{
+			name:    "rate limited with retry disabled",
+			wantErr: api.RateLimitedError,
+			setup: func() {
+				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
+					Get("/").
+					Reply(429)
+			},
+			region: "tests",
+		},
+		{
+			name:    "unauthorized",
+			wantErr: api.UnauthorizedError,
+			setup: func() {
+				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
+					Get("/").
+					Reply(401)
+			},
+			region: "tests",
+		},
+		{
+			name:    "forbidden",
+			wantErr: api.ForbiddenError,
+			setup: func() {
+				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
+					Get("/").
+					Reply(403)
+			},
+			region: "tests",
+		},
+		{
+			name:    "region empty",
+			wantErr: fmt.Errorf("region is required"),
+			setup:   func() {},
+			region:  "",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			test.setup()
+
+			client := internal.NewInternalClient(&api.EquinoxConfig{
+				Key:      "RIOT_API_KEY",
+				Cluster:  api.Americas,
+				LogLevel: api.DebugLevel,
+				Timeout:  10,
+				Retry:    false,
+			})
+
+			var gotData api.PlainTextResponse
+
+			gotErr := client.Do(http.MethodGet, test.region, "/", nil, &gotData, "")
+
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 		})
 	}
 }

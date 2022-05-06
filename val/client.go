@@ -2,7 +2,7 @@ package val
 
 import "github.com/Kyagara/equinox/internal"
 
-// Valorant endpoints
+// Valorant endpoint URLs.
 const (
 	ContentURL = "/val/content/v1/contents"
 
@@ -24,7 +24,7 @@ type VALClient struct {
 	Status  *StatusEndpoint
 }
 
-// Returns a new client using the API key provided.
+// Returns a new VALClient using the InternalClient provided.
 func NewVALClient(client *internal.InternalClient) *VALClient {
 	return &VALClient{
 		internalClient: client,
