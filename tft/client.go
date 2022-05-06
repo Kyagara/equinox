@@ -2,7 +2,7 @@ package tft
 
 import "github.com/Kyagara/equinox/internal"
 
-// Teamfight Tactics endpoints
+// Teamfight Tactics endpoint URLs.
 const (
 	MatchListURL = "/tft/match/v1/matches/by-puuid/%s/ids"
 	MatchByIDURL = "/tft/match/v1/matches/%s"
@@ -29,7 +29,7 @@ type TFTClient struct {
 	Summoner       *SummonerEndpoint
 }
 
-// Returns a new client using the API key provided.
+// Returns a new TFTClient using the InternalClient provided.
 func NewTFTClient(client *internal.InternalClient) *TFTClient {
 	return &TFTClient{
 		internalClient: client,

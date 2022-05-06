@@ -1,17 +1,8 @@
 package val
 
-type Queue string
-
-const (
-	CompetitiveQueue Queue = "competitive"
-	UnratedQueue     Queue = "unrated"
-	SpikeRushQueue   Queue = "spikerush"
-	TournamentQueue  Queue = "tournamentmode"
-)
-
 type Region string
 
-// Valorant regions
+// Valorant regions.
 const (
 	AP      Region = "ap"
 	NA      Region = "na"
@@ -20,6 +11,15 @@ const (
 	BR      Region = "br"
 	EU      Region = "eu"
 	KR      Region = "kr"
+)
+
+type Queue string
+
+const (
+	CompetitiveQueue Queue = "competitive"
+	UnratedQueue     Queue = "unrated"
+	SpikeRushQueue   Queue = "spikerush"
+	TournamentQueue  Queue = "tournamentmode"
 )
 
 type Locale string

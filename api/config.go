@@ -13,11 +13,11 @@ type EquinoxConfig struct {
 	Key string
 	// Cluster name, using the nearest cluster to you is recommended.
 	Cluster Cluster
-	// Log level. Default: api.FatalLevel
+	// Log level. Defaults to api.FatalLevel
 	LogLevel LogLevel
-	// Timeout for http.Request in seconds, 0 disables it. Default: 10
+	// Timeout for HTTP Request in seconds, 0 disables it. Defaults to 10
 	Timeout time.Duration
-	// Retry request if it returns a 429 status code. Default: true
+	// Retry request if it returns a 429 status code. Defaults to true
 	Retry bool
 }
 

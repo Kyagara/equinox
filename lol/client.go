@@ -4,7 +4,7 @@ import (
 	"github.com/Kyagara/equinox/internal"
 )
 
-// League of Legends endpoints URLs
+// League of Legends endpoint URLs.
 const (
 	ChampionURL = "/lol/platform/v3/champion-rotations"
 
@@ -66,7 +66,7 @@ type LOLClient struct {
 	TournamentStub    *TournamentStubEndpoint
 }
 
-// Creates a new LOLClient using an InternalClient provided.
+// Creates a new LOLClient using the InternalClient provided.
 func NewLOLClient(client *internal.InternalClient) *LOLClient {
 	return &LOLClient{
 		internalClient:    client,

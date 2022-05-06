@@ -33,7 +33,7 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 	}
 }
 
-// Returns a new client using the API key provided.
+// Returns a new InternalClient using configuration object provided.
 func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
 		Cluster:  config.Cluster,
@@ -45,7 +45,7 @@ func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	}
 }
 
-// Executes a http request.
+// Creates, sends and decodes a HTTP request.
 func (i *InternalClient) Do(method string, route interface{}, endpoint string, requestBody io.Reader, object interface{}, authorizationHeader string) error {
 	if route == "" {
 		return fmt.Errorf("region is required")
@@ -53,7 +53,7 @@ func (i *InternalClient) Do(method string, route interface{}, endpoint string, r
 
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
-	// Creating a new *http.Request.
+	// Creating a new HTTP Request.
 	req, err := i.NewRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
 
 	if err != nil {
@@ -64,22 +64,22 @@ func (i *InternalClient) Do(method string, route interface{}, endpoint string, r
 		req.Header.Set("Authorization", authorizationHeader)
 	}
 
-	// Sending http request and returning the response.
+	// Sending HTTP request and returning the response.
 	res, err := i.sendRequest(req, 0)
 
 	if err != nil {
 		return err
 	}
 
-	// In case of a PUT request
+	// In case of a PUT request return nil.
 	if res.Request.Method == http.MethodPut {
 		return nil
 	}
 
-	// In case of a post request returning just a single, non JSON value.
-	// This has a Post requirement because at the moment only one post request returns a plain text response
-	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type assertion
-	// This implementation looks horrible, I don't know another way of decoding any non JSON value to the &object
+	// In case of a post request returning just a single, non JSON response.
+	// This has a Post requirement because at the moment only one post request returns a plain text response.
+	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type assertion.
+	// This implementation looks horrible, I don't know another way of decoding any non JSON value to the &object.
 	if res.Request.Method == http.MethodPost && res.Header.Get("Content-Type") == "" {
 		value, err := ioutil.ReadAll(res.Body)
 
@@ -106,7 +106,7 @@ func (i *InternalClient) Do(method string, route interface{}, endpoint string, r
 	return nil
 }
 
-// Sends a http request.
+// Sends a HTTP request.
 func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.Response, error) {
 	logger := i.logger.With("httpMethod", req.Method, "path", req.URL.Path)
 
@@ -188,7 +188,7 @@ func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 	return res, nil
 }
 
-// Creates a new *http.Request and sets headers.
+// Creates a new HTTP Request and sets headers.
 func (i *InternalClient) NewRequest(method string, url string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, body)
 

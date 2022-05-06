@@ -74,6 +74,10 @@ func (e *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.
 		return nil, fmt.Errorf("the tier specified is an apex tier, please use the corresponded method instead")
 	}
 
+	if region == lol.PBE1 {
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
+	}
+
 	query := url.Values{}
 
 	if page < 1 {
@@ -107,6 +111,10 @@ func (e *LeagueEndpoint) ByID(region lol.Region, leagueID string) (*LeagueListDT
 func (e *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (*[]LeagueEntryDTO, error) {
 	logger := e.internalClient.Logger("tft").With("endpoint", "league", "method", "SummonerEntries")
 
+	if region == lol.PBE1 {
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
+	}
+
 	url := fmt.Sprintf(LeagueEntriesBySummonerURL, summonerID)
 
 	var entries *[]LeagueEntryDTO
@@ -127,6 +135,10 @@ func (e *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]
 
 	if queue == RankedTFTQueue {
 		return nil, fmt.Errorf("the queue specified is not available for the top rated ladder endpoint, please use the RankedTFTTurbo queue")
+	}
+
+	if region == lol.PBE1 {
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}
 
 	url := fmt.Sprintf(LeagueRatedLaddersURL, queue)
@@ -160,6 +172,10 @@ func (e *LeagueEndpoint) Master(region lol.Region) (*LeagueListDTO, error) {
 
 func (e *LeagueEndpoint) getLeague(url string, region lol.Region, methodName string) (*LeagueListDTO, error) {
 	logger := e.internalClient.Logger("tft").With("endpoint", "league", "method", methodName)
+
+	if region == lol.PBE1 {
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
+	}
 
 	var league *LeagueListDTO
 
