@@ -21,34 +21,34 @@ func TestMatchList(t *testing.T) {
 	tests := []struct {
 		name       string
 		code       int
-		want       []string
+		want       *[]string
 		wantErr    error
 		parameters *lol.MatchlistOptions
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: []string{},
+			want: &[]string{},
 			parameters: &lol.MatchlistOptions{Start: 0,
 				Count: 20},
 		},
 		{
 			name:       "nil options",
 			code:       http.StatusOK,
-			want:       []string{},
+			want:       &[]string{},
 			parameters: nil,
 		},
 		{
 			name: "count > 100",
 			code: http.StatusOK,
-			want: []string{},
+			want: &[]string{},
 			parameters: &lol.MatchlistOptions{Start: 0,
 				Count: 101},
 		},
 		{
 			name: "all optional fields set",
 			code: http.StatusOK,
-			want: []string{},
+			want: &[]string{},
 			parameters: &lol.MatchlistOptions{
 				StartTime: 1,
 				EndTime:   1,

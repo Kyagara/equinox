@@ -17,7 +17,7 @@ type TournamentStubEndpoint struct {
 }
 
 // Create a mock tournament code for the given tournament.
-func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) ([]string, error) {
+func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) (*[]string, error) {
 	logger := e.internalClient.Logger("lol").With("endpoint", "tournament-stub", "method", "CreateCodes")
 
 	if count < 1 || count > 1000 {
@@ -48,16 +48,12 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 
 	url := fmt.Sprintf("%s?%s", TournamentStubCodesURL, query.Encode())
 
-	body, err := json.Marshal(parameters)
+	// This shouldn't fail since the values are checked before getting here
+	body, _ := json.Marshal(parameters)
 
-	if err != nil {
-		logger.Error(err)
-		return nil, err
-	}
+	var codes *[]string
 
-	var codes []string
-
-	err = e.internalClient.Do(http.MethodPost, api.Americas, url, bytes.NewBuffer(body), &codes, "")
+	err := e.internalClient.Do(http.MethodPost, api.Americas, url, bytes.NewBuffer(body), &codes, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -92,14 +88,14 @@ func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEvent
 // The region in which the provider will be running tournaments.
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
-func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {
+func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (*int, error) {
 	logger := e.internalClient.Logger("lol").With("endpoint", "tournament-stub", "method", "CreateProvider")
 
 	_, err := url.ParseRequestURI(callbackURL)
 
 	if err != nil {
 		logger.Error(err)
-		return -1, err
+		return nil, err
 	}
 
 	options := struct {
@@ -107,20 +103,16 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 		URL    string           `json:"url"`
 	}{Region: region, URL: callbackURL}
 
-	body, err := json.Marshal(options)
+	// This shouldn't fail since the values are checked before getting here
+	body, _ := json.Marshal(options)
 
-	if err != nil {
-		logger.Error(err)
-		return -1, err
-	}
-
-	var provider int
+	var provider *int
 
 	err = e.internalClient.Do(http.MethodPost, api.Americas, TournamentStubProvidersURL, bytes.NewBuffer(body), &provider, "")
 
 	if err != nil {
 		logger.Warn(err)
-		return -1, err
+		return nil, err
 	}
 
 	return provider, nil
@@ -131,7 +123,7 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 // The provider ID to specify the regional registered provider data to associate this tournament.
 //
 // The optional name of the tournament.
-func (e *TournamentStubEndpoint) Create(providerID int, name string) (int, error) {
+func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, error) {
 	logger := e.internalClient.Logger("lol").With("endpoint", "tournament-stub", "method", "Create")
 
 	options := struct {
@@ -139,20 +131,16 @@ func (e *TournamentStubEndpoint) Create(providerID int, name string) (int, error
 		ProviderId int    `json:"providerId"`
 	}{Name: name, ProviderId: providerID}
 
-	body, err := json.Marshal(options)
+	// This shouldn't fail since the values are checked before getting here
+	body, _ := json.Marshal(options)
 
-	if err != nil {
-		logger.Error(err)
-		return -1, err
-	}
+	var tournament *int
 
-	var tournament int
-
-	err = e.internalClient.Do(http.MethodPost, api.Americas, TournamentStubURL, bytes.NewBuffer(body), &tournament, "")
+	err := e.internalClient.Do(http.MethodPost, api.Americas, TournamentStubURL, bytes.NewBuffer(body), &tournament, "")
 
 	if err != nil {
 		logger.Warn(err)
-		return -1, err
+		return nil, err
 	}
 
 	return tournament, nil

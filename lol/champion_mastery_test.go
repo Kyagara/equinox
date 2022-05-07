@@ -125,14 +125,14 @@ func TestChampionMasteryMasteryScoreSum(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    int
+		want    *int
 		wantErr error
 		region  lol.Region
 	}{
 		{
 			name:   "found",
 			code:   http.StatusOK,
-			want:   0,
+			want:   new(int),
 			region: lol.BR1,
 		},
 		{

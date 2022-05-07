@@ -109,7 +109,7 @@ type InfoDTO struct {
 // Get a list of match IDs by PUUID.
 //
 // Count defaults to 20.
-func (e *MatchEndpoint) List(PUUID string, count int) ([]string, error) {
+func (e *MatchEndpoint) List(PUUID string, count int) (*[]string, error) {
 	logger := e.internalClient.Logger("tft").With("endpoint", "match", "method", "List")
 
 	if count > 100 || count < 1 {
@@ -124,7 +124,7 @@ func (e *MatchEndpoint) List(PUUID string, count int) ([]string, error) {
 
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
-	var list []string
+	var list *[]string
 
 	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &list, "")
 

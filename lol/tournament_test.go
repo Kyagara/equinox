@@ -22,7 +22,7 @@ func TestTournamentCreateCodes(t *testing.T) {
 	tests := []struct {
 		name       string
 		code       int
-		want       []string
+		want       *[]string
 		wantErr    error
 		count      int
 		parameters *lol.TournamentCodeParametersDTO
@@ -30,7 +30,7 @@ func TestTournamentCreateCodes(t *testing.T) {
 		{
 			name:  "found",
 			code:  http.StatusOK,
-			want:  []string{},
+			want:  &[]string{},
 			count: 1,
 			parameters: &lol.TournamentCodeParametersDTO{
 				MapType:       lol.SummonersRiftMap,
@@ -253,13 +253,13 @@ func TestTournamentCreate(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    int
+		want    *int
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: 0,
+			want: new(int),
 		},
 		{
 			name:    "not found",
@@ -296,14 +296,14 @@ func TestTournamentCreateProvider(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    int
+		want    *int
 		wantErr error
 		url     string
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: 0,
+			want: new(int),
 			url:  "http://localhost:80",
 		},
 		{

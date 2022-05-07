@@ -60,7 +60,7 @@ type TournamentCodeDTO struct {
 
 type TournamentCodeParametersDTO struct {
 	// Optional list of encrypted summonerIds in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
-	AllowedSummonerIds []string `json:"allowedSummonerIds,omitempty"`
+	AllowedSummonerIDs []string `json:"allowedSummonerIds,omitempty"`
 	// The map type of the game.
 	MapType MapType `json:"mapType"`
 	// Optional string that may contain any data in any format, if specified at all. Used to denote any custom information about the game.
@@ -75,7 +75,7 @@ type TournamentCodeParametersDTO struct {
 
 type TournamentCodeUpdateParametersDTO struct {
 	// Optional list of encrypted summonerIds in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
-	AllowedSummonerIds []string `json:"allowedSummonerIds,omitempty"`
+	AllowedSummonerIDs []string `json:"allowedSummonerIds,omitempty"`
 	// The map type of the game.
 	MapType MapType `json:"mapType,omitempty"`
 	// The pick type of the game.
@@ -85,7 +85,7 @@ type TournamentCodeUpdateParametersDTO struct {
 }
 
 // Create a tournament code for the given tournament.
-func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) ([]string, error) {
+func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) (*[]string, error) {
 	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateCodes")
 
 	if count < 1 || count > 1000 {
@@ -116,16 +116,12 @@ func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 
 	url := fmt.Sprintf("%s?%s", TournamentCodesURL, query.Encode())
 
-	body, err := json.Marshal(parameters)
+	// This shouldn't fail since the values are checked before getting here
+	body, _ := json.Marshal(parameters)
 
-	if err != nil {
-		logger.Error(err)
-		return nil, err
-	}
+	var codes *[]string
 
-	var codes []string
-
-	err = e.internalClient.Do(http.MethodPost, api.Americas, url, bytes.NewBuffer(body), &codes, "")
+	err := e.internalClient.Do(http.MethodPost, api.Americas, url, bytes.NewBuffer(body), &codes, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -161,16 +157,12 @@ func (e *TournamentEndpoint) Update(tournamentCode string, parameters *Tournamen
 		return fmt.Errorf("parameters are required")
 	}
 
-	body, err := json.Marshal(parameters)
-
-	if err != nil {
-		logger.Error(err)
-		return err
-	}
+	// This shouldn't fail since the values are checked before getting here
+	body, _ := json.Marshal(parameters)
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
-	err = e.internalClient.Do(http.MethodPut, api.Americas, url, bytes.NewBuffer(body), nil, "")
+	err := e.internalClient.Do(http.MethodPut, api.Americas, url, bytes.NewBuffer(body), nil, "")
 
 	if err != nil {
 		logger.Warn(err)
@@ -205,14 +197,14 @@ func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 // The region in which the provider will be running tournaments.
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
-func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {
+func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (*int, error) {
 	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateProvider")
 
 	_, err := url.ParseRequestURI(callbackURL)
 
 	if err != nil {
 		logger.Error(err)
-		return -1, err
+		return nil, err
 	}
 
 	options := struct {
@@ -220,20 +212,16 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 		URL    string           `json:"url"`
 	}{Region: region, URL: callbackURL}
 
-	body, err := json.Marshal(options)
+	// This shouldn't fail since the values are checked before getting here
+	body, _ := json.Marshal(options)
 
-	if err != nil {
-		logger.Error(err)
-		return -1, err
-	}
-
-	var provider int
+	var provider *int
 
 	err = e.internalClient.Do(http.MethodPost, api.Americas, TournamentProvidersURL, bytes.NewBuffer(body), &provider, "")
 
 	if err != nil {
 		logger.Warn(err)
-		return -1, err
+		return nil, err
 	}
 
 	return provider, nil
@@ -244,7 +232,7 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 // The provider ID to specify the regional registered provider data to associate this tournament.
 //
 // The optional name of the tournament.
-func (e *TournamentEndpoint) Create(providerID int, name string) (int, error) {
+func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
 	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "Create")
 
 	options := struct {
@@ -252,20 +240,16 @@ func (e *TournamentEndpoint) Create(providerID int, name string) (int, error) {
 		ProviderId int    `json:"providerId"`
 	}{Name: name, ProviderId: providerID}
 
-	body, err := json.Marshal(options)
+	// This shouldn't fail since the values are checked before getting here
+	body, _ := json.Marshal(options)
 
-	if err != nil {
-		logger.Error(err)
-		return -1, err
-	}
+	var tournament *int
 
-	var tournament int
-
-	err = e.internalClient.Do(http.MethodPost, api.Americas, TournamentURL, bytes.NewBuffer(body), &tournament, "")
+	err := e.internalClient.Do(http.MethodPost, api.Americas, TournamentURL, bytes.NewBuffer(body), &tournament, "")
 
 	if err != nil {
 		logger.Warn(err)
-		return -1, err
+		return nil, err
 	}
 
 	return tournament, nil
