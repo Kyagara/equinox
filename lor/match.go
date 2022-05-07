@@ -67,12 +67,12 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 }
 
 // Get a list of match ids by PUUID.
-func (e *MatchEndpoint) List(region Region, PUUID string) ([]string, error) {
+func (e *MatchEndpoint) List(region Region, PUUID string) (*[]string, error) {
 	logger := e.internalClient.Logger("lor").With("endpoint", "match", "method", "List")
 
 	url := fmt.Sprintf(MatchListURL, PUUID)
 
-	var list []string
+	var list *[]string
 
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &list, "")
 

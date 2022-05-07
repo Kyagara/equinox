@@ -46,7 +46,7 @@ func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 }
 
 // Creates, sends and decodes a HTTP request.
-func (i *InternalClient) Do(method string, route interface{}, endpoint string, requestBody io.Reader, object interface{}, authorizationHeader string) error {
+func (c *InternalClient) Do(method string, route interface{}, endpoint string, requestBody io.Reader, object interface{}, authorizationHeader string) error {
 	if route == "" {
 		return fmt.Errorf("region is required")
 	}
@@ -54,7 +54,7 @@ func (i *InternalClient) Do(method string, route interface{}, endpoint string, r
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new HTTP Request.
-	req, err := i.NewRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
+	req, err := c.NewRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
 
 	if err != nil {
 		return err
@@ -65,7 +65,7 @@ func (i *InternalClient) Do(method string, route interface{}, endpoint string, r
 	}
 
 	// Sending HTTP request and returning the response.
-	res, err := i.sendRequest(req, 0)
+	res, err := c.sendRequest(req, 0)
 
 	if err != nil {
 		return err
@@ -107,10 +107,10 @@ func (i *InternalClient) Do(method string, route interface{}, endpoint string, r
 }
 
 // Sends a HTTP request.
-func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.Response, error) {
-	logger := i.logger.With("httpMethod", req.Method, "path", req.URL.Path)
+func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.Response, error) {
+	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.Path)
 
-	if i.retry && retryCount > 1 {
+	if c.retry && retryCount > 1 {
 		logger.Debug(fmt.Sprintf("Retried %d times, stopping", retryCount))
 
 		return nil, fmt.Errorf(fmt.Sprintf("Retried %d times, stopping", retryCount))
@@ -119,18 +119,22 @@ func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 	logger.Debug("Making request")
 
 	// Sending request.
-	res, err := i.http.Do(req)
+	res, err := c.http.Do(req)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if res.StatusCode == http.StatusUnauthorized {
+	// Handling errors documented in the Riot API docs
+	switch res.StatusCode {
+	case http.StatusUnauthorized:
 		return nil, api.UnauthorizedError
-	}
 
-	if res.StatusCode == http.StatusForbidden {
+	case http.StatusForbidden:
 		return nil, api.ForbiddenError
+
+	case http.StatusNotFound:
+		return nil, api.NotFoundError
 	}
 
 	// If the API returns a 429 code.
@@ -138,7 +142,7 @@ func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 		logger.Warn("Too many requests")
 
 		// If Retry is disabled just return an error.
-		if !i.retry {
+		if !c.retry {
 			return nil, api.RateLimitedError
 		}
 
@@ -161,12 +165,7 @@ func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 		time.Sleep(time.Duration(seconds) * time.Second)
 
-		return i.sendRequest(req, retryCount+1)
-	}
-
-	// If the API returns a 404 code, return an error.
-	if res.StatusCode == http.StatusNotFound {
-		return nil, api.NotFoundError
+		return c.sendRequest(req, retryCount+1)
 	}
 
 	// If the status code is lower than 200 or higher than 300, return an error.
@@ -189,7 +188,7 @@ func (i *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 }
 
 // Creates a new HTTP Request and sets headers.
-func (i *InternalClient) NewRequest(method string, url string, body io.Reader) (*http.Request, error) {
+func (c *InternalClient) NewRequest(method string, url string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, body)
 
 	if err != nil {
@@ -197,7 +196,7 @@ func (i *InternalClient) NewRequest(method string, url string, body io.Reader) (
 	}
 
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("X-Riot-Token", i.key)
+	req.Header.Set("X-Riot-Token", c.key)
 
 	return req, nil
 }

@@ -320,7 +320,7 @@ type MatchlistOptions struct {
 // Start defaults to 0.
 //
 // Count defaults to 20.
-func (e *MatchEndpoint) List(PUUID string, options *MatchlistOptions) ([]string, error) {
+func (e *MatchEndpoint) List(PUUID string, options *MatchlistOptions) (*[]string, error) {
 	logger := e.internalClient.Logger("lol").With("endpoint", "match", "method", "List")
 
 	if options == nil {
@@ -357,7 +357,7 @@ func (e *MatchEndpoint) List(PUUID string, options *MatchlistOptions) ([]string,
 
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
-	var list []string
+	var list *[]string
 
 	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &list, "")
 

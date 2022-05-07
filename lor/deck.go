@@ -44,16 +44,12 @@ func (e *DeckEndpoint) Create(region Region, accessToken string, code string, na
 		Name string `json:"name"`
 	}{Code: code, Name: name}
 
-	body, err := json.Marshal(options)
-
-	if err != nil {
-		logger.Error(err)
-		return "", err
-	}
+	// This shouldn't fail since the values are checked before getting here
+	body, _ := json.Marshal(options)
 
 	var deck api.PlainTextResponse
 
-	err = e.internalClient.Do(http.MethodPost, region, DeckURL, bytes.NewBuffer(body), &deck, accessToken)
+	err := e.internalClient.Do(http.MethodPost, region, DeckURL, bytes.NewBuffer(body), &deck, accessToken)
 
 	if err != nil {
 		logger.Warn(err)

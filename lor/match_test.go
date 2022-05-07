@@ -21,13 +21,13 @@ func TestMatchList(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    []string
+		want    *[]string
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: []string{},
+			want: &[]string{},
 		},
 		{
 			name:    "not found",

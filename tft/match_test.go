@@ -21,14 +21,14 @@ func TestMatchList(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    []string
+		want    *[]string
 		wantErr error
 		count   int
 	}{
 		{
 			name:  "found",
 			code:  http.StatusOK,
-			want:  []string{},
+			want:  &[]string{},
 			count: 1,
 		},
 		{
@@ -40,7 +40,7 @@ func TestMatchList(t *testing.T) {
 		{
 			name:  "default values",
 			code:  http.StatusOK,
-			want:  []string{},
+			want:  &[]string{},
 			count: 0,
 		},
 	}

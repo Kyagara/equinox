@@ -77,22 +77,22 @@ func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 }
 
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
-func (e *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID string) (int, error) {
+func (e *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID string) (*int, error) {
 	logger := e.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "MasteryScoreSum")
 
 	if region == PBE1 {
-		return -1, fmt.Errorf("the region PBE1 is not available for this method")
+		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}
 
 	url := fmt.Sprintf(ChampionMasteriesScoresURL, summonerID)
 
-	var sum int
+	var sum *int
 
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &sum, "")
 
 	if err != nil {
 		logger.Warn(err)
-		return -1, err
+		return nil, err
 	}
 
 	return sum, nil
