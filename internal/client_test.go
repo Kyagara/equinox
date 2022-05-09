@@ -132,8 +132,6 @@ func TestInternalClientHandleErrorResponse(t *testing.T) {
 func TestInternalClientNewRequest(t *testing.T) {
 	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	validReq, _ := client.NewRequest(http.MethodGet, "http://localhost:80", nil)
-
 	tests := []struct {
 		name    string
 		want    *http.Request
@@ -141,12 +139,7 @@ func TestInternalClientNewRequest(t *testing.T) {
 		method  string
 		url     string
 	}{
-		{
-			name:   "success",
-			want:   validReq,
-			method: http.MethodGet,
-			url:    "http://localhost:80",
-		},
+
 		{
 			name:    "invalid method",
 			wantErr: fmt.Errorf("net/http: invalid method \"=\""),
@@ -157,8 +150,8 @@ func TestInternalClientNewRequest(t *testing.T) {
 			name: "invalid url",
 			wantErr: &url.Error{
 				Op:  "parse",
-				URL: "\\:invalid:/=",
-				Err: fmt.Errorf("first path segment in URL cannot contain colon"),
+				URL: "https://tests.api.riotgames.com\\:invalid:/=",
+				Err: url.InvalidHostError("\\"),
 			},
 			method: http.MethodGet,
 			url:    "\\:invalid:/=",
@@ -167,13 +160,10 @@ func TestInternalClientNewRequest(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gotData, gotErr := client.NewRequest(test.method, test.url, nil)
+			gotErr := client.Do(test.method, "tests", test.url, nil, nil, "")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
 		})
 	}
 }
@@ -204,6 +194,16 @@ func TestInternalClientErrorResponses(t *testing.T) {
 				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 					Get("/").
 					Reply(429)
+			},
+			region: "tests",
+		},
+		{
+			name:    "bad request",
+			wantErr: api.BadRequestError,
+			setup: func() {
+				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
+					Get("/").
+					Reply(400)
 			},
 			region: "tests",
 		},

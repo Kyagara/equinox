@@ -54,7 +54,7 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, r
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new HTTP Request.
-	req, err := c.NewRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
+	req, err := c.newRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
 
 	if err != nil {
 		return err
@@ -129,6 +129,9 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 	// Handling errors documented in the Riot API docs
 	switch res.StatusCode {
+	case http.StatusBadRequest:
+		return nil, api.BadRequestError
+
 	case http.StatusUnauthorized:
 		return nil, api.UnauthorizedError
 
@@ -190,7 +193,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 }
 
 // Creates a new HTTP Request and sets headers.
-func (c *InternalClient) NewRequest(method string, url string, body io.Reader) (*http.Request, error) {
+func (c *InternalClient) newRequest(method string, url string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, body)
 
 	if err != nil {
