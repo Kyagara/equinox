@@ -21,14 +21,14 @@ type DeckDTO struct {
 
 // Get a list of the calling user's decks.
 func (e *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, error) {
-	logger := e.internalClient.Logger("lor").With("endpoint", "deck", "method", "List")
+	logger := e.internalClient.Logger("LOR", "deck", "List")
 
 	var deck *[]DeckDTO
 
 	err := e.internalClient.Do(http.MethodGet, region, DeckURL, nil, &deck, accessToken)
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -37,7 +37,7 @@ func (e *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, erro
 
 // Create a new deck for the calling user.
 func (e *DeckEndpoint) Create(region Region, accessToken string, code string, name string) (string, error) {
-	logger := e.internalClient.Logger("lor").With("endpoint", "deck", "method", "List")
+	logger := e.internalClient.Logger("LOR", "deck", "Create")
 
 	options := struct {
 		Code string `json:"code"`
@@ -52,7 +52,7 @@ func (e *DeckEndpoint) Create(region Region, accessToken string, code string, na
 	err := e.internalClient.Do(http.MethodPost, region, DeckURL, bytes.NewBuffer(body), &deck, accessToken)
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return "", err
 	}
 

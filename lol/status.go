@@ -13,14 +13,14 @@ type StatusEndpoint struct {
 
 // Get League of Legends status for the given platform.
 func (e *StatusEndpoint) PlatformStatus(region Region) (*api.PlatformDataDTO, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "status", "method", "PlatformStatus")
+	logger := e.internalClient.Logger("LOL", "status", "PlatformStatus")
 
 	var status *api.PlatformDataDTO
 
 	err := e.internalClient.Do(http.MethodGet, region, StatusURL, nil, &status, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 

@@ -30,6 +30,37 @@ and run `go get` without any parameters, or, if you want to use the latest versi
 go get github.com/Kyagara/equinox@master
 ```
 
+## Usage
+
+To access the diferent parts of the Riot Games API, create a new instance of the Equinox client:
+
+```go
+client, err := equinox.NewClient("RIOT_API_KEY")
+```
+A client without a configuration struct comes with the default options:
+
+```go
+config := &api.EquinoxConfig{
+	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
+	Cluster:  api.Americas, // Riot cluster, this should be one that is closest to you. Options available: Americas, Europe, Asia.
+	LogLevel: api.FatalLevel, // The logging level, the FatalLevel effectively disables logging.
+	Timeout:  10, // http.Client timeout in seconds.
+	Retry:    true, // Retry if the API returns a 429 response.
+}
+```
+
+A configuration struct can be used to create a custom Client using `equinox.NewClientWithConfig()`.
+
+Now you can access different games endpoints by their abbreviations provided you have access to them. For example:
+
+```go
+// Can be accessed with a Development key.
+summoner, err := client.LOL.Summoner.ByName(lol.BR1, "Loveable Senpai")
+
+// May not be available in your policy.
+recentMatches, err := client.VAL.Match.Recent(val.BR, val.CompetitiveQueue)
+```
+
 ## Example
 
 ```go

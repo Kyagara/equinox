@@ -34,7 +34,7 @@ type ChampionMasteryDTO struct {
 
 // Get all champion mastery entries sorted by number of champion points descending.
 func (e *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID string) (*[]ChampionMasteryDTO, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "SummonerMasteries")
+	logger := e.internalClient.Logger("LOL", "champion-mastery", "SummonerMasteries")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -47,7 +47,7 @@ func (e *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID st
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &masteries, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -56,7 +56,7 @@ func (e *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID st
 
 // Get a champion mastery by player ID and champion ID.
 func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string, championID int) (*ChampionMasteryDTO, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "ChampionScore")
+	logger := e.internalClient.Logger("LOL", "champion-mastery", "ChampionScore")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -69,7 +69,7 @@ func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &score, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -78,7 +78,7 @@ func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
 func (e *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID string) (*int, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "champion-mastery", "method", "MasteryScoreSum")
+	logger := e.internalClient.Logger("LOL", "champion-mastery", "MasteryScoreSum")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -91,7 +91,7 @@ func (e *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID stri
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &sum, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 

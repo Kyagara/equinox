@@ -3,7 +3,7 @@ package api
 import "net/http"
 
 type PlainTextResponse struct {
-	Response any `json:"response"`
+	Response interface{} `json:"response"`
 }
 
 type ErrorResponse struct {

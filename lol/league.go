@@ -54,7 +54,7 @@ type MiniSeriesDTO struct {
 //
 // Page defaults to 1.
 func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "league", "method", "Entries")
+	logger := e.internalClient.Logger("LOL", "league", "Entries")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -81,7 +81,7 @@ func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -90,7 +90,7 @@ func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 
 // Get league entries in all queues for a given summoner ID.
 func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]LeagueEntryDTO, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "league", "method", "SummonerEntries")
+	logger := e.internalClient.Logger("LOL", "league", "SummonerEntries")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -103,7 +103,7 @@ func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]L
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -131,7 +131,7 @@ func (e *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, e
 }
 
 func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueType interface{}, methodName string) (*LeagueListDTO, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "league", "method", methodName)
+	logger := e.internalClient.Logger("LOL", "league", methodName)
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -144,7 +144,7 @@ func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueTy
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &league, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 

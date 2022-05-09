@@ -110,7 +110,7 @@ type InfoDTO struct {
 //
 // Count defaults to 20.
 func (e *MatchEndpoint) List(PUUID string, count int) (*[]string, error) {
-	logger := e.internalClient.Logger("tft").With("endpoint", "match", "method", "List")
+	logger := e.internalClient.Logger("TFT", "match", "List")
 
 	if count > 100 || count < 1 {
 		count = 20
@@ -129,7 +129,7 @@ func (e *MatchEndpoint) List(PUUID string, count int) (*[]string, error) {
 	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &list, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -138,7 +138,7 @@ func (e *MatchEndpoint) List(PUUID string, count int) (*[]string, error) {
 
 // Get a match by match ID.
 func (e *MatchEndpoint) ByID(matchID string) (*MatchDTO, error) {
-	logger := e.internalClient.Logger("tft").With("endpoint", "match", "method", "ByID")
+	logger := e.internalClient.Logger("TFT", "match", "ByID")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
@@ -147,7 +147,7 @@ func (e *MatchEndpoint) ByID(matchID string) (*MatchDTO, error) {
 	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &match, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 

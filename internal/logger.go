@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// Creates a new zap.SugaredLogger from the configuration parameters provided.
+// Creates a new zap.Logger from the configuration parameters provided.
 func NewLogger(retry bool, timeout time.Duration, logLevel api.LogLevel) *zap.SugaredLogger {
 	zapConfig := zap.NewProductionConfig()
 
@@ -29,7 +29,9 @@ func NewLogger(retry bool, timeout time.Duration, logLevel api.LogLevel) *zap.Su
 	return logger.Sugar()
 }
 
-// Used to access the logger inside the InternalClient, also logs from which client the log came from.
-func (c *InternalClient) Logger(client string) *zap.SugaredLogger {
-	return c.logger.With("client", client)
+// Used to access the logger from the InternalClient, this is used to log events from other clients (RiotClient, LOLClient...)
+func (c *InternalClient) Logger(client string, endpoint string, method string) *zap.SugaredLogger {
+	logger := c.logger.With("client", client, "endpoint", endpoint, "method", method)
+
+	return logger
 }

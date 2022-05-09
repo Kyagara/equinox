@@ -59,7 +59,7 @@ type TierDetailsDTO struct {
 //
 // Start defaults to 0.
 func (e *RankedEndpoint) LeaderboardsByActID(region Region, actID string, size uint8, start int) (*LeaderboardDTO, error) {
-	logger := e.internalClient.Logger("val").With("endpoint", "ranked", "method", "LeaderboardsByActID")
+	logger := e.internalClient.Logger("VAL", "ranked", "LeaderboardsByActID")
 
 	if region == ESPORTS {
 		return nil, fmt.Errorf("the region ESPORTS is not available for this method")
@@ -80,7 +80,7 @@ func (e *RankedEndpoint) LeaderboardsByActID(region Region, actID string, size u
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &leaderboard, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 

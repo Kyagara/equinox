@@ -321,7 +321,7 @@ type MatchlistOptions struct {
 //
 // Count defaults to 20.
 func (e *MatchEndpoint) List(PUUID string, options *MatchlistOptions) (*[]string, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "match", "method", "List")
+	logger := e.internalClient.Logger("LOL", "match", "List")
 
 	if options == nil {
 		options = &MatchlistOptions{Start: 0, Count: 20}
@@ -362,7 +362,7 @@ func (e *MatchEndpoint) List(PUUID string, options *MatchlistOptions) (*[]string
 	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &list, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -371,7 +371,7 @@ func (e *MatchEndpoint) List(PUUID string, options *MatchlistOptions) (*[]string
 
 // Get a match by match ID.
 func (e *MatchEndpoint) ByID(matchID string) (*MatchDTO, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "match", "method", "ByID")
+	logger := e.internalClient.Logger("LOL", "match", "ByID")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
@@ -380,7 +380,7 @@ func (e *MatchEndpoint) ByID(matchID string) (*MatchDTO, error) {
 	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &match, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -389,7 +389,7 @@ func (e *MatchEndpoint) ByID(matchID string) (*MatchDTO, error) {
 
 // Get a match timeline by match ID.
 func (e *MatchEndpoint) Timeline(matchID string) (*MatchTimelineDTO, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "match", "method", "Timeline")
+	logger := e.internalClient.Logger("LOL", "match", "Timeline")
 
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
 
@@ -398,7 +398,7 @@ func (e *MatchEndpoint) Timeline(matchID string) (*MatchTimelineDTO, error) {
 	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &timeline, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 

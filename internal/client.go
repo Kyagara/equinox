@@ -111,9 +111,9 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.Path)
 
 	if c.retry && retryCount > 1 {
-		logger.Debug(fmt.Sprintf("Retried %d times, stopping", retryCount))
+		logger.Debug("Retried 2 times, stopping")
 
-		return nil, fmt.Errorf(fmt.Sprintf("Retried %d times, stopping", retryCount))
+		return nil, fmt.Errorf("retried 2 times, stopping")
 	}
 
 	logger.Debug("Making request")
@@ -124,6 +124,8 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 	if err != nil {
 		return nil, err
 	}
+
+	defer res.Body.Close()
 
 	// Handling errors documented in the Riot API docs
 	switch res.StatusCode {
@@ -139,7 +141,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 	// If the API returns a 429 code.
 	if res.StatusCode == http.StatusTooManyRequests {
-		logger.Warn("Too many requests")
+		logger.Debug("Too many requests")
 
 		// If Retry is disabled just return an error.
 		if !c.retry {
@@ -150,7 +152,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 		// If the header isn't found, don't retry and return error.
 		if retryAfter == "" {
-			logger.Warn("Retry-After header not found, not retrying")
+			logger.Debug("Retry-After header not found, not retrying")
 
 			return nil, fmt.Errorf("rate limited but no Retry-After header was found, stopping")
 		}
@@ -161,7 +163,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 			return nil, err
 		}
 
-		logger.Debug(fmt.Sprintf("Retrying request in %ds", seconds))
+		logger.Debug(fmt.Sprintf("Too Many Requests, retrying request in %ds", seconds))
 
 		time.Sleep(time.Duration(seconds) * time.Second)
 
