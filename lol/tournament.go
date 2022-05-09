@@ -86,7 +86,7 @@ type TournamentCodeUpdateParametersDTO struct {
 
 // Create a tournament code for the given tournament.
 func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) (*[]string, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateCodes")
+	logger := e.internalClient.Logger("LOL", "tournament", "CreateCodes")
 
 	if count < 1 || count > 1000 {
 		return nil, fmt.Errorf("count can't be less than 1 or more than 1000")
@@ -124,7 +124,7 @@ func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 	err := e.internalClient.Do(http.MethodPost, api.Americas, url, bytes.NewBuffer(body), &codes, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -133,7 +133,7 @@ func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 
 // Returns the tournament code DTO associated with a tournament code string.
 func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "ByCode")
+	logger := e.internalClient.Logger("LOL", "tournament", "ByCode")
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
@@ -142,7 +142,7 @@ func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 	err := e.internalClient.Do(http.MethodGet, api.Americas, url, nil, &tournament, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -151,7 +151,7 @@ func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 
 // Update the pick type, map, spectator type, or allowed summoners for a code.
 func (e *TournamentEndpoint) Update(tournamentCode string, parameters *TournamentCodeUpdateParametersDTO) error {
-	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "Update")
+	logger := e.internalClient.Logger("LOL", "tournament", "Update")
 
 	if parameters == nil {
 		return fmt.Errorf("parameters are required")
@@ -165,7 +165,7 @@ func (e *TournamentEndpoint) Update(tournamentCode string, parameters *Tournamen
 	err := e.internalClient.Do(http.MethodPut, api.Americas, url, bytes.NewBuffer(body), nil, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return err
 	}
 
@@ -174,7 +174,7 @@ func (e *TournamentEndpoint) Update(tournamentCode string, parameters *Tournamen
 
 // Gets a list of lobby events by tournament code.
 func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "LobbyEvents")
+	logger := e.internalClient.Logger("LOL", "tournament", "LobbyEvents")
 
 	url := fmt.Sprintf(TournamentLobbyEventsURL, tournamentCode)
 
@@ -183,7 +183,7 @@ func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 	err := e.internalClient.Do(http.MethodGet, api.Americas, url, nil, &lobbyEvents, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -198,7 +198,7 @@ func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
 func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (*int, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "CreateProvider")
+	logger := e.internalClient.Logger("LOL", "tournament", "CreateProvider")
 
 	_, err := url.ParseRequestURI(callbackURL)
 
@@ -220,7 +220,7 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 	err = e.internalClient.Do(http.MethodPost, api.Americas, TournamentProvidersURL, bytes.NewBuffer(body), &provider, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -233,7 +233,7 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 //
 // The optional name of the tournament.
 func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
-	logger := e.internalClient.Logger("lol").With("endpoint", "tournament", "method", "Create")
+	logger := e.internalClient.Logger("LOL", "tournament", "Create")
 
 	options := struct {
 		Name       string `json:"name"`
@@ -248,7 +248,7 @@ func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
 	err := e.internalClient.Do(http.MethodPost, api.Americas, TournamentURL, bytes.NewBuffer(body), &tournament, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 

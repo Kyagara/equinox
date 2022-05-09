@@ -172,7 +172,7 @@ type RoundResultDTO struct {
 
 // Get matchlist for games played by PUUID.
 func (e *MatchEndpoint) List(region Region, PUUID string) (*MatchListDTO, error) {
-	logger := e.internalClient.Logger("val").With("endpoint", "match", "method", "List")
+	logger := e.internalClient.Logger("VAL", "match", "List")
 
 	url := fmt.Sprintf(MatchListURL, PUUID)
 
@@ -181,7 +181,7 @@ func (e *MatchEndpoint) List(region Region, PUUID string) (*MatchListDTO, error)
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &list, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -190,7 +190,7 @@ func (e *MatchEndpoint) List(region Region, PUUID string) (*MatchListDTO, error)
 
 // Get match by ID.
 func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
-	logger := e.internalClient.Logger("val").With("endpoint", "match", "method", "ByID")
+	logger := e.internalClient.Logger("VAL", "match", "ByID")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
@@ -199,7 +199,7 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &match, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
@@ -214,7 +214,7 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 //
 // Requests are load balanced so you may see some inconsistencies as matches are added/removed from the list.
 func (e *MatchEndpoint) Recent(region Region, queue Queue) (*RecentMatchesDTO, error) {
-	logger := e.internalClient.Logger("val").With("endpoint", "match", "method", "Recent")
+	logger := e.internalClient.Logger("VAL", "match", "Recent")
 
 	url := fmt.Sprintf(MatchRecentURL, queue)
 
@@ -223,7 +223,7 @@ func (e *MatchEndpoint) Recent(region Region, queue Queue) (*RecentMatchesDTO, e
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &recent, "")
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 

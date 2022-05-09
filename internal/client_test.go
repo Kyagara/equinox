@@ -63,7 +63,7 @@ func TestInternalClientFailingRetry(t *testing.T) {
 	// This will take 2 seconds.
 	gotErr := client.Do(http.MethodGet, "tests", "/", nil, &object, "")
 
-	wantErr := fmt.Errorf("Retried 2 times, stopping")
+	wantErr := fmt.Errorf("retried 2 times, stopping")
 
 	require.Equal(t, wantErr, gotErr, fmt.Sprintf("want err %v, got %v", wantErr, gotErr))
 }

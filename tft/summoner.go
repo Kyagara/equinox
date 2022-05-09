@@ -38,14 +38,14 @@ func (e *SummonerEndpoint) ByAccessToken(region lol.Region, accessToken string) 
 }
 
 func (e *SummonerEndpoint) getSummoner(url string, region lol.Region, accessToken string, methodName string) (*lol.SummonerDTO, error) {
-	logger := e.internalClient.Logger("tft").With("endpoint", "summoner", "method", methodName)
+	logger := e.internalClient.Logger("TFT", "summoner", methodName)
 
 	var summoner *lol.SummonerDTO
 
 	err := e.internalClient.Do(http.MethodGet, region, url, nil, &summoner, accessToken)
 
 	if err != nil {
-		logger.Warn(err)
+		logger.Error(err)
 		return nil, err
 	}
 
