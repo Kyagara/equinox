@@ -125,8 +125,6 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 		return nil, err
 	}
 
-	defer res.Body.Close()
-
 	// Handling errors documented in the Riot API docs
 	switch res.StatusCode {
 	case http.StatusBadRequest:
