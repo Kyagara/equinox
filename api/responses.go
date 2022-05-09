@@ -20,6 +20,13 @@ func (e ErrorResponse) Error() string {
 }
 
 var (
+	BadRequestError = ErrorResponse{
+		Status: Status{
+			Message:    "Bad Request",
+			StatusCode: http.StatusBadRequest,
+		},
+	}
+
 	UnauthorizedError = ErrorResponse{
 		Status: Status{
 			Message:    "Unauthorized",
