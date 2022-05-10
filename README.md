@@ -1,9 +1,10 @@
 # Equinox
 
-[![equinox release (latest SemVer)](https://img.shields.io/github/v/release/Kyagara/equinox?sort=semver)](https://github.com/Kyagara/equinox/releases)
-[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/Kyagara/equinox)
-[![Test Status](https://github.com/Kyagara/equinox/workflows/Tests/badge.svg)](https://github.com/Kyagara/equinox/actions?query=workflow%3Atests)
-[![Test Coverage](https://codecov.io/gh/Kyagara/equinox/branch/master/graph/badge.svg)](https://codecov.io/gh/Kyagara/equinox)
+[![equinox version (latest SemVer)](https://img.shields.io/github/v/tag/Kyagara/equinox?label=Version)](https://github.com/Kyagara/equinox/releases)
+[![Go version](https://img.shields.io/github/go-mod/go-version/Kyagara/equinox)](https://github.com/Kyagara/equinox)
+[![Godoc](https://img.shields.io/static/v1?label=Godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/Kyagara/equinox)
+[![Tests](https://img.shields.io/github/workflow/status/Kyagara/equinox/Tests?label=Tests)](https://github.com/Kyagara/equinox/actions?query=workflow%3Atests)
+[![Test coverage (codecov.io)](https://codecov.io/gh/Kyagara/equinox/branch/master/graph/badge.svg)](https://codecov.io/gh/Kyagara/equinox)
 
 Equinox is a Riot Games API client written in golang with the goal of providing an easy to use interface to interact with all of the [Riot Games API](https://developer.riotgames.com/apis) endpoints and the Data Dragon service.
 

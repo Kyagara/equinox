@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"time"
 
 	"go.uber.org/zap/zapcore"
@@ -23,7 +22,7 @@ type EquinoxConfig struct {
 
 func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 	encoder.AddBool("retry", c.Retry)
-	encoder.AddString("timeout", fmt.Sprintf("%ds", c.Timeout))
+	encoder.AddDuration("timeout", c.Timeout)
 
 	return nil
 }
