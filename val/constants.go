@@ -1,16 +1,16 @@
 package val
 
-type Region string
+type Shard string
 
-// Valorant regions.
+// Valorant shards.
 const (
-	AP      Region = "ap"
-	NA      Region = "na"
-	LATAM   Region = "latam"
-	ESPORTS Region = "esports"
-	BR      Region = "br"
-	EU      Region = "eu"
-	KR      Region = "kr"
+	AP      Shard = "ap"
+	NA      Shard = "na"
+	LATAM   Shard = "latam"
+	ESPORTS Shard = "esports"
+	BR      Shard = "br"
+	EU      Shard = "eu"
+	KR      Shard = "kr"
 )
 
 type Queue string

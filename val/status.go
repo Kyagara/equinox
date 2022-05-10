@@ -13,16 +13,16 @@ type StatusEndpoint struct {
 }
 
 // Get VALORANT status for the given platform.
-func (e *StatusEndpoint) PlatformStatus(region Region) (*api.PlatformDataDTO, error) {
+func (e *StatusEndpoint) PlatformStatus(shard Shard) (*api.PlatformDataDTO, error) {
 	logger := e.internalClient.Logger("VAL", "status", "PlatformStatus")
 
-	if region == ESPORTS {
+	if shard == ESPORTS {
 		return nil, fmt.Errorf("the region ESPORTS is not available for this method")
 	}
 
 	var status *api.PlatformDataDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, StatusURL, nil, &status, "")
+	err := e.internalClient.Do(http.MethodGet, shard, StatusURL, nil, &status, "")
 
 	if err != nil {
 		logger.Error(err)

@@ -94,7 +94,7 @@ func TestTournamentCreateCodes(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentCodesURL).
 				Reply(test.code).
 				JSON(test.want)
@@ -137,7 +137,7 @@ func TestTournamentByCode(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(lol.TournamentByCodeURL, "tournamentCode")).
 				Reply(test.code).
 				JSON(test.want)
@@ -187,7 +187,7 @@ func TestTournamentUpdate(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Put(fmt.Sprintf(lol.TournamentByCodeURL, "tournamentCode")).
 				Reply(test.code)
 
@@ -229,7 +229,7 @@ func TestTournamentLobbyEvents(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(lol.TournamentLobbyEventsURL, "tournamentCode")).
 				Reply(test.code).
 				JSON(test.want)
@@ -272,7 +272,7 @@ func TestTournamentCreate(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentURL).
 				Reply(test.code).
 				JSON(test.want)
@@ -328,7 +328,7 @@ func TestTournamentCreateProvider(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentProvidersURL).
 				Reply(test.code).
 				JSON(test.want)

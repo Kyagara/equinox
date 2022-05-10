@@ -14,8 +14,18 @@ const (
 	ChallengerTier  Tier = "CHALLENGER"
 )
 
+type Route string
+
+// League of Legends routes, used on the match endpoint.
+const (
+	Americas Route = "americas"
+	Europe   Route = "europe"
+	Asia     Route = "asia"
+)
+
 type Region string
 
+// Regions used in League of Legends and Teamfight Tactics.
 const (
 	BR1  Region = "br1"
 	EUN1 Region = "eun1"

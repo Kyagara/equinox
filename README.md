@@ -43,7 +43,7 @@ A client without a configuration struct comes with the default options:
 ```go
 config := &api.EquinoxConfig{
 	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
-	Cluster:  api.Americas, // Riot cluster, this should be one that is closest to you. Options available: Americas, Europe, Asia.
+	Cluster:  api.AmericasCluster, // This should be the cluster that is closest to you. Options available: Americas, Europe, Asia.
 	LogLevel: api.FatalLevel, // The logging level, the FatalLevel effectively disables logging.
 	Timeout:  10, // http.Client timeout in seconds.
 	Retry:    true, // Retry if the API returns a 429 response.

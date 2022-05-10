@@ -49,12 +49,12 @@ func TestMatchList(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, tft.Americas)).
 				Get(fmt.Sprintf(tft.MatchListURL, "PUUID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.List("PUUID", test.code)
+			gotData, gotErr := client.Match.List(tft.Americas, "PUUID", test.code)
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -92,12 +92,12 @@ func TestMatchByID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, tft.Americas)).
 				Get(fmt.Sprintf(tft.MatchByIDURL, "matchID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.ByID("matchID")
+			gotData, gotErr := client.Match.ByID(tft.Americas, "matchID")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

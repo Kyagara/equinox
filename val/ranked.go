@@ -26,7 +26,7 @@ type LeaderboardDTO struct {
 	StartIndex            int            `json:"startIndex"`
 	Query                 string         `json:"query"`
 	// The shard for the given leaderboard.
-	Shard Region `json:"shard"`
+	Shard Shard `json:"shard"`
 }
 
 type PlayersDTO struct {
@@ -60,10 +60,10 @@ type TierDetailsDTO struct {
 // Size defaults to 200. Valid values: 1 to 200.
 //
 // Start defaults to 0.
-func (e *RankedEndpoint) LeaderboardsByActID(region Region, actID string, size uint8, start int) (*LeaderboardDTO, error) {
+func (e *RankedEndpoint) LeaderboardsByActID(shard Shard, actID string, size uint8, start int) (*LeaderboardDTO, error) {
 	logger := e.internalClient.Logger("VAL", "ranked", "LeaderboardsByActID")
 
-	if region == ESPORTS {
+	if shard == ESPORTS {
 		return nil, fmt.Errorf("the region ESPORTS is not available for this method")
 	}
 
@@ -87,7 +87,7 @@ func (e *RankedEndpoint) LeaderboardsByActID(region Region, actID string, size u
 
 	var leaderboard *LeaderboardDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &leaderboard, "")
+	err := e.internalClient.Do(http.MethodGet, shard, url, nil, &leaderboard, "")
 
 	if err != nil {
 		logger.Error(err)

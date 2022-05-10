@@ -40,7 +40,7 @@ func TestAccountPlayerActiveShard(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(riot.AccountActiveShardURL, api.VAL, "PUUID")).
 				Reply(test.code).
 				JSON(test.want)
@@ -83,7 +83,7 @@ func TestAccountByPUUID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(riot.AccountByPUUIDURL, "PUUID")).
 				Reply(test.code).
 				JSON(test.want)
@@ -126,7 +126,7 @@ func TestAccountByID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(riot.AccountByRiotIDURL, "gameName", "tagLine")).
 				Reply(test.code).
 				JSON(test.want)
@@ -169,7 +169,7 @@ func TestAccountByAccessToken(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(riot.AccountByAccessTokenURL).
 				Reply(test.code).
 				JSON(test.want).SetHeader("Authorization", "accessToken")

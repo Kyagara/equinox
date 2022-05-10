@@ -23,7 +23,7 @@ type Equinox struct {
 
 //	Creates a new Equinox client with a default configuration
 //
-//		- `Cluster`    : api.Americas
+//		- `Cluster`    : api.AmericasCluster
 //		- `LogLevel`   : api.FatalLevel
 //		- `Timeout`    : 10
 //		- `Retry`      : true
@@ -33,7 +33,7 @@ func NewClient(key string) (*Equinox, error) {
 	}
 
 	config := &api.EquinoxConfig{
-		Cluster:  api.Americas,
+		Cluster:  api.AmericasCluster,
 		Key:      key,
 		LogLevel: api.FatalLevel,
 		Timeout:  10,

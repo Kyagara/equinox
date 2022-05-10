@@ -1,5 +1,14 @@
 package tft
 
+type Route string
+
+// Teamfight Tactics routes, used on the match endpoint.
+const (
+	Americas Route = "americas"
+	Europe   Route = "europe"
+	SEA      Route = "sea"
+)
+
 type QueueType string
 
 const (

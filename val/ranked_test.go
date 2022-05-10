@@ -23,7 +23,7 @@ func TestRankedLeaderboardsByActID(t *testing.T) {
 		code    int
 		want    *val.LeaderboardDTO
 		wantErr error
-		region  val.Region
+		region  val.Shard
 		size    uint8
 		start   int
 	}{

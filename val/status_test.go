@@ -23,7 +23,7 @@ func TestPlatformStatus(t *testing.T) {
 		code    int
 		want    *api.PlatformDataDTO
 		wantErr error
-		region  val.Region
+		region  val.Shard
 	}{
 		{
 			name:   "found",

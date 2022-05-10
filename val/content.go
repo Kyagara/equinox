@@ -246,7 +246,7 @@ type LocalizedContentDTO struct {
 // Get content filtered by locale.
 //
 // Locale defaults to en-US.
-func (e *ContentEndpoint) ByLocale(region Region, locale Locale) (*LocalizedContentDTO, error) {
+func (e *ContentEndpoint) ByLocale(shard Shard, locale Locale) (*LocalizedContentDTO, error) {
 	logger := e.internalClient.Logger("VAL", "content", "ByLocale")
 
 	if locale != "" {
@@ -257,7 +257,7 @@ func (e *ContentEndpoint) ByLocale(region Region, locale Locale) (*LocalizedCont
 
 	var content *LocalizedContentDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &content, "")
+	err := e.internalClient.Do(http.MethodGet, shard, url, nil, &content, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -268,12 +268,12 @@ func (e *ContentEndpoint) ByLocale(region Region, locale Locale) (*LocalizedCont
 }
 
 // Get content with all available locales.
-func (e *ContentEndpoint) AllLocales(region Region) (*ContentDTO, error) {
+func (e *ContentEndpoint) AllLocales(shard Shard) (*ContentDTO, error) {
 	logger := e.internalClient.Logger("VAL", "content", "AllLocales")
 
 	var content *ContentDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, ContentURL, nil, &content, "")
+	err := e.internalClient.Do(http.MethodGet, shard, ContentURL, nil, &content, "")
 
 	if err != nil {
 		logger.Error(err)
