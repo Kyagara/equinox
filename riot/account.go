@@ -27,10 +27,10 @@ type ActiveShardDTO struct {
 }
 
 // Get active shard for a player.
-func (e *AccountEndpoint) PlayerActiveShard(PUUID string, game api.Game) (*ActiveShardDTO, error) {
+func (e *AccountEndpoint) PlayerActiveShard(puuid string, game api.Game) (*ActiveShardDTO, error) {
 	logger := e.internalClient.Logger("Riot", "account", "PlayerActiveShard")
 
-	url := fmt.Sprintf(AccountActiveShardURL, game, PUUID)
+	url := fmt.Sprintf(AccountActiveShardURL, game, puuid)
 
 	var shard *ActiveShardDTO
 
@@ -45,8 +45,8 @@ func (e *AccountEndpoint) PlayerActiveShard(PUUID string, game api.Game) (*Activ
 }
 
 // Get account by PUUID.
-func (e *AccountEndpoint) ByPUUID(PUUID string) (*AccountDTO, error) {
-	return e.getAccount(fmt.Sprintf(AccountByPUUIDURL, PUUID), "", "ByPUUID")
+func (e *AccountEndpoint) ByPUUID(puuid string) (*AccountDTO, error) {
+	return e.getAccount(fmt.Sprintf(AccountByPUUIDURL, puuid), "", "ByPUUID")
 }
 
 // Get account by riot ID.

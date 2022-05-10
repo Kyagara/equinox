@@ -23,13 +23,13 @@ func (e *SummonerEndpoint) ByAccountID(region lol.Region, accountID string) (*lo
 }
 
 // Get a summoner by summoner PUUID.
-func (e *SummonerEndpoint) ByPUUID(region lol.Region, PUUID string) (*lol.SummonerDTO, error) {
-	return e.getSummoner(fmt.Sprintf(SummonerByPUUIDURL, PUUID), region, "", "ByPUUID")
+func (e *SummonerEndpoint) ByPUUID(region lol.Region, puuid string) (*lol.SummonerDTO, error) {
+	return e.getSummoner(fmt.Sprintf(SummonerByPUUIDURL, puuid), region, "", "ByPUUID")
 }
 
 // Get a summoner by summoner ID.
-func (e *SummonerEndpoint) ByID(region lol.Region, PUUID string) (*lol.SummonerDTO, error) {
-	return e.getSummoner(fmt.Sprintf(SummonerByIDURL, PUUID), region, "", "ByID")
+func (e *SummonerEndpoint) ByID(region lol.Region, puuid string) (*lol.SummonerDTO, error) {
+	return e.getSummoner(fmt.Sprintf(SummonerByIDURL, puuid), region, "", "ByID")
 }
 
 // Get a summoner by access token.

@@ -320,7 +320,7 @@ type MatchlistOptions struct {
 // Start defaults to 0.
 //
 // Count defaults to 20.
-func (e *MatchEndpoint) List(route Route, PUUID string, options *MatchlistOptions) (*[]string, error) {
+func (e *MatchEndpoint) List(route Route, puuid string, options *MatchlistOptions) (*[]string, error) {
 	logger := e.internalClient.Logger("LOL", "match", "List")
 
 	if options == nil {
@@ -353,7 +353,7 @@ func (e *MatchEndpoint) List(route Route, PUUID string, options *MatchlistOption
 
 	query.Set("count", strconv.Itoa(options.Count))
 
-	method := fmt.Sprintf(MatchListURL, PUUID)
+	method := fmt.Sprintf(MatchListURL, puuid)
 
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 

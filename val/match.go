@@ -171,10 +171,10 @@ type RoundResultDTO struct {
 }
 
 // Get matchlist for games played by PUUID.
-func (e *MatchEndpoint) List(shard Shard, PUUID string) (*MatchListDTO, error) {
+func (e *MatchEndpoint) List(shard Shard, puuid string) (*MatchListDTO, error) {
 	logger := e.internalClient.Logger("VAL", "match", "List")
 
-	url := fmt.Sprintf(MatchListURL, PUUID)
+	url := fmt.Sprintf(MatchListURL, puuid)
 
 	var list *MatchListDTO
 
