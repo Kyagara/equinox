@@ -3,6 +3,8 @@ package val
 import (
 	"fmt"
 	"net/http"
+	"net/url"
+	"strconv"
 
 	"github.com/Kyagara/equinox/internal"
 )
@@ -73,7 +75,15 @@ func (e *RankedEndpoint) LeaderboardsByActID(region Region, actID string, size u
 		start = 0
 	}
 
-	url := fmt.Sprintf(RankedURL, actID)
+	query := url.Values{}
+
+	query.Set("size", strconv.Itoa(int(size)))
+
+	query.Set("start", strconv.Itoa(int(start)))
+
+	method := fmt.Sprintf(RankedURL, actID)
+
+	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
 	var leaderboard *LeaderboardDTO
 
