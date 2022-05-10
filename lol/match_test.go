@@ -71,12 +71,12 @@ func TestMatchList(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.Americas)).
 				Get(fmt.Sprintf(lol.MatchListURL, "PUUID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.List("PUUID", test.parameters)
+			gotData, gotErr := client.Match.List(lol.Americas, "PUUID", test.parameters)
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -114,12 +114,12 @@ func TestMatchByID(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.Americas)).
 				Get(fmt.Sprintf(lol.MatchByIDURL, "matchID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.ByID("matchID")
+			gotData, gotErr := client.Match.ByID(lol.Americas, "matchID")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -157,12 +157,12 @@ func TestMatchTimeline(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.Americas)).
 				Get(fmt.Sprintf(lol.MatchTimelineURL, "matchID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.Timeline("matchID")
+			gotData, gotErr := client.Match.Timeline(lol.Americas, "matchID")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

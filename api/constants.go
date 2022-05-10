@@ -7,11 +7,11 @@ const (
 
 type Cluster string
 
-// Riot API clusters.
+// Riot API clusters, used on Riot/Account and internally LOL/Tournament.
 const (
-	Americas Cluster = "americas"
-	Europe   Cluster = "europe"
-	Asia     Cluster = "asia"
+	AmericasCluster Cluster = "americas"
+	EuropeCluster   Cluster = "europe"
+	AsiaCluster     Cluster = "asia"
 )
 
 type PublishLocation string

@@ -241,7 +241,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 
 			client := internal.NewInternalClient(&api.EquinoxConfig{
 				Key:      "RIOT_API_KEY",
-				Cluster:  api.Americas,
+				Cluster:  api.AmericasCluster,
 				LogLevel: api.DebugLevel,
 				Timeout:  10,
 				Retry:    false,

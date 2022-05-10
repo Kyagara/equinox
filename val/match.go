@@ -171,14 +171,14 @@ type RoundResultDTO struct {
 }
 
 // Get matchlist for games played by PUUID.
-func (e *MatchEndpoint) List(region Region, PUUID string) (*MatchListDTO, error) {
+func (e *MatchEndpoint) List(shard Shard, PUUID string) (*MatchListDTO, error) {
 	logger := e.internalClient.Logger("VAL", "match", "List")
 
 	url := fmt.Sprintf(MatchListURL, PUUID)
 
 	var list *MatchListDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &list, "")
+	err := e.internalClient.Do(http.MethodGet, shard, url, nil, &list, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -189,14 +189,14 @@ func (e *MatchEndpoint) List(region Region, PUUID string) (*MatchListDTO, error)
 }
 
 // Get match by ID.
-func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
+func (e *MatchEndpoint) ByID(shard Shard, matchID string) (*MatchDTO, error) {
 	logger := e.internalClient.Logger("VAL", "match", "ByID")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
 	var match *MatchDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &match, "")
+	err := e.internalClient.Do(http.MethodGet, shard, url, nil, &match, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -213,14 +213,14 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 // NA/LATAM/BR share a match history deployment. As such, recent matches will return a combined list of matches from those three regions.
 //
 // Requests are load balanced so you may see some inconsistencies as matches are added/removed from the list.
-func (e *MatchEndpoint) Recent(region Region, queue Queue) (*RecentMatchesDTO, error) {
+func (e *MatchEndpoint) Recent(shard Shard, queue Queue) (*RecentMatchesDTO, error) {
 	logger := e.internalClient.Logger("VAL", "match", "Recent")
 
 	url := fmt.Sprintf(MatchRecentURL, queue)
 
 	var recent *RecentMatchesDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &recent, "")
+	err := e.internalClient.Do(http.MethodGet, shard, url, nil, &recent, "")
 
 	if err != nil {
 		logger.Error(err)

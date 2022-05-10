@@ -94,7 +94,7 @@ func TestTournamentStubCreateCodes(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentStubCodesURL).
 				Reply(test.code).
 				JSON(test.want)
@@ -137,7 +137,7 @@ func TestTournamentStubLobbyEvents(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(lol.TournamentStubLobbyEventsURL, "tournamentCode")).
 				Reply(test.code).
 				JSON(test.want)
@@ -180,7 +180,7 @@ func TestTournamentStubCreate(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentStubURL).
 				Reply(test.code).
 				JSON(test.want)
@@ -236,7 +236,7 @@ func TestTournamentStubCreateProvider(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			defer gock.Off()
 
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentStubProvidersURL).
 				Reply(test.code).
 				JSON(test.want)
