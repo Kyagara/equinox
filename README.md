@@ -43,8 +43,8 @@ A client without a configuration struct comes with the default options:
 ```go
 config := &api.EquinoxConfig{
 	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
-	Cluster:  api.AmericasCluster, // This should be the cluster that is closest to you. Options available: Americas, Europe, Asia.
-	LogLevel: api.FatalLevel, // The logging level, the FatalLevel effectively disables logging.
+	Cluster:  api.AmericasCluster, // Riot API cluster, use the nearest cluster. Options: AmericasCluster, EuropeCluster, AsiaCluster.
+	LogLevel: api.FatalLevel, // The logging level, the FatalLevel provided effectively disables logging.
 	Timeout:  10, // http.Client timeout in seconds.
 	Retry:    true, // Retry if the API returns a 429 response.
 }
@@ -52,13 +52,16 @@ config := &api.EquinoxConfig{
 
 A configuration struct can be used to create a custom Client using `equinox.NewClientWithConfig()`.
 
-Now you can access different games endpoints by their abbreviations provided you have access to them. For example:
+Now you can access different games endpoints by their abbreviations, provided you have access to them. For example:
 
 ```go
-// Can be accessed with a Development key.
+// This method uses a lol.Region. Can be accessed with a Development key.
 summoner, err := client.LOL.Summoner.ByName(lol.BR1, "Loveable Senpai")
 
-// May not be available in your policy.
+// The client.Cluster will be used as the region. Can be accessed with a Development key.
+account, err := client.Riot.Account.ByPUUID("PUUID")
+
+// This method uses a val.Shard. May not be available in your policy.
 recentMatches, err := client.VAL.Match.Recent(val.BR, val.CompetitiveQueue)
 ```
 
