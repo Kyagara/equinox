@@ -39,8 +39,8 @@ func (e *SummonerEndpoint) ByAccountID(region Region, accountID string) (*Summon
 }
 
 // Get a summoner by summoner PUUID.
-func (e *SummonerEndpoint) ByPUUID(region Region, PUUID string) (*SummonerDTO, error) {
-	return e.getSummoner(fmt.Sprintf(SummonerByPUUIDURL, PUUID), region, "", "ByPUUID")
+func (e *SummonerEndpoint) ByPUUID(region Region, puuid string) (*SummonerDTO, error) {
+	return e.getSummoner(fmt.Sprintf(SummonerByPUUIDURL, puuid), region, "", "ByPUUID")
 }
 
 // Get a summoner by summoner ID.

@@ -125,14 +125,14 @@ func (e *ClashEndpoint) ByTeamID(region Region, teamID string) (*ClashTournament
 	return e.getClash(ClashByTeamIDURL, region, teamID, "ByTeamID")
 }
 
-func (e *ClashEndpoint) getClash(endpointMethod string, region Region, ID string, methodName string) (*ClashTournamentDTO, error) {
+func (e *ClashEndpoint) getClash(endpointMethod string, region Region, id string, methodName string) (*ClashTournamentDTO, error) {
 	logger := e.internalClient.Logger("LOL", "clash", methodName)
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}
 
-	url := fmt.Sprintf(endpointMethod, ID)
+	url := fmt.Sprintf(endpointMethod, id)
 
 	var tournament *ClashTournamentDTO
 
