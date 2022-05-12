@@ -6,6 +6,13 @@ import (
 
 // League of Legends endpoint URLs.
 const (
+	ChallengesConfigurationsURL      = "/lol/challenges/v1/challenges/config"
+	ChallengesPercentilesURL         = "/lol/challenges/v1/challenges/percentiles"
+	ChallengesConfigurationByIDURL   = "/lol/challenges/v1/challenges/%d/config"
+	ChallengesLeaderboardsByLevelURL = "/lol/challenges/v1/challenges/%d/leaderboards/by-level/%s"
+	ChallengesPercentileByIDURL      = "/lol/challenges/v1/challenges/%d/percentiles"
+	ChallengesByPUUIDURL             = "/lol/challenges/v1/player-data/%s"
+
 	ChampionURL = "/lol/platform/v3/champion-rotations"
 
 	ChampionMasteriesURL           = "/lol/champion-mastery/v4/champion-masteries/by-summoner/%s"
@@ -54,6 +61,7 @@ const (
 
 type LOLClient struct {
 	internalClient    *internal.InternalClient
+	Challenges        *ChallengesEndpoint
 	Champion          *ChampionEndpoint
 	ChampionMasteries *ChampionMasteryEndpoint
 	Clash             *ClashEndpoint
@@ -70,6 +78,7 @@ type LOLClient struct {
 func NewLOLClient(client *internal.InternalClient) *LOLClient {
 	return &LOLClient{
 		internalClient:    client,
+		Challenges:        &ChallengesEndpoint{internalClient: client},
 		Champion:          &ChampionEndpoint{internalClient: client},
 		ChampionMasteries: &ChampionMasteryEndpoint{internalClient: client},
 		Clash:             &ClashEndpoint{internalClient: client},

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -100,6 +101,7 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, r
 
 	// Decoding the body into the endpoint method response object.
 	if err := json.NewDecoder(res.Body).Decode(&object); err != nil {
+		log.Println(err)
 		return err
 	}
 

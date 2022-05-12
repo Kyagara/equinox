@@ -127,3 +127,27 @@ const (
 	SlayerTransformation   ChampionTransformation = 1
 	AssassinTransformation ChampionTransformation = 2
 )
+
+type State string
+
+const (
+	DisabledState State = "DISABLED"
+	HiddenState   State = "HIDDEN"
+	EnabledState  State = "ENABLED"
+	ArchivedState State = "ARCHIVED"
+)
+
+type Tracking string
+
+const (
+	LifetimeTracking Tracking = "LIFETIME"
+	SeasonTracking   Tracking = "SEASON"
+)
+
+type Level string
+
+const (
+	MasterLevel      Level = "MASTER"
+	GrandmasterLevel Level = "GRANDMASTER"
+	ChallengerLevel  Level = "CHALLENGER"
+)

@@ -12,22 +12,22 @@ type ContentEndpoint struct {
 }
 
 type ContentDTO struct {
-	Version      string            `json:"version"`
-	Characters   []CharactersDTO   `json:"characters"`
-	Maps         []MapsDTO         `json:"maps"`
-	Chromas      []ChromasDTO      `json:"chromas"`
-	Skins        []SkinsDTO        `json:"skins"`
-	SkinLevels   []SkinLevelsDTO   `json:"skinLevels"`
-	Equips       []EquipsDTO       `json:"equips"`
-	GameModes    []GameModesDTO    `json:"gameModes"`
-	Sprays       []SpraysDTO       `json:"sprays"`
-	SprayLevels  []SprayLevelsDTO  `json:"sprayLevels"`
-	Charms       []CharmsDTO       `json:"charms"`
-	CharmLevels  []CharmLevelsDTO  `json:"charmLevels"`
-	PlayerCards  []PlayerCardsDTO  `json:"playerCards"`
-	PlayerTitles []PlayerTitlesDTO `json:"playerTitles"`
-	Acts         []ActsDTO         `json:"acts"`
-	Ceremonies   []CeremoniesDTO   `json:"ceremonies"`
+	Version      string     `json:"version"`
+	Characters   []AssetDTO `json:"characters"`
+	Maps         []AssetDTO `json:"maps"`
+	Chromas      []AssetDTO `json:"chromas"`
+	Skins        []AssetDTO `json:"skins"`
+	SkinLevels   []AssetDTO `json:"skinLevels"`
+	Equips       []AssetDTO `json:"equips"`
+	GameModes    []AssetDTO `json:"gameModes"`
+	Sprays       []AssetDTO `json:"sprays"`
+	SprayLevels  []AssetDTO `json:"sprayLevels"`
+	Charms       []AssetDTO `json:"charms"`
+	CharmLevels  []AssetDTO `json:"charmLevels"`
+	PlayerCards  []AssetDTO `json:"playerCards"`
+	PlayerTitles []AssetDTO `json:"playerTitles"`
+	Acts         []ActDTO   `json:"acts"`
+	Ceremonies   []AssetDTO `json:"ceremonies"`
 }
 
 type LocalizedNamesDTO struct {
@@ -51,196 +51,55 @@ type LocalizedNamesDTO struct {
 	ZhTW string `json:"zh-TW"`
 }
 
-type CharactersDTO struct {
+type LocalizedContentDTO struct {
+	Version      string              `json:"version"`
+	Characters   []LocalizedAssetDTO `json:"characters"`
+	Maps         []LocalizedAssetDTO `json:"maps"`
+	Chromas      []LocalizedAssetDTO `json:"chromas"`
+	Skins        []LocalizedAssetDTO `json:"skins"`
+	SkinLevels   []LocalizedAssetDTO `json:"skinLevels"`
+	Equips       []LocalizedAssetDTO `json:"equips"`
+	GameModes    []LocalizedAssetDTO `json:"gameModes"`
+	Sprays       []LocalizedAssetDTO `json:"sprays"`
+	SprayLevels  []LocalizedAssetDTO `json:"sprayLevels"`
+	Charms       []LocalizedAssetDTO `json:"charms"`
+	CharmLevels  []LocalizedAssetDTO `json:"charmLevels"`
+	PlayerCards  []LocalizedAssetDTO `json:"playerCards"`
+	PlayerTitles []LocalizedAssetDTO `json:"playerTitles"`
+	Ceremonies   []LocalizedAssetDTO `json:"ceremonies"`
+	Acts         []LocalizedActDTO   `json:"acts"`
+}
+
+type AssetDTO struct {
 	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
 	ID             string            `json:"id"`
 	AssetName      string            `json:"assetName"`
+	AssetPath      string            `json:"assetPath,omitempty"`
+	LocalizedNames LocalizedNamesDTO `json:"localizedNames"`
 }
 
-type MapsDTO struct {
-	Name              string            `json:"name"`
-	LocalizedNamesDTO LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID                string            `json:"id"`
-	AssetName         string            `json:"assetName"`
-	AssetPath         string            `json:"assetPath,omitempty"`
+type LocalizedAssetDTO struct {
+	Name      string `json:"name"`
+	ID        string `json:"id"`
+	AssetName string `json:"assetName"`
+	AssetPath string `json:"assetPath,omitempty"`
 }
 
-type ChromasDTO struct {
-	Name              string            `json:"name"`
-	LocalizedNamesDTO LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID                string            `json:"id"`
-	AssetName         string            `json:"assetName"`
-}
-
-type SkinsDTO struct {
-	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID             string            `json:"id"`
-	AssetName      string            `json:"assetName"`
-}
-
-type SkinLevelsDTO struct {
-	Name              string            `json:"name"`
-	LocalizedNamesDTO LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID                string            `json:"id"`
-	AssetName         string            `json:"assetName"`
-}
-
-type EquipsDTO struct {
-	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID             string            `json:"id"`
-	AssetName      string            `json:"assetName"`
-}
-
-type GameModesDTO struct {
-	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID             string            `json:"id"`
-	AssetName      string            `json:"assetName"`
-	AssetPath      string            `json:"assetPath"`
-}
-
-type SpraysDTO struct {
-	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID             string            `json:"id"`
-	AssetName      string            `json:"assetName"`
-}
-
-type SprayLevelsDTO struct {
-	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID             string            `json:"id"`
-	AssetName      string            `json:"assetName"`
-}
-
-type CharmsDTO struct {
-	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID             string            `json:"id"`
-	AssetName      string            `json:"assetName"`
-}
-
-type CharmLevelsDTO struct {
-	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID             string            `json:"id"`
-	AssetName      string            `json:"assetName"`
-}
-
-type PlayerCardsDTO struct {
-	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID             string            `json:"id"`
-	AssetName      string            `json:"assetName"`
-}
-
-type PlayerTitlesDTO struct {
-	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID             string            `json:"id"`
-	AssetName      string            `json:"assetName"`
-}
-
-type ActsDTO struct {
+type ActDTO struct {
 	ID             string            `json:"id"`
 	ParentID       string            `json:"parentId"`
 	Type           string            `json:"type"`
 	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
+	LocalizedNames LocalizedNamesDTO `json:"localizedNames"`
 	IsActive       bool              `json:"isActive"`
 }
 
-type CeremoniesDTO struct {
-	Name           string            `json:"name"`
-	LocalizedNames LocalizedNamesDTO `json:"localizedNames,omitempty"`
-	ID             string            `json:"id"`
-	AssetName      string            `json:"assetName"`
-}
-
-type LocalizedContentDTO struct {
-	Version    string `json:"version"`
-	Characters []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"characters"`
-	Maps []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-		AssetPath string `json:"assetPath,omitempty"`
-	} `json:"maps"`
-	Chromas []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"chromas"`
-	Skins []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"skins"`
-	SkinLevels []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"skinLevels"`
-	Equips []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"equips"`
-	GameModes []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-		AssetPath string `json:"assetPath"`
-	} `json:"gameModes"`
-	Sprays []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"sprays"`
-	SprayLevels []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"sprayLevels"`
-	Charms []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"charms"`
-	CharmLevels []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"charmLevels"`
-	PlayerCards []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"playerCards"`
-	PlayerTitles []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"playerTitles"`
-	Acts []struct {
-		ID       string `json:"id"`
-		ParentID string `json:"parentId"`
-		Type     string `json:"type"`
-		Name     string `json:"name"`
-		IsActive bool   `json:"isActive"`
-	} `json:"acts"`
-	Ceremonies []struct {
-		Name      string `json:"name"`
-		ID        string `json:"id"`
-		AssetName string `json:"assetName"`
-	} `json:"ceremonies"`
+type LocalizedActDTO struct {
+	ID       string `json:"id"`
+	ParentID string `json:"parentId"`
+	Type     string `json:"type"`
+	Name     string `json:"name"`
+	IsActive bool   `json:"isActive"`
 }
 
 // Get content filtered by locale.
