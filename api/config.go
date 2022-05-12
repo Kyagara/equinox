@@ -22,7 +22,7 @@ type EquinoxConfig struct {
 
 func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 	encoder.AddBool("retry", c.Retry)
-	encoder.AddDuration("timeout", c.Timeout)
+	encoder.AddDuration("timeout", c.Timeout*time.Second)
 
 	return nil
 }
