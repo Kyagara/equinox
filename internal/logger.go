@@ -2,7 +2,6 @@ package internal
 
 import (
 	"log"
-	"time"
 
 	"github.com/Kyagara/equinox/api"
 	"go.uber.org/zap"
@@ -10,12 +9,13 @@ import (
 )
 
 // Creates a new zap.Logger from the configuration parameters provided.
-func NewLogger(retry bool, timeout time.Duration, logLevel api.LogLevel) *zap.SugaredLogger {
+func NewLogger(retry bool, timeout int, ttl int, logLevel api.LogLevel) *zap.SugaredLogger {
 	zapConfig := zap.NewProductionConfig()
 
 	equinoxOptions := &api.EquinoxConfig{
 		Retry:   retry,
 		Timeout: timeout,
+		TTL:     ttl,
 	}
 
 	zapConfig.Level = zap.NewAtomicLevelAt(zapcore.Level(logLevel))

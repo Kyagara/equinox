@@ -2,7 +2,6 @@ package lol
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
 )
@@ -120,7 +119,7 @@ func (e *ChallengesEndpoint) List(region Region) (*[]ChallengeConfigInfoDTO, err
 
 	var challenges *[]ChallengeConfigInfoDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, ChallengesConfigurationsURL, nil, &challenges, "")
+	err := e.internalClient.Get(region, ChallengesConfigurationsURL, &challenges, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -138,7 +137,7 @@ func (e *ChallengesEndpoint) ByID(region Region, challengeID int64) (*ChallengeC
 
 	url := fmt.Sprintf(ChallengesConfigurationByIDURL, challengeID)
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &challenge, "")
+	err := e.internalClient.Get(region, url, &challenge, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -154,7 +153,7 @@ func (e *ChallengesEndpoint) Percentiles(region Region) (*map[int64]PercentileDT
 
 	var percentiles *map[int64]PercentileDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, ChallengesPercentilesURL, nil, &percentiles, "")
+	err := e.internalClient.Get(region, ChallengesPercentilesURL, &percentiles, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -172,7 +171,7 @@ func (e *ChallengesEndpoint) PercentilesByID(region Region, challengeID int64) (
 
 	url := fmt.Sprintf(ChallengesPercentileByIDURL, challengeID)
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &percentile, "")
+	err := e.internalClient.Get(region, url, &percentile, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -196,7 +195,7 @@ func (e *ChallengesEndpoint) Leaderboards(region Region, challengeID int64, leve
 		url = fmt.Sprintf("%s?limit=%d", url, limit)
 	}
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &leaderboards, "")
+	err := e.internalClient.Get(region, url, &leaderboards, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -214,7 +213,7 @@ func (e *ChallengesEndpoint) ByPUUID(region Region, puuid string) (*PlayerInfoDT
 
 	url := fmt.Sprintf(ChallengesByPUUIDURL, puuid)
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &challenges, "")
+	err := e.internalClient.Get(region, url, &challenges, "")
 
 	if err != nil {
 		logger.Error(err)

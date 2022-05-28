@@ -1,8 +1,6 @@
 package lor
 
 import (
-	"net/http"
-
 	"github.com/Kyagara/equinox/internal"
 )
 
@@ -30,7 +28,7 @@ func (e *RankedEndpoint) Leaderboards(region Region) (*LeaderboardDTO, error) {
 
 	var leaderboard *LeaderboardDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, RankedURL, nil, &leaderboard, "")
+	err := e.internalClient.Get(region, RankedURL, &leaderboard, "")
 
 	if err != nil {
 		logger.Error(err)

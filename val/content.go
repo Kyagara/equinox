@@ -2,7 +2,6 @@ package val
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
 )
@@ -116,7 +115,7 @@ func (e *ContentEndpoint) ByLocale(shard Shard, locale Locale) (*LocalizedConten
 
 	var content *LocalizedContentDTO
 
-	err := e.internalClient.Do(http.MethodGet, shard, url, nil, &content, "")
+	err := e.internalClient.Get(shard, url, &content, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -132,7 +131,7 @@ func (e *ContentEndpoint) AllLocales(shard Shard) (*ContentDTO, error) {
 
 	var content *ContentDTO
 
-	err := e.internalClient.Do(http.MethodGet, shard, ContentURL, nil, &content, "")
+	err := e.internalClient.Get(shard, ContentURL, &content, "")
 
 	if err != nil {
 		logger.Error(err)

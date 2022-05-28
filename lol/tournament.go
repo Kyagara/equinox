@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 
@@ -121,7 +120,7 @@ func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 
 	var codes *[]string
 
-	err := e.internalClient.Do(http.MethodPost, api.AmericasCluster, url, bytes.NewBuffer(body), &codes, "")
+	err := e.internalClient.Post(api.AmericasCluster, url, bytes.NewBuffer(body), &codes, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -139,7 +138,7 @@ func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 
 	var tournament *TournamentCodeDTO
 
-	err := e.internalClient.Do(http.MethodGet, api.AmericasCluster, url, nil, &tournament, "")
+	err := e.internalClient.Get(api.AmericasCluster, url, &tournament, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -162,7 +161,7 @@ func (e *TournamentEndpoint) Update(tournamentCode string, parameters *Tournamen
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
-	err := e.internalClient.Do(http.MethodPut, api.AmericasCluster, url, bytes.NewBuffer(body), nil, "")
+	err := e.internalClient.Put(api.AmericasCluster, url, bytes.NewBuffer(body))
 
 	if err != nil {
 		logger.Error(err)
@@ -180,7 +179,7 @@ func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 
 	var lobbyEvents *LobbyEventDTOWrapper
 
-	err := e.internalClient.Do(http.MethodGet, api.AmericasCluster, url, nil, &lobbyEvents, "")
+	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -217,7 +216,7 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 
 	var provider *int
 
-	err = e.internalClient.Do(http.MethodPost, api.AmericasCluster, TournamentProvidersURL, bytes.NewBuffer(body), &provider, "")
+	err = e.internalClient.Post(api.AmericasCluster, TournamentProvidersURL, bytes.NewBuffer(body), &provider, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -245,7 +244,7 @@ func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
 
 	var tournament *int
 
-	err := e.internalClient.Do(http.MethodPost, api.AmericasCluster, TournamentURL, bytes.NewBuffer(body), &tournament, "")
+	err := e.internalClient.Post(api.AmericasCluster, TournamentURL, bytes.NewBuffer(body), &tournament, "")
 
 	if err != nil {
 		logger.Error(err)

@@ -2,7 +2,6 @@ package tft
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/lol"
@@ -42,7 +41,7 @@ func (e *SummonerEndpoint) getSummoner(url string, region lol.Region, accessToke
 
 	var summoner *lol.SummonerDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &summoner, accessToken)
+	err := e.internalClient.Get(region, url, &summoner, accessToken)
 
 	if err != nil {
 		logger.Error(err)

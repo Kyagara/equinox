@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 
@@ -53,7 +52,7 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 
 	var codes *[]string
 
-	err := e.internalClient.Do(http.MethodPost, api.AmericasCluster, url, bytes.NewBuffer(body), &codes, "")
+	err := e.internalClient.Post(api.AmericasCluster, url, bytes.NewBuffer(body), &codes, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -71,7 +70,7 @@ func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEvent
 
 	var lobbyEvents *LobbyEventDTOWrapper
 
-	err := e.internalClient.Do(http.MethodGet, api.AmericasCluster, url, nil, &lobbyEvents, "")
+	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -108,7 +107,7 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 
 	var provider *int
 
-	err = e.internalClient.Do(http.MethodPost, api.AmericasCluster, TournamentStubProvidersURL, bytes.NewBuffer(body), &provider, "")
+	err = e.internalClient.Post(api.AmericasCluster, TournamentStubProvidersURL, bytes.NewBuffer(body), &provider, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -136,7 +135,7 @@ func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, erro
 
 	var tournament *int
 
-	err := e.internalClient.Do(http.MethodPost, api.AmericasCluster, TournamentStubURL, bytes.NewBuffer(body), &tournament, "")
+	err := e.internalClient.Post(api.AmericasCluster, TournamentStubURL, bytes.NewBuffer(body), &tournament, "")
 
 	if err != nil {
 		logger.Error(err)

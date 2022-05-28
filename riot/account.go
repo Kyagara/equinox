@@ -2,7 +2,6 @@ package riot
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -34,7 +33,7 @@ func (e *AccountEndpoint) PlayerActiveShard(puuid string, game api.Game) (*Activ
 
 	var shard *ActiveShardDTO
 
-	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &shard, "")
+	err := e.internalClient.Get(e.internalClient.Cluster, url, &shard, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -64,7 +63,7 @@ func (e *AccountEndpoint) getAccount(url string, accessToken string, methodName 
 
 	var account *AccountDTO
 
-	err := e.internalClient.Do(http.MethodGet, e.internalClient.Cluster, url, nil, &account, accessToken)
+	err := e.internalClient.Get(e.internalClient.Cluster, url, &account, accessToken)
 
 	if err != nil {
 		logger.Error(err)

@@ -2,7 +2,6 @@ package val
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
 )
@@ -178,7 +177,7 @@ func (e *MatchEndpoint) List(shard Shard, puuid string) (*MatchListDTO, error) {
 
 	var list *MatchListDTO
 
-	err := e.internalClient.Do(http.MethodGet, shard, url, nil, &list, "")
+	err := e.internalClient.Get(shard, url, &list, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -196,7 +195,7 @@ func (e *MatchEndpoint) ByID(shard Shard, matchID string) (*MatchDTO, error) {
 
 	var match *MatchDTO
 
-	err := e.internalClient.Do(http.MethodGet, shard, url, nil, &match, "")
+	err := e.internalClient.Get(shard, url, &match, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -220,7 +219,7 @@ func (e *MatchEndpoint) Recent(shard Shard, queue Queue) (*RecentMatchesDTO, err
 
 	var recent *RecentMatchesDTO
 
-	err := e.internalClient.Do(http.MethodGet, shard, url, nil, &recent, "")
+	err := e.internalClient.Get(shard, url, &recent, "")
 
 	if err != nil {
 		logger.Error(err)

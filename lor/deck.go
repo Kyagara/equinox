@@ -3,7 +3,6 @@ package lor
 import (
 	"bytes"
 	"encoding/json"
-	"net/http"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -25,7 +24,7 @@ func (e *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, erro
 
 	var deck *[]DeckDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, DeckURL, nil, &deck, accessToken)
+	err := e.internalClient.Get(region, DeckURL, &deck, accessToken)
 
 	if err != nil {
 		logger.Error(err)
@@ -49,7 +48,7 @@ func (e *DeckEndpoint) Create(region Region, accessToken string, code string, na
 
 	var deck api.PlainTextResponse
 
-	err := e.internalClient.Do(http.MethodPost, region, DeckURL, bytes.NewBuffer(body), &deck, accessToken)
+	err := e.internalClient.Post(region, DeckURL, bytes.NewBuffer(body), &deck, accessToken)
 
 	if err != nil {
 		logger.Error(err)

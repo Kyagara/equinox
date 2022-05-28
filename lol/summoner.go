@@ -2,7 +2,6 @@ package lol
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
 )
@@ -62,7 +61,7 @@ func (e *SummonerEndpoint) getSummoner(url string, region Region, accessToken st
 
 	var summoner *SummonerDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &summoner, accessToken)
+	err := e.internalClient.Get(region, url, &summoner, accessToken)
 
 	if err != nil {
 		logger.Error(err)

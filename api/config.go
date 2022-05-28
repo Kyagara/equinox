@@ -1,8 +1,6 @@
 package api
 
 import (
-	"time"
-
 	"go.uber.org/zap/zapcore"
 )
 
@@ -15,14 +13,17 @@ type EquinoxConfig struct {
 	// Log level. Defaults to api.FatalLevel
 	LogLevel LogLevel
 	// Timeout for HTTP Request in seconds, 0 disables it. Defaults to 10
-	Timeout time.Duration
+	Timeout int
+	// TTL for the cache in seconds, 0 disables caching. Defaults to 120 seconds
+	TTL int
 	// Retry request if it returns a 429 status code. Defaults to true
 	Retry bool
 }
 
 func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 	encoder.AddBool("retry", c.Retry)
-	encoder.AddDuration("timeout", c.Timeout*time.Second)
+	encoder.AddInt("timeout", c.Timeout)
+	encoder.AddInt("ttl", c.TTL)
 
 	return nil
 }

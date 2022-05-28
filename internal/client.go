@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -16,6 +15,8 @@ import (
 
 type InternalClient struct {
 	Cluster  api.Cluster
+	cache    *Cache
+	ttl      int
 	key      string
 	logLevel api.LogLevel
 	retry    bool
@@ -30,6 +31,7 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 		Cluster:  api.AmericasCluster,
 		LogLevel: api.DebugLevel,
 		Timeout:  10,
+		TTL:      0,
 		Retry:    true,
 	}
 }
@@ -38,24 +40,22 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
 		Cluster:  config.Cluster,
+		cache:    NewCache(),
+		ttl:      config.TTL,
 		key:      config.Key,
 		logLevel: config.LogLevel,
 		retry:    config.Retry,
-		http:     &http.Client{Timeout: config.Timeout * time.Second},
-		logger:   NewLogger(config.Retry, config.Timeout, config.LogLevel),
+		http:     &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
+		logger:   NewLogger(config.Retry, config.Timeout, config.TTL, config.LogLevel),
 	}
 }
 
-// Creates, sends and decodes a HTTP request.
-func (c *InternalClient) Do(method string, route interface{}, endpoint string, requestBody io.Reader, object interface{}, authorizationHeader string) error {
-	if route == "" {
-		return fmt.Errorf("region is required")
-	}
-
+// Performs a GET request, authorizationHeader can be blank
+func (c *InternalClient) Get(route interface{}, endpoint string, object interface{}, authorizationHeader string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new HTTP Request.
-	req, err := c.newRequest(method, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
+	req, err := c.newRequest(http.MethodGet, fmt.Sprintf("%s%s", baseUrl, endpoint), nil)
 
 	if err != nil {
 		return err
@@ -72,16 +72,40 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, r
 		return err
 	}
 
-	// In case of a PUT request return nil.
-	if res.Request.Method == http.MethodPut {
-		return nil
+	// Decoding the body into the endpoint method response object.
+	if err := json.NewDecoder(res.Body).Decode(&object); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Performs a POST request, authorizationHeader can be blank
+func (c *InternalClient) Post(route interface{}, endpoint string, requestBody io.Reader, object interface{}, authorizationHeader string) error {
+	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
+
+	// Creating a new HTTP Request.
+	req, err := c.newRequest(http.MethodPost, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	if authorizationHeader != "" {
+		req.Header.Set("Authorization", authorizationHeader)
+	}
+
+	// Sending HTTP request and returning the response.
+	res, err := c.sendRequest(req, 0)
+
+	if err != nil {
+		return err
 	}
 
 	// In case of a post request returning just a single, non JSON response.
-	// This has a Post requirement because at the moment only one post request returns a plain text response.
 	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type assertion.
 	// This implementation looks horrible, I don't know another way of decoding any non JSON value to the &object.
-	if res.Request.Method == http.MethodPost && res.Header.Get("Content-Type") == "" {
+	if res.Header.Get("Content-Type") == "" {
 		value, err := ioutil.ReadAll(res.Body)
 
 		if err != nil {
@@ -101,7 +125,27 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, r
 
 	// Decoding the body into the endpoint method response object.
 	if err := json.NewDecoder(res.Body).Decode(&object); err != nil {
-		log.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+// Performs a PUT request
+func (c *InternalClient) Put(route interface{}, endpoint string, requestBody io.Reader) error {
+	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
+
+	// Creating a new HTTP Request.
+	req, err := c.newRequest(http.MethodPut, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	// Sending HTTP request and returning the response.
+	_, err = c.sendRequest(req, 0)
+
+	if err != nil {
 		return err
 	}
 
@@ -111,6 +155,20 @@ func (c *InternalClient) Do(method string, route interface{}, endpoint string, r
 // Sends a HTTP request.
 func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.Response, error) {
 	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.Path)
+
+	if c.ttl != 0 && req.Method == http.MethodGet {
+		res, err := c.cache.Get(req.URL.String())
+
+		if err != nil {
+			return nil, err
+		}
+
+		if res != nil {
+			logger.Debug("Cache hit")
+
+			return res, nil
+		}
+	}
 
 	if c.retry && retryCount > 1 {
 		logger.Debug("Retried 2 times, stopping")
@@ -160,11 +218,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 			return nil, fmt.Errorf("rate limited but no Retry-After header was found, stopping")
 		}
 
-		seconds, err := strconv.Atoi(retryAfter)
-
-		if err != nil {
-			return nil, err
-		}
+		seconds, _ := strconv.Atoi(retryAfter)
 
 		logger.Debug(fmt.Sprintf("Too Many Requests, retrying request in %ds", seconds))
 
@@ -185,6 +239,10 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 		}
 
 		return nil, err
+	}
+
+	if c.ttl != 0 && req.Method == http.MethodGet {
+		c.cache.Set(req.URL.String(), res)
 	}
 
 	logger.Debug("Request successful")
