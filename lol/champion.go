@@ -2,7 +2,6 @@ package lol
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
 )
@@ -30,7 +29,7 @@ func (e *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, erro
 
 	var rotations *ChampionRotationsDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, ChampionURL, nil, &rotations, "")
+	err := e.internalClient.Get(region, ChampionURL, &rotations, "")
 
 	if err != nil {
 		logger.Error(err)

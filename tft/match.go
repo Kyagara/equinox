@@ -2,7 +2,6 @@ package tft
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 
@@ -126,7 +125,7 @@ func (e *MatchEndpoint) List(route Route, puuid string, count int) (*[]string, e
 
 	var list *[]string
 
-	err := e.internalClient.Do(http.MethodGet, route, url, nil, &list, "")
+	err := e.internalClient.Get(route, url, &list, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -144,7 +143,7 @@ func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
 
 	var match *MatchDTO
 
-	err := e.internalClient.Do(http.MethodGet, route, url, nil, &match, "")
+	err := e.internalClient.Get(route, url, &match, "")
 
 	if err != nil {
 		logger.Error(err)

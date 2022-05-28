@@ -1,8 +1,6 @@
 package lor
 
 import (
-	"net/http"
-
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 )
@@ -17,7 +15,7 @@ func (e *StatusEndpoint) PlatformStatus(region Region) (*api.PlatformDataDTO, er
 
 	var status *api.PlatformDataDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, StatusURL, nil, &status, "")
+	err := e.internalClient.Get(region, StatusURL, &status, "")
 
 	if err != nil {
 		logger.Error(err)

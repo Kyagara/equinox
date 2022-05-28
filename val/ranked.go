@@ -2,7 +2,6 @@ package val
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 
@@ -87,7 +86,7 @@ func (e *RankedEndpoint) LeaderboardsByActID(shard Shard, actID string, size uin
 
 	var leaderboard *LeaderboardDTO
 
-	err := e.internalClient.Do(http.MethodGet, shard, url, nil, &leaderboard, "")
+	err := e.internalClient.Get(shard, url, &leaderboard, "")
 
 	if err != nil {
 		logger.Error(err)

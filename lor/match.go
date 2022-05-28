@@ -2,7 +2,6 @@ package lor
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
 )
@@ -56,7 +55,7 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 
 	var match *MatchDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &match, "")
+	err := e.internalClient.Get(region, url, &match, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -74,7 +73,7 @@ func (e *MatchEndpoint) List(region Region, puuid string) (*[]string, error) {
 
 	var list *[]string
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &list, "")
+	err := e.internalClient.Get(region, url, &list, "")
 
 	if err != nil {
 		logger.Error(err)

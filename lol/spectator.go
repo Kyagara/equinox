@@ -2,7 +2,6 @@ package lol
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
 )
@@ -144,7 +143,7 @@ func (e *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, err
 
 	var games *FeaturedGamesDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, SpectatorFeaturedGamesURL, nil, &games, "")
+	err := e.internalClient.Get(region, SpectatorFeaturedGamesURL, &games, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -160,7 +159,7 @@ func (e *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*Curr
 
 	var game *CurrentGameInfoDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), nil, &game, "")
+	err := e.internalClient.Get(region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), &game, "")
 
 	if err != nil {
 		logger.Error(err)

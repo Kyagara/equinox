@@ -26,6 +26,7 @@ type Equinox struct {
 //		- `Cluster`    : api.AmericasCluster
 //		- `LogLevel`   : api.FatalLevel
 //		- `Timeout`    : 10
+//		- `TTL`        : 120
 //		- `Retry`      : true
 func NewClient(key string) (*Equinox, error) {
 	if key == "" {
@@ -37,6 +38,7 @@ func NewClient(key string) (*Equinox, error) {
 		Key:      key,
 		LogLevel: api.FatalLevel,
 		Timeout:  10,
+		TTL:      120,
 		Retry:    true,
 	}
 

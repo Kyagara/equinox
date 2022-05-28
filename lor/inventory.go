@@ -1,8 +1,6 @@
 package lor
 
 import (
-	"net/http"
-
 	"github.com/Kyagara/equinox/internal"
 )
 
@@ -21,7 +19,7 @@ func (e *InventoryEndpoint) Cards(region Region, accessToken string) (*[]CardDTO
 
 	var cards *[]CardDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, InventoryURL, nil, &cards, accessToken)
+	err := e.internalClient.Get(region, InventoryURL, &cards, accessToken)
 
 	if err != nil {
 		logger.Error(err)

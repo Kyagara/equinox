@@ -20,6 +20,20 @@ func TestInternalClient(t *testing.T) {
 	assert.NotNil(t, client, "expecting non-nil InternalClient")
 }
 
+func TestInternalClientPut(t *testing.T) {
+	defer gock.Off()
+
+	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
+		Put("/").
+		Reply(200)
+
+	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	err := client.Put("tests", "/", nil)
+
+	assert.Nil(t, err, "expecting nil error")
+}
+
 func TestInternalClientRetries(t *testing.T) {
 	defer gock.Off()
 
@@ -38,7 +52,7 @@ func TestInternalClientRetries(t *testing.T) {
 	res := api.PlatformDataDTO{}
 
 	// This will take 1 second.
-	err := client.Do(http.MethodGet, lol.BR1, lol.StatusURL, nil, &res, "")
+	err := client.Get(lol.BR1, lol.StatusURL, &res, "")
 
 	assert.Nil(t, err, "expecting nil error")
 
@@ -61,7 +75,7 @@ func TestInternalClientFailingRetry(t *testing.T) {
 	var object api.PlainTextResponse
 
 	// This will take 2 seconds.
-	gotErr := client.Do(http.MethodGet, "tests", "/", nil, &object, "")
+	gotErr := client.Get("tests", "/", &object, "")
 
 	wantErr := fmt.Errorf("retried 2 times, stopping")
 
@@ -79,15 +93,15 @@ func TestInternalClientRetryHeader(t *testing.T) {
 
 	var object api.PlainTextResponse
 
-	gotErr := client.Do(http.MethodGet, "tests", "/", nil, &object, "")
+	gotErr := client.Get("tests", "/", &object, "")
 
 	wantErr := fmt.Errorf("rate limited but no Retry-After header was found, stopping")
 
 	require.Equal(t, wantErr, gotErr, fmt.Sprintf("want err %v, got %v", wantErr, gotErr))
 }
 
-// Testing if InternalClient.Do() can properly decode a plain text response.
-func TestInternalClientDoRequest(t *testing.T) {
+// Testing if InternalClient.Post() can properly decode a plain text response.
+func TestInternalClientPlainTextResponse(t *testing.T) {
 	defer gock.Off()
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
@@ -98,7 +112,25 @@ func TestInternalClientDoRequest(t *testing.T) {
 
 	var object api.PlainTextResponse
 
-	err := client.Do(http.MethodPost, "tests", "/", nil, &object, "")
+	err := client.Post("tests", "/", nil, &object, "")
+
+	assert.Nil(t, err, "expecting nil error")
+
+	assert.NotNil(t, object, "expecting non-nil response")
+}
+
+func TestInternalClientPost(t *testing.T) {
+	defer gock.Off()
+
+	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
+		Post("/").
+		Reply(200).JSON(&api.PlatformDataDTO{})
+
+	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	var object *api.PlatformDataDTO
+
+	err := client.Post("tests", "/", nil, &object, "")
 
 	assert.Nil(t, err, "expecting nil error")
 
@@ -117,7 +149,7 @@ func TestInternalClientHandleErrorResponse(t *testing.T) {
 
 	var object api.PlainTextResponse
 
-	gotErr := client.Do(http.MethodGet, "tests", "/", nil, &object, "")
+	gotErr := client.Get("tests", "/", &object, "")
 
 	wantErr := api.ErrorResponse{
 		Status: api.Status{
@@ -141,26 +173,19 @@ func TestInternalClientNewRequest(t *testing.T) {
 	}{
 
 		{
-			name:    "invalid method",
-			wantErr: fmt.Errorf("net/http: invalid method \"=\""),
-			method:  "=",
-			url:     "http://localhost:80",
-		},
-		{
 			name: "invalid url",
 			wantErr: &url.Error{
 				Op:  "parse",
 				URL: "https://tests.api.riotgames.com\\:invalid:/=",
 				Err: url.InvalidHostError("\\"),
 			},
-			method: http.MethodGet,
-			url:    "\\:invalid:/=",
+			url: "\\:invalid:/=",
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gotErr := client.Do(test.method, "tests", test.url, nil, nil, "")
+			gotErr := client.Get("tests", test.url, nil, "")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -227,12 +252,6 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			},
 			region: "tests",
 		},
-		{
-			name:    "region empty",
-			wantErr: fmt.Errorf("region is required"),
-			setup:   func() {},
-			region:  "",
-		},
 	}
 
 	for _, test := range tests {
@@ -249,7 +268,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 
 			var gotData api.PlainTextResponse
 
-			gotErr := client.Do(http.MethodGet, test.region, "/", nil, &gotData, "")
+			gotErr := client.Get(test.region, "/", &gotData, "")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 		})

@@ -2,7 +2,6 @@ package tft
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 
@@ -92,7 +91,7 @@ func (e *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.
 
 	var entries *[]LeagueEntryDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
+	err := e.internalClient.Get(region, url, &entries, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -119,7 +118,7 @@ func (e *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (
 
 	var entries *[]LeagueEntryDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
+	err := e.internalClient.Get(region, url, &entries, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -145,7 +144,7 @@ func (e *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]
 
 	var entries *[]TopRatedLadderEntryDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
+	err := e.internalClient.Get(region, url, &entries, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -179,7 +178,7 @@ func (e *LeagueEndpoint) getLeague(url string, region lol.Region, methodName str
 
 	var league *LeagueListDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &league, "")
+	err := e.internalClient.Get(region, url, &league, "")
 
 	if err != nil {
 		logger.Error(err)

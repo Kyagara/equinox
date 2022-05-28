@@ -2,7 +2,6 @@ package lol
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
 )
@@ -44,7 +43,7 @@ func (e *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID st
 
 	var masteries *[]ChampionMasteryDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &masteries, "")
+	err := e.internalClient.Get(region, url, &masteries, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -66,7 +65,7 @@ func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 
 	var score *ChampionMasteryDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &score, "")
+	err := e.internalClient.Get(region, url, &score, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -88,7 +87,7 @@ func (e *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID stri
 
 	var sum *int
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &sum, "")
+	err := e.internalClient.Get(region, url, &sum, "")
 
 	if err != nil {
 		logger.Error(err)

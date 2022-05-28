@@ -2,7 +2,6 @@ package lol
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 
@@ -78,7 +77,7 @@ func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 
 	var entries *[]LeagueEntryDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
+	err := e.internalClient.Get(region, url, &entries, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -100,7 +99,7 @@ func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]L
 
 	var entries *[]LeagueEntryDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &entries, "")
+	err := e.internalClient.Get(region, url, &entries, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -141,7 +140,7 @@ func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueTy
 
 	var league *LeagueListDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &league, "")
+	err := e.internalClient.Get(region, url, &league, "")
 
 	if err != nil {
 		logger.Error(err)

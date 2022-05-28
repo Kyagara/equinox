@@ -10,7 +10,7 @@ import (
 )
 
 func TestNewLogger(t *testing.T) {
-	logger := internal.NewLogger(true, 10, api.DebugLevel)
+	logger := internal.NewLogger(true, 10, 120, api.DebugLevel)
 
 	require.NotNil(t, logger, "expecting non-nil Logger")
 

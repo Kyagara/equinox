@@ -2,7 +2,6 @@ package lol
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/internal"
 )
@@ -59,7 +58,7 @@ func (e *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error
 
 	var tournaments *[]ClashTournamentDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, ClashURL, nil, &tournaments, "")
+	err := e.internalClient.Get(region, ClashURL, &tournaments, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -83,7 +82,7 @@ func (e *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]To
 
 	var players *[]TournamentPlayerDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &players, "")
+	err := e.internalClient.Get(region, url, &players, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -105,7 +104,7 @@ func (e *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*Tourn
 
 	var team *TournamentTeamDto
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &team, "")
+	err := e.internalClient.Get(region, url, &team, "")
 
 	if err != nil {
 		logger.Error(err)
@@ -136,7 +135,7 @@ func (e *ClashEndpoint) getClash(endpointMethod string, region Region, id string
 
 	var tournament *ClashTournamentDTO
 
-	err := e.internalClient.Do(http.MethodGet, region, url, nil, &tournament, "")
+	err := e.internalClient.Get(region, url, &tournament, "")
 
 	if err != nil {
 		logger.Error(err)

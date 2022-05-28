@@ -2,7 +2,6 @@ package val
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -22,7 +21,7 @@ func (e *StatusEndpoint) PlatformStatus(shard Shard) (*api.PlatformDataDTO, erro
 
 	var status *api.PlatformDataDTO
 
-	err := e.internalClient.Do(http.MethodGet, shard, StatusURL, nil, &status, "")
+	err := e.internalClient.Get(shard, StatusURL, &status, "")
 
 	if err != nil {
 		logger.Error(err)
