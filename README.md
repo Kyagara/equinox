@@ -38,6 +38,7 @@ To access the diferent parts of the Riot Games API, create a new instance of the
 ```go
 client, err := equinox.NewClient("RIOT_API_KEY")
 ```
+
 A client without a configuration struct comes with the default options:
 
 ```go
@@ -46,6 +47,7 @@ config := &api.EquinoxConfig{
 	Cluster:  api.AmericasCluster, // Riot API cluster, use the nearest cluster. Options: AmericasCluster, EuropeCluster, AsiaCluster.
 	LogLevel: api.FatalLevel, // The logging level, the FatalLevel provided effectively disables logging.
 	Timeout:  10, // http.Client timeout in seconds.
+	TTL:  120, // TTL for cache in seconds.
 	Retry:    true, // Retry if the API returns a 429 response.
 }
 ```
