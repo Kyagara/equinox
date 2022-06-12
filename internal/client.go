@@ -190,12 +190,11 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 	// Checking rate limits for the app
 	if c.rateLimit && c.rate.appRate.SecondsLimit > 0 {
 		c.rate.appRate.Mutex.Lock()
+		defer c.rate.appRate.Mutex.Unlock()
 
 		if c.rate.appRate.SecondsCount >= c.rate.appRate.SecondsLimit {
 			return nil, api.RateLimitedError
 		}
-
-		c.rate.appRate.Mutex.Unlock()
 	}
 
 	// Checking rate limits for the endpoint method
@@ -203,12 +202,11 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 
 	if c.rateLimit && rate != nil {
 		rate.Mutex.Lock()
+		defer rate.Mutex.Unlock()
 
 		if rate.SecondsCount >= rate.SecondsLimit {
 			return nil, api.RateLimitedError
 		}
-
-		rate.Mutex.Unlock()
 	}
 
 	logger.Debug("Making request")
