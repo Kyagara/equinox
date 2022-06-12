@@ -92,8 +92,6 @@ func TestTournamentCreateCodes(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentCodesURL).
 				Reply(test.code).
@@ -135,8 +133,6 @@ func TestTournamentByCode(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(lol.TournamentByCodeURL, "tournamentCode")).
 				Reply(test.code).
@@ -185,8 +181,6 @@ func TestTournamentUpdate(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Put(fmt.Sprintf(lol.TournamentByCodeURL, "tournamentCode")).
 				Reply(test.code)
@@ -227,8 +221,6 @@ func TestTournamentLobbyEvents(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(lol.TournamentLobbyEventsURL, "tournamentCode")).
 				Reply(test.code).
@@ -270,8 +262,6 @@ func TestTournamentCreate(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentURL).
 				Reply(test.code).
@@ -326,8 +316,6 @@ func TestTournamentCreateProvider(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentProvidersURL).
 				Reply(test.code).

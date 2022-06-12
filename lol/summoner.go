@@ -53,7 +53,7 @@ func (e *SummonerEndpoint) ByAccessToken(region Region, accessToken string) (*Su
 }
 
 func (e *SummonerEndpoint) getSummoner(url string, region Region, accessToken string, methodName string) (*SummonerDTO, error) {
-	logger := e.internalClient.Logger("LOL", "summoner", methodName)
+	logger := e.internalClient.Logger("LOL", "summoner-v4", methodName)
 
 	if methodName == "ByAccessToken" && accessToken == "" {
 		return nil, fmt.Errorf("accessToken is required")
@@ -61,7 +61,7 @@ func (e *SummonerEndpoint) getSummoner(url string, region Region, accessToken st
 
 	var summoner *SummonerDTO
 
-	err := e.internalClient.Get(region, url, &summoner, accessToken)
+	err := e.internalClient.Get(region, url, &summoner, "summoner-v4", methodName, accessToken)
 
 	if err != nil {
 		logger.Error(err)

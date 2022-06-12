@@ -38,8 +38,6 @@ func TestDeckList(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lor.Americas)).
 				Get(lor.DeckURL).
 				Reply(test.code).
@@ -81,8 +79,6 @@ func TestDeckCreate(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lor.Americas)).
 				Post(lor.DeckURL).
 				Reply(test.code).SetHeader("Authorization", "accessToken").BodyString("response")

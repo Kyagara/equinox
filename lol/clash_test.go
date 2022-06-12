@@ -46,8 +46,6 @@ func TestClashTournaments(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(lol.ClashURL).
 				Reply(test.code).
@@ -97,8 +95,6 @@ func TestClashSummonerEntries(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(lol.ClashSummonerEntriesURL, "summonerID")).
 				Reply(test.code).
@@ -149,8 +145,6 @@ func TestClashTournamentTeamByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(lol.ClashTournamentTeamByIDURL, "teamID")).
 				Reply(test.code).
@@ -201,8 +195,6 @@ func TestClashByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(lol.ClashByIDURL, "tournamentID")).
 				Reply(test.code).
@@ -244,8 +236,6 @@ func TestClashByTeamID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.ClashByTeamIDURL, "teamID")).
 				Reply(test.code).

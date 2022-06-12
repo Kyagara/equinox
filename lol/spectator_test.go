@@ -38,8 +38,6 @@ func TestSpectatorFeaturedGames(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(lol.SpectatorFeaturedGamesURL).
 				Reply(test.code).
@@ -81,8 +79,6 @@ func TestSpectatorCurrentGame(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.SpectatorCurrentGameURL, "summonerID")).
 				Reply(test.code).

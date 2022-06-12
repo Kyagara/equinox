@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -13,20 +14,17 @@ import (
 )
 
 func TestNewCache(t *testing.T) {
-	cache := internal.NewCache()
+	cache := internal.NewCache(120)
 
 	require.NotNil(t, cache, "expecting non-nil Cache")
 }
 
 func TestCacheHit(t *testing.T) {
-	internalClient := internal.NewInternalClient(&api.EquinoxConfig{
-		Key:      "RIOT_API_KEY",
-		Cluster:  api.AmericasCluster,
-		LogLevel: api.DebugLevel,
-		Timeout:  10,
-		TTL:      120,
-		Retry:    true,
-	})
+	config := internal.NewTestEquinoxConfig()
+
+	config.TTL = 120
+
+	internalClient := internal.NewInternalClient(config)
 
 	client := lol.NewLOLClient(internalClient)
 
@@ -44,6 +42,10 @@ func TestCacheHit(t *testing.T) {
 		Get(lol.ChampionURL).
 		Reply(200).JSON(data)
 
+	gock.New(fmt.Sprintf(api.BaseURLFormat, "br1")).
+		Get(lol.ChampionURL).
+		Reply(200).JSON(data)
+
 	gotData, gotErr := client.Champion.Rotations(lol.BR1)
 
 	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
@@ -55,4 +57,12 @@ func TestCacheHit(t *testing.T) {
 	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
 
 	require.Equal(t, data, gotCache, fmt.Sprintf("want data %v, got %v", data, gotCache))
+
+	time.Sleep(3 * time.Second)
+
+	gotCacheEmpty, gotErr := client.Champion.Rotations(lol.BR1)
+
+	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
+
+	require.Equal(t, data, gotCacheEmpty, fmt.Sprintf("want data %v, got %v", data, gotCacheEmpty))
 }

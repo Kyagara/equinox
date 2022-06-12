@@ -24,11 +24,11 @@ type LeaderboardPlayersDTO struct {
 //
 // The leaderboard is updated once an hour.
 func (e *RankedEndpoint) Leaderboards(region Region) (*LeaderboardDTO, error) {
-	logger := e.internalClient.Logger("LOR", "ranked", "Leaderboards")
+	logger := e.internalClient.Logger("LOR", "lor-ranked-v1", "Leaderboards")
 
 	var leaderboard *LeaderboardDTO
 
-	err := e.internalClient.Get(region, RankedURL, &leaderboard, "")
+	err := e.internalClient.Get(region, RankedURL, &leaderboard, "lor-ranked-v1", "Leaderboards", "")
 
 	if err != nil {
 		logger.Error(err)

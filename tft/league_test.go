@@ -72,8 +72,6 @@ func TestLeagueEntries(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(tft.LeagueEntriesURL, test.tier, api.I)).
 				Reply(test.code).
@@ -124,8 +122,6 @@ func TestLeagueByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(tft.LeagueByIDURL, "leagueID")).
 				Reply(test.code).
@@ -186,8 +182,6 @@ func TestLeagueTopRatedLadder(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(tft.LeagueRatedLaddersURL, test.queue)).
 				Reply(test.code).
@@ -238,8 +232,6 @@ func TestLeagueSummonerEntries(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(tft.LeagueEntriesBySummonerURL, "summonerID")).
 				Reply(test.code).
@@ -290,8 +282,6 @@ func TestLeagueChallenger(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(tft.LeagueChallengerURL).
 				Reply(test.code).
@@ -342,8 +332,6 @@ func TestLeagueGrandmaster(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(tft.LeagueGrandmasterURL).
 				Reply(test.code).
@@ -394,8 +382,6 @@ func TestLeagueMaster(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(tft.LeagueMasterURL).
 				Reply(test.code).

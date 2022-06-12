@@ -38,8 +38,6 @@ func TestChallengesList(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(lol.ChallengesConfigurationsURL).
 				Reply(test.code).
@@ -81,8 +79,6 @@ func TestChallengesByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.ChallengesConfigurationByIDURL, 1)).
 				Reply(test.code).
@@ -124,8 +120,6 @@ func TestChallengesPercentiles(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(lol.ChallengesPercentilesURL).
 				Reply(test.code).
@@ -167,8 +161,6 @@ func TestChallengesPercentilesByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.ChallengesPercentileByIDURL, 1)).
 				Reply(test.code).
@@ -219,8 +211,6 @@ func TestChallengesLeaderboards(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.ChallengesLeaderboardsByLevelURL, 1, lol.MasterLevel)).
 				Reply(test.code).
@@ -262,8 +252,6 @@ func TestChallengesByPUUID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(lol.ChallengesByPUUIDURL, "PUUID")).
 				Reply(test.code).

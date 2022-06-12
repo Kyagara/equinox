@@ -17,7 +17,7 @@ type TournamentStubEndpoint struct {
 
 // Create a mock tournament code for the given tournament.
 func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) (*[]string, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-stub", "CreateCodes")
+	logger := e.internalClient.Logger("LOL", "tournament-stub-v4", "CreateCodes")
 
 	if count < 1 || count > 1000 {
 		return nil, fmt.Errorf("count can't be less than 1 or more than 1000")
@@ -52,7 +52,7 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 
 	var codes *[]string
 
-	err := e.internalClient.Post(api.AmericasCluster, url, bytes.NewBuffer(body), &codes, "")
+	err := e.internalClient.Post(api.AmericasCluster, url, bytes.NewBuffer(body), &codes, "tournament-stub-v4", "CreateCodes", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -64,13 +64,13 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 
 // Gets a mock list of lobby events by tournament code.
 func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-stub", "LobbyEvents")
+	logger := e.internalClient.Logger("LOL", "tournament-stub-v4", "LobbyEvents")
 
 	url := fmt.Sprintf(TournamentStubLobbyEventsURL, tournamentCode)
 
 	var lobbyEvents *LobbyEventDTOWrapper
 
-	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "")
+	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "tournament-stub-v4", "LobbyEvents", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -107,7 +107,7 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 
 	var provider *int
 
-	err = e.internalClient.Post(api.AmericasCluster, TournamentStubProvidersURL, bytes.NewBuffer(body), &provider, "")
+	err = e.internalClient.Post(api.AmericasCluster, TournamentStubProvidersURL, bytes.NewBuffer(body), &provider, "tournament-stub", "CreateProvider", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -123,7 +123,7 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 //
 // The optional name of the tournament.
 func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-stub", "Create")
+	logger := e.internalClient.Logger("LOL", "tournament-stub-v4", "Create")
 
 	options := struct {
 		Name       string `json:"name"`
@@ -135,7 +135,7 @@ func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, erro
 
 	var tournament *int
 
-	err := e.internalClient.Post(api.AmericasCluster, TournamentStubURL, bytes.NewBuffer(body), &tournament, "")
+	err := e.internalClient.Post(api.AmericasCluster, TournamentStubURL, bytes.NewBuffer(body), &tournament, "tournament-stub-v4", "Create", "")
 
 	if err != nil {
 		logger.Error(err)
