@@ -20,11 +20,11 @@ type DeckDTO struct {
 
 // Get a list of the calling user's decks.
 func (e *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, error) {
-	logger := e.internalClient.Logger("LOR", "deck", "List")
+	logger := e.internalClient.Logger("LOR", "lor-deck-v1", "List")
 
 	var deck *[]DeckDTO
 
-	err := e.internalClient.Get(region, DeckURL, &deck, accessToken)
+	err := e.internalClient.Get(region, DeckURL, &deck, "lor-deck-v1", "List", accessToken)
 
 	if err != nil {
 		logger.Error(err)
@@ -36,7 +36,7 @@ func (e *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, erro
 
 // Create a new deck for the calling user.
 func (e *DeckEndpoint) Create(region Region, accessToken string, code string, name string) (string, error) {
-	logger := e.internalClient.Logger("LOR", "deck", "Create")
+	logger := e.internalClient.Logger("LOR", "lor-deck-v1", "Create")
 
 	options := struct {
 		Code string `json:"code"`
@@ -48,7 +48,7 @@ func (e *DeckEndpoint) Create(region Region, accessToken string, code string, na
 
 	var deck api.PlainTextResponse
 
-	err := e.internalClient.Post(region, DeckURL, bytes.NewBuffer(body), &deck, accessToken)
+	err := e.internalClient.Post(region, DeckURL, bytes.NewBuffer(body), &deck, "lor-deck-v1", "Create", accessToken)
 
 	if err != nil {
 		logger.Error(err)

@@ -53,7 +53,7 @@ type MiniSeriesDTO struct {
 //
 // Page defaults to 1.
 func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
-	logger := e.internalClient.Logger("LOL", "league", "Entries")
+	logger := e.internalClient.Logger("LOL", "league-v4", "Entries")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -77,7 +77,7 @@ func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 
 	var entries *[]LeagueEntryDTO
 
-	err := e.internalClient.Get(region, url, &entries, "")
+	err := e.internalClient.Get(region, url, &entries, "league-v4", "Entries", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -89,7 +89,7 @@ func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 
 // Get league entries in all queues for a given summoner ID.
 func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]LeagueEntryDTO, error) {
-	logger := e.internalClient.Logger("LOL", "league", "SummonerEntries")
+	logger := e.internalClient.Logger("LOL", "league-v4", "SummonerEntries")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -99,7 +99,7 @@ func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]L
 
 	var entries *[]LeagueEntryDTO
 
-	err := e.internalClient.Get(region, url, &entries, "")
+	err := e.internalClient.Get(region, url, &entries, "league-v4", "SummonerEntries", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -130,7 +130,7 @@ func (e *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, e
 }
 
 func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueType interface{}, methodName string) (*LeagueListDTO, error) {
-	logger := e.internalClient.Logger("LOL", "league", methodName)
+	logger := e.internalClient.Logger("LOL", "league-v4", methodName)
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -140,7 +140,7 @@ func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueTy
 
 	var league *LeagueListDTO
 
-	err := e.internalClient.Get(region, url, &league, "")
+	err := e.internalClient.Get(region, url, &league, "league-v4", methodName, "")
 
 	if err != nil {
 		logger.Error(err)

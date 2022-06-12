@@ -171,13 +171,13 @@ type RoundResultDTO struct {
 
 // Get matchlist for games played by PUUID.
 func (e *MatchEndpoint) List(shard Shard, puuid string) (*MatchListDTO, error) {
-	logger := e.internalClient.Logger("VAL", "match", "List")
+	logger := e.internalClient.Logger("VAL", "val-match-v1", "List")
 
 	url := fmt.Sprintf(MatchListURL, puuid)
 
 	var list *MatchListDTO
 
-	err := e.internalClient.Get(shard, url, &list, "")
+	err := e.internalClient.Get(shard, url, &list, "val-match-v1", "List", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -189,13 +189,13 @@ func (e *MatchEndpoint) List(shard Shard, puuid string) (*MatchListDTO, error) {
 
 // Get match by ID.
 func (e *MatchEndpoint) ByID(shard Shard, matchID string) (*MatchDTO, error) {
-	logger := e.internalClient.Logger("VAL", "match", "ByID")
+	logger := e.internalClient.Logger("VAL", "val-match-v1", "ByID")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
 	var match *MatchDTO
 
-	err := e.internalClient.Get(shard, url, &match, "")
+	err := e.internalClient.Get(shard, url, &match, "val-match-v1", "ByID", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -213,13 +213,13 @@ func (e *MatchEndpoint) ByID(shard Shard, matchID string) (*MatchDTO, error) {
 //
 // Requests are load balanced so you may see some inconsistencies as matches are added/removed from the list.
 func (e *MatchEndpoint) Recent(shard Shard, queue Queue) (*RecentMatchesDTO, error) {
-	logger := e.internalClient.Logger("VAL", "match", "Recent")
+	logger := e.internalClient.Logger("VAL", "val-match-v1", "Recent")
 
 	url := fmt.Sprintf(MatchRecentURL, queue)
 
 	var recent *RecentMatchesDTO
 
-	err := e.internalClient.Get(shard, url, &recent, "")
+	err := e.internalClient.Get(shard, url, &recent, "val-match-v1", "Recent", "")
 
 	if err != nil {
 		logger.Error(err)

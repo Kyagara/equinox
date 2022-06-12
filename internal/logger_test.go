@@ -5,7 +5,6 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -24,7 +23,7 @@ func TestLogger(t *testing.T) {
 
 	logger := client.Logger("logger", "s", "d")
 
-	assert.NotNil(t, logger, "expecting non-nil Logger")
+	require.NotNil(t, logger, "expecting non-nil Logger")
 
 	logger.Info("Info logger")
 }

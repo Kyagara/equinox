@@ -38,8 +38,6 @@ func TestPlatformStatus(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(lol.StatusURL).
 				Reply(test.code).

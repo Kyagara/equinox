@@ -17,6 +17,18 @@ Equinox is a Riot Games API client written in golang with the goal of providing 
 -   [x] Valorant
 -   [x] Legends of Runeterra
 
+#### Features
+
+-   [x] Cache
+-   [x] Rate Limiting
+-   [ ] Helper Methods (e.g.: GetChampion or GetSummoner inside a match response)
+
+Cache and Rate limiting is in an early stage.
+
+Rate limiting needs a lot of work, not sure if this implementation is good, for now it only respects the 'requests per seconds' part of the headers, Riot returns rate limits for seconds and minutes.
+
+Caching and Rate limiting are in memory only for now.
+
 ## Installation
 
 To install equinox you can either import it in a package:
@@ -47,8 +59,9 @@ config := &api.EquinoxConfig{
 	Cluster:  api.AmericasCluster, // Riot API cluster, use the nearest cluster. Options: AmericasCluster, EuropeCluster, AsiaCluster.
 	LogLevel: api.FatalLevel, // The logging level, the FatalLevel provided effectively disables logging.
 	Timeout:  10, // http.Client timeout in seconds.
-	TTL:  120, // TTL for cache in seconds.
+	TTL:  120, // TTL for cache in seconds, 0 disables caching.
 	Retry:    true, // Retry if the API returns a 429 response.
+	RateLimit: true // If rate limit is enabled or not
 }
 ```
 
@@ -61,7 +74,7 @@ Now you can access different games endpoints by their abbreviations, provided yo
 summoner, err := client.LOL.Summoner.ByName(lol.BR1, "Loveable Senpai")
 
 // The client.Cluster will be used as the region. Can be accessed with a Development key.
-account, err := client.Riot.Account.ByPUUID("PUUID")
+account, err := client.Riot.Account.ByPUUID("puuid")
 
 // This method uses a val.Shard. May not be available in your policy.
 recentMatches, err := client.VAL.Match.Recent(val.BR, val.CompetitiveQueue)

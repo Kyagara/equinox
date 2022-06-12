@@ -18,6 +18,8 @@ type EquinoxConfig struct {
 	TTL int
 	// Retry request if it returns a 429 status code. Defaults to true
 	Retry bool
+	// Disables rate limiting. Defaults to false
+	RateLimit bool
 }
 
 func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {

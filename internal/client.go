@@ -14,44 +14,55 @@ import (
 )
 
 type InternalClient struct {
-	Cluster  api.Cluster
-	cache    *Cache
-	ttl      int
-	key      string
-	logLevel api.LogLevel
-	retry    bool
-	http     *http.Client
-	logger   *zap.SugaredLogger
+	Cluster   api.Cluster
+	cache     *Cache
+	rate      *RateLimiter
+	ttl       int
+	key       string
+	logLevel  api.LogLevel
+	retry     bool
+	http      *http.Client
+	logger    *zap.SugaredLogger
+	rateLimit bool
 }
 
 // Creates an EquinoxConfig for tests.
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
-		Key:      "RIOT_API_KEY",
-		Cluster:  api.AmericasCluster,
-		LogLevel: api.DebugLevel,
-		Timeout:  10,
-		TTL:      0,
-		Retry:    true,
+		Key:       "RIOT_API_KEY",
+		Cluster:   api.AmericasCluster,
+		LogLevel:  api.DebugLevel,
+		Timeout:   10,
+		TTL:       0,
+		Retry:     false,
+		RateLimit: false,
 	}
 }
 
 // Returns a new InternalClient using configuration object provided.
 func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
-		Cluster:  config.Cluster,
-		cache:    NewCache(),
-		ttl:      config.TTL,
-		key:      config.Key,
-		logLevel: config.LogLevel,
-		retry:    config.Retry,
-		http:     &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
-		logger:   NewLogger(config.Retry, config.Timeout, config.TTL, config.LogLevel),
+		Cluster:   config.Cluster,
+		cache:     NewCache(int64(config.TTL)),
+		rate:      NewRateLimiter(),
+		ttl:       config.TTL,
+		key:       config.Key,
+		logLevel:  config.LogLevel,
+		retry:     config.Retry,
+		http:      &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
+		logger:    NewLogger(config.Retry, config.Timeout, config.TTL, config.LogLevel),
+		rateLimit: config.RateLimit,
+	}
+}
+
+func (c *InternalClient) ClearInternalClientCache() {
+	if c.ttl > 0 {
+		c.cache.Clear()
 	}
 }
 
 // Performs a GET request, authorizationHeader can be blank
-func (c *InternalClient) Get(route interface{}, endpoint string, object interface{}, authorizationHeader string) error {
+func (c *InternalClient) Get(route interface{}, endpoint string, object interface{}, endpointName string, method string, authorizationHeader string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new HTTP Request.
@@ -66,7 +77,7 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 	}
 
 	// Sending HTTP request and returning the response.
-	res, err := c.sendRequest(req, 0)
+	res, err := c.sendRequest(req, 0, endpointName, method)
 
 	if err != nil {
 		return err
@@ -81,7 +92,7 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 }
 
 // Performs a POST request, authorizationHeader can be blank
-func (c *InternalClient) Post(route interface{}, endpoint string, requestBody io.Reader, object interface{}, authorizationHeader string) error {
+func (c *InternalClient) Post(route interface{}, endpoint string, requestBody io.Reader, object interface{}, endpointName string, method string, authorizationHeader string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new HTTP Request.
@@ -96,7 +107,7 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody io
 	}
 
 	// Sending HTTP request and returning the response.
-	res, err := c.sendRequest(req, 0)
+	res, err := c.sendRequest(req, 0, endpointName, method)
 
 	if err != nil {
 		return err
@@ -132,7 +143,7 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody io
 }
 
 // Performs a PUT request
-func (c *InternalClient) Put(route interface{}, endpoint string, requestBody io.Reader) error {
+func (c *InternalClient) Put(route interface{}, endpoint string, requestBody io.Reader, endpointName string, method string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new HTTP Request.
@@ -143,7 +154,7 @@ func (c *InternalClient) Put(route interface{}, endpoint string, requestBody io.
 	}
 
 	// Sending HTTP request and returning the response.
-	_, err = c.sendRequest(req, 0)
+	_, err = c.sendRequest(req, 0, endpointName, method)
 
 	if err != nil {
 		return err
@@ -153,7 +164,7 @@ func (c *InternalClient) Put(route interface{}, endpoint string, requestBody io.
 }
 
 // Sends a HTTP request.
-func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.Response, error) {
+func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoint string, method string) (*http.Response, error) {
 	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.Path)
 
 	if c.ttl != 0 && req.Method == http.MethodGet {
@@ -176,6 +187,30 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 		return nil, fmt.Errorf("retried 2 times, stopping")
 	}
 
+	// Checking rate limits for the app
+	if c.rateLimit && c.rate.appRate.SecondsLimit > 0 {
+		c.rate.appRate.Mutex.Lock()
+
+		if c.rate.appRate.SecondsCount >= c.rate.appRate.SecondsLimit {
+			return nil, api.RateLimitedError
+		}
+
+		c.rate.appRate.Mutex.Unlock()
+	}
+
+	// Checking rate limits for the endpoint method
+	rate := c.rate.Get(endpoint, method)
+
+	if c.rateLimit && rate != nil {
+		rate.Mutex.Lock()
+
+		if rate.SecondsCount >= rate.SecondsLimit {
+			return nil, api.RateLimitedError
+		}
+
+		rate.Mutex.Unlock()
+	}
+
 	logger.Debug("Making request")
 
 	// Sending request.
@@ -183,6 +218,18 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 	if err != nil {
 		return nil, err
+	}
+
+	if c.rateLimit {
+		// Updating app rate limit
+		rate = c.rate.ParseHeaders(res.Header, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
+
+		c.rate.SetAppRate(rate)
+
+		// Updating method rate limit
+		rate = c.rate.ParseHeaders(res.Header, "X-Method-Rate-Limit", "X-Method-Rate-Limit-Count")
+
+		c.rate.Set(endpoint, method, rate)
 	}
 
 	// Handling errors documented in the Riot API docs
@@ -224,7 +271,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8) (*http.
 
 		time.Sleep(time.Duration(seconds) * time.Second)
 
-		return c.sendRequest(req, retryCount+1)
+		return c.sendRequest(req, retryCount+1, endpoint, method)
 	}
 
 	// If the status code is lower than 200 or higher than 300, return an error.

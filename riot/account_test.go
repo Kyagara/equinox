@@ -38,8 +38,6 @@ func TestAccountPlayerActiveShard(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(riot.AccountActiveShardURL, api.VAL, "PUUID")).
 				Reply(test.code).
@@ -81,8 +79,6 @@ func TestAccountByPUUID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(riot.AccountByPUUIDURL, "PUUID")).
 				Reply(test.code).
@@ -124,8 +120,6 @@ func TestAccountByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(riot.AccountByRiotIDURL, "gameName", "tagLine")).
 				Reply(test.code).
@@ -167,8 +161,6 @@ func TestAccountByAccessToken(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(riot.AccountByAccessTokenURL).
 				Reply(test.code).

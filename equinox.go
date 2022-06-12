@@ -28,18 +28,20 @@ type Equinox struct {
 //		- `Timeout`    : 10
 //		- `TTL`        : 120
 //		- `Retry`      : true
+//		- `RateLimit`  : true
 func NewClient(key string) (*Equinox, error) {
 	if key == "" {
 		return nil, fmt.Errorf("API Key not provided")
 	}
 
 	config := &api.EquinoxConfig{
-		Cluster:  api.AmericasCluster,
-		Key:      key,
-		LogLevel: api.FatalLevel,
-		Timeout:  10,
-		TTL:      120,
-		Retry:    true,
+		Cluster:   api.AmericasCluster,
+		Key:       key,
+		LogLevel:  api.FatalLevel,
+		Timeout:   10,
+		TTL:       120,
+		Retry:     true,
+		RateLimit: true,
 	}
 
 	client := internal.NewInternalClient(config)
@@ -84,4 +86,9 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	}
 
 	return equinox, nil
+}
+
+// Clears the Cache
+func (c *Equinox) ClearCache() {
+	c.internalClient.ClearInternalClientCache()
 }

@@ -38,8 +38,6 @@ func TestMatchList(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, val.BR)).
 				Get(fmt.Sprintf(val.MatchListURL, "PUUID")).
 				Reply(test.code).
@@ -81,8 +79,6 @@ func TestMatchByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, val.BR)).
 				Get(fmt.Sprintf(val.MatchByIDURL, "matchID")).
 				Reply(test.code).
@@ -124,8 +120,6 @@ func TestMatchRecent(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, val.BR)).
 				Get(fmt.Sprintf(val.MatchRecentURL, val.CompetitiveQueue)).
 				Reply(test.code).

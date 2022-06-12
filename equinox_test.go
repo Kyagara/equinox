@@ -3,12 +3,15 @@ package equinox_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/riot"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/h2non/gock.v1"
 )
 
 func TestNewEquinoxClient(t *testing.T) {
@@ -99,5 +102,69 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 				require.NotEmpty(t, gotData, "expecting not empty client")
 			}
 		})
+	}
+}
+
+func TestEquinoxClientClearCache(t *testing.T) {
+	config := &api.EquinoxConfig{
+		Key:       "RIOT_API_KEY",
+		Cluster:   api.AmericasCluster,
+		LogLevel:  api.DebugLevel,
+		Timeout:   10,
+		TTL:       120,
+		Retry:     false,
+		RateLimit: false,
+	}
+
+	client, _ := equinox.NewClientWithConfig(config)
+
+	delay := 2 * time.Second
+
+	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
+		Get(fmt.Sprintf(riot.AccountByPUUIDURL, "puuid")).
+		Reply(200).
+		JSON(&riot.AccountDTO{}).Delay(delay)
+
+	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
+		Get(fmt.Sprintf(riot.AccountByPUUIDURL, "puuid")).
+		Reply(403).
+		JSON(&riot.AccountDTO{}).Delay(delay)
+
+	gotData, gotErr := client.Riot.Account.ByPUUID("puuid")
+
+	require.Equal(t, &riot.AccountDTO{}, gotData)
+
+	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
+
+	start := time.Now()
+	gotData, gotErr = client.Riot.Account.ByPUUID("puuid")
+	duration := int(time.Since(start).Seconds())
+
+	require.Equal(t, &riot.AccountDTO{}, gotData)
+
+	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
+
+	if duration >= 2 {
+		gotErr = fmt.Errorf("request took more than 1s, took %ds, request not cached", duration)
+
+		require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
+	}
+
+	client.ClearCache()
+
+	start = time.Now()
+	gotData, gotErr = client.Riot.Account.ByPUUID("puuid")
+	duration = int(time.Since(start).Seconds())
+
+	require.Equal(t, api.ForbiddenError, gotErr, fmt.Sprintf("want err %v, got %v", api.ForbiddenError, gotErr))
+
+	if duration <= 1 {
+		gotErr = fmt.Errorf("request took less than 1s, took %ds, cache not cleared", duration)
+
+		require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
+	}
+
+	if gotErr == nil {
+		assert.Equal(t, &riot.AccountDTO{}, gotData)
 	}
 }

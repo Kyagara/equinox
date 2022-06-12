@@ -38,8 +38,6 @@ func TestContentAllLocales(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, val.BR)).
 				Get(val.ContentURL).
 				Reply(test.code).
@@ -81,8 +79,6 @@ func TestContentByLocale(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, val.BR)).
 				Get(val.ContentURL).
 				Reply(test.code).

@@ -39,8 +39,6 @@ func TestSummonerByAccountID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(tft.SummonerByAccountIDURL, "accountID")).
 				Reply(test.code).
@@ -82,8 +80,6 @@ func TestSummonerByName(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(tft.SummonerByNameURL, "summonerName")).
 				Reply(test.code).
@@ -125,8 +121,6 @@ func TestSummonerByPUUID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(tft.SummonerByPUUIDURL, "PUUID")).
 				Reply(test.code).
@@ -168,8 +162,6 @@ func TestSummonerByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(fmt.Sprintf(tft.SummonerByIDURL, "summonerID")).
 				Reply(test.code).
@@ -211,8 +203,6 @@ func TestSummonerByAccessToken(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 				Get(tft.SummonerByAccessTokenURL).
 				Reply(test.code).

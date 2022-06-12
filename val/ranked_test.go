@@ -63,8 +63,6 @@ func TestRankedLeaderboardsByActID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(val.RankedURL, "actID")).
 				Reply(test.code).

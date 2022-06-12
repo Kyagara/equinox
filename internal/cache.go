@@ -5,34 +5,69 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httputil"
+	"sync"
 	"time"
 )
 
-type CacheItem struct {
-	response []byte
-	expire   time.Time
-}
-
 type Cache struct {
 	items map[string]*CacheItem
+	mutex sync.Mutex
 }
 
-func NewCache() *Cache {
-	return &Cache{
+type CacheItem struct {
+	response []byte
+	access   int64
+}
+
+func NewCache(ttl int64) *Cache {
+	cache := &Cache{
 		items: map[string]*CacheItem{},
+		mutex: sync.Mutex{},
 	}
+
+	go func() {
+		for now := range time.Tick(time.Second) {
+			cache.mutex.Lock()
+
+			for url, item := range cache.items {
+				if now.Unix()-item.access > ttl {
+					delete(cache.items, url)
+				}
+			}
+
+			cache.mutex.Unlock()
+		}
+	}()
+
+	return cache
+}
+
+func (c *Cache) Set(url string, res *http.Response) error {
+	response, err := httputil.DumpResponse(res, true)
+
+	if err != nil {
+		return err
+	}
+
+	c.mutex.Lock()
+
+	c.items[url] = &CacheItem{
+		response: response,
+		access:   time.Now().Unix(),
+	}
+
+	c.mutex.Unlock()
+
+	return nil
 }
 
 func (c *Cache) Get(url string) (*http.Response, error) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	item, ok := c.items[url]
 
 	if ok {
-		if item.expire.Before(time.Now()) {
-			delete(c.items, url)
-
-			return nil, nil
-		}
-
 		reader := bufio.NewReader(bytes.NewReader(item.response))
 
 		res, err := http.ReadResponse(reader, nil)
@@ -47,14 +82,11 @@ func (c *Cache) Get(url string) (*http.Response, error) {
 	return nil, nil
 }
 
-func (c *Cache) Set(url string, res *http.Response) error {
-	response, err := httputil.DumpResponse(res, true)
+func (c *Cache) Clear() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 
-	if err != nil {
-		return err
+	for k := range c.items {
+		delete(c.items, k)
 	}
-
-	c.items[url] = &CacheItem{response: response, expire: time.Now().Add(2 * time.Minute)}
-
-	return nil
 }

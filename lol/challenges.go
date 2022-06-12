@@ -115,11 +115,11 @@ type ChallengeInfo struct {
 
 // List of all basic challenge configuration information (includes all translations for names and descriptions.
 func (e *ChallengesEndpoint) List(region Region) (*[]ChallengeConfigInfoDTO, error) {
-	logger := e.internalClient.Logger("LOL", "challenges", "List")
+	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "List")
 
 	var challenges *[]ChallengeConfigInfoDTO
 
-	err := e.internalClient.Get(region, ChallengesConfigurationsURL, &challenges, "")
+	err := e.internalClient.Get(region, ChallengesConfigurationsURL, &challenges, "lol-challenges-v1", "List", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -131,13 +131,13 @@ func (e *ChallengesEndpoint) List(region Region) (*[]ChallengeConfigInfoDTO, err
 
 // Get challenge configuration.
 func (e *ChallengesEndpoint) ByID(region Region, challengeID int64) (*ChallengeConfigInfoDTO, error) {
-	logger := e.internalClient.Logger("LOL", "challenges", "ByID")
+	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "ByID")
 
 	var challenge *ChallengeConfigInfoDTO
 
 	url := fmt.Sprintf(ChallengesConfigurationByIDURL, challengeID)
 
-	err := e.internalClient.Get(region, url, &challenge, "")
+	err := e.internalClient.Get(region, url, &challenge, "lol-challenges-v1", "ByID", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -149,11 +149,11 @@ func (e *ChallengesEndpoint) ByID(region Region, challengeID int64) (*ChallengeC
 
 // Map of level to percentile of players who have achieved it - keys: ChallengeId -> Season -> Level -> percentile of players who achieved it.
 func (e *ChallengesEndpoint) Percentiles(region Region) (*map[int64]PercentileDTO, error) {
-	logger := e.internalClient.Logger("LOL", "challenges", "Percentiles")
+	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "Percentiles")
 
 	var percentiles *map[int64]PercentileDTO
 
-	err := e.internalClient.Get(region, ChallengesPercentilesURL, &percentiles, "")
+	err := e.internalClient.Get(region, ChallengesPercentilesURL, &percentiles, "lol-challenges-v1", "Percentiles", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -165,13 +165,13 @@ func (e *ChallengesEndpoint) Percentiles(region Region) (*map[int64]PercentileDT
 
 // Map of level to percentile of players who have achieved it.
 func (e *ChallengesEndpoint) PercentilesByID(region Region, challengeID int64) (*PercentileDTO, error) {
-	logger := e.internalClient.Logger("LOL", "challenges", "PercentileByID")
+	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "PercentileByID")
 
 	var percentile *PercentileDTO
 
 	url := fmt.Sprintf(ChallengesPercentileByIDURL, challengeID)
 
-	err := e.internalClient.Get(region, url, &percentile, "")
+	err := e.internalClient.Get(region, url, &percentile, "lol-challenges-v1", "PercentileByID", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -185,7 +185,7 @@ func (e *ChallengesEndpoint) PercentilesByID(region Region, challengeID int64) (
 //
 // Limit is optional, if 0 is provided, a limit will not be set.
 func (e *ChallengesEndpoint) Leaderboards(region Region, challengeID int64, level Level, limit int) (*[]ApexPlayerInfoDTO, error) {
-	logger := e.internalClient.Logger("LOL", "challenges", "Leaderboards")
+	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "Leaderboards")
 
 	var leaderboards *[]ApexPlayerInfoDTO
 
@@ -195,7 +195,7 @@ func (e *ChallengesEndpoint) Leaderboards(region Region, challengeID int64, leve
 		url = fmt.Sprintf("%s?limit=%d", url, limit)
 	}
 
-	err := e.internalClient.Get(region, url, &leaderboards, "")
+	err := e.internalClient.Get(region, url, &leaderboards, "lol-challenges-v1", "Leaderboards", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -207,13 +207,13 @@ func (e *ChallengesEndpoint) Leaderboards(region Region, challengeID int64, leve
 
 // Returns player information with list of all progressed challenges.
 func (e *ChallengesEndpoint) ByPUUID(region Region, puuid string) (*PlayerInfoDTO, error) {
-	logger := e.internalClient.Logger("LOL", "challenges", "ByPUUID")
+	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "ByPUUID")
 
 	var challenges *PlayerInfoDTO
 
 	url := fmt.Sprintf(ChallengesByPUUIDURL, puuid)
 
-	err := e.internalClient.Get(region, url, &challenges, "")
+	err := e.internalClient.Get(region, url, &challenges, "lol-challenges-v1", "ByPUUID", "")
 
 	if err != nil {
 		logger.Error(err)

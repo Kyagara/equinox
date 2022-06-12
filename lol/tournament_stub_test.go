@@ -92,8 +92,6 @@ func TestTournamentStubCreateCodes(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentStubCodesURL).
 				Reply(test.code).
@@ -135,8 +133,6 @@ func TestTournamentStubLobbyEvents(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Get(fmt.Sprintf(lol.TournamentStubLobbyEventsURL, "tournamentCode")).
 				Reply(test.code).
@@ -178,8 +174,6 @@ func TestTournamentStubCreate(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentStubURL).
 				Reply(test.code).
@@ -234,8 +228,6 @@ func TestTournamentStubCreateProvider(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 				Post(lol.TournamentStubProvidersURL).
 				Reply(test.code).

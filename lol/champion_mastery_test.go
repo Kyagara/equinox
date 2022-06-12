@@ -47,8 +47,6 @@ func TestChampionMasterySummonerMasteries(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(lol.ChampionMasteriesURL, "summonerID")).
 				Reply(test.code).
@@ -99,8 +97,6 @@ func TestChampionMasteryChampionScore(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(lol.ChampionMasteriesByChampionURL, "summonerID", 59)).
 				Reply(test.code).
@@ -151,8 +147,6 @@ func TestChampionMasteryMasteryScoreSum(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			defer gock.Off()
-
 			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
 				Get(fmt.Sprintf(lol.ChampionMasteriesScoresURL, "summonerID")).
 				Reply(test.code).
