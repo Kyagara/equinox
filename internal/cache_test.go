@@ -3,12 +3,14 @@ package internal_test
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"testing"
 	"time"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/lol"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -17,6 +19,26 @@ func TestNewCache(t *testing.T) {
 	cache := internal.NewCache(120)
 
 	require.NotNil(t, cache, "expecting non-nil Cache")
+}
+
+func TestCache(t *testing.T) {
+	cache := internal.NewCache(120)
+
+	cache.Set("/", &http.Response{})
+
+	res, err := cache.Get("/")
+
+	require.Nil(t, err, "expecting nil err")
+
+	require.NotNil(t, res, "expecting non-nil res")
+
+	cache.Clear()
+
+	res, err = cache.Get("/")
+
+	require.Nil(t, err, "expecting nil err")
+
+	assert.Nil(t, res, "expecting nil res")
 }
 
 func TestCacheHit(t *testing.T) {

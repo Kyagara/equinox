@@ -63,9 +63,10 @@ func (c *Cache) Set(url string, res *http.Response) error {
 
 func (c *Cache) Get(url string) (*http.Response, error) {
 	c.mutex.Lock()
-	defer c.mutex.Unlock()
 
 	item, ok := c.items[url]
+
+	c.mutex.Unlock()
 
 	if ok {
 		reader := bufio.NewReader(bytes.NewReader(item.response))

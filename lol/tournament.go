@@ -1,8 +1,6 @@
 package lol
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -115,12 +113,9 @@ func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 
 	url := fmt.Sprintf("%s?%s", TournamentCodesURL, query.Encode())
 
-	// This shouldn't fail since the values are checked before getting here
-	body, _ := json.Marshal(parameters)
-
 	var codes *[]string
 
-	err := e.internalClient.Post(api.AmericasCluster, url, bytes.NewBuffer(body), &codes, "tournament-v4", "CreateCodes", "")
+	err := e.internalClient.Post(api.AmericasCluster, url, parameters, &codes, "tournament-v4", "CreateCodes", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -156,12 +151,9 @@ func (e *TournamentEndpoint) Update(tournamentCode string, parameters *Tournamen
 		return fmt.Errorf("parameters are required")
 	}
 
-	// This shouldn't fail since the values are checked before getting here
-	body, _ := json.Marshal(parameters)
-
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
-	err := e.internalClient.Put(api.AmericasCluster, url, bytes.NewBuffer(body), "tournament-v4", "Update")
+	err := e.internalClient.Put(api.AmericasCluster, url, parameters, "tournament-v4", "Update")
 
 	if err != nil {
 		logger.Error(err)
@@ -211,12 +203,9 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 		URL    string           `json:"url"`
 	}{Region: region, URL: callbackURL}
 
-	// This shouldn't fail since the values are checked before getting here
-	body, _ := json.Marshal(options)
-
 	var provider *int
 
-	err = e.internalClient.Post(api.AmericasCluster, TournamentProvidersURL, bytes.NewBuffer(body), &provider, "tournament-v4", "CreateProvider", "")
+	err = e.internalClient.Post(api.AmericasCluster, TournamentProvidersURL, options, &provider, "tournament-v4", "CreateProvider", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -239,12 +228,9 @@ func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
 		ProviderId int    `json:"providerId"`
 	}{Name: name, ProviderId: providerID}
 
-	// This shouldn't fail since the values are checked before getting here
-	body, _ := json.Marshal(options)
-
 	var tournament *int
 
-	err := e.internalClient.Post(api.AmericasCluster, TournamentURL, bytes.NewBuffer(body), &tournament, "tournament-v4", "Create", "")
+	err := e.internalClient.Post(api.AmericasCluster, TournamentURL, options, &tournament, "tournament-v4", "Create", "")
 
 	if err != nil {
 		logger.Error(err)
