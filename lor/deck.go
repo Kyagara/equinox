@@ -1,9 +1,6 @@
 package lor
 
 import (
-	"bytes"
-	"encoding/json"
-
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 )
@@ -43,12 +40,9 @@ func (e *DeckEndpoint) Create(region Region, accessToken string, code string, na
 		Name string `json:"name"`
 	}{Code: code, Name: name}
 
-	// This shouldn't fail since the values are checked before getting here
-	body, _ := json.Marshal(options)
-
 	var deck api.PlainTextResponse
 
-	err := e.internalClient.Post(region, DeckURL, bytes.NewBuffer(body), &deck, "lor-deck-v1", "Create", accessToken)
+	err := e.internalClient.Post(region, DeckURL, options, &deck, "lor-deck-v1", "Create", accessToken)
 
 	if err != nil {
 		logger.Error(err)

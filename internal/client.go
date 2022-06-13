@@ -1,9 +1,9 @@
 package internal
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -92,7 +92,7 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 }
 
 // Performs a POST request, authorizationHeader can be blank
-func (c *InternalClient) Post(route interface{}, endpoint string, requestBody io.Reader, object interface{}, endpointName string, method string, authorizationHeader string) error {
+func (c *InternalClient) Post(route interface{}, endpoint string, requestBody interface{}, object interface{}, endpointName string, method string, authorizationHeader string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new HTTP Request.
@@ -143,7 +143,7 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody io
 }
 
 // Performs a PUT request
-func (c *InternalClient) Put(route interface{}, endpoint string, requestBody io.Reader, endpointName string, method string) error {
+func (c *InternalClient) Put(route interface{}, endpoint string, requestBody interface{}, endpointName string, method string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	// Creating a new HTTP Request.
@@ -190,11 +190,14 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 	// Checking rate limits for the app
 	if c.rateLimit && c.rate.appRate.SecondsLimit > 0 {
 		c.rate.appRate.Mutex.Lock()
-		defer c.rate.appRate.Mutex.Unlock()
 
 		if c.rate.appRate.SecondsCount >= c.rate.appRate.SecondsLimit {
+			c.rate.appRate.Mutex.Unlock()
+
 			return nil, api.RateLimitedError
 		}
+
+		c.rate.appRate.Mutex.Unlock()
 	}
 
 	// Checking rate limits for the endpoint method
@@ -202,11 +205,13 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 
 	if c.rateLimit && rate != nil {
 		rate.Mutex.Lock()
-		defer rate.Mutex.Unlock()
 
 		if rate.SecondsCount >= rate.SecondsLimit {
+			rate.Mutex.Unlock()
 			return nil, api.RateLimitedError
 		}
+
+		rate.Mutex.Unlock()
 	}
 
 	logger.Debug("Making request")
@@ -217,6 +222,8 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 	if err != nil {
 		return nil, err
 	}
+
+	defer res.Body.Close()
 
 	if c.rateLimit {
 		// Updating app rate limit
@@ -296,8 +303,14 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 }
 
 // Creates a new HTTP Request and sets headers.
-func (c *InternalClient) newRequest(method string, url string, body io.Reader) (*http.Request, error) {
-	req, err := http.NewRequest(method, url, body)
+func (c *InternalClient) newRequest(method string, url string, body interface{}) (*http.Request, error) {
+	jsonBody, err := json.Marshal(body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonBody))
 
 	if err != nil {
 		return nil, err

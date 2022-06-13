@@ -1,8 +1,6 @@
 package lol
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -47,12 +45,9 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 
 	url := fmt.Sprintf("%s?%s", TournamentStubCodesURL, query.Encode())
 
-	// This shouldn't fail since the values are checked before getting here
-	body, _ := json.Marshal(parameters)
-
 	var codes *[]string
 
-	err := e.internalClient.Post(api.AmericasCluster, url, bytes.NewBuffer(body), &codes, "tournament-stub-v4", "CreateCodes", "")
+	err := e.internalClient.Post(api.AmericasCluster, url, parameters, &codes, "tournament-stub-v4", "CreateCodes", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -102,12 +97,9 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 		URL    string           `json:"url"`
 	}{Region: region, URL: callbackURL}
 
-	// This shouldn't fail since the values are checked before getting here
-	body, _ := json.Marshal(options)
-
 	var provider *int
 
-	err = e.internalClient.Post(api.AmericasCluster, TournamentStubProvidersURL, bytes.NewBuffer(body), &provider, "tournament-stub", "CreateProvider", "")
+	err = e.internalClient.Post(api.AmericasCluster, TournamentStubProvidersURL, options, &provider, "tournament-stub", "CreateProvider", "")
 
 	if err != nil {
 		logger.Error(err)
@@ -130,12 +122,9 @@ func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, erro
 		ProviderId int    `json:"providerId"`
 	}{Name: name, ProviderId: providerID}
 
-	// This shouldn't fail since the values are checked before getting here
-	body, _ := json.Marshal(options)
-
 	var tournament *int
 
-	err := e.internalClient.Post(api.AmericasCluster, TournamentStubURL, bytes.NewBuffer(body), &tournament, "tournament-stub-v4", "Create", "")
+	err := e.internalClient.Post(api.AmericasCluster, TournamentStubURL, options, &tournament, "tournament-stub-v4", "Create", "")
 
 	if err != nil {
 		logger.Error(err)
