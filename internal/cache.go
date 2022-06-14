@@ -42,6 +42,7 @@ func NewCache(ttl int64) *Cache {
 	return cache
 }
 
+// Adds a http.Response in the cache
 func (c *Cache) Set(url string, res *http.Response) error {
 	response, err := httputil.DumpResponse(res, true)
 
@@ -61,6 +62,7 @@ func (c *Cache) Set(url string, res *http.Response) error {
 	return nil
 }
 
+// Gets a http.Response from the cache
 func (c *Cache) Get(url string) (*http.Response, error) {
 	c.mutex.Lock()
 

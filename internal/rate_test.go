@@ -11,25 +11,22 @@ import (
 )
 
 func TestNewRateLimit(t *testing.T) {
-	rateLimit := internal.NewRateLimiter()
+	rateLimit := internal.NewRateLimit()
 
 	assert.NotNil(t, rateLimit, "expecting non-nil RateLimit")
 }
 
 func TestRateLimitSetGet(t *testing.T) {
-	rateLimit := internal.NewRateLimiter()
+	rateLimit := internal.NewRateLimit()
 
 	require.NotNil(t, rateLimit, "expecting non-nil RateLimit")
 
 	rate := &internal.Rate{
-		Seconds:      100,
-		SecondsLimit: 10,
-		SecondsCount: 1000,
-		Ticker:       &time.Ticker{},
-		Mutex:        &sync.Mutex{},
+		Seconds: &internal.RateTiming{Time: 100, Limit: 10, Count: 1000, Ticker: &time.Ticker{}, Mutex: &sync.Mutex{}},
+		Minutes: &internal.RateTiming{Time: 100, Limit: 10, Count: 1000, Ticker: &time.Ticker{}, Mutex: &sync.Mutex{}},
 	}
 
-	rate.Ticker = time.NewTicker(time.Duration(rate.Seconds) * time.Second)
+	rate.Seconds.Ticker = time.NewTicker(time.Duration(rate.Seconds.Time) * time.Second)
 
 	rateLimit.Set("testEndpoint", "testMethod", rate)
 
@@ -37,9 +34,9 @@ func TestRateLimitSetGet(t *testing.T) {
 
 	require.NotNil(t, check, "expecting non-nil Rate")
 
-	require.Equal(t, 1000, check.SecondsCount, "expecting non-nil Rate")
+	require.Equal(t, 1000, check.Seconds.Count, "expecting non-nil Rate")
 
-	rate.SecondsCount = 500
+	rate.Seconds.Count = 500
 
 	rateLimit.Set("testEndpoint", "testMethod", rate)
 
@@ -47,11 +44,11 @@ func TestRateLimitSetGet(t *testing.T) {
 
 	require.NotNil(t, check, "expecting non-nil Rate")
 
-	assert.Equal(t, 500, check.SecondsCount, "expecting non-nil Rate")
+	assert.Equal(t, 500, check.Seconds.Count, "expecting non-nil Rate")
 }
 
 func TestRateLimitParseHeaders(t *testing.T) {
-	rateLimit := internal.NewRateLimiter()
+	rateLimit := internal.NewRateLimit()
 
 	require.NotNil(t, rateLimit, "expecting non-nil RateLimit")
 
@@ -67,11 +64,11 @@ func TestRateLimitParseHeaders(t *testing.T) {
 
 	require.NotNil(t, rate, "expecting non-nil Rate")
 
-	require.Equal(t, 1000, rate.SecondsCount)
+	require.Equal(t, 1000, rate.Seconds.Count)
 
 	rate = rateLimit.ParseHeaders(headers, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
 
 	require.NotNil(t, rate, "expecting non-nil Rate")
 
-	assert.Equal(t, 1000, rate.SecondsCount)
+	assert.Equal(t, 1000, rate.Seconds.Count)
 }

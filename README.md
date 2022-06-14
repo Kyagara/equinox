@@ -1,12 +1,31 @@
-# Equinox
-
-[![equinox version (latest SemVer)](https://img.shields.io/github/v/tag/Kyagara/equinox?label=Version)](https://github.com/Kyagara/equinox/releases)
-[![Go version](https://img.shields.io/github/go-mod/go-version/Kyagara/equinox)](https://github.com/Kyagara/equinox)
-[![Godoc](https://img.shields.io/static/v1?label=Godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/Kyagara/equinox)
-[![Tests](https://img.shields.io/github/workflow/status/Kyagara/equinox/Tests?label=Tests)](https://github.com/Kyagara/equinox/actions?query=workflow%3Atests)
-[![Test coverage (codecov.io)](https://codecov.io/gh/Kyagara/equinox/branch/master/graph/badge.svg)](https://codecov.io/gh/Kyagara/equinox)
-
-Equinox is a Riot Games API client written in golang with the goal of providing an easy to use interface to interact with all of the [Riot Games API](https://developer.riotgames.com/apis) endpoints and the Data Dragon service.
+<div align="center">
+	<h1>Equinox</h1>
+	<p>Equinox is a Riot Games API client written in golang with the goal of providing an easy to use interface to interact with all of the <a href="https://developer.riotgames.com/apis">Riot Games API</a> endpoints and the Data Dragon service.
+	</p>
+	<p>
+		<a href="https://github.com/Kyagara/equinox/releases">
+			<img src="https://img.shields.io/github/v/tag/Kyagara/equinox?label=Version"/>
+		</a>
+		<a href="https://github.com/Kyagara/equinox">
+			<img src="https://img.shields.io/github/go-mod/go-version/Kyagara/equinox"/>
+		</a>    
+		<a href="https://pkg.go.dev/github.com/Kyagara/equinox">
+			<img src="https://img.shields.io/static/v1?label=Godoc&message=reference&color=blue"/>
+		</a>
+		<a href="https://github.com/Kyagara/equinox/actions?query=workflow%3Atests">
+			<img src="https://img.shields.io/github/workflow/status/Kyagara/equinox/Tests?label=Tests"/>
+		</a>
+		<a href="https://codecov.io/gh/Kyagara/equinox">
+			<img src="https://codecov.io/gh/Kyagara/equinox/branch/master/graph/badge.svg"/>
+		</a>
+	</p>
+	<p>
+		<a href="#installation">Installation</a> •
+		<a href="#usage">Usage</a> •
+		<a href="#example">Example</a> •
+		<a href="#disclaimer">Disclaimer</a>
+	</p>
+</div>
 
 #### Implemented:
 
@@ -23,11 +42,7 @@ Equinox is a Riot Games API client written in golang with the goal of providing 
 -   [x] Rate Limiting
 -   [ ] Helper Methods (e.g.: GetChampion or GetSummoner inside a match response)
 
-Cache and Rate limiting is in an early stage.
-
-Rate limiting needs a lot of work, not sure if this implementation is good, for now it only respects the 'requests per seconds' part of the headers, Riot returns rate limits for seconds and minutes.
-
-Caching and Rate limiting are in memory only for now.
+Caching and Rate limiting is in an early stage, they are in-memory only for now.
 
 ## Installation
 
