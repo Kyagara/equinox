@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type RateLimiter struct {
+type RateLimit struct {
 	endpoints map[string]*EndpointMethods
 	appRate   *Rate
 }
@@ -18,39 +18,62 @@ type EndpointMethods struct {
 }
 
 type Rate struct {
-	Seconds int
-	// Maximum amount of requests in n seconds
-	SecondsLimit int
-	// Current count of requests in n seconds
-	SecondsCount int
-	Ticker       *time.Ticker
-	Mutex        *sync.Mutex
+	Seconds *RateTiming
+	Minutes *RateTiming
 }
 
-func NewRateLimiter() *RateLimiter {
-	return &RateLimiter{
+func NewRateLimit() *RateLimit {
+	return &RateLimit{
 		endpoints: map[string]*EndpointMethods{},
 		appRate: &Rate{
-			Seconds:      0,
-			SecondsLimit: 0,
-			SecondsCount: 0,
-			Ticker:       &time.Ticker{},
-			Mutex:        &sync.Mutex{},
+			Seconds: &RateTiming{},
+			Minutes: &RateTiming{},
 		},
 	}
 }
 
-func (r *Rate) tick() {
+type RateTiming struct {
+	// The amount in seconds the rate limit should reset
+	Time int
+	// Maximum amount of requests in n seconds
+	Limit int
+	// Current count of requests made in n seconds
+	Count int
+
+	Ticker *time.Ticker
+	Mutex  *sync.Mutex
+}
+
+func (r *RateTiming) tick() {
 	for range r.Ticker.C {
 		r.Mutex.Lock()
 
-		r.SecondsCount = 0
+		r.Count = 0
 
 		r.Mutex.Unlock()
 	}
 }
 
-func (r *RateLimiter) Get(endpointName string, methodName string) *Rate {
+// Checks if the app or method is currently rate limited
+func (r *RateLimit) Check(rate *Rate) bool {
+	if rate.Seconds.Limit == 0 {
+		return true
+	}
+
+	rate.Seconds.Mutex.Lock()
+	defer rate.Seconds.Mutex.Unlock()
+
+	if rate.Seconds.Count >= rate.Seconds.Limit {
+		return false
+	}
+
+	rate.Minutes.Mutex.Lock()
+	defer rate.Minutes.Mutex.Unlock()
+
+	return rate.Minutes.Count >= rate.Minutes.Limit
+}
+
+func (r *RateLimit) Get(endpointName string, methodName string) *Rate {
 	endpoint := r.endpoints[endpointName]
 
 	if endpoint != nil {
@@ -66,7 +89,7 @@ func (r *RateLimiter) Get(endpointName string, methodName string) *Rate {
 	return nil
 }
 
-func (r *RateLimiter) Set(endpointName string, methodName string, rate *Rate) {
+func (r *RateLimit) Set(endpointName string, methodName string, rate *Rate) {
 	endpoint := r.endpoints[endpointName]
 
 	if endpoint == nil {
@@ -77,7 +100,9 @@ func (r *RateLimiter) Set(endpointName string, methodName string, rate *Rate) {
 		if r.endpoints[endpointName].methods[methodName] == nil {
 			r.endpoints[endpointName].methods[methodName] = rate
 
-			go rate.tick()
+			go rate.Seconds.tick()
+
+			go rate.Minutes.tick()
 		}
 
 		return
@@ -85,36 +110,35 @@ func (r *RateLimiter) Set(endpointName string, methodName string, rate *Rate) {
 
 	methodRate := endpoint.methods[methodName]
 
-	methodRate.Mutex.Lock()
+	// Update seconds count
+	updateRateCount(methodRate.Seconds, rate.Seconds)
 
-	methodRate.SecondsCount = rate.SecondsCount
-
-	methodRate.Mutex.Unlock()
+	// Update minutes count
+	updateRateCount(methodRate.Minutes, rate.Minutes)
 }
 
-func (r *RateLimiter) SetAppRate(rate *Rate) {
-	if r.appRate.Seconds == 0 {
+func (r *RateLimit) SetAppRate(rate *Rate) {
+	if r.appRate.Seconds.Limit == 0 {
 		r.appRate = rate
 
-		go rate.tick()
+		go rate.Seconds.tick()
+
+		go rate.Minutes.tick()
 
 		return
 	}
 
-	r.appRate.Mutex.Lock()
+	// Update seconds count
+	updateRateCount(r.appRate.Seconds, rate.Seconds)
 
-	r.appRate.SecondsCount = rate.SecondsCount
-
-	r.appRate.Mutex.Unlock()
+	// Update minutes count
+	updateRateCount(r.appRate.Minutes, rate.Minutes)
 }
 
-func (r *RateLimiter) ParseHeaders(headers http.Header, limitHeader string, countHeader string) *Rate {
+func (r *RateLimit) ParseHeaders(headers http.Header, limitHeader string, countHeader string) *Rate {
 	rate := &Rate{
-		Seconds:      0,
-		SecondsLimit: 0,
-		SecondsCount: 0,
-		Ticker:       &time.Ticker{},
-		Mutex:        &sync.Mutex{},
+		Seconds: &RateTiming{},
+		Minutes: &RateTiming{},
 	}
 
 	rateLimit := headers.Get(limitHeader)
@@ -127,11 +151,14 @@ func (r *RateLimiter) ParseHeaders(headers http.Header, limitHeader string, coun
 	rates := strings.Split(rateLimit, ",")
 
 	// Obtaining rate limit for seconds
-	max, inSeconds := getNumberPairs(rates[0])
+	limit, seconds := getNumberPairs(rates[0])
 
-	rate.Seconds = inSeconds
+	rate.Seconds = getRateTiming(limit, seconds)
 
-	rate.SecondsLimit = max
+	// Obtaining rate limit for minutes
+	limit, seconds = getNumberPairs(rates[1])
+
+	rate.Minutes = getRateTiming(limit, seconds)
 
 	rateCount := headers.Get(countHeader)
 
@@ -142,12 +169,15 @@ func (r *RateLimiter) ParseHeaders(headers http.Header, limitHeader string, coun
 	// Obtaining rate counts
 	counts := strings.Split(rateCount, ",")
 
-	// Obtaining a specific rate count
+	// Obtaining rate count for seconds
 	current, _ := getNumberPairs(counts[0])
 
-	rate.SecondsCount = current
+	rate.Seconds.Count = current
 
-	rate.Ticker = time.NewTicker(time.Duration(rate.Seconds) * time.Second)
+	// Obtaining rate count for seconds
+	current, _ = getNumberPairs(counts[1])
+
+	rate.Minutes.Count = current
 
 	return rate
 }
@@ -160,4 +190,25 @@ func getNumberPairs(str string) (int, int) {
 	limit, _ := strconv.Atoi(numbers[1])
 
 	return number, limit
+}
+
+func getRateTiming(limit int, seconds int) *RateTiming {
+	timing := &RateTiming{
+		Time:   seconds,
+		Limit:  limit,
+		Count:  0,
+		Ticker: &time.Ticker{},
+		Mutex:  &sync.Mutex{},
+	}
+
+	timing.Ticker = time.NewTicker(time.Duration(seconds) * time.Second)
+
+	return timing
+}
+
+func updateRateCount(old *RateTiming, new *RateTiming) {
+	old.Mutex.Lock()
+	defer old.Mutex.Unlock()
+
+	old.Count = new.Count
 }

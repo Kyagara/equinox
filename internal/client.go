@@ -16,7 +16,7 @@ import (
 type InternalClient struct {
 	Cluster   api.Cluster
 	cache     *Cache
-	rate      *RateLimiter
+	rate      *RateLimit
 	ttl       int
 	key       string
 	logLevel  api.LogLevel
@@ -44,7 +44,7 @@ func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
 		Cluster:   config.Cluster,
 		cache:     NewCache(int64(config.TTL)),
-		rate:      NewRateLimiter(),
+		rate:      NewRateLimit(),
 		ttl:       config.TTL,
 		key:       config.Key,
 		logLevel:  config.LogLevel,
@@ -188,30 +188,23 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 	}
 
 	// Checking rate limits for the app
-	if c.rateLimit && c.rate.appRate.SecondsLimit > 0 {
-		c.rate.appRate.Mutex.Lock()
+	if c.rateLimit {
+		ok := c.rate.Check(c.rate.appRate)
 
-		if c.rate.appRate.SecondsCount >= c.rate.appRate.SecondsLimit {
-			c.rate.appRate.Mutex.Unlock()
-
+		if !ok {
 			return nil, api.RateLimitedError
 		}
-
-		c.rate.appRate.Mutex.Unlock()
 	}
 
 	// Checking rate limits for the endpoint method
 	rate := c.rate.Get(endpoint, method)
 
 	if c.rateLimit && rate != nil {
-		rate.Mutex.Lock()
+		ok := c.rate.Check(c.rate.appRate)
 
-		if rate.SecondsCount >= rate.SecondsLimit {
-			rate.Mutex.Unlock()
+		if !ok {
 			return nil, api.RateLimitedError
 		}
-
-		rate.Mutex.Unlock()
 	}
 
 	logger.Debug("Making request")
@@ -225,6 +218,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 
 	defer res.Body.Close()
 
+	// Update rate limits
 	if c.rateLimit {
 		// Updating app rate limit
 		rate = c.rate.ParseHeaders(res.Header, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
@@ -237,7 +231,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 		c.rate.Set(endpoint, method, rate)
 	}
 
-	// Handling errors documented in the Riot API docs
+	// Handling errors documented in the Riot API docs, not all errors are implemented.
 	switch res.StatusCode {
 	case http.StatusBadRequest:
 		return nil, api.BadRequestError

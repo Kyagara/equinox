@@ -12,8 +12,6 @@ func TestNewLogger(t *testing.T) {
 	logger := internal.NewLogger(true, 10, 120, api.DebugLevel)
 
 	require.NotNil(t, logger, "expecting non-nil Logger")
-
-	logger.Info("Info logger")
 }
 
 func TestLogger(t *testing.T) {
@@ -21,7 +19,7 @@ func TestLogger(t *testing.T) {
 
 	require.NotNil(t, client, "expecting non-nil InternalClient")
 
-	logger := client.Logger("logger", "s", "d")
+	logger := client.Logger("client", "endpoint", "method")
 
 	require.NotNil(t, logger, "expecting non-nil Logger")
 
