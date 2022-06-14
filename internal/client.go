@@ -219,7 +219,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 	defer res.Body.Close()
 
 	// Update rate limits
-	if c.rateLimit {
+	if c.rateLimit && res.Header.Get("X-App-Rate-Limit") != "" {
 		// Updating app rate limit
 		rate = c.rate.ParseHeaders(res.Header, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
 
@@ -298,6 +298,19 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 
 // Creates a new HTTP Request and sets headers.
 func (c *InternalClient) newRequest(method string, url string, body interface{}) (*http.Request, error) {
+	if method == http.MethodGet {
+		req, err := http.NewRequest(method, url, nil)
+
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Accept", "application/json")
+		req.Header.Set("X-Riot-Token", c.key)
+
+		return req, nil
+	}
+
 	jsonBody, err := json.Marshal(body)
 
 	if err != nil {
