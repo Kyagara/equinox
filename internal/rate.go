@@ -9,11 +9,11 @@ import (
 )
 
 type RateLimit struct {
-	endpoints map[string]*EndpointMethods
+	endpoints map[string]*Methods
 	appRate   *Rate
 }
 
-type EndpointMethods struct {
+type Methods struct {
 	methods map[string]*Rate
 }
 
@@ -24,7 +24,7 @@ type Rate struct {
 
 func NewRateLimit() *RateLimit {
 	return &RateLimit{
-		endpoints: map[string]*EndpointMethods{},
+		endpoints: map[string]*Methods{},
 		appRate: &Rate{
 			Seconds: &RateTiming{},
 			Minutes: &RateTiming{},
@@ -54,17 +54,17 @@ func (r *RateTiming) tick() {
 	}
 }
 
-// Checks if the app or method is currently rate limited
-func (r *RateLimit) Check(rate *Rate) bool {
+// Checks if the *Rate is currently rate limited
+func (r *RateLimit) IsRateLimited(rate *Rate) bool {
 	if rate.Seconds.Limit == 0 {
-		return true
+		return false
 	}
 
 	rate.Seconds.Mutex.Lock()
 	defer rate.Seconds.Mutex.Unlock()
 
 	if rate.Seconds.Count >= rate.Seconds.Limit {
-		return false
+		return true
 	}
 
 	rate.Minutes.Mutex.Lock()
@@ -93,7 +93,7 @@ func (r *RateLimit) Set(endpointName string, methodName string, rate *Rate) {
 	endpoint := r.endpoints[endpointName]
 
 	if endpoint == nil {
-		r.endpoints[endpointName] = &EndpointMethods{
+		r.endpoints[endpointName] = &Methods{
 			methods: map[string]*Rate{},
 		}
 
@@ -135,7 +135,7 @@ func (r *RateLimit) SetAppRate(rate *Rate) {
 	updateRateCount(r.appRate.Minutes, rate.Minutes)
 }
 
-func (r *RateLimit) ParseHeaders(headers http.Header, limitHeader string, countHeader string) *Rate {
+func ParseHeaders(headers http.Header, limitHeader string, countHeader string) *Rate {
 	rate := &Rate{
 		Seconds: &RateTiming{},
 		Minutes: &RateTiming{},

@@ -60,13 +60,13 @@ func TestRateLimitParseHeaders(t *testing.T) {
 	headers["X-Method-Rate-Limit"] = []string{"1000:10,60000:600"}
 	headers["X-Method-Rate-Limit-Count"] = []string{"1000:10,60000:600"}
 
-	rate := rateLimit.ParseHeaders(headers, "X-Method-Rate-Limit", "X-Method-Rate-Limit-Count")
+	rate := internal.ParseHeaders(headers, "X-Method-Rate-Limit", "X-Method-Rate-Limit-Count")
 
 	require.NotNil(t, rate, "expecting non-nil Rate")
 
 	require.Equal(t, 1000, rate.Seconds.Count)
 
-	rate = rateLimit.ParseHeaders(headers, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
+	rate = internal.ParseHeaders(headers, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
 
 	require.NotNil(t, rate, "expecting non-nil Rate")
 
