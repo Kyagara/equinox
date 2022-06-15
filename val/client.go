@@ -17,11 +17,10 @@ const (
 
 type VALClient struct {
 	internalClient *internal.InternalClient
-
-	Content *ContentEndpoint
-	Match   *MatchEndpoint
-	Ranked  *RankedEndpoint
-	Status  *StatusEndpoint
+	Content        *ContentEndpoint
+	Match          *MatchEndpoint
+	Ranked         *RankedEndpoint
+	Status         *StatusEndpoint
 }
 
 // Returns a new VALClient using the InternalClient provided.

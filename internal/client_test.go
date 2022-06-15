@@ -79,7 +79,7 @@ func TestInternalClientFailingRetry(t *testing.T) {
 	// This will take 2 seconds.
 	gotErr := client.Get("tests", "/", &object, "", "", "")
 
-	wantErr := fmt.Errorf("retried 2 times, stopping")
+	wantErr := fmt.Errorf("retried and failed 2 times, stopping")
 
 	require.Equal(t, wantErr, gotErr, fmt.Sprintf("want err %v, got %v", wantErr, gotErr))
 }
@@ -194,65 +194,84 @@ func TestInternalClientErrorResponses(t *testing.T) {
 	tests := []struct {
 		name    string
 		wantErr error
-		setup   func()
+		code    int
 		region  string
 	}{
 		{
-			name:    "not found",
-			wantErr: api.NotFoundError,
-			setup: func() {
-				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
-					Get("/").
-					Reply(404)
-			},
-			region: "tests",
-		},
-		{
-			name:    "rate limited with retry disabled",
-			wantErr: api.RateLimitedError,
-			setup: func() {
-				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
-					Get("/").
-					Reply(429)
-			},
-			region: "tests",
-		},
-		{
 			name:    "bad request",
 			wantErr: api.BadRequestError,
-			setup: func() {
-				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
-					Get("/").
-					Reply(400)
-			},
-			region: "tests",
+			code:    400,
+			region:  "tests",
 		},
 		{
 			name:    "unauthorized",
 			wantErr: api.UnauthorizedError,
-			setup: func() {
-				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
-					Get("/").
-					Reply(401)
-			},
-			region: "tests",
+			code:    401,
+			region:  "tests",
 		},
 		{
 			name:    "forbidden",
 			wantErr: api.ForbiddenError,
-			setup: func() {
-				gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
-					Get("/").
-					Reply(403)
-			},
-			region: "tests",
+			code:    403,
+			region:  "tests",
+		},
+		{
+			name:    "not found",
+			wantErr: api.NotFoundError,
+			code:    404,
+			region:  "tests",
+		},
+		{
+			name:    "method not allowed",
+			wantErr: api.MethodNotAllowedError,
+			code:    405,
+			region:  "tests",
+		},
+		{
+			name:    "unsupported media type",
+			wantErr: api.UnsupportedMediaTypeError,
+			code:    415,
+			region:  "tests",
+		},
+		{
+			name:    "rate limited with retry disabled",
+			wantErr: api.RateLimitedError,
+			code:    429,
+			region:  "tests",
+		},
+		{
+			name:    "internal server error",
+			wantErr: api.InternalServerError,
+			code:    500,
+			region:  "tests",
+		},
+		{
+			name:    "bad gateway",
+			wantErr: api.BadGatewayError,
+			code:    502,
+			region:  "tests",
+		},
+		{
+			name:    "service unavailable",
+			wantErr: api.ServiceUnavailableError,
+			code:    503,
+			region:  "tests",
+		},
+		{
+			name:    "gateway timeout",
+			wantErr: api.GatewayTimeoutError,
+			code:    504,
+			region:  "tests",
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			test.setup()
+			gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
+				Get("/").
+				Reply(test.code)
+
 			client := internal.NewInternalClient(&api.EquinoxConfig{
-				Key:       "RIOT_API_KEY",
+				Key:       "RGAPI-KEY",
 				Cluster:   api.AmericasCluster,
 				LogLevel:  api.DebugLevel,
 				TTL:       0,

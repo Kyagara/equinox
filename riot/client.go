@@ -21,7 +21,6 @@ type RiotClient struct {
 func NewRiotClient(client *internal.InternalClient) *RiotClient {
 	return &RiotClient{
 		internalClient: client,
-
-		Account: &AccountEndpoint{internalClient: client},
+		Account:        &AccountEndpoint{internalClient: client},
 	}
 }

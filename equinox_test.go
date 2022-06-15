@@ -24,7 +24,7 @@ func TestNewEquinoxClient(t *testing.T) {
 		{
 			name: "success",
 			want: &equinox.Equinox{},
-			key:  "RIOT_API_KEY",
+			key:  "RGAPI-KEY",
 		},
 		{
 			name:    "nil key",
@@ -80,7 +80,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 			name:    "cluster nil",
 			wantErr: fmt.Errorf("cluster not provided"),
 			config: &api.EquinoxConfig{
-				Key:      "RIOT_API_KEY",
+				Key:      "RGAPI-KEY",
 				LogLevel: api.DebugLevel,
 				Timeout:  10,
 				Retry:    true,
@@ -107,7 +107,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 
 func TestEquinoxClientClearCache(t *testing.T) {
 	config := &api.EquinoxConfig{
-		Key:       "RIOT_API_KEY",
+		Key:       "RGAPI-KEY",
 		Cluster:   api.AmericasCluster,
 		LogLevel:  api.DebugLevel,
 		Timeout:   10,
