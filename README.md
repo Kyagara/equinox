@@ -1,6 +1,6 @@
 <div align="center">
 	<h1>Equinox</h1>
-	<p>Equinox is a Riot Games API client written in golang with the goal of providing an easy to use interface to interact with all of the <a href="https://developer.riotgames.com/apis">Riot Games API</a> endpoints and the Data Dragon service.
+	<p>Equinox is an API client written in golang with the goal of providing an easy to use interface to interact with all of the <a href="https://developer.riotgames.com/apis">Riot Games API</a> endpoints.
 	</p>
 	<p>
 		<a href="https://github.com/Kyagara/equinox/releases">
@@ -20,6 +20,8 @@
 		</a>
 	</p>
 	<p>
+		<a href="#features">Features</a> •
+		<a href="#todo">Todo</a> •
 		<a href="#installation">Installation</a> •
 		<a href="#usage">Usage</a> •
 		<a href="#example">Example</a> •
@@ -27,22 +29,25 @@
 	</p>
 </div>
 
-#### Implemented:
-
--   [ ] Data Dragon
--   [x] Riot Account
--   [x] League of Legends
--   [x] Teamfight Tactics
--   [x] Valorant
--   [x] Legends of Runeterra
-
 #### Features
 
--   [x] Cache
--   [x] Rate Limiting
--   [ ] Helper Methods (e.g.: GetChampion or GetSummoner inside a match response)
+-   All Riot APIs implemented
+    -   Riot Account
+    -   League of Legends
+    -   Teamfight Tactics
+    -   Valorant
+    -   Legends of Runeterra
+-   Cache
+-   Rate Limiting
 
-Caching and Rate limiting is in an early stage, they are in-memory only for now.
+> Caching and Rate limiting is in an early stage, they are in-memory only for now.
+
+#### Todo
+
+-   Add integration tests.
+-   Review the cache and rate limiting implementation
+-   Add Data Dragon support
+-   Add Helper Methods (e.g.: GetChampion or GetSummoner inside a match response)
 
 ## Installation
 
