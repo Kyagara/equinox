@@ -16,7 +16,7 @@ import (
 type InternalClient struct {
 	Cluster   api.Cluster
 	cache     *Cache
-	rate      *RateLimit
+	rates     map[interface{}]*RateLimit
 	ttl       int
 	key       string
 	logLevel  api.LogLevel
@@ -44,7 +44,7 @@ func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
 		Cluster:   config.Cluster,
 		cache:     NewCache(int64(config.TTL)),
-		rate:      NewRateLimit(),
+		rates:     map[interface{}]*RateLimit{},
 		ttl:       config.TTL,
 		key:       config.Key,
 		logLevel:  config.LogLevel,
@@ -76,10 +76,9 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 		req.Header.Set("Authorization", authorizationHeader)
 	}
 
-	var res *http.Response
-
+	// If caching is enabled
 	if c.ttl > 0 {
-		res, err = c.cache.Get(req.URL.String())
+		res, err := c.cache.Get(req.URL.String())
 
 		if err != nil {
 			return err
@@ -89,24 +88,31 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 			logger := c.logger.With("httpMethod", http.MethodGet, "path", req.URL.Path)
 
 			logger.Debug("Cache hit")
+
+			// Decoding the body into the endpoint method response object.
+			if err := json.NewDecoder(res.Body).Decode(&object); err != nil {
+				return err
+			}
+
+			return nil
 		}
 	}
 
-	if res == nil {
-		// Sending HTTP request and returning the response.
-		res, err = c.sendRequest(req, 0, endpointName, method)
+	// Sending HTTP request and returning the response.
+	res, body, err := c.sendRequest(req, 0, endpointName, method, route)
 
-		if err != nil {
-			return err
-		}
+	if err != nil {
+		return err
+	}
 
-		if c.ttl > 0 {
-			c.cache.Set(req.URL.String(), res)
-		}
+	if c.ttl > 0 {
+		c.cache.Set(req.URL.String(), res)
 	}
 
 	// Decoding the body into the endpoint method response object.
-	if err := json.NewDecoder(res.Body).Decode(&object); err != nil {
+	err = json.Unmarshal(body, &object)
+
+	if err != nil {
 		return err
 	}
 
@@ -129,7 +135,7 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody in
 	}
 
 	// Sending HTTP request and returning the response.
-	res, err := c.sendRequest(req, 0, endpointName, method)
+	res, body, err := c.sendRequest(req, 0, endpointName, method, route)
 
 	if err != nil {
 		return err
@@ -157,7 +163,9 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody in
 	}
 
 	// Decoding the body into the endpoint method response object.
-	if err := json.NewDecoder(res.Body).Decode(&object); err != nil {
+	err = json.Unmarshal(body, &object)
+
+	if err != nil {
 		return err
 	}
 
@@ -176,7 +184,7 @@ func (c *InternalClient) Put(route interface{}, endpoint string, requestBody int
 	}
 
 	// Sending HTTP request and returning the response.
-	_, err = c.sendRequest(req, 0, endpointName, method)
+	_, _, err = c.sendRequest(req, 0, endpointName, method, route)
 
 	if err != nil {
 		return err
@@ -186,33 +194,21 @@ func (c *InternalClient) Put(route interface{}, endpoint string, requestBody int
 }
 
 // Sends a HTTP request.
-func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoint string, method string) (*http.Response, error) {
+func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoint string, method string, route interface{}) (*http.Response, []byte, error) {
 	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.Path)
 
 	if c.retry && retryCount > 1 {
 		logger.Debug("Retried 2 times, stopping")
 
-		return nil, fmt.Errorf("retried and failed 2 times, stopping")
+		return nil, nil, fmt.Errorf("retried and failed 2 times, stopping")
 	}
 
 	// If rate limiting is enabled
 	if c.rateLimit {
-		// Checking rate limits for the app
-		ok := c.rate.Check(c.rate.appRate)
+		isRateLimited := c.checkRates(route, endpoint, method)
 
-		if !ok {
-			return nil, api.RateLimitedError
-		}
-
-		// Checking rate limits for the endpoint method
-		rate := c.rate.Get(endpoint, method)
-
-		if rate != nil {
-			ok := c.rate.Check(c.rate.appRate)
-
-			if !ok {
-				return nil, api.RateLimitedError
-			}
+		if isRateLimited {
+			return nil, nil, api.RateLimitedError
 		}
 	}
 
@@ -223,8 +219,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 
 	if err != nil {
 		logger.Error("Request failed")
-
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer res.Body.Close()
@@ -232,14 +227,14 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 	// Update rate limits
 	if c.rateLimit && res.Header.Get("X-App-Rate-Limit") != "" {
 		// Updating app rate limit
-		rate := c.rate.ParseHeaders(res.Header, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
+		rate := ParseHeaders(res.Header, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
 
-		c.rate.SetAppRate(rate)
+		c.rates[route].SetAppRate(rate)
 
 		// Updating method rate limit
-		rate = c.rate.ParseHeaders(res.Header, "X-Method-Rate-Limit", "X-Method-Rate-Limit-Count")
+		rate = ParseHeaders(res.Header, "X-Method-Rate-Limit", "X-Method-Rate-Limit-Count")
 
-		c.rate.Set(endpoint, method, rate)
+		c.rates[route].Set(endpoint, method, rate)
 	}
 
 	// If the API returns a 429 code.
@@ -248,7 +243,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 
 		// If Retry is disabled just return an error.
 		if !c.retry {
-			return nil, api.RateLimitedError
+			return nil, nil, api.RateLimitedError
 		}
 
 		retryAfter := res.Header.Get("Retry-After")
@@ -256,8 +251,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 		// If the header isn't found, don't retry and return error.
 		if retryAfter == "" {
 			logger.Debug("Retry-After header not found, not retrying")
-
-			return nil, fmt.Errorf("rate limited but no Retry-After header was found, stopping")
+			return nil, nil, fmt.Errorf("rate limited but no Retry-After header was found, stopping")
 		}
 
 		seconds, _ := strconv.Atoi(retryAfter)
@@ -266,34 +260,24 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 
 		time.Sleep(time.Duration(seconds) * time.Second)
 
-		return c.sendRequest(req, retryCount+1, endpoint, method)
+		return c.sendRequest(req, 2, endpoint, method, route)
 	}
 
-	// If the status code is lower than 200 or higher than 299, return an error.
-	if res.StatusCode < http.StatusOK || res.StatusCode > 299 {
-		logger.Errorf("Endpoint method returned an error response: %v", res.Status)
+	err = c.checkResponse(res)
 
-		// Handling errors documented in the Riot API docs
-		// This StatusCodeToError solution is from KnutZuidema/golio
-		// https://github.com/KnutZuidema/golio/blob/master/api/error.go
-		// https://github.com/KnutZuidema/golio/blob/master/internal/client.go
-		err, ok := api.StatusCodeToError[res.StatusCode]
-
-		if !ok {
-			err = api.ErrorResponse{
-				Status: api.Status{
-					Message:    "Unknown error",
-					StatusCode: res.StatusCode,
-				},
-			}
-		}
-
-		return nil, err
+	if err != nil {
+		return nil, nil, err
 	}
 
 	logger.Debug("Request successful")
 
-	return res, nil
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		logger.Error(err)
+	}
+
+	return res, body, nil
 }
 
 // Creates a new HTTP Request and sets headers.
@@ -327,4 +311,59 @@ func (c *InternalClient) newRequest(method string, url string, body interface{})
 	req.Header.Set("X-Riot-Token", c.key)
 
 	return req, nil
+}
+
+func (c *InternalClient) checkResponse(res *http.Response) error {
+	logger := c.logger.With("httpMethod", res.Request.Method, "path", res.Request.URL.Path)
+
+	// If the status code is lower than 200 or higher than 299, return an error.
+	if res.StatusCode < http.StatusOK || res.StatusCode > 299 {
+		logger.Errorf("Endpoint method returned an error response: %v", res.Status)
+
+		// Handling errors documented in the Riot API docs
+		// This StatusCodeToError solution is from KnutZuidema/golio
+		// https://github.com/KnutZuidema/golio/blob/master/api/error.go
+		// https://github.com/KnutZuidema/golio/blob/master/internal/client.go
+		err, ok := api.StatusCodeToError[res.StatusCode]
+
+		if !ok {
+			err = api.ErrorResponse{
+				Status: api.Status{
+					Message:    "Unknown error",
+					StatusCode: res.StatusCode,
+				},
+			}
+		}
+
+		return err
+	}
+
+	return nil
+}
+
+// Checks the app and method rate limit, returns true if rate limited
+func (c *InternalClient) checkRates(route interface{}, endpoint string, method string) bool {
+	if c.rates[route] == nil {
+		c.rates[route] = NewRateLimit()
+	}
+
+	// Checking rate limits for the app
+	isRateLimited := c.rates[route].IsRateLimited(c.rates[route].appRate)
+
+	if isRateLimited {
+		return true
+	}
+
+	// Checking rate limits for the endpoint method
+	rate := c.rates[route].Get(endpoint, method)
+
+	if rate != nil {
+		isRateLimited := c.rates[route].IsRateLimited(rate)
+
+		if isRateLimited {
+			return true
+		}
+	}
+
+	return false
 }

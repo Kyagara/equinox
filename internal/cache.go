@@ -85,6 +85,7 @@ func (c *Cache) Get(url string) (*http.Response, error) {
 	return nil, nil
 }
 
+// Clears the cache
 func (c *Cache) Clear() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()

@@ -29,7 +29,7 @@
 	</p>
 </div>
 
-#### Features
+## Features
 
 -   All Riot APIs implemented
     -   Riot Account
@@ -42,7 +42,7 @@
 
 > Caching and Rate limiting is in an early stage, they are in-memory only for now.
 
-#### Todo
+## Todo
 
 -   Add integration tests.
 -   Review the cache and rate limiting implementation
