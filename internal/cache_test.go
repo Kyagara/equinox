@@ -3,7 +3,6 @@ package internal_test
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"testing"
 	"time"
 
@@ -24,7 +23,7 @@ func TestNewCache(t *testing.T) {
 func TestCache(t *testing.T) {
 	cache := internal.NewCache(120)
 
-	cache.Set("/", &http.Response{})
+	cache.Set("/", make([]byte, 1))
 
 	res, err := cache.Get("/")
 
