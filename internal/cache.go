@@ -1,10 +1,6 @@
 package internal
 
 import (
-	"bufio"
-	"bytes"
-	"net/http"
-	"net/http/httputil"
 	"sync"
 	"time"
 )
@@ -43,17 +39,11 @@ func NewCache(ttl int64) *Cache {
 }
 
 // Adds a http.Response in the cache
-func (c *Cache) Set(url string, res *http.Response) error {
-	response, err := httputil.DumpResponse(res, true)
-
-	if err != nil {
-		return err
-	}
-
+func (c *Cache) Set(url string, res []byte) error {
 	c.mutex.Lock()
 
 	c.items[url] = &CacheItem{
-		response: response,
+		response: res,
 		access:   time.Now().Unix(),
 	}
 
@@ -63,7 +53,7 @@ func (c *Cache) Set(url string, res *http.Response) error {
 }
 
 // Gets a http.Response from the cache
-func (c *Cache) Get(url string) (*http.Response, error) {
+func (c *Cache) Get(url string) (*CacheItem, error) {
 	c.mutex.Lock()
 
 	item, ok := c.items[url]
@@ -71,15 +61,7 @@ func (c *Cache) Get(url string) (*http.Response, error) {
 	c.mutex.Unlock()
 
 	if ok {
-		reader := bufio.NewReader(bytes.NewReader(item.response))
-
-		res, err := http.ReadResponse(reader, nil)
-
-		if err != nil {
-			return nil, err
-		}
-
-		return res, nil
+		return item, nil
 	}
 
 	return nil, nil

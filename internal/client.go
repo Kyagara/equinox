@@ -78,19 +78,26 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 
 	// If caching is enabled
 	if c.ttl > 0 {
-		res, err := c.cache.Get(req.URL.String())
+		cacheItem, err := c.cache.Get(req.URL.String())
 
 		if err != nil {
 			return err
 		}
 
-		if res != nil {
+		if cacheItem != nil {
 			logger := c.logger.With("httpMethod", http.MethodGet, "path", req.URL.Path)
 
 			logger.Debug("Cache hit")
 
-			// Decoding the body into the endpoint method response object.
-			if err := json.NewDecoder(res.Body).Decode(&object); err != nil {
+			if err != nil {
+				logger.Error(err)
+				return err
+			}
+
+			// Decoding the cached body into the endpoint method response object.
+			err = json.Unmarshal(cacheItem.response, &object)
+
+			if err != nil {
 				return err
 			}
 
@@ -99,14 +106,14 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 	}
 
 	// Sending HTTP request and returning the response.
-	res, body, err := c.sendRequest(req, 0, endpointName, method, route)
+	_, body, err := c.sendRequest(req, 0, endpointName, method, route)
 
 	if err != nil {
 		return err
 	}
 
 	if c.ttl > 0 {
-		c.cache.Set(req.URL.String(), res)
+		c.cache.Set(req.URL.String(), body)
 	}
 
 	// Decoding the body into the endpoint method response object.
@@ -145,13 +152,7 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody in
 	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type assertion.
 	// This implementation looks horrible, I don't know another way of decoding any non JSON value to the &object.
 	if res.Header.Get("Content-Type") == "" {
-		value, err := ioutil.ReadAll(res.Body)
-
-		if err != nil {
-			return err
-		}
-
-		body := []byte(fmt.Sprintf(`{"response":"%s"}`, string(value)))
+		body := []byte(fmt.Sprintf(`{"response":"%s"}`, string(body)))
 
 		err = json.Unmarshal(body, &object)
 
@@ -260,7 +261,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 
 		time.Sleep(time.Duration(seconds) * time.Second)
 
-		return c.sendRequest(req, 2, endpoint, method, route)
+		return c.sendRequest(req, retryCount+1, endpoint, method, route)
 	}
 
 	err = c.checkResponse(res)
@@ -275,6 +276,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 
 	if err != nil {
 		logger.Error(err)
+		return nil, nil, err
 	}
 
 	return res, body, nil

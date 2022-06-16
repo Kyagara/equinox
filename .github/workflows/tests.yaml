@@ -3,26 +3,29 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.18
+            - name: Set up Go
+              uses: actions/setup-go@v3
+              with:
+                  go-version: 1.18
 
-      - name: Verify dependencies
-        run: go mod verify
+            - name: Verify dependencies
+              run: go mod verify
 
-      - name: Run go vet
-        run: go vet ./...
+            - name: Run go vet
+              run: go vet ./...
 
-      - name: Run go test
-        run: go test ./... -v -race -coverprofile cover.txt -covermode atomic
+            - name: Run go test
+              run: go test ./... -v -race -coverprofile cover.txt -covermode atomic
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          files: ./cover.txt
+            - name: Ensure integration tests build
+              run: go test -v -tags=integration -run=^$ ./test/integration
+
+            - name: Upload coverage to Codecov
+              uses: codecov/codecov-action@v2
+              with:
+                  files: ./cover.txt

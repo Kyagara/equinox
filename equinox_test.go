@@ -120,19 +120,25 @@ func TestEquinoxClientClearCache(t *testing.T) {
 
 	delay := 2 * time.Second
 
+	account := &riot.AccountDTO{
+		PUUID:    "puuid",
+		GameName: "gamename",
+		TagLine:  "tagline",
+	}
+
 	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 		Get(fmt.Sprintf(riot.AccountByPUUIDURL, "puuid")).
 		Reply(200).
-		JSON(&riot.AccountDTO{}).Delay(delay)
+		JSON(account).Delay(delay)
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 		Get(fmt.Sprintf(riot.AccountByPUUIDURL, "puuid")).
 		Reply(403).
-		JSON(&riot.AccountDTO{}).Delay(delay)
+		JSON(account).Delay(delay)
 
 	gotData, gotErr := client.Riot.Account.ByPUUID("puuid")
 
-	require.Equal(t, &riot.AccountDTO{}, gotData)
+	require.Equal(t, account, gotData)
 
 	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
 
@@ -140,7 +146,7 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	gotData, gotErr = client.Riot.Account.ByPUUID("puuid")
 	duration := int(time.Since(start).Seconds())
 
-	require.Equal(t, &riot.AccountDTO{}, gotData)
+	require.Equal(t, account, gotData)
 
 	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
 
@@ -165,6 +171,6 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	}
 
 	if gotErr == nil {
-		assert.Equal(t, &riot.AccountDTO{}, gotData)
+		assert.Equal(t, account, gotData)
 	}
 }

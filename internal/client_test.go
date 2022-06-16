@@ -169,12 +169,11 @@ func TestInternalClientNewRequest(t *testing.T) {
 		method  string
 		url     string
 	}{
-
 		{
 			name: "invalid url",
 			wantErr: &url.Error{
 				Op:  "parse",
-				URL: "https://tests.api.riotgames.com\\:invalid:/=",
+				URL: "https://----.api.riotgames.com\\:invalid:/=",
 				Err: url.InvalidHostError("\\"),
 			},
 			url: "\\:invalid:/=",
@@ -183,7 +182,7 @@ func TestInternalClientNewRequest(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gotErr := client.Get("tests", test.url, nil, "", "", "")
+			gotErr := client.Get("----", test.url, nil, "", "", "")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 		})
@@ -264,6 +263,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			region:  "tests",
 		},
 	}
+
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).

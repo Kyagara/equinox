@@ -102,7 +102,9 @@ func (r *RateLimit) Set(endpointName string, methodName string, rate *Rate) {
 
 			go rate.Seconds.tick()
 
-			go rate.Minutes.tick()
+			if rate.Minutes.Limit != 0 {
+				go rate.Minutes.tick()
+			}
 		}
 
 		return
@@ -123,7 +125,9 @@ func (r *RateLimit) SetAppRate(rate *Rate) {
 
 		go rate.Seconds.tick()
 
-		go rate.Minutes.tick()
+		if rate.Minutes.Limit != 0 {
+			go rate.Minutes.tick()
+		}
 
 		return
 	}
@@ -155,10 +159,12 @@ func ParseHeaders(headers http.Header, limitHeader string, countHeader string) *
 
 	rate.Seconds = getRateTiming(limit, seconds)
 
-	// Obtaining rate limit for minutes
-	limit, seconds = getNumberPairs(rates[1])
+	if len(rates) == 2 {
+		// Obtaining rate limit for minutes
+		limit, seconds = getNumberPairs(rates[1])
 
-	rate.Minutes = getRateTiming(limit, seconds)
+		rate.Minutes = getRateTiming(limit, seconds)
+	}
 
 	rateCount := headers.Get(countHeader)
 
@@ -174,10 +180,12 @@ func ParseHeaders(headers http.Header, limitHeader string, countHeader string) *
 
 	rate.Seconds.Count = current
 
-	// Obtaining rate count for seconds
-	current, _ = getNumberPairs(counts[1])
+	if len(counts) == 2 {
+		// Obtaining rate count for seconds
+		current, _ = getNumberPairs(counts[1])
 
-	rate.Minutes.Count = current
+		rate.Minutes.Count = current
+	}
 
 	return rate
 }
