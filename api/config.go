@@ -10,22 +10,23 @@ type EquinoxConfig struct {
 	Key string
 	// Cluster name, using the nearest cluster to you is recommended.
 	Cluster Cluster
-	// Log level. Defaults to api.FatalLevel
+	// Log level.
 	LogLevel LogLevel
-	// Timeout for HTTP Request in seconds, 0 disables it. Defaults to 10
+	// Timeout for the http.Client in seconds, 0 disables the timeout.
 	Timeout int
-	// TTL for the cache in seconds, 0 disables caching. Defaults to 120 seconds
-	TTL int
-	// Retry request if it returns a 429 status code. Defaults to true
+	// TTL for the cache in seconds, 0 disables caching.
+	TTL int64
+	// Enable or disable retrying a request if it returns a 429 status code.
 	Retry bool
-	// Disables rate limiting. Defaults to false
+	// Enable or disable rate limiting.
 	RateLimit bool
 }
 
 func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 	encoder.AddBool("retry", c.Retry)
 	encoder.AddInt("timeout", c.Timeout)
-	encoder.AddInt("ttl", c.TTL)
+	encoder.AddInt64("default-ttl", c.TTL)
+	encoder.AddBool("rate-limit", c.RateLimit)
 
 	return nil
 }

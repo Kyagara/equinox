@@ -85,6 +85,8 @@ type TournamentCodeUpdateParametersDTO struct {
 func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) (*[]string, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-v4", "CreateCodes")
 
+	logger.Debug("Method executed")
+
 	if count < 1 || count > 1000 {
 		return nil, fmt.Errorf("count can't be less than 1 or more than 1000")
 	}
@@ -129,6 +131,8 @@ func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-v4", "ByCode")
 
+	logger.Debug("Method executed")
+
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
 	var tournament *TournamentCodeDTO
@@ -146,6 +150,8 @@ func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 // Update the pick type, map, spectator type, or allowed summoners for a code.
 func (e *TournamentEndpoint) Update(tournamentCode string, parameters *TournamentCodeUpdateParametersDTO) error {
 	logger := e.internalClient.Logger("LOL", "tournament-v4", "Update")
+
+	logger.Debug("Method executed")
 
 	if parameters == nil {
 		return fmt.Errorf("parameters are required")
@@ -166,6 +172,8 @@ func (e *TournamentEndpoint) Update(tournamentCode string, parameters *Tournamen
 // Gets a list of lobby events by tournament code.
 func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-v4", "LobbyEvents")
+
+	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(TournamentLobbyEventsURL, tournamentCode)
 
@@ -190,6 +198,8 @@ func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
 func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (*int, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-v4", "CreateProvider")
+
+	logger.Debug("Method executed")
 
 	_, err := url.ParseRequestURI(callbackURL)
 
@@ -222,6 +232,8 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 // The optional name of the tournament.
 func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-v4", "Create")
+
+	logger.Debug("Method executed")
 
 	options := struct {
 		Name       string `json:"name"`

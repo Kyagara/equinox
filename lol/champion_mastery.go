@@ -35,6 +35,8 @@ type ChampionMasteryDTO struct {
 func (e *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID string) (*[]ChampionMasteryDTO, error) {
 	logger := e.internalClient.Logger("LOL", "champion-mastery-v4", "SummonerMasteries")
 
+	logger.Debug("Method executed")
+
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}
@@ -57,6 +59,8 @@ func (e *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID st
 func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string, championID int) (*ChampionMasteryDTO, error) {
 	logger := e.internalClient.Logger("LOL", "champion-mastery-v4", "ChampionScore")
 
+	logger.Debug("Method executed")
+
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}
@@ -78,6 +82,8 @@ func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
 func (e *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID string) (*int, error) {
 	logger := e.internalClient.Logger("LOL", "champion-mastery-v4", "MasteryScoreSum")
+
+	logger.Debug("Method executed")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")

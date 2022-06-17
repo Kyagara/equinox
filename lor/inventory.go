@@ -17,6 +17,8 @@ type CardDTO struct {
 func (e *InventoryEndpoint) Cards(region Region, accessToken string) (*[]CardDTO, error) {
 	logger := e.internalClient.Logger("LOR", "lor-inventory-v1", "Cards")
 
+	logger.Debug("Method executed")
+
 	var cards *[]CardDTO
 
 	err := e.internalClient.Get(region, InventoryURL, &cards, "lor-inventory-v1", "Cards", accessToken)

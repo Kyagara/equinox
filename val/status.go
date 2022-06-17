@@ -15,6 +15,8 @@ type StatusEndpoint struct {
 func (e *StatusEndpoint) PlatformStatus(shard Shard) (*api.PlatformDataDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-status-v1", "PlatformStatus")
 
+	logger.Debug("Method executed")
+
 	if shard == ESPORTS {
 		return nil, fmt.Errorf("the region ESPORTS is not available for this method")
 	}

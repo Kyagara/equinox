@@ -173,6 +173,8 @@ type RoundResultDTO struct {
 func (e *MatchEndpoint) List(shard Shard, puuid string) (*MatchListDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-match-v1", "List")
 
+	logger.Debug("Method executed")
+
 	url := fmt.Sprintf(MatchListURL, puuid)
 
 	var list *MatchListDTO
@@ -190,6 +192,8 @@ func (e *MatchEndpoint) List(shard Shard, puuid string) (*MatchListDTO, error) {
 // Get match by ID.
 func (e *MatchEndpoint) ByID(shard Shard, matchID string) (*MatchDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-match-v1", "ByID")
+
+	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
@@ -214,6 +218,8 @@ func (e *MatchEndpoint) ByID(shard Shard, matchID string) (*MatchDTO, error) {
 // Requests are load balanced so you may see some inconsistencies as matches are added/removed from the list.
 func (e *MatchEndpoint) Recent(shard Shard, queue Queue) (*RecentMatchesDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-match-v1", "Recent")
+
+	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(MatchRecentURL, queue)
 
