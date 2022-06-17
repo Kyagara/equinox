@@ -62,6 +62,8 @@ type TierDetailsDTO struct {
 func (e *RankedEndpoint) LeaderboardsByActID(shard Shard, actID string, size uint8, start int) (*LeaderboardDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-ranked-v1", "LeaderboardsByActID")
 
+	logger.Debug("Method executed")
+
 	if shard == ESPORTS {
 		return nil, fmt.Errorf("the region ESPORTS is not available for this method")
 	}

@@ -39,6 +39,8 @@ func (e *SummonerEndpoint) ByAccessToken(region lol.Region, accessToken string) 
 func (e *SummonerEndpoint) getSummoner(url string, region lol.Region, accessToken string, methodName string) (*lol.SummonerDTO, error) {
 	logger := e.internalClient.Logger("TFT", "tft-summoner-v1", methodName)
 
+	logger.Debug("Method executed")
+
 	var summoner *lol.SummonerDTO
 
 	err := e.internalClient.Get(region, url, &summoner, "tft-summoner-v1", methodName, accessToken)

@@ -33,6 +33,12 @@ func TestInternalClientPut(t *testing.T) {
 }
 
 func TestInternalClientRetries(t *testing.T) {
+	config := internal.NewTestEquinoxConfig()
+
+	config.Retry = true
+
+	client := internal.NewInternalClient(config)
+
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 		Get(lol.StatusURL).
 		Reply(429).SetHeader("Retry-After", "1").
@@ -42,12 +48,6 @@ func TestInternalClientRetries(t *testing.T) {
 		Get(lol.StatusURL).
 		Reply(200).
 		JSON(&api.PlatformDataDTO{})
-
-	config := internal.NewTestEquinoxConfig()
-
-	config.Retry = true
-
-	client := internal.NewInternalClient(config)
 
 	res := api.PlatformDataDTO{}
 
@@ -72,16 +72,14 @@ func TestInternalClientFailingRetry(t *testing.T) {
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 		Get("/").
-		Reply(429).SetHeader("Retry-After", "1")
+		Reply(500)
 
 	var object api.PlainTextResponse
 
-	// This will take 2 seconds.
+	// This will take 1 seconds.
 	gotErr := client.Get("tests", "/", &object, "", "", "")
 
-	wantErr := fmt.Errorf("retried and failed 2 times, stopping")
-
-	require.Equal(t, wantErr, gotErr, fmt.Sprintf("want err %v, got %v", wantErr, gotErr))
+	require.Equal(t, api.InternalServerError, gotErr, fmt.Sprintf("want err %v, got %v", api.InternalServerError, gotErr))
 }
 
 func TestInternalClientRetryHeader(t *testing.T) {
@@ -234,7 +232,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 		},
 		{
 			name:    "rate limited with retry disabled",
-			wantErr: api.RateLimitedError,
+			wantErr: api.TooManyRequestsError,
 			code:    429,
 			region:  "tests",
 		},
@@ -314,5 +312,5 @@ func TestInternalClientRateLimit(t *testing.T) {
 
 	err = client.Put("tests", "/", nil, "", "")
 
-	require.Equal(t, api.RateLimitedError, err, fmt.Sprintf("want err %v, got %v", api.RateLimitedError, err))
+	require.Equal(t, api.TooManyRequestsError, err, fmt.Sprintf("want err %v, got %v", api.TooManyRequestsError, err))
 }

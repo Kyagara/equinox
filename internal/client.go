@@ -3,7 +3,9 @@ package internal
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -14,16 +16,16 @@ import (
 )
 
 type InternalClient struct {
-	Cluster   api.Cluster
-	cache     *Cache
-	rates     map[interface{}]*RateLimit
-	ttl       int
-	key       string
-	logLevel  api.LogLevel
-	retry     bool
-	http      *http.Client
-	logger    *zap.SugaredLogger
-	rateLimit bool
+	Cluster    api.Cluster
+	cache      *Cache
+	rates      map[interface{}]*RateLimit
+	defaultTTL int64
+	key        string
+	logLevel   api.LogLevel
+	retry      bool
+	http       *http.Client
+	logger     *zap.SugaredLogger
+	rateLimit  bool
 }
 
 // Creates an EquinoxConfig for tests.
@@ -42,21 +44,21 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 // Returns a new InternalClient using configuration object provided.
 func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
-		Cluster:   config.Cluster,
-		cache:     NewCache(int64(config.TTL)),
-		rates:     map[interface{}]*RateLimit{},
-		ttl:       config.TTL,
-		key:       config.Key,
-		logLevel:  config.LogLevel,
-		retry:     config.Retry,
-		http:      &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
-		logger:    NewLogger(config.Retry, config.Timeout, config.TTL, config.LogLevel),
-		rateLimit: config.RateLimit,
+		Cluster:    config.Cluster,
+		cache:      NewCache(),
+		rates:      map[interface{}]*RateLimit{},
+		defaultTTL: config.TTL * int64(time.Second),
+		key:        config.Key,
+		logLevel:   config.LogLevel,
+		retry:      config.Retry,
+		http:       &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
+		logger:     NewLogger(config),
+		rateLimit:  config.RateLimit,
 	}
 }
 
 func (c *InternalClient) ClearInternalClientCache() {
-	if c.ttl > 0 {
+	if c.defaultTTL > 0 {
 		c.cache.Clear()
 	}
 }
@@ -77,7 +79,7 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 	}
 
 	// If caching is enabled
-	if c.ttl > 0 {
+	if c.defaultTTL > 0 {
 		cacheItem, err := c.cache.Get(req.URL.String())
 
 		if err != nil {
@@ -87,7 +89,7 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 		if cacheItem != nil {
 			logger := c.logger.With("httpMethod", http.MethodGet, "path", req.URL.Path)
 
-			logger.Debug("Cache hit")
+			logger.Info("Cache hit")
 
 			if err != nil {
 				logger.Error(err)
@@ -106,14 +108,14 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 	}
 
 	// Sending HTTP request and returning the response.
-	_, body, err := c.sendRequest(req, 0, endpointName, method, route)
+	_, body, err := c.sendRequest(req, endpointName, method, route)
 
 	if err != nil {
 		return err
 	}
 
-	if c.ttl > 0 {
-		c.cache.Set(req.URL.String(), body)
+	if c.defaultTTL > 0 {
+		c.cache.Set(req.URL.String(), body, c.defaultTTL)
 	}
 
 	// Decoding the body into the endpoint method response object.
@@ -142,7 +144,7 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody in
 	}
 
 	// Sending HTTP request and returning the response.
-	res, body, err := c.sendRequest(req, 0, endpointName, method, route)
+	res, body, err := c.sendRequest(req, endpointName, method, route)
 
 	if err != nil {
 		return err
@@ -185,7 +187,7 @@ func (c *InternalClient) Put(route interface{}, endpoint string, requestBody int
 	}
 
 	// Sending HTTP request and returning the response.
-	_, _, err = c.sendRequest(req, 0, endpointName, method, route)
+	_, _, err = c.sendRequest(req, endpointName, method, route)
 
 	if err != nil {
 		return err
@@ -195,21 +197,15 @@ func (c *InternalClient) Put(route interface{}, endpoint string, requestBody int
 }
 
 // Sends a HTTP request.
-func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoint string, method string, route interface{}) (*http.Response, []byte, error) {
+func (c *InternalClient) sendRequest(req *http.Request, endpoint string, method string, route interface{}) (*http.Response, []byte, error) {
 	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.Path)
-
-	if c.retry && retryCount > 1 {
-		logger.Debug("Retried 2 times, stopping")
-
-		return nil, nil, fmt.Errorf("retried and failed 2 times, stopping")
-	}
 
 	// If rate limiting is enabled
 	if c.rateLimit {
 		isRateLimited := c.checkRates(route, endpoint, method)
 
 		if isRateLimited {
-			return nil, nil, api.RateLimitedError
+			return nil, nil, api.TooManyRequestsError
 		}
 	}
 
@@ -238,41 +234,33 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 		c.rates[route].Set(endpoint, method, rate)
 	}
 
-	// If the API returns a 429 code.
-	if res.StatusCode == http.StatusTooManyRequests {
-		logger.Debug("Too many requests")
-
-		// If Retry is disabled just return an error.
-		if !c.retry {
-			return nil, nil, api.RateLimitedError
-		}
-
-		retryAfter := res.Header.Get("Retry-After")
-
-		// If the header isn't found, don't retry and return error.
-		if retryAfter == "" {
-			logger.Debug("Retry-After header not found, not retrying")
-			return nil, nil, fmt.Errorf("rate limited but no Retry-After header was found, stopping")
-		}
-
-		seconds, _ := strconv.Atoi(retryAfter)
-
-		logger.Debug(fmt.Sprintf("Too Many Requests, retrying request in %ds", seconds))
-
-		time.Sleep(time.Duration(seconds) * time.Second)
-
-		return c.sendRequest(req, retryCount+1, endpoint, method, route)
-	}
-
+	// Checking the response
 	err = c.checkResponse(res)
 
+	// The body is defined here so if we retry the request we can later return the value
+	// without having to read the body again, causing an error
+	var body []byte
+
+	// If retry is enabled and c.checkResponse() returns an api.RateLimitedError, retry the request
+	if c.retry && errors.Is(err, api.TooManyRequestsError) {
+		// If this retry is successful, the body var will be the res.Body
+		res, body, err = c.sendRequest(req, endpoint, method, route)
+	}
+
+	// Returns the error from c.checkResponse() if any
+	// If retry is enabled, this error could also be the error from the retried request if it failed again
 	if err != nil {
 		return nil, nil, err
 	}
 
-	logger.Debug("Request successful")
+	// If the retry was successful, the body won't be nil, so return the result here to avoid reading the body again
+	if body != nil {
+		return res, body, nil
+	}
 
-	body, err := ioutil.ReadAll(res.Body)
+	logger.Info("Request successful")
+
+	body, err = ioutil.ReadAll(res.Body)
 
 	if err != nil {
 		logger.Error(err)
@@ -284,39 +272,57 @@ func (c *InternalClient) sendRequest(req *http.Request, retryCount int8, endpoin
 
 // Creates a new HTTP Request and sets headers.
 func (c *InternalClient) newRequest(method string, url string, body interface{}) (*http.Request, error) {
-	if method == http.MethodGet {
-		req, err := http.NewRequest(method, url, nil)
+	var buffer io.ReadWriter
+
+	if body != nil {
+		buffer = &bytes.Buffer{}
+
+		enc := json.NewEncoder(buffer)
+
+		err := enc.Encode(body)
 
 		if err != nil {
 			return nil, err
 		}
-
-		req.Header.Set("Accept", "application/json")
-		req.Header.Set("X-Riot-Token", c.key)
-
-		return req, nil
 	}
 
-	jsonBody, err := json.Marshal(body)
+	req, err := http.NewRequest(method, url, buffer)
 
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonBody))
-
-	if err != nil {
-		return nil, err
+	if body != nil {
+		req.Header.Set("Content-Type", "application/json")
 	}
 
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("X-Riot-Token", c.key)
+	req.Header.Set("User-Agent", "equinox")
 
 	return req, nil
 }
 
 func (c *InternalClient) checkResponse(res *http.Response) error {
 	logger := c.logger.With("httpMethod", res.Request.Method, "path", res.Request.URL.Path)
+
+	// If the API returns a 429 code.
+	if res.StatusCode == http.StatusTooManyRequests && c.retry {
+		retryAfter := res.Header.Get("Retry-After")
+
+		// If the header isn't found, don't retry and return error.
+		if retryAfter == "" {
+			return fmt.Errorf("rate limited but no Retry-After header was found, stopping")
+		}
+
+		seconds, _ := strconv.Atoi(retryAfter)
+
+		logger.Warn(fmt.Sprintf("Too Many Requests, retrying request in %ds", seconds))
+
+		time.Sleep(time.Duration(seconds) * time.Second)
+
+		return api.TooManyRequestsError
+	}
 
 	// If the status code is lower than 200 or higher than 299, return an error.
 	if res.StatusCode < http.StatusOK || res.StatusCode > 299 {

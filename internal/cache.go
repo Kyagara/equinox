@@ -12,10 +12,10 @@ type Cache struct {
 
 type CacheItem struct {
 	response []byte
-	access   int64
+	expire   int64
 }
 
-func NewCache(ttl int64) *Cache {
+func NewCache() *Cache {
 	cache := &Cache{
 		items: map[string]*CacheItem{},
 		mutex: sync.Mutex{},
@@ -26,7 +26,7 @@ func NewCache(ttl int64) *Cache {
 			cache.mutex.Lock()
 
 			for url, item := range cache.items {
-				if now.Unix()-item.access > ttl {
+				if now.Unix() > item.expire {
 					delete(cache.items, url)
 				}
 			}
@@ -39,12 +39,12 @@ func NewCache(ttl int64) *Cache {
 }
 
 // Adds a http.Response in the cache
-func (c *Cache) Set(url string, res []byte) error {
+func (c *Cache) Set(url string, res []byte, ttl int64) error {
 	c.mutex.Lock()
 
 	c.items[url] = &CacheItem{
 		response: res,
-		access:   time.Now().Unix(),
+		expire:   time.Now().Unix() + ttl,
 	}
 
 	c.mutex.Unlock()

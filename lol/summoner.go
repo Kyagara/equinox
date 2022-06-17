@@ -55,6 +55,8 @@ func (e *SummonerEndpoint) ByAccessToken(region Region, accessToken string) (*Su
 func (e *SummonerEndpoint) getSummoner(url string, region Region, accessToken string, methodName string) (*SummonerDTO, error) {
 	logger := e.internalClient.Logger("LOL", "summoner-v4", methodName)
 
+	logger.Debug("Method executed")
+
 	if methodName == "ByAccessToken" && accessToken == "" {
 		return nil, fmt.Errorf("accessToken is required")
 	}

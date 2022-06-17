@@ -9,16 +9,17 @@ import (
 )
 
 // Creates a new zap.Logger from the configuration parameters provided.
-func NewLogger(retry bool, timeout int, ttl int, logLevel api.LogLevel) *zap.SugaredLogger {
+func NewLogger(config *api.EquinoxConfig) *zap.SugaredLogger {
 	zapConfig := zap.NewProductionConfig()
 
 	equinoxOptions := &api.EquinoxConfig{
-		Retry:   retry,
-		Timeout: timeout,
-		TTL:     ttl,
+		Retry:     config.Retry,
+		Timeout:   config.Timeout,
+		TTL:       config.TTL,
+		RateLimit: config.RateLimit,
 	}
 
-	zapConfig.Level = zap.NewAtomicLevelAt(zapcore.Level(logLevel))
+	zapConfig.Level = zap.NewAtomicLevelAt(zapcore.Level(config.LogLevel))
 
 	logger, err := zapConfig.Build(zap.Fields(zap.Object("equinox", equinoxOptions)))
 

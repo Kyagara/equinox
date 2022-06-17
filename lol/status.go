@@ -13,6 +13,8 @@ type StatusEndpoint struct {
 func (e *StatusEndpoint) PlatformStatus(region Region) (*api.PlatformDataDTO, error) {
 	logger := e.internalClient.Logger("LOL", "lol-status-v4", "PlatformStatus")
 
+	logger.Debug("Method executed")
+
 	var status *api.PlatformDataDTO
 
 	err := e.internalClient.Get(region, StatusURL, &status, "lol-status-v4", "PlatformStatus", "")

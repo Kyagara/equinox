@@ -23,6 +23,8 @@ type ChampionRotationsDTO struct {
 func (e *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, error) {
 	logger := e.internalClient.Logger("LOL", "champion-v3", "Rotations")
 
+	logger.Debug("Method executed")
+
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}

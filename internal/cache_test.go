@@ -15,15 +15,15 @@ import (
 )
 
 func TestNewCache(t *testing.T) {
-	cache := internal.NewCache(120)
+	cache := internal.NewCache()
 
 	require.NotNil(t, cache, "expecting non-nil Cache")
 }
 
 func TestCache(t *testing.T) {
-	cache := internal.NewCache(120)
+	cache := internal.NewCache()
 
-	cache.Set("/", make([]byte, 1))
+	cache.Set("/", make([]byte, 1), 120)
 
 	res, err := cache.Get("/")
 

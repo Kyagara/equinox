@@ -52,6 +52,8 @@ type TournamentPlayerDTO struct {
 func (e *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error) {
 	logger := e.internalClient.Logger("LOL", "clash-v1", "Tournaments")
 
+	logger.Debug("Method executed")
+
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}
@@ -74,6 +76,8 @@ func (e *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error
 func (e *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]TournamentPlayerDTO, error) {
 	logger := e.internalClient.Logger("LOL", "clash-v1", "SummonerEntries")
 
+	logger.Debug("Method executed")
+
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}
@@ -95,6 +99,8 @@ func (e *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]To
 // Get team by ID.
 func (e *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*TournamentTeamDto, error) {
 	logger := e.internalClient.Logger("LOL", "clash-v1", "TournamentTeamByID")
+
+	logger.Debug("Method executed")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
@@ -126,6 +132,8 @@ func (e *ClashEndpoint) ByTeamID(region Region, teamID string) (*ClashTournament
 
 func (e *ClashEndpoint) getClash(endpointMethod string, region Region, id string, methodName string) (*ClashTournamentDTO, error) {
 	logger := e.internalClient.Logger("LOL", "clash-v1", methodName)
+
+	logger.Debug("Method executed")
 
 	if region == PBE1 {
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")

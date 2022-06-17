@@ -51,6 +51,8 @@ type PlayersDTO struct {
 func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 	logger := e.internalClient.Logger("LOR", "lor-match-v1", "ByID")
 
+	logger.Debug("Method executed")
+
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
 	var match *MatchDTO
@@ -68,6 +70,8 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 // Get a list of match ids by PUUID.
 func (e *MatchEndpoint) List(region Region, puuid string) (*[]string, error) {
 	logger := e.internalClient.Logger("LOR", "lor-match-v1", "List")
+
+	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(MatchListURL, puuid)
 

@@ -17,6 +17,8 @@ type TournamentStubEndpoint struct {
 func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) (*[]string, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-stub-v4", "CreateCodes")
 
+	logger.Debug("Method executed")
+
 	if count < 1 || count > 1000 {
 		return nil, fmt.Errorf("count can't be less than 1 or more than 1000")
 	}
@@ -61,6 +63,8 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-stub-v4", "LobbyEvents")
 
+	logger.Debug("Method executed")
+
 	url := fmt.Sprintf(TournamentStubLobbyEventsURL, tournamentCode)
 
 	var lobbyEvents *LobbyEventDTOWrapper
@@ -84,6 +88,8 @@ func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEvent
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
 func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (*int, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-stub", "CreateProvider")
+
+	logger.Debug("Method executed")
 
 	_, err := url.ParseRequestURI(callbackURL)
 
@@ -116,6 +122,8 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 // The optional name of the tournament.
 func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-stub-v4", "Create")
+
+	logger.Debug("Method executed")
 
 	options := struct {
 		Name       string `json:"name"`

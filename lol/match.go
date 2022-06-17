@@ -322,6 +322,8 @@ type MatchlistOptions struct {
 func (e *MatchEndpoint) List(route Route, puuid string, options *MatchlistOptions) (*[]string, error) {
 	logger := e.internalClient.Logger("LOL", "match-v5", "List")
 
+	logger.Debug("Method executed")
+
 	if options == nil {
 		options = &MatchlistOptions{Start: 0, Count: 20}
 	}
@@ -372,6 +374,8 @@ func (e *MatchEndpoint) List(route Route, puuid string, options *MatchlistOption
 func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
 	logger := e.internalClient.Logger("LOL", "match-v5", "ByID")
 
+	logger.Debug("Method executed")
+
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
 	var match *MatchDTO
@@ -389,6 +393,8 @@ func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
 // Get a match timeline by match ID.
 func (e *MatchEndpoint) Timeline(route Route, matchID string) (*MatchTimelineDTO, error) {
 	logger := e.internalClient.Logger("LOL", "match-v5", "Timeline")
+
+	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
 

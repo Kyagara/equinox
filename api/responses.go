@@ -62,7 +62,7 @@ var (
 		},
 	}
 
-	RateLimitedError = ErrorResponse{
+	TooManyRequestsError = ErrorResponse{
 		Status: Status{
 			Message:    "Rate limited",
 			StatusCode: http.StatusTooManyRequests,
@@ -104,7 +104,7 @@ var (
 		http.StatusNotFound:             NotFoundError,
 		http.StatusMethodNotAllowed:     MethodNotAllowedError,
 		http.StatusUnsupportedMediaType: UnsupportedMediaTypeError,
-		http.StatusTooManyRequests:      RateLimitedError,
+		http.StatusTooManyRequests:      TooManyRequestsError,
 		http.StatusInternalServerError:  InternalServerError,
 		http.StatusBadGateway:           BadGatewayError,
 		http.StatusServiceUnavailable:   ServiceUnavailableError,

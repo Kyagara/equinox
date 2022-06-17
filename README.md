@@ -1,14 +1,11 @@
 <div align="center">
 	<h1>Equinox</h1>
-	<p>Equinox is an API client written in golang with the goal of providing an easy to use interface to interact with all of the <a href="https://developer.riotgames.com/apis">Riot Games API</a> endpoints.
+	<p>Interact with all <a href="https://developer.riotgames.com/apis">Riot Games API</a> endpoints in an easy to use interface.
 	</p>
 	<p>
 		<a href="https://github.com/Kyagara/equinox/releases">
 			<img src="https://img.shields.io/github/v/tag/Kyagara/equinox?label=Version"/>
-		</a>
-		<a href="https://github.com/Kyagara/equinox">
-			<img src="https://img.shields.io/github/go-mod/go-version/Kyagara/equinox"/>
-		</a>    
+		</a>  
 		<a href="https://pkg.go.dev/github.com/Kyagara/equinox">
 			<img src="https://img.shields.io/static/v1?label=Godoc&message=reference&color=blue"/>
 		</a>
@@ -44,8 +41,8 @@
 
 ## Todo
 
--   Add integration tests.
 -   Review the cache and rate limiting implementation
+-   Add a way to define a custom TTL per endpoint method
 -   Add Data Dragon support
 -   Add Helper Methods (e.g.: GetChampion or GetSummoner inside a match response)
 
