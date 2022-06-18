@@ -22,7 +22,9 @@
 		<a href="#installation">Installation</a> •
 		<a href="#usage">Usage</a> •
 		<a href="#example">Example</a> •
-		<a href="#disclaimer">Disclaimer</a>
+		<a href="#about">About</a> •
+		<a href="#disclaimer">Disclaimer</a> •
+		<a href="#license">License</a>
 	</p>
 </div>
 
@@ -134,6 +136,20 @@ func main() {
 }
 ```
 
+## About
+
+This is my first time developing and publishing an API client, I started this project to learn more about Golang and ended up loving the developer experience using Go, after noticing there wasn't any 'all-in-one' type of client for all Riot Games API endpoints I decided to challenge myself and do it.
+
+I learned a lot about how API clients work and I am constantly changing the project as I test and learn new things, however, as the project approaches a more stable version, I am avoiding doing any breaking changes.
+
+Please, always check the commit messages before a new release to check if there was any breaking change introduced.
+
 ## Disclaimer
 
 Equinox isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+
+## License
+
+This project is licensed under the MIT license.
+
+The `internal/client.go` file contains code from [golio](https://github.com/KnutZuidema/golio/blob/master/internal/client.go#L151=). [golio](https://github.com/KnutZuidema/golio/blob/master/LICENSE) is also licensed under MIT.
