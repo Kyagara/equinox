@@ -108,7 +108,7 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 	}
 
 	// Sending HTTP request and returning the response.
-	_, body, err := c.sendRequest(req, endpointName, method, route)
+	_, body, err := c.sendRequest(req, false, endpointName, method, route)
 
 	if err != nil {
 		return err
@@ -144,7 +144,7 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody in
 	}
 
 	// Sending HTTP request and returning the response.
-	res, body, err := c.sendRequest(req, endpointName, method, route)
+	res, body, err := c.sendRequest(req, false, endpointName, method, route)
 
 	if err != nil {
 		return err
@@ -187,7 +187,7 @@ func (c *InternalClient) Put(route interface{}, endpoint string, requestBody int
 	}
 
 	// Sending HTTP request and returning the response.
-	_, _, err = c.sendRequest(req, endpointName, method, route)
+	_, _, err = c.sendRequest(req, false, endpointName, method, route)
 
 	if err != nil {
 		return err
@@ -197,7 +197,7 @@ func (c *InternalClient) Put(route interface{}, endpoint string, requestBody int
 }
 
 // Sends a HTTP request.
-func (c *InternalClient) sendRequest(req *http.Request, endpoint string, method string, route interface{}) (*http.Response, []byte, error) {
+func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint string, method string, route interface{}) (*http.Response, []byte, error) {
 	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.Path)
 
 	// If rate limiting is enabled
@@ -242,9 +242,9 @@ func (c *InternalClient) sendRequest(req *http.Request, endpoint string, method 
 	var body []byte
 
 	// If retry is enabled and c.checkResponse() returns an api.RateLimitedError, retry the request
-	if c.retry && errors.Is(err, api.TooManyRequestsError) {
+	if c.retry && errors.Is(err, api.TooManyRequestsError) && !retried {
 		// If this retry is successful, the body var will be the res.Body
-		res, body, err = c.sendRequest(req, endpoint, method, route)
+		res, body, err = c.sendRequest(req, true, endpoint, method, route)
 	}
 
 	// Returns the error from c.checkResponse() if any
