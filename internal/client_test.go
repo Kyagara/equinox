@@ -72,14 +72,14 @@ func TestInternalClientFailingRetry(t *testing.T) {
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 		Get("/").
-		Reply(500)
+		Reply(429).SetHeader("Retry-After", "1")
 
 	var object api.PlainTextResponse
 
-	// This will take 1 seconds.
+	// This will take 2 seconds.
 	gotErr := client.Get("tests", "/", &object, "", "", "")
 
-	require.Equal(t, api.InternalServerError, gotErr, fmt.Sprintf("want err %v, got %v", api.InternalServerError, gotErr))
+	require.Equal(t, api.TooManyRequestsError, gotErr, fmt.Sprintf("want err %v, got %v", api.TooManyRequestsError, gotErr))
 }
 
 func TestInternalClientRetryHeader(t *testing.T) {
