@@ -16,16 +16,16 @@ import (
 )
 
 type InternalClient struct {
-	Cluster    api.Cluster
-	cache      *Cache
-	rates      map[interface{}]*RateLimit
-	defaultTTL int64
 	key        string
-	logLevel   api.LogLevel
-	retry      bool
+	Cluster    api.Cluster
 	http       *http.Client
+	logLevel   api.LogLevel
 	logger     *zap.SugaredLogger
+	defaultTTL int64
+	cache      *Cache
 	rateLimit  bool
+	rates      map[interface{}]*RateLimit
+	retry      bool
 }
 
 // Creates an EquinoxConfig for tests.
@@ -44,16 +44,16 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 // Returns a new InternalClient using configuration object provided.
 func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
 	return &InternalClient{
-		Cluster:    config.Cluster,
-		cache:      NewCache(),
-		rates:      map[interface{}]*RateLimit{},
-		defaultTTL: config.TTL * int64(time.Second),
 		key:        config.Key,
-		logLevel:   config.LogLevel,
-		retry:      config.Retry,
+		Cluster:    config.Cluster,
 		http:       &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
 		logger:     NewLogger(config),
+		logLevel:   config.LogLevel,
+		defaultTTL: config.TTL * int64(time.Second),
+		cache:      NewCache(),
+		rates:      map[interface{}]*RateLimit{},
 		rateLimit:  config.RateLimit,
+		retry:      config.Retry,
 	}
 }
 
