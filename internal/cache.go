@@ -1,78 +1,49 @@
 package internal
 
 import (
-	"sync"
 	"time"
+
+	"github.com/allegro/bigcache/v3"
 )
 
 type Cache struct {
-	items map[string]*CacheItem
-	mutex sync.Mutex
+	// Where the cache will be stored.
+	store *bigcache.BigCache
+	ttl   int
 }
 
-type CacheItem struct {
-	response []byte
-	expire   int64
-}
+func NewCache(ttl int) (*Cache, error) {
+	time := time.Duration(ttl) * time.Second
 
-func NewCache() *Cache {
-	cache := &Cache{
-		items: map[string]*CacheItem{},
-		mutex: sync.Mutex{},
+	bCache, err := bigcache.NewBigCache(bigcache.DefaultConfig(time))
+
+	if err != nil {
+		return nil, err
 	}
 
-	go func() {
-		for now := range time.Tick(time.Second) {
-			cache.mutex.Lock()
+	cache := &Cache{store: bCache, ttl: ttl}
 
-			for url, item := range cache.items {
-				if now.Unix() > item.expire {
-					delete(cache.items, url)
-				}
-			}
-
-			cache.mutex.Unlock()
-		}
-	}()
-
-	return cache
+	return cache, nil
 }
 
-// Adds a http.Response in the cache
-func (c *Cache) Set(url string, res []byte, ttl int64) error {
-	c.mutex.Lock()
+// Adds an item in the cache
+func (c *Cache) Set(url string, res []byte) error {
+	err := c.store.Set(url, res)
 
-	c.items[url] = &CacheItem{
-		response: res,
-		expire:   time.Now().Unix() + ttl,
-	}
-
-	c.mutex.Unlock()
-
-	return nil
+	return err
 }
 
-// Gets a http.Response from the cache
-func (c *Cache) Get(url string) (*CacheItem, error) {
-	c.mutex.Lock()
+// Gets item from the cache
+func (c *Cache) Get(url string) []byte {
+	// BigCache returns an error if the item is not found.
+	res, _ := c.store.Get(url)
 
-	item, ok := c.items[url]
-
-	c.mutex.Unlock()
-
-	if ok {
-		return item, nil
-	}
-
-	return nil, nil
+	return res
 }
 
 // Clears the cache
-func (c *Cache) Clear() {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
+func (c *Cache) Clear() error {
+	err := c.store.Reset()
 
-	for k := range c.items {
-		delete(c.items, k)
-	}
+	return err
 }

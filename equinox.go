@@ -5,12 +5,12 @@ import (
 	"strings"
 
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/clients/lol"
+	"github.com/Kyagara/equinox/clients/lor"
+	"github.com/Kyagara/equinox/clients/riot"
+	"github.com/Kyagara/equinox/clients/tft"
+	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/Kyagara/equinox/lol"
-	"github.com/Kyagara/equinox/lor"
-	"github.com/Kyagara/equinox/riot"
-	"github.com/Kyagara/equinox/tft"
-	"github.com/Kyagara/equinox/val"
 )
 
 type Equinox struct {
@@ -26,9 +26,9 @@ type Equinox struct {
 //
 //		- `Cluster`    : api.AmericasCluster
 //		- `LogLevel`   : api.FatalLevel
-//		- `Timeout`    : 10
-//		- `TTL`        : 120
+//		- `Timeout`    : 10 Seconds
 //		- `Retry`      : true
+//		- `TTL`        : 240 Seconds
 //		- `RateLimit`  : true
 func NewClient(key string) (*Equinox, error) {
 	if !strings.HasPrefix(key, "RGAPI-") {
@@ -36,16 +36,20 @@ func NewClient(key string) (*Equinox, error) {
 	}
 
 	config := &api.EquinoxConfig{
-		Cluster:   api.AmericasCluster,
 		Key:       key,
+		Cluster:   api.AmericasCluster,
 		LogLevel:  api.FatalLevel,
 		Timeout:   10,
-		TTL:       120,
 		Retry:     true,
+		TTL:       240,
 		RateLimit: true,
 	}
 
-	client := internal.NewInternalClient(config)
+	client, err := internal.NewInternalClient(config)
+
+	if err != nil {
+		return nil, err
+	}
 
 	equinox := &Equinox{
 		internalClient: client,
@@ -75,7 +79,11 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 		return nil, fmt.Errorf("cluster not provided")
 	}
 
-	client := internal.NewInternalClient(config)
+	client, err := internal.NewInternalClient(config)
+
+	if err != nil {
+		return nil, err
+	}
 
 	equinox := &Equinox{
 		internalClient: client,
@@ -90,6 +98,8 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 }
 
 // Clears the cache
-func (c *Equinox) ClearCache() {
-	c.internalClient.ClearInternalClientCache()
+func (c *Equinox) ClearCache() error {
+	err := c.internalClient.ClearInternalClientCache()
+
+	return err
 }

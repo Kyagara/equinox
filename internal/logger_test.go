@@ -16,11 +16,13 @@ func TestNewLogger(t *testing.T) {
 }
 
 func TestLogger(t *testing.T) {
-	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	require.NotNil(t, client, "expecting non-nil InternalClient")
+	require.Nil(t, err, "expecting nil error")
 
-	logger := client.Logger("client", "endpoint", "method")
+	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
+
+	logger := internalClient.Logger("client", "endpoint", "method")
 
 	require.NotNil(t, logger, "expecting non-nil Logger")
 
