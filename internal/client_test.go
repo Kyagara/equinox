@@ -7,27 +7,31 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/Kyagara/equinox/lol"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
 
 func TestInternalClient(t *testing.T) {
-	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
-	assert.NotNil(t, client, "expecting non-nil InternalClient")
+	require.Nil(t, err, "expecting nil error")
+
+	assert.NotNil(t, internalClient, "expecting non-nil InternalClient")
 }
 
 func TestInternalClientPut(t *testing.T) {
-	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	require.Nil(t, err, "expecting nil error")
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 		Put("/").
 		Reply(200)
 
-	err := client.Put("tests", "/", nil, "", "")
+	err = internalClient.Put("tests", "/", nil, "", "")
 
 	assert.Nil(t, err, "expecting nil error")
 }
@@ -37,7 +41,9 @@ func TestInternalClientRetries(t *testing.T) {
 
 	config.Retry = true
 
-	client := internal.NewInternalClient(config)
+	internalClient, err := internal.NewInternalClient(config)
+
+	require.Nil(t, err, "expecting nil error")
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 		Get(lol.StatusURL).
@@ -52,7 +58,7 @@ func TestInternalClientRetries(t *testing.T) {
 	res := api.PlatformDataDTO{}
 
 	// This will take 1 second.
-	err := client.Get(lol.BR1, lol.StatusURL, &res, "", "", "")
+	err = internalClient.Get(lol.BR1, lol.StatusURL, &res, "", "", "")
 
 	require.Nil(t, err, "expecting nil error")
 
@@ -64,7 +70,9 @@ func TestInternalClientFailingRetry(t *testing.T) {
 
 	config.Retry = true
 
-	client := internal.NewInternalClient(config)
+	internalClient, err := internal.NewInternalClient(config)
+
+	require.Nil(t, err, "expecting nil error")
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 		Get("/").
@@ -77,7 +85,7 @@ func TestInternalClientFailingRetry(t *testing.T) {
 	var object api.PlainTextResponse
 
 	// This will take 2 seconds.
-	gotErr := client.Get("tests", "/", &object, "", "", "")
+	gotErr := internalClient.Get("tests", "/", &object, "", "", "")
 
 	require.Equal(t, api.TooManyRequestsError, gotErr, fmt.Sprintf("want err %v, got %v", api.TooManyRequestsError, gotErr))
 }
@@ -87,7 +95,9 @@ func TestInternalClientRetryHeader(t *testing.T) {
 
 	config.Retry = true
 
-	client := internal.NewInternalClient(config)
+	internalClient, err := internal.NewInternalClient(config)
+
+	require.Nil(t, err, "expecting nil error")
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 		Get("/").
@@ -95,7 +105,7 @@ func TestInternalClientRetryHeader(t *testing.T) {
 
 	var object api.PlainTextResponse
 
-	gotErr := client.Get("tests", "/", &object, "", "", "")
+	gotErr := internalClient.Get("tests", "/", &object, "", "", "")
 
 	wantErr := fmt.Errorf("rate limited but no Retry-After header was found, stopping")
 
@@ -104,7 +114,9 @@ func TestInternalClientRetryHeader(t *testing.T) {
 
 // Testing if InternalClient.Post() can properly decode a plain text response.
 func TestInternalClientPlainTextResponse(t *testing.T) {
-	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	require.Nil(t, err, "expecting nil error")
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 		Post("/").
@@ -112,7 +124,7 @@ func TestInternalClientPlainTextResponse(t *testing.T) {
 
 	var object api.PlainTextResponse
 
-	err := client.Post("tests", "/", nil, &object, "", "", "")
+	err = internalClient.Post("tests", "/", nil, &object, "", "", "")
 
 	require.Nil(t, err, "expecting nil error")
 
@@ -120,7 +132,9 @@ func TestInternalClientPlainTextResponse(t *testing.T) {
 }
 
 func TestInternalClientPost(t *testing.T) {
-	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	require.Nil(t, err, "expecting nil error")
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 		Post("/").
@@ -128,16 +142,18 @@ func TestInternalClientPost(t *testing.T) {
 
 	var object *api.PlatformDataDTO
 
-	err := client.Post("tests", "/", nil, &object, "", "", "")
+	err = internalClient.Post("tests", "/", nil, &object, "", "", "")
 
 	require.Nil(t, err, "expecting nil error")
 
 	assert.NotNil(t, object, "expecting non-nil response")
 }
 
-// Testing if the InternalClient can properly handle a status code not specified in the Riot API.
+// Testing if the InternalClient can properly handle a status code not specified in the Riot api.
 func TestInternalClientHandleErrorResponse(t *testing.T) {
-	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	require.Nil(t, err, "expecting nil error")
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 		Get("/").
@@ -145,7 +161,7 @@ func TestInternalClientHandleErrorResponse(t *testing.T) {
 
 	var object api.PlainTextResponse
 
-	gotErr := client.Get("tests", "/", &object, "", "", "")
+	gotErr := internalClient.Get("tests", "/", &object, "", "", "")
 
 	wantErr := api.ErrorResponse{
 		Status: api.Status{
@@ -158,7 +174,9 @@ func TestInternalClientHandleErrorResponse(t *testing.T) {
 }
 
 func TestInternalClientNewRequest(t *testing.T) {
-	client := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	require.Nil(t, err, "expecting nil error")
 
 	tests := []struct {
 		name    string
@@ -180,7 +198,7 @@ func TestInternalClientNewRequest(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gotErr := client.Get("----", test.url, nil, "", "", "")
+			gotErr := internalClient.Get("----", test.url, nil, "", "", "")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 		})
@@ -268,7 +286,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 				Get("/").
 				Reply(test.code)
 
-			client := internal.NewInternalClient(&api.EquinoxConfig{
+			internalClient, err := internal.NewInternalClient(&api.EquinoxConfig{
 				Key:       "RGAPI-KEY",
 				Cluster:   api.AmericasCluster,
 				LogLevel:  api.DebugLevel,
@@ -278,9 +296,11 @@ func TestInternalClientErrorResponses(t *testing.T) {
 				RateLimit: false,
 			})
 
+			require.Nil(t, err, "expecting nil error")
+
 			var gotData api.PlainTextResponse
 
-			gotErr := client.Get(test.region, "/", &gotData, "", "", "")
+			gotErr := internalClient.Get(test.region, "/", &gotData, "", "", "")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 		})
@@ -292,7 +312,9 @@ func TestInternalClientRateLimit(t *testing.T) {
 
 	config.RateLimit = true
 
-	client := internal.NewInternalClient(config)
+	internalClient, err := internal.NewInternalClient(config)
+
+	require.Nil(t, err, "expecting nil error")
 
 	headers := map[string]string{}
 
@@ -306,11 +328,25 @@ func TestInternalClientRateLimit(t *testing.T) {
 		Put("/").
 		Reply(200).SetHeaders(headers)
 
-	err := client.Put("tests", "/", nil, "", "")
+	err = internalClient.Put("tests", "/", nil, "", "")
 
-	assert.Nil(t, err, "expecting nil error")
+	require.Nil(t, err, "expecting nil error")
 
-	err = client.Put("tests", "/", nil, "", "")
+	err = internalClient.Put("tests", "/", nil, "", "")
 
-	require.Equal(t, api.TooManyRequestsError, err, fmt.Sprintf("want err %v, got %v", api.TooManyRequestsError, err))
+	assert.Equal(t, api.TooManyRequestsError, err, fmt.Sprintf("want err %v, got %v", api.TooManyRequestsError, err))
+}
+
+func TestCacheIsDisabled(t *testing.T) {
+	config := internal.NewTestEquinoxConfig()
+
+	internalClient, err := internal.NewInternalClient(config)
+
+	require.Nil(t, err, "expecting nil error")
+
+	err = internalClient.ClearInternalClientCache()
+
+	disabled := fmt.Errorf("cache is disabled")
+
+	assert.Equal(t, disabled, err, fmt.Sprintf("want err %v, got %v", disabled, err))
 }

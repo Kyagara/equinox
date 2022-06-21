@@ -16,16 +16,16 @@ import (
 )
 
 type InternalClient struct {
-	key        string
-	Cluster    api.Cluster
-	http       *http.Client
-	logLevel   api.LogLevel
-	logger     *zap.SugaredLogger
-	defaultTTL int64
-	cache      *Cache
-	rateLimit  bool
-	rates      map[interface{}]*RateLimit
-	retry      bool
+	key          string
+	Cluster      api.Cluster
+	http         *http.Client
+	logLevel     api.LogLevel
+	logger       *zap.SugaredLogger
+	cacheEnabled bool
+	cache        *Cache
+	rateLimit    bool
+	rates        map[interface{}]*RateLimit
+	retry        bool
 }
 
 // Creates an EquinoxConfig for tests.
@@ -35,32 +35,52 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 		Cluster:   api.AmericasCluster,
 		LogLevel:  api.DebugLevel,
 		Timeout:   10,
-		TTL:       0,
 		Retry:     false,
+		TTL:       0,
 		RateLimit: false,
 	}
 }
 
 // Returns a new InternalClient using configuration object provided.
-func NewInternalClient(config *api.EquinoxConfig) *InternalClient {
-	return &InternalClient{
-		key:        config.Key,
-		Cluster:    config.Cluster,
-		http:       &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
-		logger:     NewLogger(config),
-		logLevel:   config.LogLevel,
-		defaultTTL: config.TTL * int64(time.Second),
-		cache:      NewCache(),
-		rates:      map[interface{}]*RateLimit{},
-		rateLimit:  config.RateLimit,
-		retry:      config.Retry,
+func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
+	var cacheEnabled bool
+
+	client := &InternalClient{
+		key:          config.Key,
+		Cluster:      config.Cluster,
+		http:         &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
+		logger:       NewLogger(config),
+		logLevel:     config.LogLevel,
+		cacheEnabled: cacheEnabled,
+		cache:        &Cache{},
+		rates:        map[interface{}]*RateLimit{},
+		rateLimit:    config.RateLimit,
+		retry:        config.Retry,
 	}
+
+	if config.TTL > 0 {
+		client.cacheEnabled = true
+
+		cache, err := NewCache(config.TTL)
+
+		if err != nil {
+			return nil, err
+		}
+
+		client.cache = cache
+	}
+
+	return client, nil
 }
 
-func (c *InternalClient) ClearInternalClientCache() {
-	if c.defaultTTL > 0 {
-		c.cache.Clear()
+func (c *InternalClient) ClearInternalClientCache() error {
+	if c.cacheEnabled {
+		err := c.cache.Clear()
+
+		return err
 	}
+
+	return fmt.Errorf("cache is disabled")
 }
 
 // Performs a GET request, authorizationHeader can be blank
@@ -79,27 +99,19 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 	}
 
 	// If caching is enabled
-	if c.defaultTTL > 0 {
-		cacheItem, err := c.cache.Get(req.URL.String())
-
-		if err != nil {
-			return err
-		}
+	if c.cacheEnabled {
+		cacheItem := c.cache.Get(req.URL.String())
 
 		if cacheItem != nil {
 			logger := c.logger.With("httpMethod", http.MethodGet, "path", req.URL.Path)
 
 			logger.Info("Cache hit")
 
+			// Decoding the cached body into the endpoint method response object.
+			err = json.Unmarshal(cacheItem, &object)
+
 			if err != nil {
 				logger.Error(err)
-				return err
-			}
-
-			// Decoding the cached body into the endpoint method response object.
-			err = json.Unmarshal(cacheItem.response, &object)
-
-			if err != nil {
 				return err
 			}
 
@@ -114,8 +126,17 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 		return err
 	}
 
-	if c.defaultTTL > 0 {
-		c.cache.Set(req.URL.String(), body, c.defaultTTL)
+	if c.cacheEnabled {
+		err := c.cache.Set(req.URL.String(), body)
+
+		logger := c.logger.With("httpMethod", http.MethodGet, "path", req.URL.Path)
+
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+
+		logger.Debug("Cache set")
 	}
 
 	// Decoding the body into the endpoint method response object.

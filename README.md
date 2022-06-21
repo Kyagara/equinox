@@ -39,7 +39,7 @@
 -   Cache
 -   Rate Limiting
 
-> Caching and Rate limiting is in an early stage, they are in-memory only for now.
+> Caching and Rate limiting is in an early stage, they are in-memory only for now. Cache uses [bigcache](https://github.com/allegro/bigcache).
 
 ## Todo
 
@@ -78,7 +78,7 @@ config := &api.EquinoxConfig{
 	Cluster:  api.AmericasCluster, // Riot API cluster, use the nearest cluster. Options: AmericasCluster, EuropeCluster, AsiaCluster.
 	LogLevel: api.FatalLevel, // The logging level, the FatalLevel provided effectively disables logging.
 	Timeout:  10, // http.Client timeout in seconds.
-	TTL:  120, // TTL for cache in seconds, 0 disables caching.
+	TTL:  240, // TTL for cache in seconds, 0 disables caching.
 	Retry:    true, // Retry if the API returns a 429 response.
 	RateLimit: true // If rate limit is enabled or not
 }
@@ -108,7 +108,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox"
-	"github.com/Kyagara/equinox/lol"
+	"github.com/Kyagara/equinox/clients/lol"
 )
 
 func main() {
@@ -152,4 +152,4 @@ Equinox isn't endorsed by Riot Games and doesn't reflect the views or opinions o
 
 This project is licensed under the MIT license.
 
-The `internal/client.go` file contains code from [golio](https://github.com/KnutZuidema/golio/blob/master/internal/client.go#L151=). [golio](https://github.com/KnutZuidema/golio/blob/master/LICENSE) is also licensed under MIT.
+The `internal/client.go` file contains code from [golio](https://github.com/KnutZuidema/golio/blob/master/internal/client.go#L151=). golio is also licensed under [MIT](https://github.com/KnutZuidema/golio/blob/master/LICENSE).

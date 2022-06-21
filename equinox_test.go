@@ -7,8 +7,8 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/clients/riot"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/Kyagara/equinox/riot"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
@@ -104,14 +104,13 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 		})
 	}
 }
-
 func TestEquinoxClientClearCache(t *testing.T) {
 	config := &api.EquinoxConfig{
 		Key:       "RGAPI-KEY",
 		Cluster:   api.AmericasCluster,
 		LogLevel:  api.DebugLevel,
 		Timeout:   10,
-		TTL:       120,
+		TTL:       240,
 		Retry:     false,
 		RateLimit: false,
 	}
@@ -146,7 +145,7 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	gotData, gotErr = client.Riot.Account.ByPUUID("puuid")
 	duration := int(time.Since(start).Seconds())
 
-	require.Equal(t, account, gotData)
+	require.Equal(t, account, gotData, fmt.Sprintf("want data %v, got %v", account, gotData))
 
 	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
 

@@ -6,7 +6,7 @@ package integration
 import (
 	"testing"
 
-	"github.com/Kyagara/equinox/lor"
+	"github.com/Kyagara/equinox/clients/lor"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

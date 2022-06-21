@@ -11,7 +11,7 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/lol"
+	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,7 +30,7 @@ func init() {
 			Cluster:   api.AmericasCluster,
 			LogLevel:  api.DebugLevel,
 			Timeout:   10,
-			TTL:       120,
+			TTL:       240,
 			Retry:     true,
 			RateLimit: true,
 		}
