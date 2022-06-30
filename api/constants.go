@@ -12,6 +12,7 @@ const (
 	AmericasCluster Cluster = "americas"
 	EuropeCluster   Cluster = "europe"
 	AsiaCluster     Cluster = "asia"
+	EsportsCluster  Cluster = "esports"
 )
 
 type PublishLocation string

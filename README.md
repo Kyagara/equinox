@@ -75,7 +75,7 @@ A client without a configuration struct comes with the default options:
 ```go
 config := &api.EquinoxConfig{
 	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
-	Cluster:  api.AmericasCluster, // Riot API cluster, use the nearest cluster. Options: AmericasCluster, EuropeCluster, AsiaCluster.
+	Cluster:  api.AmericasCluster, // Riot API cluster, use the cluster closest to you.
 	LogLevel: api.FatalLevel, // The logging level, the FatalLevel provided effectively disables logging.
 	Timeout:  10, // http.Client timeout in seconds.
 	TTL:  240, // TTL for cache in seconds, 0 disables caching.
@@ -91,6 +91,9 @@ Now you can access different games endpoints by their abbreviations, provided yo
 ```go
 // This method uses a lol.Region. Can be accessed with a Development key.
 summoner, err := client.LOL.Summoner.ByName(lol.BR1, "Loveable Senpai")
+
+// This method uses a lol.Route. Can be accessed with a Development key.
+summoner, err := client.LOL.Match.ByID(lol.Americas, "BR1_2530718601")
 
 // The client.Cluster will be used as the region. Can be accessed with a Development key.
 account, err := client.Riot.Account.ByPUUID("puuid")

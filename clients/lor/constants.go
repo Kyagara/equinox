@@ -6,6 +6,7 @@ type Region string
 const (
 	Americas Region = "americas"
 	Europe   Region = "europe"
+	APAC     Region = "apac"
 	SEA      Region = "sea"
 )
 
