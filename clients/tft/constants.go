@@ -6,7 +6,7 @@ type Route string
 const (
 	Americas Route = "americas"
 	Europe   Route = "europe"
-	SEA      Route = "sea"
+	Asia     Route = "asia"
 )
 
 type QueueType string

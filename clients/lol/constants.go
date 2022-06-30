@@ -21,6 +21,7 @@ const (
 	Americas Route = "americas"
 	Europe   Route = "europe"
 	Asia     Route = "asia"
+	SEA      Route = "sea"
 )
 
 type Region string
