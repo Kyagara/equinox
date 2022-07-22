@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/stretchr/testify/assert"
@@ -290,8 +291,8 @@ func TestInternalClientErrorResponses(t *testing.T) {
 				Key:       "RGAPI-KEY",
 				Cluster:   api.AmericasCluster,
 				LogLevel:  api.DebugLevel,
-				TTL:       0,
-				Timeout:   10,
+				Cache:     &cache.Cache{TTL: 0},
+				Timeout:   15,
 				Retry:     false,
 				RateLimit: false,
 			})

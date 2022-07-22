@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/Kyagara/equinox/cache"
 	"go.uber.org/zap/zapcore"
 )
 
@@ -16,8 +17,8 @@ type EquinoxConfig struct {
 	Timeout int
 	// Enable or disable retrying a request if it returns a 429 status code.
 	Retry bool
-	// TTL for the cache in seconds, 0 disables caching.
-	TTL int
+	// The cache used to store all GET requests done by the client.
+	Cache *cache.Cache
 	// Enable or disable rate limiting.
 	RateLimit bool
 }
@@ -25,8 +26,8 @@ type EquinoxConfig struct {
 func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 	encoder.AddBool("retry-enabled", c.Retry)
 	encoder.AddInt("client-timeout", c.Timeout)
-	encoder.AddInt("cache-ttl", c.TTL)
 	encoder.AddBool("rate-limit", c.RateLimit)
+	encoder.AddDuration("cache-ttl", c.Cache.TTL)
 
 	return nil
 }

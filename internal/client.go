@@ -12,20 +12,21 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/cache"
 	"go.uber.org/zap"
 )
 
 type InternalClient struct {
-	key          string
-	Cluster      api.Cluster
-	http         *http.Client
-	logLevel     api.LogLevel
-	logger       *zap.SugaredLogger
-	cacheEnabled bool
-	cache        *Cache
-	rateLimit    bool
-	rates        map[interface{}]*RateLimit
-	retry        bool
+	key                string
+	Cluster            api.Cluster
+	http               *http.Client
+	logger             *zap.SugaredLogger
+	logLevel           api.LogLevel
+	cache              *cache.Cache
+	isCacheEnabled     bool
+	rates              map[interface{}]*RateLimit
+	isRateLimitEnabled bool
+	isRetryEnabled     bool
 }
 
 // Creates an EquinoxConfig for tests.
@@ -34,9 +35,9 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 		Key:       "RGAPI-KEY",
 		Cluster:   api.AmericasCluster,
 		LogLevel:  api.DebugLevel,
-		Timeout:   10,
+		Timeout:   15,
 		Retry:     false,
-		TTL:       0,
+		Cache:     &cache.Cache{TTL: 0},
 		RateLimit: false,
 	}
 }
@@ -45,36 +46,33 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	var cacheEnabled bool
 
-	client := &InternalClient{
-		key:          config.Key,
-		Cluster:      config.Cluster,
-		http:         &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
-		logger:       NewLogger(config),
-		logLevel:     config.LogLevel,
-		cacheEnabled: cacheEnabled,
-		cache:        &Cache{},
-		rates:        map[interface{}]*RateLimit{},
-		rateLimit:    config.RateLimit,
-		retry:        config.Retry,
+	if config.Cache == nil {
+		config.Cache = &cache.Cache{TTL: 0}
 	}
 
-	if config.TTL > 0 {
-		client.cacheEnabled = true
+	client := &InternalClient{
+		key:                config.Key,
+		Cluster:            config.Cluster,
+		http:               &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
+		logger:             NewLogger(config),
+		logLevel:           config.LogLevel,
+		isCacheEnabled:     cacheEnabled,
+		cache:              config.Cache,
+		rates:              map[interface{}]*RateLimit{},
+		isRateLimitEnabled: config.RateLimit,
+		isRetryEnabled:     config.Retry,
+	}
 
-		cache, err := NewCache(config.TTL)
-
-		if err != nil {
-			return nil, err
-		}
-
-		client.cache = cache
+	if config.Cache.TTL > 0 {
+		client.isCacheEnabled = true
+		client.cache = config.Cache
 	}
 
 	return client, nil
 }
 
 func (c *InternalClient) ClearInternalClientCache() error {
-	if c.cacheEnabled {
+	if c.isCacheEnabled {
 		err := c.cache.Clear()
 
 		return err
@@ -94,21 +92,25 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 		return err
 	}
 
+	logger := c.logger.With("httpMethod", http.MethodGet, "path", req.URL.Path)
+
 	if authorizationHeader != "" {
 		req.Header.Set("Authorization", authorizationHeader)
 	}
 
-	// If caching is enabled
-	if c.cacheEnabled {
-		cacheItem := c.cache.Get(req.URL.String())
+	if c.isCacheEnabled {
+		item, err := c.cache.Get(req.URL.String())
 
-		if cacheItem != nil {
-			logger := c.logger.With("httpMethod", http.MethodGet, "path", req.URL.Path)
+		// If there was an error with retrieving the cached response, only log the error
+		if err != nil {
+			logger.Error(err)
+		}
 
+		if item != nil {
 			logger.Info("Cache hit")
 
 			// Decoding the cached body into the endpoint method response object.
-			err = json.Unmarshal(cacheItem, &object)
+			err = json.Unmarshal(item, &object)
 
 			if err != nil {
 				logger.Error(err)
@@ -126,17 +128,14 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 		return err
 	}
 
-	if c.cacheEnabled {
+	if c.isCacheEnabled {
 		err := c.cache.Set(req.URL.String(), body)
-
-		logger := c.logger.With("httpMethod", http.MethodGet, "path", req.URL.Path)
 
 		if err != nil {
 			logger.Error(err)
-			return err
+		} else {
+			logger.Debug("Cache set")
 		}
-
-		logger.Debug("Cache set")
 	}
 
 	// Decoding the body into the endpoint method response object.
@@ -219,10 +218,10 @@ func (c *InternalClient) Put(route interface{}, endpoint string, requestBody int
 
 // Sends a HTTP request.
 func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint string, method string, route interface{}) (*http.Response, []byte, error) {
-	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.Path)
+	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.String())
 
 	// If rate limiting is enabled
-	if c.rateLimit {
+	if c.isRateLimitEnabled {
 		isRateLimited := c.checkRates(route, endpoint, method)
 
 		if isRateLimited {
@@ -230,7 +229,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint s
 		}
 	}
 
-	logger.Debug("Making request")
+	logger.Info("Sending request")
 
 	// Sending request.
 	res, err := c.http.Do(req)
@@ -243,7 +242,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint s
 	defer res.Body.Close()
 
 	// Update rate limits
-	if c.rateLimit && res.Header.Get("X-App-Rate-Limit") != "" {
+	if c.isRateLimitEnabled && res.Header.Get("X-App-Rate-Limit") != "" {
 		// Updating app rate limit
 		rate := ParseHeaders(res.Header, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
 
@@ -263,7 +262,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint s
 	var body []byte
 
 	// If retry is enabled and c.checkResponse() returns an api.RateLimitedError, retry the request
-	if c.retry && errors.Is(err, api.TooManyRequestsError) && !retried {
+	if c.isRetryEnabled && errors.Is(err, api.TooManyRequestsError) && !retried {
 		// If this retry is successful, the body var will be the res.Body
 		res, body, err = c.sendRequest(req, true, endpoint, method, route)
 	}
@@ -328,7 +327,7 @@ func (c *InternalClient) checkResponse(res *http.Response) error {
 	logger := c.logger.With("httpMethod", res.Request.Method, "path", res.Request.URL.Path)
 
 	// If the API returns a 429 code.
-	if res.StatusCode == http.StatusTooManyRequests && c.retry {
+	if res.StatusCode == http.StatusTooManyRequests && c.isRetryEnabled {
 		retryAfter := res.Header.Get("Retry-After")
 
 		// If the header isn't found, don't retry and return error.
