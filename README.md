@@ -36,10 +36,8 @@
     -   Teamfight Tactics
     -   Valorant
     -   Legends of Runeterra
--   Cache
+-   Caching
 -   Rate Limiting
-
-> Caching and Rate limiting is in an early stage, they are in-memory only for now. Cache uses [bigcache](https://github.com/allegro/bigcache).
 
 ## Todo
 
@@ -75,16 +73,18 @@ A client without a configuration struct comes with the default options:
 ```go
 config := &api.EquinoxConfig{
 	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
-	Cluster:  api.AmericasCluster, // Riot API cluster, use the cluster closest to you.
+	Cluster: api.AmericasCluster, // Riot API cluster, use the cluster closest to you.
 	LogLevel: api.FatalLevel, // The logging level, the FatalLevel provided effectively disables logging.
-	Timeout:  10, // http.Client timeout in seconds.
-	TTL:  240, // TTL for cache in seconds, 0 disables caching.
-	Retry:    true, // Retry if the API returns a 429 response.
+	Timeout: 15, // http.Client timeout in seconds.
+	Cache: cache.NewBigCache(4 * time.Minute), // The caching method, this client uses BigCache with 4 minutes of eviction time
+	Retry: true, // Retry if the API returns a 429 response.
 	RateLimit: true // If rate limit is enabled or not
 }
 ```
 
-A configuration struct can be used to create a custom Client using `equinox.NewClientWithConfig()`.
+> A custom Client can be created using `equinox.NewClientWithConfig()`, requires an `&api.EquinoxConfig{}` struct.
+
+> A different storage can be used for the config.Cache using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil disables caching.
 
 Now you can access different games endpoints by their abbreviations, provided you have access to them. For example:
 

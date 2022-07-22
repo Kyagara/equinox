@@ -7,8 +7,10 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/riot"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/allegro/bigcache/v3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
@@ -72,7 +74,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 			wantErr: fmt.Errorf("API Key not provided"),
 			config: &api.EquinoxConfig{
 				LogLevel: api.DebugLevel,
-				Timeout:  10,
+				Timeout:  15,
 				Retry:    true,
 			},
 		},
@@ -82,7 +84,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 			config: &api.EquinoxConfig{
 				Key:      "RGAPI-KEY",
 				LogLevel: api.DebugLevel,
-				Timeout:  10,
+				Timeout:  15,
 				Retry:    true,
 			},
 		},
@@ -105,12 +107,16 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 	}
 }
 func TestEquinoxClientClearCache(t *testing.T) {
+	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4*time.Minute), 4*time.Minute)
+
+	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
+
 	config := &api.EquinoxConfig{
 		Key:       "RGAPI-KEY",
 		Cluster:   api.AmericasCluster,
 		LogLevel:  api.DebugLevel,
-		Timeout:   10,
-		TTL:       240,
+		Cache:     cache,
+		Timeout:   15,
 		Retry:     false,
 		RateLimit: false,
 	}

@@ -3,14 +3,17 @@ package equinox
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/lor"
 	"github.com/Kyagara/equinox/clients/riot"
 	"github.com/Kyagara/equinox/clients/tft"
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/allegro/bigcache/v3"
 )
 
 type Equinox struct {
@@ -26,22 +29,28 @@ type Equinox struct {
 //
 //		- `Cluster`    : api.AmericasCluster
 //		- `LogLevel`   : api.FatalLevel
-//		- `Timeout`    : 10 Seconds
+//		- `Timeout`    : 15 Seconds
 //		- `Retry`      : true
-//		- `TTL`        : 240 Seconds
+//		- `Cache`      : BigCache with eviction time of 4 minutes
 //		- `RateLimit`  : true
 func NewClient(key string) (*Equinox, error) {
 	if !strings.HasPrefix(key, "RGAPI-") {
 		return nil, fmt.Errorf("API Key not provided")
 	}
 
+	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4*time.Minute), 4*time.Minute)
+
+	if err != nil {
+		return nil, err
+	}
+
 	config := &api.EquinoxConfig{
 		Key:       key,
 		Cluster:   api.AmericasCluster,
 		LogLevel:  api.FatalLevel,
-		Timeout:   10,
+		Timeout:   15,
 		Retry:     true,
-		TTL:       240,
+		Cache:     cache,
 		RateLimit: true,
 	}
 
