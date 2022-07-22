@@ -37,16 +37,16 @@ func TestNewEquinoxClient(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gotData, gotErr := equinox.NewClient(test.key)
+			client, err := equinox.NewClient(test.key)
 
 			if test.name != "success" {
-				require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+				require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
 
 				if test.wantErr == nil {
-					assert.Equal(t, test.want, gotData)
+					require.Equal(t, test.want, client)
 				}
 			} else {
-				require.NotEmpty(t, gotData, "expecting not empty client")
+				require.NotNil(t, client, "expecting non-nil Client")
 			}
 		})
 	}
@@ -92,44 +92,41 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gotData, gotErr := equinox.NewClientWithConfig(test.config)
+			client, err := equinox.NewClientWithConfig(test.config)
 
 			if test.name != "success" {
-				require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+				require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
 
 				if test.wantErr == nil {
-					assert.Equal(t, test.want, gotData)
+					require.Equal(t, test.want, client)
 				}
 			} else {
-				require.NotEmpty(t, gotData, "expecting not empty client")
+				require.NotNil(t, client, "expecting non-nil Client")
 			}
 		})
 	}
 }
+
 func TestEquinoxClientClearCache(t *testing.T) {
 	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4*time.Minute), 4*time.Minute)
 
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
-	config := &api.EquinoxConfig{
-		Key:       "RGAPI-KEY",
-		Cluster:   api.AmericasCluster,
-		LogLevel:  api.DebugLevel,
-		Cache:     cache,
-		Timeout:   15,
-		Retry:     false,
-		RateLimit: false,
-	}
+	config := internal.NewTestEquinoxConfig()
 
-	client, _ := equinox.NewClientWithConfig(config)
+	config.Cache = cache
 
-	delay := 2 * time.Second
+	client, err := equinox.NewClientWithConfig(config)
+
+	require.Nil(t, err, "expecting nil error")
 
 	account := &riot.AccountDTO{
 		PUUID:    "puuid",
 		GameName: "gamename",
 		TagLine:  "tagline",
 	}
+
+	delay := 2 * time.Second
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 		Get(fmt.Sprintf(riot.AccountByPUUIDURL, "puuid")).
@@ -156,9 +153,7 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
 
 	if duration >= 2 {
-		gotErr = fmt.Errorf("request took more than 1s, took %ds, request not cached", duration)
-
-		require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
+		t.Error(fmt.Errorf("request took more than 1s, took %ds, request not cached", duration))
 	}
 
 	client.ClearCache()
@@ -167,15 +162,11 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	gotData, gotErr = client.Riot.Account.ByPUUID("puuid")
 	duration = int(time.Since(start).Seconds())
 
-	require.Equal(t, api.ForbiddenError, gotErr, fmt.Sprintf("want err %v, got %v", api.ForbiddenError, gotErr))
-
 	if duration <= 1 {
-		gotErr = fmt.Errorf("request took less than 1s, took %ds, cache not cleared", duration)
-
-		require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
+		t.Error(fmt.Errorf("request took less than 1s, took %ds, cache not cleared", duration))
 	}
 
-	if gotErr == nil {
-		assert.Equal(t, account, gotData)
-	}
+	require.Nil(t, gotData)
+
+	assert.Equal(t, api.ForbiddenError, gotErr, fmt.Sprintf("want err %v, got %v", api.ForbiddenError, gotErr))
 }

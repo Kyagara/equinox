@@ -6,7 +6,7 @@ require (
 	github.com/alicebob/miniredis/v2 v2.22.0
 	github.com/allegro/bigcache/v3 v3.0.2
 	github.com/go-redis/redis/v9 v9.0.0-beta.1
-	github.com/stretchr/testify v1.7.4
+	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.21.0
 	gopkg.in/h2non/gock.v1 v1.1.2
 )

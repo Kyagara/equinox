@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/stretchr/testify/assert"
@@ -287,15 +286,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 				Get("/").
 				Reply(test.code)
 
-			internalClient, err := internal.NewInternalClient(&api.EquinoxConfig{
-				Key:       "RGAPI-KEY",
-				Cluster:   api.AmericasCluster,
-				LogLevel:  api.DebugLevel,
-				Cache:     &cache.Cache{TTL: 0},
-				Timeout:   15,
-				Retry:     false,
-				RateLimit: false,
-			})
+			internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 			require.Nil(t, err, "expecting nil error")
 
@@ -339,9 +330,7 @@ func TestInternalClientRateLimit(t *testing.T) {
 }
 
 func TestCacheIsDisabled(t *testing.T) {
-	config := internal.NewTestEquinoxConfig()
-
-	internalClient, err := internal.NewInternalClient(config)
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	require.Nil(t, err, "expecting nil error")
 
