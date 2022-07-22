@@ -32,30 +32,24 @@ func TestBigCacheMethods(t *testing.T) {
 	bytes := []byte("data")
 
 	err = cache.Set("test", bytes)
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	data, err := cache.Get("test")
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	require.Equal(t, bytes, data, fmt.Sprintf("want data %v, got %v", bytes, data))
 
 	err = cache.Delete("test")
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	err = cache.Set("test", bytes)
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	err = cache.Clear()
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	data, err = cache.Get("test")
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	assert.Empty(t, data)
 }
@@ -100,30 +94,24 @@ func TestRedisMethods(t *testing.T) {
 	bytes := []byte("data")
 
 	err = cache.Set("test", bytes)
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	data, err := cache.Get("test")
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	require.Equal(t, bytes, data, fmt.Sprintf("want data %v, got %v", bytes, data))
 
 	err = cache.Delete("test")
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	err = cache.Set("test", bytes)
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	err = cache.Clear()
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	data, err = cache.Get("test")
-
-	require.Nil(t, err, "expecting nil err")
+	require.Nil(t, err, "expecting nil error")
 
 	assert.Empty(t, data)
 }
