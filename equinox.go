@@ -7,6 +7,7 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
+	"github.com/Kyagara/equinox/clients/data_dragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/lor"
 	"github.com/Kyagara/equinox/clients/riot"
@@ -18,6 +19,7 @@ import (
 
 type Equinox struct {
 	internalClient *internal.InternalClient
+	DataDragon     *data_dragon.DataDragonClient
 	Riot           *riot.RiotClient
 	LOL            *lol.LOLClient
 	TFT            *tft.TFTClient
@@ -62,6 +64,7 @@ func NewClient(key string) (*Equinox, error) {
 
 	equinox := &Equinox{
 		internalClient: client,
+		DataDragon:     data_dragon.NewDataDragonClient(client),
 		Riot:           riot.NewRiotClient(client),
 		LOL:            lol.NewLOLClient(client),
 		TFT:            tft.NewTFTClient(client),
@@ -96,6 +99,7 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 
 	equinox := &Equinox{
 		internalClient: client,
+		DataDragon:     data_dragon.NewDataDragonClient(client),
 		Riot:           riot.NewRiotClient(client),
 		LOL:            lol.NewLOLClient(client),
 		TFT:            tft.NewTFTClient(client),

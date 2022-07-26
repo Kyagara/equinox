@@ -81,25 +81,35 @@ func (c *InternalClient) ClearInternalClientCache() error {
 	return fmt.Errorf("cache is disabled")
 }
 
-// Performs a GET request, authorizationHeader can be blank
+// Performs a GET request to the Riot API
 func (c *InternalClient) Get(route interface{}, endpoint string, object interface{}, endpointName string, method string, authorizationHeader string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
+	return c.get(fmt.Sprintf("%s%s", baseUrl, endpoint), route, object, endpointName, method, authorizationHeader)
+}
+
+// Performs a GET request to the Data Dragon API
+func (c *InternalClient) DataDragonGet(endpoint string, object interface{}, endpointName string, method string) error {
+	return c.get(fmt.Sprintf(api.DataDragonURLFormat, endpoint), "", object, endpointName, method, "")
+}
+
+func (c *InternalClient) get(url string, route interface{}, object interface{}, endpointName string, method string, authorizationHeader string) error {
+	logger := c.logger.With("httpMethod", http.MethodGet, "path", url)
+
 	// Creating a new HTTP Request.
-	req, err := c.newRequest(http.MethodGet, fmt.Sprintf("%s%s", baseUrl, endpoint), nil)
+	req, err := c.newRequest(http.MethodGet, url, nil)
 
 	if err != nil {
+		logger.Error(err)
 		return err
 	}
-
-	logger := c.logger.With("httpMethod", http.MethodGet, "path", req.URL.Path)
 
 	if authorizationHeader != "" {
 		req.Header.Set("Authorization", authorizationHeader)
 	}
 
 	if c.isCacheEnabled {
-		item, err := c.cache.Get(req.URL.String())
+		item, err := c.cache.Get(url)
 
 		// If there was an error with retrieving the cached response, only log the error
 		if err != nil {
@@ -129,7 +139,7 @@ func (c *InternalClient) Get(route interface{}, endpoint string, object interfac
 	}
 
 	if c.isCacheEnabled {
-		err := c.cache.Set(req.URL.String(), body)
+		err := c.cache.Set(url, body)
 
 		if err != nil {
 			logger.Error(err)
@@ -371,6 +381,10 @@ func (c *InternalClient) checkResponse(res *http.Response) error {
 
 // Checks the app and method rate limit, returns true if rate limited
 func (c *InternalClient) checkRates(route interface{}, endpoint string, method string) bool {
+	if route == "" {
+		return false
+	}
+
 	if c.rates[route] == nil {
 		c.rates[route] = NewRateLimit()
 	}

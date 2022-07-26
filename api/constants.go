@@ -1,8 +1,9 @@
 package api
 
-// Base API URL format.
+// Base API URLs formats.
 const (
-	BaseURLFormat = "https://%s.api.riotgames.com"
+	BaseURLFormat       = "https://%s.api.riotgames.com"
+	DataDragonURLFormat = "https://ddragon.leagueoflegends.com%s"
 )
 
 type Cluster string
