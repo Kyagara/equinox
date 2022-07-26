@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// A config object for the EquinoxClient.
+// A config struct for the Equinox client.
 type EquinoxConfig struct {
 	// Riot API Key.
 	Key string

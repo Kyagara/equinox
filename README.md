@@ -71,12 +71,13 @@ client, err := equinox.NewClient("RIOT_API_KEY")
 A client without a configuration struct comes with the default options:
 
 ```go
+cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
 config := &api.EquinoxConfig{
 	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
 	Cluster: api.AmericasCluster, // Riot API cluster, use the cluster closest to you.
 	LogLevel: api.FatalLevel, // The logging level, the FatalLevel provided effectively disables logging.
 	Timeout: 15, // http.Client timeout in seconds.
-	Cache: cache.NewBigCache(4 * time.Minute), // The caching method, this client uses BigCache with 4 minutes of eviction time
+	Cache: cache.NewBigCache(cacheConfig), // The default client uses BigCache with TTL of 4 minutes
 	Retry: true, // Retry if the API returns a 429 response.
 	RateLimit: true // If rate limit is enabled or not
 }
@@ -84,7 +85,7 @@ config := &api.EquinoxConfig{
 
 > A custom Client can be created using `equinox.NewClientWithConfig()`, requires an `&api.EquinoxConfig{}` struct.
 
-> A different storage can be used for the config.Cache using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil disables caching.
+> A different storage can be provided to the client using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil in config.Cache disables caching.
 
 Now you can access different games endpoints by their abbreviations, provided you have access to them. For example:
 
@@ -99,7 +100,7 @@ summoner, err := client.LOL.Match.ByID(lol.Americas, "BR1_2530718601")
 account, err := client.Riot.Account.ByPUUID("puuid")
 
 // This method uses a val.Shard. May not be available in your policy.
-recentMatches, err := client.VAL.Match.Recent(val.BR, val.CompetitiveQueue)
+matches, err := client.VAL.Match.Recent(val.BR, val.CompetitiveQueue)
 ```
 
 ## Example

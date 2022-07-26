@@ -27,7 +27,7 @@ func init() {
 	if key == "" {
 		fmt.Println("RIOT_GAMES_API_KEY not found. Tests won't run.")
 	} else {
-		cache, err := cache.NewBigCache(bigcache.DefaultConfig(4*time.Minute), 4*time.Minute)
+		cache, err := cache.NewBigCache(bigcache.DefaultConfig(4 * time.Minute))
 
 		if err != nil {
 			fmt.Println(err)

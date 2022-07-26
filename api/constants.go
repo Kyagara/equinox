@@ -7,7 +7,7 @@ const (
 
 type Cluster string
 
-// Riot API clusters, used in RiotClient and LOLClient.Tournament/LOLClient.TournamentStub.
+// Riot API clusters, used in RiotClient and LOLClient.Tournament/TournamentStub.
 const (
 	AmericasCluster Cluster = "americas"
 	EuropeCluster   Cluster = "europe"

@@ -15,7 +15,7 @@ import (
 )
 
 func TestNewBigCache(t *testing.T) {
-	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4*time.Minute), 4*time.Minute)
+	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4 * time.Minute))
 
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
@@ -23,7 +23,7 @@ func TestNewBigCache(t *testing.T) {
 }
 
 func TestBigCacheMethods(t *testing.T) {
-	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4*time.Minute), 4*time.Minute)
+	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4 * time.Minute))
 
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
@@ -65,6 +65,12 @@ func TestNewRedis(t *testing.T) {
 		Network: "tcp",
 		Addr:    s.Addr(),
 	}
+
+	_, err := cache.NewRedis(ctx, nil, 4*time.Minute)
+
+	redisErr := fmt.Errorf("redis options is empty")
+
+	require.Equal(t, redisErr, err, fmt.Sprintf("want err %v, got %v", redisErr, err))
 
 	cache, err := cache.NewRedis(ctx, config, 4*time.Minute)
 

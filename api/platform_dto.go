@@ -2,8 +2,7 @@ package api
 
 import "time"
 
-// The PlatformDataDTO is used in a lot of clients.
-
+// The PlatformDataDTO is used in multiple clients.
 type PlatformDataDTO struct {
 	ID           string      `json:"id"`
 	Name         string      `json:"name"`
