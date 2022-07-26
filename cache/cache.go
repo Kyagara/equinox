@@ -21,7 +21,9 @@ type Store interface {
 	Clear() error
 }
 
-func NewBigCache(config bigcache.Config, ttl time.Duration) (*Cache, error) {
+// Creates a new Cache using BigCache
+// Requires a BigCache config that can be created with bigcache.DefaultConfig(n*time.Minute)
+func NewBigCache(config bigcache.Config) (*Cache, error) {
 	bigcache, err := bigcache.NewBigCache(config)
 
 	if err != nil {
@@ -32,12 +34,13 @@ func NewBigCache(config bigcache.Config, ttl time.Duration) (*Cache, error) {
 		store: &BigCacheStore{
 			client: bigcache,
 		},
-		TTL: ttl,
+		TTL: config.LifeWindow,
 	}
 
 	return cache, nil
 }
 
+// Creates a new Cache using go-redis
 func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*Cache, error) {
 	if options == nil {
 		return nil, fmt.Errorf("redis options is empty")
@@ -45,7 +48,7 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 
 	redis := redis.NewClient(options)
 
-	_, err := redis.Ping(ctx).Result()
+	err := redis.Ping(ctx).Err()
 
 	if err != nil {
 		return nil, err

@@ -11,7 +11,7 @@ import (
 type RedisClient interface {
 	Get(ctx context.Context, key string) *redis.StringCmd
 	Set(ctx context.Context, key string, value interface{}, ttl time.Duration) *redis.StatusCmd
-	Del(ctx context.Context, key ...string) *redis.IntCmd
+	Del(ctx context.Context, keys ...string) *redis.IntCmd
 	FlushAll(ctx context.Context) *redis.StatusCmd
 }
 
@@ -36,7 +36,7 @@ func (s *RedisStore) Get(key string) ([]byte, error) {
 }
 
 func (s *RedisStore) Set(key string, value []byte, ttl time.Duration) error {
-	_, err := s.client.Set(s.ctx, key, value, s.ttl).Result()
+	err := s.client.Set(s.ctx, key, value, s.ttl).Err()
 
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func (s *RedisStore) Set(key string, value []byte, ttl time.Duration) error {
 }
 
 func (s *RedisStore) Delete(key string) error {
-	_, err := s.client.Del(s.ctx, key).Result()
+	err := s.client.Del(s.ctx, key).Err()
 
 	if err != nil {
 		return err
@@ -56,7 +56,7 @@ func (s *RedisStore) Delete(key string) error {
 }
 
 func (s *RedisStore) Clear() error {
-	_, err := s.client.FlushAll(s.ctx).Result()
+	err := s.client.FlushAll(s.ctx).Err()
 
 	return err
 }

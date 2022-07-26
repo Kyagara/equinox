@@ -31,14 +31,14 @@ type Equinox struct {
 //		- `LogLevel`   : api.FatalLevel
 //		- `Timeout`    : 15 Seconds
 //		- `Retry`      : true
-//		- `Cache`      : BigCache with eviction time of 4 minutes
+//		- `Cache`      : BigCache with TTL of 4 minutes
 //		- `RateLimit`  : true
 func NewClient(key string) (*Equinox, error) {
 	if !strings.HasPrefix(key, "RGAPI-") {
 		return nil, fmt.Errorf("API Key not provided")
 	}
 
-	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4*time.Minute), 4*time.Minute)
+	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4 * time.Minute))
 
 	if err != nil {
 		return nil, err
