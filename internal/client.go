@@ -42,7 +42,7 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 	}
 }
 
-// Returns a new InternalClient using configuration object provided.
+// Returns a new InternalClient using the configuration object provided.
 func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	var cacheEnabled bool
 
@@ -100,7 +100,6 @@ func (c *InternalClient) get(url string, route interface{}, object interface{}, 
 	req, err := c.newRequest(http.MethodGet, url, nil)
 
 	if err != nil {
-		logger.Error(err)
 		return err
 	}
 
@@ -109,7 +108,7 @@ func (c *InternalClient) get(url string, route interface{}, object interface{}, 
 	}
 
 	if c.isCacheEnabled {
-		item, err := c.cache.Get(url)
+		item, err := c.cache.Get(fmt.Sprintf("%s/%s", url, authorizationHeader))
 
 		// If there was an error with retrieving the cached response, only log the error
 		if err != nil {
@@ -117,13 +116,12 @@ func (c *InternalClient) get(url string, route interface{}, object interface{}, 
 		}
 
 		if item != nil {
-			logger.Info("Cache hit")
+			logger.Debug("Cache hit")
 
 			// Decoding the cached body into the endpoint method response object.
 			err = json.Unmarshal(item, &object)
 
 			if err != nil {
-				logger.Error(err)
 				return err
 			}
 
@@ -139,7 +137,7 @@ func (c *InternalClient) get(url string, route interface{}, object interface{}, 
 	}
 
 	if c.isCacheEnabled {
-		err := c.cache.Set(url, body)
+		err := c.cache.Set(fmt.Sprintf("%s/%s", url, authorizationHeader), body)
 
 		if err != nil {
 			logger.Error(err)
@@ -245,7 +243,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint s
 	res, err := c.http.Do(req)
 
 	if err != nil {
-		logger.Error("Request failed")
+		logger.Warn("Request failed")
 		return nil, nil, err
 	}
 
@@ -293,7 +291,6 @@ func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint s
 	body, err = ioutil.ReadAll(res.Body)
 
 	if err != nil {
-		logger.Error(err)
 		return nil, nil, err
 	}
 
