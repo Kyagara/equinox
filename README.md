@@ -43,7 +43,7 @@
 
 -   Review the cache and rate limiting implementation
 -   Add a way to define a custom TTL per endpoint method
--   Add Data Dragon support
+-   Improve Data Dragon support
 -   Add Helper Methods (e.g.: GetChampion or GetSummoner inside a match response)
 
 ## Installation
