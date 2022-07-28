@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type SpectatorEndpoint struct {
@@ -148,7 +149,7 @@ func (e *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, err
 	err := e.internalClient.Get(region, SpectatorFeaturedGamesURL, &games, "spectator-v4", "FeaturedGames", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -166,7 +167,7 @@ func (e *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*Curr
 	err := e.internalClient.Get(region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), &game, "spectator-v4", "CurrentGame", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

@@ -3,6 +3,7 @@ package lor
 import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type DeckEndpoint struct {
@@ -26,7 +27,7 @@ func (e *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, erro
 	err := e.internalClient.Get(region, DeckURL, &deck, "lor-deck-v1", "List", accessToken)
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -44,12 +45,12 @@ func (e *DeckEndpoint) Create(region Region, accessToken string, code string, na
 		Name string `json:"name"`
 	}{Code: code, Name: name}
 
-	var deck api.PlainTextResponse
+	var deck *api.PlainTextResponse
 
 	err := e.internalClient.Post(region, DeckURL, options, &deck, "lor-deck-v1", "Create", accessToken)
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return "", err
 	}
 

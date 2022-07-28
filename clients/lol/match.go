@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type MatchEndpoint struct {
@@ -561,7 +562,7 @@ func (e *MatchEndpoint) List(route Route, puuid string, options *MatchlistOption
 	err := e.internalClient.Get(route, url, &list, "match-v5", "List", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -581,7 +582,7 @@ func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
 	err := e.internalClient.Get(route, url, &match, "match-v5", "ByID", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -601,7 +602,7 @@ func (e *MatchEndpoint) Timeline(route Route, matchID string) (*MatchTimelineDTO
 	err := e.internalClient.Get(route, url, &timeline, "match-v5", "Timeline", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

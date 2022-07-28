@@ -68,7 +68,7 @@ To access the diferent parts of the Riot Games API, create a new instance of the
 client, err := equinox.NewClient("RIOT_API_KEY")
 ```
 
-A client without a configuration struct comes with the default options:
+A client without a configuration comes with the default options:
 
 ```go
 cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
@@ -117,7 +117,7 @@ import (
 
 func main() {
 	// For custom configurations, you can use NewClientWithConfig(),
-	// you will need to provide an api.EquinoxConfig{} object.
+	// you will need to provide an &api.EquinoxConfig{}.
 	client, err := equinox.NewClient("RIOT_API_KEY")
 
 	if err != nil {

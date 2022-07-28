@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type MatchEndpoint struct {
@@ -60,7 +61,7 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 	err := e.internalClient.Get(region, url, &match, "lor-match-v1", "ByID", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -80,7 +81,7 @@ func (e *MatchEndpoint) List(region Region, puuid string) (*[]string, error) {
 	err := e.internalClient.Get(region, url, &list, "lor-match-v1", "List", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

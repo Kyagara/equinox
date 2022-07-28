@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type ClashEndpoint struct {
@@ -63,7 +64,7 @@ func (e *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error
 	err := e.internalClient.Get(region, ClashURL, &tournaments, "clash-v1", "Tournaments", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -89,7 +90,7 @@ func (e *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]To
 	err := e.internalClient.Get(region, url, &players, "clash-v1", "SummonerEntries", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -113,7 +114,7 @@ func (e *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*Tourn
 	err := e.internalClient.Get(region, url, &team, "clash-v1", "TournamentTeamByID", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -146,7 +147,7 @@ func (e *ClashEndpoint) getClash(endpointMethod string, region Region, id string
 	err := e.internalClient.Get(region, url, &tournament, "clash-v1", methodName, "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

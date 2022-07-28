@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type ContentEndpoint struct {
@@ -120,7 +121,7 @@ func (e *ContentEndpoint) ByLocale(shard Shard, locale Locale) (*LocalizedConten
 	err := e.internalClient.Get(shard, url, &content, "val-content-v1", "ByLocale", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -138,7 +139,7 @@ func (e *ContentEndpoint) AllLocales(shard Shard) (*ContentDTO, error) {
 	err := e.internalClient.Get(shard, ContentURL, &content, "val-content-v1", "AllLocales", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

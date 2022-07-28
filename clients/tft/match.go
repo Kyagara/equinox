@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type MatchEndpoint struct {
@@ -130,7 +131,7 @@ func (e *MatchEndpoint) List(route Route, puuid string, count int) (*[]string, e
 	err := e.internalClient.Get(route, url, &list, "tft-match-v1", "List", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -150,7 +151,7 @@ func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
 	err := e.internalClient.Get(route, url, &match, "tft-match-v1", "ByID", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

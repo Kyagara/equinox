@@ -8,6 +8,7 @@ import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type LeagueEndpoint struct {
@@ -96,7 +97,7 @@ func (e *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.
 	err := e.internalClient.Get(region, url, &entries, "tft-league-v1", "Entries", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -125,7 +126,7 @@ func (e *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (
 	err := e.internalClient.Get(region, url, &entries, "tft-league-v1", "SummonerEntries", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -153,7 +154,7 @@ func (e *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]
 	err := e.internalClient.Get(region, url, &entries, "tft-league-v1", "TopRatedLadder", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -189,7 +190,7 @@ func (e *LeagueEndpoint) getLeague(url string, region lol.Region, methodName str
 	err := e.internalClient.Get(region, url, &league, "tft-league-v1", methodName, "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

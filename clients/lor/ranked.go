@@ -2,6 +2,7 @@ package lor
 
 import (
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type RankedEndpoint struct {
@@ -33,7 +34,7 @@ func (e *RankedEndpoint) Leaderboards(region Region) (*LeaderboardDTO, error) {
 	err := e.internalClient.Get(region, RankedURL, &leaderboard, "lor-ranked-v1", "Leaderboards", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

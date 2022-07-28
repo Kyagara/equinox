@@ -2,7 +2,6 @@ package equinox
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/Kyagara/equinox/api"
@@ -36,7 +35,7 @@ type Equinox struct {
 //		- `Cache`      : BigCache with TTL of 4 minutes
 //		- `RateLimit`  : true
 func NewClient(key string) (*Equinox, error) {
-	if !strings.HasPrefix(key, "RGAPI-") {
+	if key == "" {
 		return nil, fmt.Errorf("API Key not provided")
 	}
 
@@ -83,7 +82,7 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 		return nil, fmt.Errorf("equinox configuration not provided")
 	}
 
-	if !strings.HasPrefix(config.Key, "RGAPI-") {
+	if config.Key == "" {
 		return nil, fmt.Errorf("API Key not provided")
 	}
 

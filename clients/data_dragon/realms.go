@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type RealmEndpoint struct {
@@ -24,11 +25,11 @@ type RealmData struct {
 	} `json:"n"`
 	V              string      `json:"v"`
 	L              string      `json:"l"`
-	Cdn            string      `json:"cdn"`
-	Dd             string      `json:"dd"`
-	Lg             string      `json:"lg"`
+	CDN            string      `json:"cdn"`
+	DD             string      `json:"dd"`
+	LG             string      `json:"lg"`
 	CSS            string      `json:"css"`
-	Profileiconmax int         `json:"profileiconmax"`
+	ProfileIconMax int         `json:"profileiconmax"`
 	Store          interface{} `json:"store"`
 }
 
@@ -44,7 +45,7 @@ func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {
 	err := e.internalClient.DataDragonGet(url, &data, "realm", "ByName")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

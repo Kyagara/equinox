@@ -76,8 +76,8 @@ func (c *Cache) Get(key string) ([]byte, error) {
 	return value, nil
 }
 
-func (c *Cache) Set(key string, object []byte) error {
-	return c.store.Set(key, object, c.TTL)
+func (c *Cache) Set(key string, item []byte) error {
+	return c.store.Set(key, item, c.TTL)
 }
 
 func (c *Cache) Delete(key string) error {
