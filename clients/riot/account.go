@@ -5,6 +5,7 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type AccountEndpoint struct {
@@ -38,7 +39,7 @@ func (e *AccountEndpoint) PlayerActiveShard(puuid string, game api.Game) (*Activ
 	err := e.internalClient.Get(e.internalClient.Cluster, url, &shard, "account-v1", "PlayerActiveShard", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -70,7 +71,7 @@ func (e *AccountEndpoint) getAccount(url string, accessToken string, methodName 
 	err := e.internalClient.Get(e.internalClient.Cluster, url, &account, "account-v1", methodName, accessToken)
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

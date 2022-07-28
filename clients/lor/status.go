@@ -3,6 +3,7 @@ package lor
 import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type StatusEndpoint struct {
@@ -20,7 +21,7 @@ func (e *StatusEndpoint) PlatformStatus(region Region) (*api.PlatformDataDTO, er
 	err := e.internalClient.Get(region, StatusURL, &status, "lor-status-v1", "PlatformStatus", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

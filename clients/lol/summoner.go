@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type SummonerEndpoint struct {
@@ -66,7 +67,7 @@ func (e *SummonerEndpoint) getSummoner(url string, region Region, accessToken st
 	err := e.internalClient.Get(region, url, &summoner, "summoner-v4", methodName, accessToken)
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

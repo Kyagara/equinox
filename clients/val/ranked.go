@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type RankedEndpoint struct {
@@ -91,7 +92,7 @@ func (e *RankedEndpoint) LeaderboardsByActID(shard Shard, actID string, size uin
 	err := e.internalClient.Get(shard, url, &leaderboard, "val-ranked-v1", "LeaderboardsByActID", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

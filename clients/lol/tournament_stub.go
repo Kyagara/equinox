@@ -7,6 +7,7 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type TournamentStubEndpoint struct {
@@ -52,7 +53,7 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 	err := e.internalClient.Post(api.AmericasCluster, url, parameters, &codes, "tournament-stub-v4", "CreateCodes", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -72,7 +73,7 @@ func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEvent
 	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "tournament-stub-v4", "LobbyEvents", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -94,7 +95,7 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 	_, err := url.ParseRequestURI(callbackURL)
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -108,7 +109,7 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 	err = e.internalClient.Post(api.AmericasCluster, TournamentStubProvidersURL, options, &provider, "tournament-stub", "CreateProvider", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -135,7 +136,7 @@ func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, erro
 	err := e.internalClient.Post(api.AmericasCluster, TournamentStubURL, options, &tournament, "tournament-stub-v4", "Create", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

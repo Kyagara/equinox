@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type ChampionEndpoint struct {
@@ -34,7 +35,7 @@ func (e *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, erro
 	err := e.internalClient.Get(region, ChampionURL, &rotations, "champion-v3", "Rotations", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type LeagueEndpoint struct {
@@ -82,7 +83,7 @@ func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 	err := e.internalClient.Get(region, url, &entries, "league-v4", "Entries", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -106,7 +107,7 @@ func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]L
 	err := e.internalClient.Get(region, url, &entries, "league-v4", "SummonerEntries", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -149,7 +150,7 @@ func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueTy
 	err := e.internalClient.Get(region, url, &league, "league-v4", methodName, "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

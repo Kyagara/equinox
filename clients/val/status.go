@@ -5,6 +5,7 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type StatusEndpoint struct {
@@ -26,7 +27,7 @@ func (e *StatusEndpoint) PlatformStatus(shard Shard) (*api.PlatformDataDTO, erro
 	err := e.internalClient.Get(shard, StatusURL, &status, "val-status-v1", "PlatformStatus", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

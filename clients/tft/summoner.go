@@ -5,6 +5,7 @@ import (
 
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type SummonerEndpoint struct {
@@ -46,7 +47,7 @@ func (e *SummonerEndpoint) getSummoner(url string, region lol.Region, accessToke
 	err := e.internalClient.Get(region, url, &summoner, "tft-summoner-v1", methodName, accessToken)
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

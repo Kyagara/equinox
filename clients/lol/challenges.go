@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type ChallengesEndpoint struct {
@@ -124,7 +125,7 @@ func (e *ChallengesEndpoint) List(region Region) (*[]ChallengeConfigInfoDTO, err
 	err := e.internalClient.Get(region, ChallengesConfigurationsURL, &challenges, "lol-challenges-v1", "List", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -144,7 +145,7 @@ func (e *ChallengesEndpoint) ByID(region Region, challengeID int64) (*ChallengeC
 	err := e.internalClient.Get(region, url, &challenge, "lol-challenges-v1", "ByID", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -162,7 +163,7 @@ func (e *ChallengesEndpoint) Percentiles(region Region) (*map[int64]PercentileDT
 	err := e.internalClient.Get(region, ChallengesPercentilesURL, &percentiles, "lol-challenges-v1", "Percentiles", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -182,7 +183,7 @@ func (e *ChallengesEndpoint) PercentilesByID(region Region, challengeID int64) (
 	err := e.internalClient.Get(region, url, &percentile, "lol-challenges-v1", "PercentileByID", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -208,7 +209,7 @@ func (e *ChallengesEndpoint) Leaderboards(region Region, challengeID int64, leve
 	err := e.internalClient.Get(region, url, &leaderboards, "lol-challenges-v1", "Leaderboards", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -228,7 +229,7 @@ func (e *ChallengesEndpoint) ByPUUID(region Region, puuid string) (*PlayerInfoDT
 	err := e.internalClient.Get(region, url, &challenges, "lol-challenges-v1", "ByPUUID", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

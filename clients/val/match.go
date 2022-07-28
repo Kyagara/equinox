@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type MatchEndpoint struct {
@@ -182,7 +183,7 @@ func (e *MatchEndpoint) List(shard Shard, puuid string) (*MatchListDTO, error) {
 	err := e.internalClient.Get(shard, url, &list, "val-match-v1", "List", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -202,7 +203,7 @@ func (e *MatchEndpoint) ByID(shard Shard, matchID string) (*MatchDTO, error) {
 	err := e.internalClient.Get(shard, url, &match, "val-match-v1", "ByID", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -228,7 +229,7 @@ func (e *MatchEndpoint) Recent(shard Shard, queue Queue) (*RecentMatchesDTO, err
 	err := e.internalClient.Get(shard, url, &recent, "val-match-v1", "Recent", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

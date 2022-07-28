@@ -2,6 +2,7 @@ package data_dragon
 
 import (
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type VersionEndpoint struct {
@@ -18,7 +19,7 @@ func (e *VersionEndpoint) Latest() (*string, error) {
 	err := e.internalClient.DataDragonGet(VersionsURL, &versions, "version", "Latest")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -35,7 +36,7 @@ func (e *VersionEndpoint) List() (*[]string, error) {
 	err := e.internalClient.DataDragonGet(VersionsURL, &versions, "version", "List")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

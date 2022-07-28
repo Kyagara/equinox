@@ -7,7 +7,9 @@ import (
 // Data Dragon endpoint URLs.
 const (
 	VersionsURL = "/api/versions.json"
-	RealmURL    = "/realms/%s.json"
+
+	RealmURL = "/realms/%s.json"
+
 	ChampionURL = "/cdn/%s/data/%s/champion/%s.json"
 )
 

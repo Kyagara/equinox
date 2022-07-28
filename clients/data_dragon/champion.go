@@ -4,17 +4,11 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type ChampionEndpoint struct {
 	internalClient *internal.InternalClient
-}
-
-type DataDragonMetadata struct {
-	Type    string                  `json:"type"`
-	Format  string                  `json:"format"`
-	Version string                  `json:"version"`
-	Data    map[string]ChampionData `json:"data"`
 }
 
 type ChampionData struct {
@@ -121,7 +115,7 @@ func (e *ChampionEndpoint) ByName(version string, language Language, champion st
 	err := e.internalClient.DataDragonGet(url, &data, "champion", "ByName")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

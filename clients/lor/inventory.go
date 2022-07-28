@@ -2,6 +2,7 @@ package lor
 
 import (
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type InventoryEndpoint struct {
@@ -24,7 +25,7 @@ func (e *InventoryEndpoint) Cards(region Region, accessToken string) (*[]CardDTO
 	err := e.internalClient.Get(region, InventoryURL, &cards, "lor-inventory-v1", "Cards", accessToken)
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

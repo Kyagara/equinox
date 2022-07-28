@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
 )
 
 type ChampionMasteryEndpoint struct {
@@ -48,7 +49,7 @@ func (e *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID st
 	err := e.internalClient.Get(region, url, &masteries, "champion-mastery-v4", "SummonerMasteries", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -72,7 +73,7 @@ func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 	err := e.internalClient.Get(region, url, &score, "champion-mastery-v4", "ChampionScore", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -96,7 +97,7 @@ func (e *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID stri
 	err := e.internalClient.Get(region, url, &sum, "champion-mastery-v4", "MasteryScoreSum", "")
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 

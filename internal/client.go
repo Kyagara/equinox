@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -20,11 +19,11 @@ type InternalClient struct {
 	key                string
 	Cluster            api.Cluster
 	http               *http.Client
-	logger             *zap.SugaredLogger
+	logger             *zap.Logger
 	logLevel           api.LogLevel
 	cache              *cache.Cache
 	isCacheEnabled     bool
-	rates              map[interface{}]*RateLimit
+	rateLimit          map[interface{}]*RateLimit
 	isRateLimitEnabled bool
 	isRetryEnabled     bool
 }
@@ -32,7 +31,7 @@ type InternalClient struct {
 // Creates an EquinoxConfig for tests.
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
-		Key:       "RGAPI-KEY",
+		Key:       "RGAPI-TEST",
 		Cluster:   api.AmericasCluster,
 		LogLevel:  api.DebugLevel,
 		Timeout:   15,
@@ -42,7 +41,7 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 	}
 }
 
-// Returns a new InternalClient using the configuration object provided.
+// Returns a new InternalClient using the configuration provided.
 func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	var cacheEnabled bool
 
@@ -58,7 +57,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		logLevel:           config.LogLevel,
 		isCacheEnabled:     cacheEnabled,
 		cache:              config.Cache,
-		rates:              map[interface{}]*RateLimit{},
+		rateLimit:          map[interface{}]*RateLimit{},
 		isRateLimitEnabled: config.RateLimit,
 		isRetryEnabled:     config.Retry,
 	}
@@ -82,20 +81,26 @@ func (c *InternalClient) ClearInternalClientCache() error {
 }
 
 // Performs a GET request to the Riot API
-func (c *InternalClient) Get(route interface{}, endpoint string, object interface{}, endpointName string, method string, authorizationHeader string) error {
+func (c *InternalClient) Get(route interface{}, endpointPath string, target interface{}, endpointName string, methodName string, authorizationHeader string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
-	return c.get(fmt.Sprintf("%s%s", baseUrl, endpoint), route, object, endpointName, method, authorizationHeader)
+	url := fmt.Sprintf("%s%s", baseUrl, endpointPath)
+
+	logger := c.logger.With(zap.String("httpMethod", http.MethodGet), zap.String("url", url))
+
+	return c.get(logger, url, route, target, endpointName, methodName, authorizationHeader)
 }
 
 // Performs a GET request to the Data Dragon API
-func (c *InternalClient) DataDragonGet(endpoint string, object interface{}, endpointName string, method string) error {
-	return c.get(fmt.Sprintf(api.DataDragonURLFormat, endpoint), "", object, endpointName, method, "")
+func (c *InternalClient) DataDragonGet(endpointPath string, target interface{}, endpointName string, methodName string) error {
+	url := fmt.Sprintf(api.DataDragonURLFormat, endpointPath)
+
+	logger := c.logger.With(zap.String("httpMethod", http.MethodGet), zap.String("url", url))
+
+	return c.get(logger, url, "", target, endpointName, methodName, "")
 }
 
-func (c *InternalClient) get(url string, route interface{}, object interface{}, endpointName string, method string, authorizationHeader string) error {
-	logger := c.logger.With("httpMethod", http.MethodGet, "path", url)
-
+func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, target interface{}, endpointName string, methodName string, authorizationHeader string) error {
 	// Creating a new HTTP Request.
 	req, err := c.newRequest(http.MethodGet, url, nil)
 
@@ -112,14 +117,14 @@ func (c *InternalClient) get(url string, route interface{}, object interface{}, 
 
 		// If there was an error with retrieving the cached response, only log the error
 		if err != nil {
-			logger.Error(err)
+			logger.Error("Method failed", zap.Error(err))
 		}
 
 		if item != nil {
 			logger.Debug("Cache hit")
 
-			// Decoding the cached body into the endpoint method response object.
-			err = json.Unmarshal(item, &object)
+			// Decoding the cached body into the target.
+			err = json.Unmarshal(item, &target)
 
 			if err != nil {
 				return err
@@ -130,7 +135,7 @@ func (c *InternalClient) get(url string, route interface{}, object interface{}, 
 	}
 
 	// Sending HTTP request and returning the response.
-	_, body, err := c.sendRequest(req, false, endpointName, method, route)
+	_, body, err := c.sendRequest(logger, url, req, false, endpointName, methodName, route)
 
 	if err != nil {
 		return err
@@ -140,14 +145,14 @@ func (c *InternalClient) get(url string, route interface{}, object interface{}, 
 		err := c.cache.Set(fmt.Sprintf("%s/%s", url, authorizationHeader), body)
 
 		if err != nil {
-			logger.Error(err)
+			logger.Error("Method failed", zap.Error(err))
 		} else {
 			logger.Debug("Cache set")
 		}
 	}
 
-	// Decoding the body into the endpoint method response object.
-	err = json.Unmarshal(body, &object)
+	// Decoding the body into the target.
+	err = json.Unmarshal(body, &target)
 
 	if err != nil {
 		return err
@@ -157,11 +162,15 @@ func (c *InternalClient) get(url string, route interface{}, object interface{}, 
 }
 
 // Performs a POST request, authorizationHeader can be blank
-func (c *InternalClient) Post(route interface{}, endpoint string, requestBody interface{}, object interface{}, endpointName string, method string, authorizationHeader string) error {
+func (c *InternalClient) Post(route interface{}, endpointPath string, requestBody interface{}, target interface{}, endpointName string, method string, authorizationHeader string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
+	url := fmt.Sprintf("%s%s", baseUrl, endpointPath)
+
+	logger := c.logger.With(zap.String("httpMethod", http.MethodPost), zap.String("url", url))
+
 	// Creating a new HTTP Request.
-	req, err := c.newRequest(http.MethodPost, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
+	req, err := c.newRequest(http.MethodPost, url, requestBody)
 
 	if err != nil {
 		return err
@@ -172,7 +181,7 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody in
 	}
 
 	// Sending HTTP request and returning the response.
-	res, body, err := c.sendRequest(req, false, endpointName, method, route)
+	res, body, err := c.sendRequest(logger, url, req, false, endpointName, method, route)
 
 	if err != nil {
 		return err
@@ -180,11 +189,11 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody in
 
 	// In case of a post request returning just a single, non JSON response.
 	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type assertion.
-	// This implementation looks horrible, I don't know another way of decoding any non JSON value to the &object.
+	// This implementation looks horrible, I don't know another way of decoding any non JSON value to the &target.
 	if res.Header.Get("Content-Type") == "" {
 		body := []byte(fmt.Sprintf(`{"response":"%s"}`, string(body)))
 
-		err = json.Unmarshal(body, &object)
+		err = json.Unmarshal(body, &target)
 
 		if err != nil {
 			return err
@@ -193,8 +202,8 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody in
 		return nil
 	}
 
-	// Decoding the body into the endpoint method response object.
-	err = json.Unmarshal(body, &object)
+	// Decoding the body into the target.
+	err = json.Unmarshal(body, &target)
 
 	if err != nil {
 		return err
@@ -204,18 +213,22 @@ func (c *InternalClient) Post(route interface{}, endpoint string, requestBody in
 }
 
 // Performs a PUT request
-func (c *InternalClient) Put(route interface{}, endpoint string, requestBody interface{}, endpointName string, method string) error {
+func (c *InternalClient) Put(route interface{}, endpointPath string, requestBody interface{}, endpointName string, methodName string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
+	url := fmt.Sprintf("%s%s", baseUrl, endpointPath)
+
+	logger := c.logger.With(zap.String("httpMethod", http.MethodPut), zap.String("url", url))
+
 	// Creating a new HTTP Request.
-	req, err := c.newRequest(http.MethodPut, fmt.Sprintf("%s%s", baseUrl, endpoint), requestBody)
+	req, err := c.newRequest(http.MethodPut, url, requestBody)
 
 	if err != nil {
 		return err
 	}
 
 	// Sending HTTP request and returning the response.
-	_, _, err = c.sendRequest(req, false, endpointName, method, route)
+	_, _, err = c.sendRequest(logger, url, req, false, endpointName, methodName, route)
 
 	if err != nil {
 		return err
@@ -225,12 +238,10 @@ func (c *InternalClient) Put(route interface{}, endpoint string, requestBody int
 }
 
 // Sends a HTTP request.
-func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint string, method string, route interface{}) (*http.Response, []byte, error) {
-	logger := c.logger.With("httpMethod", req.Method, "path", req.URL.String())
-
+func (c *InternalClient) sendRequest(logger *zap.Logger, url string, req *http.Request, retried bool, endpointName string, methodName string, route interface{}) (*http.Response, []byte, error) {
 	// If rate limiting is enabled
 	if c.isRateLimitEnabled {
-		isRateLimited := c.checkRates(route, endpoint, method)
+		isRateLimited := c.checkRateLimit(route, endpointName, methodName)
 
 		if isRateLimited {
 			return nil, nil, api.TooManyRequestsError
@@ -243,7 +254,6 @@ func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint s
 	res, err := c.http.Do(req)
 
 	if err != nil {
-		logger.Warn("Request failed")
 		return nil, nil, err
 	}
 
@@ -254,16 +264,16 @@ func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint s
 		// Updating app rate limit
 		rate := ParseHeaders(res.Header, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
 
-		c.rates[route].SetAppRate(rate)
+		c.rateLimit[route].SetAppRate(rate)
 
 		// Updating method rate limit
 		rate = ParseHeaders(res.Header, "X-Method-Rate-Limit", "X-Method-Rate-Limit-Count")
 
-		c.rates[route].Set(endpoint, method, rate)
+		c.rateLimit[route].Set(endpointName, methodName, rate)
 	}
 
 	// Checking the response
-	err = c.checkResponse(res)
+	err = c.checkResponse(logger, url, res)
 
 	// The body is defined here so if we retry the request we can later return the value
 	// without having to read the body again, causing an error
@@ -272,7 +282,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint s
 	// If retry is enabled and c.checkResponse() returns an api.RateLimitedError, retry the request
 	if c.isRetryEnabled && errors.Is(err, api.TooManyRequestsError) && !retried {
 		// If this retry is successful, the body var will be the res.Body
-		res, body, err = c.sendRequest(req, true, endpoint, method, route)
+		res, body, err = c.sendRequest(logger, url, req, true, endpointName, methodName, route)
 	}
 
 	// Returns the error from c.checkResponse() if any
@@ -288,7 +298,7 @@ func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint s
 
 	logger.Info("Request successful")
 
-	body, err = ioutil.ReadAll(res.Body)
+	body, err = io.ReadAll(res.Body)
 
 	if err != nil {
 		return nil, nil, err
@@ -298,22 +308,22 @@ func (c *InternalClient) sendRequest(req *http.Request, retried bool, endpoint s
 }
 
 // Creates a new HTTP Request and sets headers.
-func (c *InternalClient) newRequest(method string, url string, body interface{}) (*http.Request, error) {
+func (c *InternalClient) newRequest(httpMethod string, url string, body interface{}) (*http.Request, error) {
 	var buffer io.ReadWriter
 
 	if body != nil {
 		buffer = &bytes.Buffer{}
 
-		enc := json.NewEncoder(buffer)
+		encoder := json.NewEncoder(buffer)
 
-		err := enc.Encode(body)
+		err := encoder.Encode(body)
 
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	req, err := http.NewRequest(method, url, buffer)
+	req, err := http.NewRequest(httpMethod, url, buffer)
 
 	if err != nil {
 		return nil, err
@@ -330,9 +340,7 @@ func (c *InternalClient) newRequest(method string, url string, body interface{})
 	return req, nil
 }
 
-func (c *InternalClient) checkResponse(res *http.Response) error {
-	logger := c.logger.With("httpMethod", res.Request.Method, "path", res.Request.URL.Path)
-
+func (c *InternalClient) checkResponse(logger *zap.Logger, url string, res *http.Response) error {
 	// If the API returns a 429 code.
 	if res.StatusCode == http.StatusTooManyRequests && c.isRetryEnabled {
 		retryAfter := res.Header.Get("Retry-After")
@@ -342,7 +350,12 @@ func (c *InternalClient) checkResponse(res *http.Response) error {
 			return fmt.Errorf("rate limited but no Retry-After header was found, stopping")
 		}
 
-		seconds, _ := strconv.Atoi(retryAfter)
+		seconds, err := strconv.Atoi(retryAfter)
+
+		if err != nil {
+			logger.Error("Error converting retry after header", zap.Error(err))
+			return err
+		}
 
 		logger.Warn(fmt.Sprintf("Too Many Requests, retrying request in %ds", seconds))
 
@@ -353,12 +366,10 @@ func (c *InternalClient) checkResponse(res *http.Response) error {
 
 	// If the status code is lower than 200 or higher than 299, return an error.
 	if res.StatusCode < http.StatusOK || res.StatusCode > 299 {
-		logger.Errorf("Endpoint method returned an error response: %v", res.Status)
+		logger.Error("Request failed", zap.Error(fmt.Errorf("endpoint method returned an error code: %v", res.Status)))
 
 		// Handling errors documented in the Riot API docs
 		// This StatusCodeToError solution is from KnutZuidema/golio
-		// https://github.com/KnutZuidema/golio/blob/master/api/error.go
-		// https://github.com/KnutZuidema/golio/blob/master/internal/client.go
 		err, ok := api.StatusCodeToError[res.StatusCode]
 
 		if !ok {
@@ -377,27 +388,27 @@ func (c *InternalClient) checkResponse(res *http.Response) error {
 }
 
 // Checks the app and method rate limit, returns true if rate limited
-func (c *InternalClient) checkRates(route interface{}, endpoint string, method string) bool {
+func (c *InternalClient) checkRateLimit(route interface{}, endpointName string, methodName string) bool {
 	if route == "" {
 		return false
 	}
 
-	if c.rates[route] == nil {
-		c.rates[route] = NewRateLimit()
+	if c.rateLimit[route] == nil {
+		c.rateLimit[route] = NewRateLimit()
 	}
 
 	// Checking rate limits for the app
-	isRateLimited := c.rates[route].IsRateLimited(c.rates[route].appRate)
+	isRateLimited := c.rateLimit[route].IsRateLimited(c.rateLimit[route].appRate)
 
 	if isRateLimited {
 		return true
 	}
 
 	// Checking rate limits for the endpoint method
-	rate := c.rates[route].Get(endpoint, method)
+	rate := c.rateLimit[route].Get(endpointName, methodName)
 
 	if rate != nil {
-		isRateLimited := c.rates[route].IsRateLimited(rate)
+		isRateLimited := c.rateLimit[route].IsRateLimited(rate)
 
 		if isRateLimited {
 			return true
