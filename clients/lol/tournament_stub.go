@@ -120,7 +120,7 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 //
 // The provider ID to specify the regional registered provider data to associate this tournament.
 //
-// The optional name of the tournament.
+// The name of the tournament is optional.
 func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-stub-v4", "Create")
 

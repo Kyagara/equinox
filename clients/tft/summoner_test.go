@@ -35,7 +35,7 @@ func TestSummonerByAccountID(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -78,7 +78,7 @@ func TestSummonerByName(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -121,7 +121,7 @@ func TestSummonerByPUUID(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -164,7 +164,7 @@ func TestSummonerByID(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -207,7 +207,7 @@ func TestSummonerByAccessToken(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 

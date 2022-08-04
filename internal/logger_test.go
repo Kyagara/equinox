@@ -9,7 +9,9 @@ import (
 )
 
 func TestNewLogger(t *testing.T) {
-	logger := internal.NewLogger(internal.NewTestEquinoxConfig())
+	logger, err := internal.NewLogger(internal.NewTestEquinoxConfig())
+
+	require.Nil(t, err, "expecting nil error")
 
 	assert.NotNil(t, logger, "expecting non-nil Logger")
 }

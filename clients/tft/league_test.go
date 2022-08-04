@@ -41,7 +41,7 @@ func TestLeagueEntries(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 			tier:    lol.BronzeTier,
 			page:    1,
@@ -113,7 +113,7 @@ func TestLeagueByID(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{
@@ -167,7 +167,7 @@ func TestLeagueTopRatedLadder(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			queue:   tft.RankedTFTTurboQueue,
 			region:  lol.BR1,
 		},
@@ -227,7 +227,7 @@ func TestLeagueSummonerEntries(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{
@@ -279,7 +279,7 @@ func TestLeagueChallenger(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{
@@ -331,7 +331,7 @@ func TestLeagueGrandmaster(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{
@@ -383,7 +383,7 @@ func TestLeagueMaster(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{

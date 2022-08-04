@@ -36,7 +36,7 @@ func TestChampionMasterySummonerMasteries(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{
@@ -88,7 +88,7 @@ func TestChampionMasteryChampionScore(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{
@@ -140,7 +140,7 @@ func TestChampionMasteryMasteryScoreSum(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{

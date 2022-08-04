@@ -57,9 +57,9 @@ type TierDetailsDTO struct {
 
 // Get leaderboard for the competitive queue.
 //
-// Size defaults to 200. Valid values: 1 to 200.
+// Size defaults to 200. Valid values: 1 to 200
 //
-// Start defaults to 0.
+// Start defaults to 0
 func (e *RankedEndpoint) LeaderboardsByActID(shard Shard, actID string, size uint8, start int) (*LeaderboardDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-ranked-v1", "LeaderboardsByActID")
 

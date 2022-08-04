@@ -40,7 +40,7 @@ func TestRankedLeaderboardsByActID(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  val.BR,
 			size:    1,
 			start:   0,

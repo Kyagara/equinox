@@ -36,7 +36,7 @@ func TestClashTournaments(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		}, {
 			name:    "invalid region",
@@ -87,7 +87,7 @@ func TestClashSummonerEntries(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		}, {
 			name:    "invalid region",
@@ -138,7 +138,7 @@ func TestClashTournamentTeamByID(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{
@@ -190,7 +190,7 @@ func TestClashByID(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{
@@ -240,7 +240,7 @@ func TestClashByTeamID(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 

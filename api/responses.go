@@ -20,77 +20,77 @@ func (e ErrorResponse) Error() string {
 }
 
 var (
-	BadRequestError = ErrorResponse{
+	ErrBadRequest = ErrorResponse{
 		Status: Status{
 			Message:    "Bad Request",
 			StatusCode: http.StatusBadRequest,
 		},
 	}
 
-	UnauthorizedError = ErrorResponse{
+	ErrUnauthorized = ErrorResponse{
 		Status: Status{
 			Message:    "Unauthorized",
 			StatusCode: http.StatusUnauthorized,
 		},
 	}
 
-	ForbiddenError = ErrorResponse{
+	ErrForbidden = ErrorResponse{
 		Status: Status{
 			Message:    "Forbidden",
 			StatusCode: http.StatusForbidden,
 		},
 	}
 
-	NotFoundError = ErrorResponse{
+	ErrNotFound = ErrorResponse{
 		Status: Status{
 			Message:    "Not Found",
 			StatusCode: http.StatusNotFound,
 		},
 	}
 
-	MethodNotAllowedError = ErrorResponse{
+	ErrMethodNotAllowed = ErrorResponse{
 		Status: Status{
 			Message:    "Method not allowed",
 			StatusCode: http.StatusMethodNotAllowed,
 		},
 	}
 
-	UnsupportedMediaTypeError = ErrorResponse{
+	ErrUnsupportedMediaType = ErrorResponse{
 		Status: Status{
 			Message:    "Unsupported media type",
 			StatusCode: http.StatusUnsupportedMediaType,
 		},
 	}
 
-	TooManyRequestsError = ErrorResponse{
+	ErrTooManyRequests = ErrorResponse{
 		Status: Status{
 			Message:    "Rate limited",
 			StatusCode: http.StatusTooManyRequests,
 		},
 	}
 
-	InternalServerError = ErrorResponse{
+	ErrInternalServer = ErrorResponse{
 		Status: Status{
 			Message:    "Internal server error",
 			StatusCode: http.StatusInternalServerError,
 		},
 	}
 
-	BadGatewayError = ErrorResponse{
+	ErrBadGateway = ErrorResponse{
 		Status: Status{
 			Message:    "Bad gateway",
 			StatusCode: http.StatusBadGateway,
 		},
 	}
 
-	ServiceUnavailableError = ErrorResponse{
+	ErrServiceUnavailable = ErrorResponse{
 		Status: Status{
 			Message:    "Service unavailable",
 			StatusCode: http.StatusServiceUnavailable,
 		},
 	}
 
-	GatewayTimeoutError = ErrorResponse{
+	ErrGatewayTimeout = ErrorResponse{
 		Status: Status{
 			Message:    "Gateway timeout",
 			StatusCode: http.StatusGatewayTimeout,
@@ -98,16 +98,16 @@ var (
 	}
 
 	StatusCodeToError = map[int]ErrorResponse{
-		http.StatusBadRequest:           BadRequestError,
-		http.StatusUnauthorized:         UnauthorizedError,
-		http.StatusForbidden:            ForbiddenError,
-		http.StatusNotFound:             NotFoundError,
-		http.StatusMethodNotAllowed:     MethodNotAllowedError,
-		http.StatusUnsupportedMediaType: UnsupportedMediaTypeError,
-		http.StatusTooManyRequests:      TooManyRequestsError,
-		http.StatusInternalServerError:  InternalServerError,
-		http.StatusBadGateway:           BadGatewayError,
-		http.StatusServiceUnavailable:   ServiceUnavailableError,
-		http.StatusGatewayTimeout:       GatewayTimeoutError,
+		http.StatusBadRequest:           ErrBadRequest,
+		http.StatusUnauthorized:         ErrUnauthorized,
+		http.StatusForbidden:            ErrForbidden,
+		http.StatusNotFound:             ErrNotFound,
+		http.StatusMethodNotAllowed:     ErrMethodNotAllowed,
+		http.StatusUnsupportedMediaType: ErrUnsupportedMediaType,
+		http.StatusTooManyRequests:      ErrTooManyRequests,
+		http.StatusInternalServerError:  ErrInternalServer,
+		http.StatusBadGateway:           ErrBadGateway,
+		http.StatusServiceUnavailable:   ErrServiceUnavailable,
+		http.StatusGatewayTimeout:       ErrGatewayTimeout,
 	}
 )

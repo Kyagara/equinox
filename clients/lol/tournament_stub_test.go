@@ -45,7 +45,7 @@ func TestTournamentStubCreateCodes(t *testing.T) {
 			name:    "not found",
 			count:   1,
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			parameters: &lol.TournamentCodeParametersDTO{
 				MapType:       lol.SummonersRiftMap,
 				PickType:      lol.TournamentDraftPick,
@@ -131,7 +131,7 @@ func TestTournamentStubLobbyEvents(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -174,7 +174,7 @@ func TestTournamentStubCreate(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -219,7 +219,7 @@ func TestTournamentStubCreateProvider(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			url:     "http://localhost:80",
 		},
 		{
