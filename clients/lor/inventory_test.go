@@ -34,7 +34,7 @@ func TestInventoryCards(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 

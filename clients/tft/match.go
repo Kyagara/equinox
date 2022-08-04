@@ -108,7 +108,7 @@ type InfoDTO struct {
 
 // Get a list of match IDs by PUUID.
 //
-// Count defaults to 20.
+// Count defaults to 20
 func (e *MatchEndpoint) List(route Route, puuid string, count int) (*[]string, error) {
 	logger := e.internalClient.Logger("TFT", "tft-match-v1", "List")
 

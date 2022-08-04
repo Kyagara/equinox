@@ -33,11 +33,11 @@ func NewRateLimit() *RateLimit {
 }
 
 type RateTiming struct {
-	// The amount in seconds the rate limit should reset
+	// The amount in seconds the rate limit should reset.
 	Time int
-	// Maximum amount of requests in n seconds
+	// Maximum amount of requests in n seconds.
 	Limit int
-	// Current count of requests made in n seconds
+	// Current count of requests made in n seconds.
 	Count int
 
 	Ticker *time.Ticker

@@ -19,11 +19,11 @@ type LobbyEventDTOWrapper struct {
 }
 
 type LobbyEventDTO struct {
-	// The summonerId that triggered the event (Encrypted)
+	// The summonerId that triggered the event (Encrypted).
 	SummonerID string `json:"summonerId"`
-	// The type of event that was triggered
+	// The type of event that was triggered.
 	EventType string `json:"eventType"`
-	// Timestamp from the event
+	// Timestamp from the event.
 	Timestamp string `json:"timestamp"`
 }
 
@@ -42,7 +42,7 @@ type TournamentCodeDTO struct {
 	TeamSize int
 	// The provider's ID.
 	ProviderId int
-	// 	The pick mode for tournament code game.
+	// The pick mode for tournament code game.
 	PickType PickType
 	// The tournament's ID.
 	TournamentID int
@@ -50,9 +50,9 @@ type TournamentCodeDTO struct {
 	ID int
 	// The tournament code's region.
 	Region TournamentRegion
-	// The game map for the tournament code game
+	// The game map for the tournament code game.
 	Map MapType
-	// The summonerIds of the participants (Encrypted)
+	// The summonerIds of the participants (Encrypted).
 	Participants []string
 }
 
@@ -230,7 +230,7 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 //
 // The provider ID to specify the regional registered provider data to associate this tournament.
 //
-// The optional name of the tournament.
+// The name of the tournament is optional.
 func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-v4", "Create")
 

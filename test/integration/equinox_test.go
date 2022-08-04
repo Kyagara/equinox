@@ -11,9 +11,7 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/allegro/bigcache/v3"
 	"github.com/stretchr/testify/require"
 )
 
@@ -27,23 +25,9 @@ func init() {
 	if key == "" {
 		fmt.Println("RIOT_GAMES_API_KEY not found. Tests won't run.")
 	} else {
-		cache, err := cache.NewBigCache(bigcache.DefaultConfig(4 * time.Minute))
+		config, err := equinox.DefaultConfig("RGAPI-TEST")
 
-		if err != nil {
-			fmt.Println(err)
-
-			return
-		}
-
-		config := &api.EquinoxConfig{
-			Key:       key,
-			Cluster:   api.AmericasCluster,
-			LogLevel:  api.DebugLevel,
-			Timeout:   15,
-			Cache:     cache,
-			Retry:     true,
-			RateLimit: true,
-		}
+		config.LogLevel = api.DebugLevel
 
 		c, err := equinox.NewClientWithConfig(config)
 

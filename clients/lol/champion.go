@@ -12,11 +12,11 @@ type ChampionEndpoint struct {
 }
 
 type ChampionRotationsDTO struct {
-	// List of free champions IDs
+	// List of free champions IDs.
 	FreeChampionIDs []int `json:"freeChampionIds"`
-	// List of free champions IDs for new players
+	// List of free champions IDs for new players.
 	FreeChampionIDsForNewPlayers []int `json:"freeChampionIdsForNewPlayers"`
-	// Max new player level
+	// Max new player level.
 	MaxNewPlayerLevel int `json:"maxNewPlayerLevel"`
 }
 

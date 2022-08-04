@@ -514,10 +514,10 @@ type MatchlistOptions struct {
 }
 
 // Get a list of match IDs by PUUID.
-
-// Start defaults to 0.
 //
-// Count defaults to 20.
+// MatchlistOptions.Start defaults to 0.
+//
+// MatchlistOptions.Count defaults to 20
 func (e *MatchEndpoint) List(route Route, puuid string, options *MatchlistOptions) (*[]string, error) {
 	logger := e.internalClient.Logger("LOL", "match-v5", "List")
 

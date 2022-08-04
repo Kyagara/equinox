@@ -6,7 +6,9 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/stretchr/testify/assert"
@@ -57,7 +59,7 @@ func TestInternalClientRetries(t *testing.T) {
 
 	res := api.PlatformDataDTO{}
 
-	// This will take 1 second.
+	// This will take 1 second
 	err = internalClient.Get(lol.BR1, lol.StatusURL, &res, "", "", "")
 
 	require.Nil(t, err, "expecting nil error")
@@ -84,10 +86,10 @@ func TestInternalClientFailingRetry(t *testing.T) {
 
 	var object api.PlainTextResponse
 
-	// This will take 2 seconds.
+	// This will take 2 seconds
 	gotErr := internalClient.Get("tests", "/", &object, "", "", "")
 
-	require.Equal(t, api.TooManyRequestsError, gotErr, fmt.Sprintf("want err %v, got %v", api.TooManyRequestsError, gotErr))
+	require.Equal(t, api.ErrTooManyRequests, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrTooManyRequests, gotErr))
 }
 
 func TestInternalClientRetryHeader(t *testing.T) {
@@ -214,67 +216,67 @@ func TestInternalClientErrorResponses(t *testing.T) {
 	}{
 		{
 			name:    "bad request",
-			wantErr: api.BadRequestError,
+			wantErr: api.ErrBadRequest,
 			code:    400,
 			region:  "tests",
 		},
 		{
 			name:    "unauthorized",
-			wantErr: api.UnauthorizedError,
+			wantErr: api.ErrUnauthorized,
 			code:    401,
 			region:  "tests",
 		},
 		{
 			name:    "forbidden",
-			wantErr: api.ForbiddenError,
+			wantErr: api.ErrForbidden,
 			code:    403,
 			region:  "tests",
 		},
 		{
 			name:    "not found",
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			code:    404,
 			region:  "tests",
 		},
 		{
 			name:    "method not allowed",
-			wantErr: api.MethodNotAllowedError,
+			wantErr: api.ErrMethodNotAllowed,
 			code:    405,
 			region:  "tests",
 		},
 		{
 			name:    "unsupported media type",
-			wantErr: api.UnsupportedMediaTypeError,
+			wantErr: api.ErrUnsupportedMediaType,
 			code:    415,
 			region:  "tests",
 		},
 		{
 			name:    "rate limited with retry disabled",
-			wantErr: api.TooManyRequestsError,
+			wantErr: api.ErrTooManyRequests,
 			code:    429,
 			region:  "tests",
 		},
 		{
 			name:    "internal server error",
-			wantErr: api.InternalServerError,
+			wantErr: api.ErrInternalServer,
 			code:    500,
 			region:  "tests",
 		},
 		{
 			name:    "bad gateway",
-			wantErr: api.BadGatewayError,
+			wantErr: api.ErrBadGateway,
 			code:    502,
 			region:  "tests",
 		},
 		{
 			name:    "service unavailable",
-			wantErr: api.ServiceUnavailableError,
+			wantErr: api.ErrServiceUnavailable,
 			code:    503,
 			region:  "tests",
 		},
 		{
 			name:    "gateway timeout",
-			wantErr: api.GatewayTimeoutError,
+			wantErr: api.ErrGatewayTimeout,
 			code:    504,
 			region:  "tests",
 		},
@@ -326,17 +328,15 @@ func TestInternalClientRateLimit(t *testing.T) {
 
 	err = internalClient.Put("tests", "/", nil, "", "")
 
-	assert.Equal(t, api.TooManyRequestsError, err, fmt.Sprintf("want err %v, got %v", api.TooManyRequestsError, err))
+	assert.Equal(t, api.ErrTooManyRequests, err, fmt.Sprintf("want err %v, got %v", api.ErrTooManyRequests, err))
 }
 
 func TestCacheIsDisabled(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := equinox.NewClientWithConfig(internal.NewTestEquinoxConfig())
 
 	require.Nil(t, err, "expecting nil error")
 
-	err = internalClient.ClearInternalClientCache()
+	err = client.Cache.Clear()
 
-	disabled := fmt.Errorf("cache is disabled")
-
-	assert.Equal(t, disabled, err, fmt.Sprintf("want err %v, got %v", disabled, err))
+	assert.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", cache.ErrCacheIsDisabled, err))
 }

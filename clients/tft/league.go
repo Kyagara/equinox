@@ -66,7 +66,7 @@ type TopRatedLadderEntryDTO struct {
 
 // Get all the league entries.
 //
-// Page defaults to 1.
+// Page defaults to 1
 func (e *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
 	logger := e.internalClient.Logger("TFT", "tft-league-v1", "Entries")
 

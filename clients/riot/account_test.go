@@ -34,7 +34,7 @@ func TestAccountPlayerActiveShard(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -77,7 +77,7 @@ func TestAccountByPUUID(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -120,7 +120,7 @@ func TestAccountByID(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -163,7 +163,7 @@ func TestAccountByAccessToken(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 

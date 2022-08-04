@@ -7,12 +7,10 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/data_dragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/riot"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/allegro/bigcache/v3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
@@ -110,13 +108,11 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 }
 
 func TestEquinoxClientClearCache(t *testing.T) {
-	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4 * time.Minute))
+	config, err := equinox.DefaultConfig("RGAPI-TEST")
+
+	config.LogLevel = api.DebugLevel
 
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
-
-	config := internal.NewTestEquinoxConfig()
-
-	config.Cache = cache
 
 	client, err := equinox.NewClientWithConfig(config)
 
@@ -158,7 +154,9 @@ func TestEquinoxClientClearCache(t *testing.T) {
 		t.Error(fmt.Errorf("request took more than 1s, took %ds, request not cached", duration))
 	}
 
-	client.ClearCache()
+	gotErr = client.Cache.Clear()
+
+	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
 
 	start = time.Now()
 	gotData, gotErr = client.Riot.Account.ByPUUID("puuid")
@@ -170,7 +168,7 @@ func TestEquinoxClientClearCache(t *testing.T) {
 
 	require.Nil(t, gotData)
 
-	assert.Equal(t, api.ForbiddenError, gotErr, fmt.Sprintf("want err %v, got %v", api.ForbiddenError, gotErr))
+	assert.Equal(t, api.ErrForbidden, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrForbidden, gotErr))
 }
 
 // Never done a benchmark in go
@@ -183,19 +181,23 @@ func TestEquinoxClientClearCache(t *testing.T) {
 // BenchmarkCachedSummonerByName-16 73472 16236 ns/op 9780 B/op 48 allocs/op
 // BenchmarkCachedSummonerByName-16 68229 17395 ns/op 10132 B/op 48 allocs/op
 func BenchmarkCachedSummonerByName(b *testing.B) {
+	b.ReportAllocs()
+
+	summoner := &lol.SummonerDTO{
+		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
+		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
+		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
+		Name:          "Loveable Senpai",
+		ProfileIconID: 1386,
+		RevisionDate:  1657211888000,
+		SummonerLevel: 68,
+	}
+
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 		Get(fmt.Sprintf(lol.SummonerByNameURL, "Loveable Senpai")).
 		Persist().
 		Reply(200).
-		JSON(&lol.SummonerDTO{
-			ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
-			AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
-			PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
-			Name:          "Loveable Senpai",
-			ProfileIconID: 1386,
-			RevisionDate:  1657211888000,
-			SummonerLevel: 68,
-		})
+		JSON(summoner)
 
 	client, err := equinox.NewClient("RGAPI-TEST")
 
@@ -219,23 +221,29 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 // BenchmarkSummonerByName-16 47240 25171 ns/op 8046 B/op 84 allocs/op
 // BenchmarkSummonerByName-16 45874 25856 ns/op 8560 B/op 85 allocs/op
 func BenchmarkSummonerByName(b *testing.B) {
+	b.ReportAllocs()
+
+	summoner := &lol.SummonerDTO{
+		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
+		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
+		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
+		Name:          "Loveable Senpai",
+		ProfileIconID: 1386,
+		RevisionDate:  1657211888000,
+		SummonerLevel: 68,
+	}
+
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 		Get(fmt.Sprintf(lol.SummonerByNameURL, "Loveable Senpai")).
 		Persist().
 		Reply(200).
-		JSON(&lol.SummonerDTO{
-			ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
-			AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
-			PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
-			Name:          "Loveable Senpai",
-			ProfileIconID: 1386,
-			RevisionDate:  1657211888000,
-			SummonerLevel: 68,
-		})
+		JSON(summoner)
 
 	config := internal.NewTestEquinoxConfig()
 
 	config.LogLevel = api.FatalLevel
+	config.RateLimit = true
+	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
 
@@ -259,6 +267,8 @@ func BenchmarkSummonerByName(b *testing.B) {
 // BenchmarkCachedDataDragonRealm-16 68016 18454 ns/op 10148 B/op 55 allocs/op
 // BenchmarkCachedDataDragonRealm-16 60730 19914 ns/op 10743 B/op 55 allocs/op
 func BenchmarkCachedDataDragonRealm(b *testing.B) {
+	b.ReportAllocs()
+
 	realm := &data_dragon.RealmData{
 		N: struct {
 			Item        string "json:\"item\""
@@ -319,6 +329,8 @@ func BenchmarkCachedDataDragonRealm(b *testing.B) {
 // BenchmarkDataDragonRealm-16 40266 27107 ns/op 8049 B/op 91 allocs/op
 // BenchmarkDataDragonRealm-16 42764 27618 ns/op 8561 B/op 92 allocs/op
 func BenchmarkDataDragonRealm(b *testing.B) {
+	b.ReportAllocs()
+
 	realm := &data_dragon.RealmData{
 		N: struct {
 			Item        string "json:\"item\""
@@ -360,6 +372,8 @@ func BenchmarkDataDragonRealm(b *testing.B) {
 	config := internal.NewTestEquinoxConfig()
 
 	config.LogLevel = api.FatalLevel
+	config.RateLimit = true
+	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
 

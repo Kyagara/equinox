@@ -45,7 +45,7 @@ func TestTournamentCreateCodes(t *testing.T) {
 			name:    "not found",
 			count:   1,
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			parameters: &lol.TournamentCodeParametersDTO{
 				MapType:       lol.SummonersRiftMap,
 				PickType:      lol.TournamentDraftPick,
@@ -131,7 +131,7 @@ func TestTournamentByCode(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -174,7 +174,7 @@ func TestTournamentUpdate(t *testing.T) {
 		{
 			name:       "not found",
 			code:       http.StatusNotFound,
-			wantErr:    api.NotFoundError,
+			wantErr:    api.ErrNotFound,
 			parameters: &lol.TournamentCodeUpdateParametersDTO{},
 		},
 		{
@@ -223,7 +223,7 @@ func TestTournamentLobbyEvents(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -266,7 +266,7 @@ func TestTournamentCreate(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 		},
 	}
 
@@ -311,7 +311,7 @@ func TestTournamentCreateProvider(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			url:     "http://localhost:80",
 		},
 		{

@@ -104,7 +104,7 @@ type LocalizedActDTO struct {
 
 // Get content filtered by locale.
 //
-// Locale defaults to en-US.
+// Locale defaults to en-US
 func (e *ContentEndpoint) ByLocale(shard Shard, locale Locale) (*LocalizedContentDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-content-v1", "ByLocale")
 

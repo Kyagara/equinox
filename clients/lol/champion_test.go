@@ -36,7 +36,7 @@ func TestChampionRotations(t *testing.T) {
 		{
 			name:    "not found",
 			code:    http.StatusNotFound,
-			wantErr: api.NotFoundError,
+			wantErr: api.ErrNotFound,
 			region:  lol.BR1,
 		},
 		{

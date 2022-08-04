@@ -45,7 +45,7 @@ type TournamentPlayerDTO struct {
 	TeamID     string `json:"teamId,omitempty"`
 	// (Legal values: UNSELECTED, FILL, TOP, JUNGLE, MIDDLE, BOTTOM, UTILITY).
 	Position string `json:"position"`
-	// (Legal values: CAPTAIN, MEMBER)
+	// (Legal values: CAPTAIN, MEMBER).
 	Role string `json:"role"`
 }
 
