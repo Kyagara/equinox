@@ -1,7 +1,10 @@
 package api
 
 import (
+	"time"
+
 	"github.com/Kyagara/equinox/cache"
+	"github.com/Kyagara/equinox/rate_limit"
 	"go.uber.org/zap/zapcore"
 )
 
@@ -11,23 +14,54 @@ type EquinoxConfig struct {
 	Key string
 	// Cluster name, using the nearest cluster to you is recommended.
 	Cluster Cluster
-	// Log level.
+	// Log level, api.FatalLevel effectively disables logging.
 	LogLevel LogLevel
-	// Timeout for the http.Client in seconds, 0 disables the timeout.
+	// Timeout for the internal http.Client in seconds, 0 disables the timeout.
 	Timeout int
-	// Enable or disable retrying a request if it returns a 429 status code.
+	// Allows retrying a request if it returns a 429 status code.
 	Retry bool
 	// The cache used to store all GET requests done by the client.
 	Cache *cache.Cache
-	// Enable or disable rate limiting.
-	RateLimit bool
+	// The rate limit store.
+	RateLimit *rate_limit.RateLimit
 }
 
 func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
-	encoder.AddBool("retry-enabled", c.Retry)
-	encoder.AddInt("client-timeout", c.Timeout)
-	encoder.AddBool("rate-limit", c.RateLimit)
-	encoder.AddDuration("cache-ttl", c.Cache.TTL)
+	encoder.AddBool("retry-if-429", c.Retry)
+	encoder.AddInt("http-client-timeout", c.Timeout)
+
+	if c.RateLimit.Enabled {
+		rate := RateConfig{Store: string(c.RateLimit.StoreType)}
+
+		encoder.AddObject("rate-limit", rate)
+	}
+	if c.Cache.TTL > 0 {
+		cache := CacheConfig{Store: string(c.Cache.StoreType), TTL: c.Cache.TTL}
+
+		encoder.AddObject("cache", cache)
+	}
+
+	return nil
+}
+
+type CacheConfig struct {
+	TTL   time.Duration
+	Store string
+}
+
+func (c CacheConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
+	encoder.AddString("store", c.Store)
+	encoder.AddDuration("cache-ttl", c.TTL)
+
+	return nil
+}
+
+type RateConfig struct {
+	Store string
+}
+
+func (c RateConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
+	encoder.AddString("store", c.Store)
 
 	return nil
 }

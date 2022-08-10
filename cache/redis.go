@@ -36,27 +36,13 @@ func (s *RedisStore) Get(key string) ([]byte, error) {
 }
 
 func (s *RedisStore) Set(key string, value []byte, ttl time.Duration) error {
-	err := s.client.Set(s.ctx, key, value, s.ttl).Err()
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.client.Set(s.ctx, key, value, s.ttl).Err()
 }
 
 func (s *RedisStore) Delete(key string) error {
-	err := s.client.Del(s.ctx, key).Err()
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.client.Del(s.ctx, key).Err()
 }
 
 func (s *RedisStore) Clear() error {
-	err := s.client.FlushAll(s.ctx).Err()
-
-	return err
+	return s.client.FlushAll(s.ctx).Err()
 }

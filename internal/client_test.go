@@ -9,8 +9,10 @@ import (
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
+	"github.com/Kyagara/equinox/clients/data_dragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/rate_limit"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
@@ -34,6 +36,23 @@ func TestInternalClientPut(t *testing.T) {
 		Reply(200)
 
 	err = internalClient.Put("tests", "/", nil, "", "")
+
+	assert.Nil(t, err, "expecting nil error")
+}
+
+func TestInternalClientDataDragonGet(t *testing.T) {
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	require.Nil(t, err, "expecting nil error")
+
+	gock.New(fmt.Sprintf(api.DataDragonURLFormat, "/")).
+		Get("").
+		Reply(200).
+		JSON(&data_dragon.DataDragonMetadata{})
+
+	target := &data_dragon.DataDragonMetadata{}
+
+	err = internalClient.DataDragonGet("/", target, "endpoint", "method")
 
 	assert.Nil(t, err, "expecting nil error")
 }
@@ -89,10 +108,10 @@ func TestInternalClientFailingRetry(t *testing.T) {
 	// This will take 2 seconds
 	gotErr := internalClient.Get("tests", "/", &object, "", "", "")
 
-	require.Equal(t, api.ErrTooManyRequests, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrTooManyRequests, gotErr))
+	assert.Equal(t, api.ErrTooManyRequests, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrTooManyRequests, gotErr))
 }
 
-func TestInternalClientRetryHeader(t *testing.T) {
+func TestInternalClientRetryHeaderNotFound(t *testing.T) {
 	config := internal.NewTestEquinoxConfig()
 
 	config.Retry = true
@@ -109,9 +128,7 @@ func TestInternalClientRetryHeader(t *testing.T) {
 
 	gotErr := internalClient.Get("tests", "/", &object, "", "", "")
 
-	wantErr := fmt.Errorf("rate limited but no Retry-After header was found, stopping")
-
-	require.Equal(t, wantErr, gotErr, fmt.Sprintf("want err %v, got %v", wantErr, gotErr))
+	assert.Equal(t, api.ErrRetryAfterHeaderNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrRetryAfterHeaderNotFound, gotErr))
 }
 
 // Testing if InternalClient.Post() can properly decode a plain text response.
@@ -304,7 +321,11 @@ func TestInternalClientErrorResponses(t *testing.T) {
 func TestInternalClientRateLimit(t *testing.T) {
 	config := internal.NewTestEquinoxConfig()
 
-	config.RateLimit = true
+	rate, err := rate_limit.NewInternalRateLimit()
+
+	require.Nil(t, err, "expecting nil error")
+
+	config.RateLimit = rate
 
 	internalClient, err := internal.NewInternalClient(config)
 
@@ -312,11 +333,13 @@ func TestInternalClientRateLimit(t *testing.T) {
 
 	headers := map[string]string{}
 
-	headers["X-App-Rate-Limit"] = "1:10,1:600"
-	headers["X-App-Rate-Limit-Count"] = "1000:10,1000:600"
+	// The app is not rate limited
+	headers["X-App-Rate-Limit"] = "20:1,100:120"
+	headers[rate_limit.AppRateLimitCountHeader] = "1:1,1:120"
 
-	headers["X-Method-Rate-Limit"] = "1:10,1:600"
-	headers["X-Method-Rate-Limit-Count"] = "1000:10,1000:600"
+	// The method will be rate limited
+	headers[rate_limit.MethodRateLimitHeader] = "1300:60"
+	headers[rate_limit.MethodRateLimitCountHeader] = "1300:60"
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 		Put("/").

@@ -13,6 +13,7 @@ import (
 	"github.com/Kyagara/equinox/clients/tft"
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/rate_limit"
 	"github.com/allegro/bigcache/v3"
 )
 
@@ -33,9 +34,15 @@ type Equinox struct {
 //   - `Timeout`    : 15 Seconds
 //   - `Retry`      : true
 //   - `Cache`      : BigCache with TTL of 4 minutes
-//   - `RateLimit`  : true
+//   - `RateLimit`  : Internal
 func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4 * time.Minute))
+
+	if err != nil {
+		return nil, err
+	}
+
+	rate, err := rate_limit.NewInternalRateLimit()
 
 	if err != nil {
 		return nil, err
@@ -48,7 +55,7 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 		Timeout:   15,
 		Retry:     true,
 		Cache:     cache,
-		RateLimit: true,
+		RateLimit: rate,
 	}
 
 	return config, nil
@@ -61,7 +68,7 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 //   - `Timeout`    : 15 Seconds
 //   - `Retry`      : true
 //   - `Cache`      : BigCache with TTL of 4 minutes
-//   - `RateLimit`  : true
+//   - `RateLimit`  : Internal
 func NewClient(key string) (*Equinox, error) {
 	if key == "" {
 		return nil, fmt.Errorf("API Key not provided")
