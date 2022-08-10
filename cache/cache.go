@@ -10,9 +10,17 @@ import (
 	"github.com/go-redis/redis/v9"
 )
 
+type CacheStoreType string
+
+const (
+	BigCache   CacheStoreType = "BigCache"
+	RedisCache CacheStoreType = "Redis"
+)
+
 type Cache struct {
-	store Store
-	TTL   time.Duration
+	store     Store
+	TTL       time.Duration
+	StoreType CacheStoreType
 }
 
 type Store interface {
@@ -37,10 +45,9 @@ func NewBigCache(config bigcache.Config) (*Cache, error) {
 	}
 
 	cache := &Cache{
-		store: &BigCacheStore{
-			client: bigcache,
-		},
-		TTL: config.LifeWindow,
+		store:     &BigCacheStore{client: bigcache},
+		TTL:       config.LifeWindow,
+		StoreType: BigCache,
 	}
 
 	return cache, nil
@@ -66,7 +73,8 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 			ttl:    ttl,
 			ctx:    ctx,
 		},
-		TTL: ttl,
+		TTL:       ttl,
+		StoreType: RedisCache,
 	}
 
 	return cache, nil
@@ -78,13 +86,7 @@ func (c *Cache) Get(key string) ([]byte, error) {
 		return nil, ErrCacheIsDisabled
 	}
 
-	value, err := c.store.Get(key)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return value, nil
+	return c.store.Get(key)
 }
 
 // Saves an item under the key provided.

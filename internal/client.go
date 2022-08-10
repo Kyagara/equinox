@@ -12,6 +12,7 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
+	"github.com/Kyagara/equinox/rate_limit"
 	"go.uber.org/zap"
 )
 
@@ -21,7 +22,7 @@ type InternalClient struct {
 	http               *http.Client
 	logger             *zap.Logger
 	cache              *cache.Cache
-	rateLimit          map[interface{}]*RateLimit
+	rateLimit          *rate_limit.RateLimit
 	isCacheEnabled     bool
 	isRateLimitEnabled bool
 	isRetryEnabled     bool
@@ -36,7 +37,7 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 		Timeout:   15,
 		Retry:     false,
 		Cache:     &cache.Cache{TTL: 0},
-		RateLimit: false,
+		RateLimit: &rate_limit.RateLimit{Enabled: false},
 	}
 }
 
@@ -48,11 +49,19 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
 
+	var rateEnabled bool
+
+	if config.RateLimit == nil {
+		config.RateLimit = &rate_limit.RateLimit{Enabled: false}
+	}
+
 	logger, err := NewLogger(config)
 
 	if err != nil {
 		return nil, err
 	}
+
+	rateEnabled = config.RateLimit.Enabled
 
 	client := &InternalClient{
 		key:                config.Key,
@@ -60,9 +69,9 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		http:               &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
 		logger:             logger,
 		cache:              config.Cache,
-		rateLimit:          map[interface{}]*RateLimit{},
+		rateLimit:          config.RateLimit,
 		isCacheEnabled:     cacheEnabled,
-		isRateLimitEnabled: config.RateLimit,
+		isRateLimitEnabled: rateEnabled,
 		isRetryEnabled:     config.Retry,
 	}
 
@@ -268,10 +277,10 @@ func (c *InternalClient) newRequest(httpMethod string, url string, body interfac
 func (c *InternalClient) sendRequest(logger *zap.Logger, url string, req *http.Request, retrying bool, endpointName string, methodName string, route interface{}) (*http.Response, []byte, error) {
 	// If rate limiting is enabled
 	if c.isRateLimitEnabled {
-		isRateLimited := c.checkRateLimit(route, endpointName, methodName)
+		err := c.checkRateLimit(route, endpointName, methodName)
 
-		if isRateLimited {
-			return nil, nil, api.ErrTooManyRequests
+		if err != nil {
+			return nil, nil, err
 		}
 	}
 
@@ -287,16 +296,20 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, url string, req *http.R
 	defer res.Body.Close()
 
 	// Update rate limits
-	if c.isRateLimitEnabled && res.Header.Get("X-App-Rate-Limit") != "" {
+	if c.isRateLimitEnabled {
 		// Updating app rate limit
-		rate := ParseHeaders(res.Header, "X-App-Rate-Limit", "X-App-Rate-Limit-Count")
+		err := c.rateLimit.SetAppRate(route, &res.Header)
 
-		c.rateLimit[route].SetAppRate(rate)
+		if err != nil {
+			return nil, nil, err
+		}
 
-		// Updating method rate limi
-		rate = ParseHeaders(res.Header, "X-Method-Rate-Limit", "X-Method-Rate-Limit-Count")
+		// Updating method rate limit
+		err = c.rateLimit.Set(route, endpointName, methodName, &res.Header)
 
-		c.rateLimit[route].Set(endpointName, methodName, rate)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	// Checking the response
@@ -306,24 +319,26 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, url string, req *http.R
 	// without having to read the body again, causing an error
 	var body []byte
 
-	// If retry is enabled and c.checkResponse() returns an api.RateLimitedError, retry the request
-	if c.isRetryEnabled && errors.Is(err, api.ErrTooManyRequests) && !retrying {
+	// If retry is enabled and c.checkResponse() returns an error, retry the request
+	if c.isRetryEnabled && !retrying && errors.Is(err, api.ErrTooManyRequests) {
+		logger.Debug("Retrying request")
+
 		// If this retry is successful, the body var will be the res.Body
 		res, body, err = c.sendRequest(logger, url, req, true, endpointName, methodName, route)
 	}
 
 	// Returns the error from c.checkResponse() if any
-	// If retry is enabled, this error could also be the error from the retried request if it failed again
+	// If retry is enabled, this error will be the error from the retried request if it failed again
 	if err != nil {
 		return nil, nil, err
 	}
 
-	// If the retry was successful, the body won't be nil, so return the result here to avoid reading the body again
+	logger.Info("Request successful")
+
+	// If the retry was successful, the body won't be nil, so return the result here to avoid reading the body again, causing an error
 	if body != nil {
 		return res, body, nil
 	}
-
-	logger.Info("Request successful")
 
 	body, err = io.ReadAll(res.Body)
 
@@ -336,18 +351,19 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, url string, req *http.R
 
 func (c *InternalClient) checkResponse(logger *zap.Logger, url string, res *http.Response) error {
 	// If the API returns a 429 code
-	if res.StatusCode == http.StatusTooManyRequests && c.isRetryEnabled {
+	if c.isRetryEnabled && res.StatusCode == http.StatusTooManyRequests {
 		retryAfter := res.Header.Get("Retry-After")
 
 		// If the header isn't found, don't retry and return error
 		if retryAfter == "" {
-			return fmt.Errorf("rate limited but no Retry-After header was found, stopping")
+			logger.Error("Request failed", zap.Error(api.ErrRetryAfterHeaderNotFound))
+			return api.ErrRetryAfterHeaderNotFound
 		}
 
 		seconds, err := strconv.Atoi(retryAfter)
 
 		if err != nil {
-			logger.Error("Error converting retry after header", zap.Error(err))
+			logger.Error("Error converting Retry-After header", zap.Error(err))
 			return err
 		}
 
@@ -363,11 +379,11 @@ func (c *InternalClient) checkResponse(logger *zap.Logger, url string, res *http
 		logger.Error("Request failed", zap.Error(fmt.Errorf("endpoint method returned an error code: %v", res.Status)))
 
 		// Handling errors documented in the Riot API docs
-		// This StatusCodeToError solution is from KnutZuidema/golio
+		// This StatusCodeToError solution is from https://github.com/KnutZuidema/golio
 		err, ok := api.StatusCodeToError[res.StatusCode]
 
 		if !ok {
-			err = api.ErrorResponse{
+			return api.ErrorResponse{
 				Status: api.Status{
 					Message:    "Unknown error",
 					StatusCode: res.StatusCode,
@@ -382,32 +398,44 @@ func (c *InternalClient) checkResponse(logger *zap.Logger, url string, res *http
 }
 
 // Checks the app and method rate limit, returns true if rate limited.
-func (c *InternalClient) checkRateLimit(route interface{}, endpointName string, methodName string) bool {
+func (c *InternalClient) checkRateLimit(route interface{}, endpointName string, methodName string) error {
 	if route == "" {
-		return false
-	}
-
-	if c.rateLimit[route] == nil {
-		c.rateLimit[route] = NewRateLimit()
+		return nil
 	}
 
 	// Checking rate limits for the app
-	isRateLimited := c.rateLimit[route].IsRateLimited(c.rateLimit[route].appRate)
+	rate, err := c.rateLimit.GetAppRate(route)
+
+	if err != nil {
+		return err
+	}
+
+	isRateLimited, err := c.rateLimit.IsRateLimited(rate)
+
+	if err != nil {
+		return err
+	}
 
 	if isRateLimited {
-		return true
+		return api.ErrTooManyRequests
 	}
 
 	// Checking rate limits for the endpoint method
-	rate := c.rateLimit[route].Get(endpointName, methodName)
+	rate, err = c.rateLimit.Get(route, endpointName, methodName)
 
-	if rate != nil {
-		isRateLimited := c.rateLimit[route].IsRateLimited(rate)
-
-		if isRateLimited {
-			return true
-		}
+	if err != nil {
+		return err
 	}
 
-	return false
+	isRateLimited, err = c.rateLimit.IsRateLimited(rate)
+
+	if err != nil {
+		return err
+	}
+
+	if isRateLimited {
+		return api.ErrTooManyRequests
+	}
+
+	return nil
 }

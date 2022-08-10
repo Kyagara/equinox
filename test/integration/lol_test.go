@@ -12,6 +12,10 @@ import (
 )
 
 func TestLOLChampionsRotations(t *testing.T) {
+	if OnlyDataDragon {
+		t.SkipNow()
+	}
+
 	rotations, err := client.LOL.Champion.Rotations(lol.BR1)
 
 	require.Nil(t, err, "expecting nil error")

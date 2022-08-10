@@ -33,13 +33,7 @@ func (s *BigCacheStore) Get(key string) ([]byte, error) {
 }
 
 func (s *BigCacheStore) Set(key string, value []byte, _ time.Duration) error {
-	err := s.client.Set(key, value)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.client.Set(key, value)
 }
 
 func (s *BigCacheStore) Delete(key string) error {

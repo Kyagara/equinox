@@ -11,6 +11,7 @@ import (
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/riot"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/rate_limit"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
@@ -111,6 +112,7 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	config, err := equinox.DefaultConfig("RGAPI-TEST")
 
 	config.LogLevel = api.DebugLevel
+	config.Retry = false
 
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
@@ -133,7 +135,7 @@ func TestEquinoxClientClearCache(t *testing.T) {
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
 		Get(fmt.Sprintf(riot.AccountByPUUIDURL, "puuid")).
-		Reply(403).
+		Reply(404).
 		JSON(account).Delay(delay)
 
 	gotData, gotErr := client.Riot.Account.ByPUUID("puuid")
@@ -168,7 +170,7 @@ func TestEquinoxClientClearCache(t *testing.T) {
 
 	require.Nil(t, gotData)
 
-	assert.Equal(t, api.ErrForbidden, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrForbidden, gotErr))
+	assert.Equal(t, api.ErrNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrNotFound, gotErr))
 }
 
 // Never done a benchmark in go
@@ -233,16 +235,20 @@ func BenchmarkSummonerByName(b *testing.B) {
 		SummonerLevel: 68,
 	}
 
+	headers := map[string]string{}
+
+	headers[rate_limit.AppRateLimitHeader] = "1300:2,1300:60"
+	headers[rate_limit.AppRateLimitCountHeader] = "1:2,5:60"
+
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 		Get(fmt.Sprintf(lol.SummonerByNameURL, "Loveable Senpai")).
 		Persist().
 		Reply(200).
-		JSON(summoner)
+		JSON(summoner).SetHeaders(headers)
 
 	config := internal.NewTestEquinoxConfig()
 
 	config.LogLevel = api.FatalLevel
-	config.RateLimit = true
 	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
@@ -372,7 +378,6 @@ func BenchmarkDataDragonRealm(b *testing.B) {
 	config := internal.NewTestEquinoxConfig()
 
 	config.LogLevel = api.FatalLevel
-	config.RateLimit = true
 	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)

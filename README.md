@@ -44,7 +44,6 @@
 -   Review the cache and rate limiting implementation
 -   Add a way to define a custom TTL per endpoint method
 -   Improve Data Dragon support
--   Add Helper Methods (e.g.: GetChampion or GetSummoner inside a match response)
 
 ## Installation
 
@@ -77,9 +76,9 @@ config := &api.EquinoxConfig{
 	Cluster: api.AmericasCluster, // Riot API cluster, use the cluster closest to you.
 	LogLevel: api.FatalLevel, // The logging level, the FatalLevel provided effectively disables logging.
 	Timeout: 15, // http.Client timeout in seconds.
-	Cache: cache.NewBigCache(cacheConfig), // The default client uses BigCache with TTL of 4 minutes
-	Retry: true, // Retry if the API returns a 429 response.
-	RateLimit: true // If rate limit is enabled or not
+	Cache: cache.NewBigCache(cacheConfig), // The default client uses BigCache with an eviction time of 4 minutes.
+	Retry: true, // Retries a request if the API returns a 429 response.
+	RateLimit: rate_limit.NewInternalRateLimit() // In-memory rate limit.
 }
 ```
 
@@ -87,19 +86,19 @@ config := &api.EquinoxConfig{
 
 > A different storage can be provided to the client using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil in config.Cache disables caching.
 
-Now you can access different games endpoints by their abbreviations, provided you have access to them. For example:
+Now you can access different games endpoints by their abbreviations. For example:
 
 ```go
-// This method uses a lol.Region. Can be accessed with a Development key.
+// This method uses a lol.Region and a summoner name. Can be accessed with a Development key.
 summoner, err := client.LOL.Summoner.ByName(lol.BR1, "Loveable Senpai")
 
-// This method uses a lol.Route. Can be accessed with a Development key.
+// This method uses a lol.Route and a match ID. Can be accessed with a Development key.
 summoner, err := client.LOL.Match.ByID(lol.Americas, "BR1_2530718601")
 
 // The client.Cluster will be used as the region. Can be accessed with a Development key.
 account, err := client.Riot.Account.ByPUUID("puuid")
 
-// This method uses a val.Shard. May not be available in your policy.
+// This method uses a val.Shard an a val.Queue. May not be available in your policy.
 matches, err := client.VAL.Match.Recent(val.BR, val.CompetitiveQueue)
 ```
 
@@ -142,11 +141,12 @@ func main() {
 
 ## About
 
-This is my first time developing and publishing an API client, I started this project to learn more about Golang and ended up loving the developer experience using Go, after noticing there wasn't any 'all-in-one' type of client for all Riot Games API endpoints I decided to challenge myself and do it.
+This is my first time developing and publishing an API client, I learned a lot about how API clients work and I am constantly changing the project as I test and learn new things, as the project approaches a more stable version, I am avoiding doing lots of breaking changes.
 
-I learned a lot about how API clients work and I am constantly changing the project as I test and learn new things, however, as the project approaches a more stable version, I am avoiding doing any breaking changes.
+These two projects helped me learn a lot:
 
-Please, always check the commit messages before a new release to check if there was any breaking change introduced.
+-   [go-github](https://github.com/google/go-github)
+-   [golio](https://github.com/KnutZuidema/golio)
 
 ## Disclaimer
 
@@ -155,5 +155,3 @@ Equinox isn't endorsed by Riot Games and doesn't reflect the views or opinions o
 ## License
 
 This project is licensed under the MIT license.
-
-The `internal/client.go` file contains code from [golio](https://github.com/KnutZuidema/golio/blob/master/internal/client.go#L151=). golio is also licensed under [MIT](https://github.com/KnutZuidema/golio/blob/master/LICENSE).

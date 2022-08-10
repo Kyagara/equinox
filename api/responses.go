@@ -1,6 +1,9 @@
 package api
 
-import "net/http"
+import (
+	"errors"
+	"net/http"
+)
 
 type PlainTextResponse struct {
 	Response interface{} `json:"response"`
@@ -20,6 +23,8 @@ func (e ErrorResponse) Error() string {
 }
 
 var (
+	ErrRetryAfterHeaderNotFound = errors.New("rate limited but no Retry-After header was found, stopping")
+
 	ErrBadRequest = ErrorResponse{
 		Status: Status{
 			Message:    "Bad Request",
