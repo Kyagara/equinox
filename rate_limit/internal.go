@@ -177,13 +177,17 @@ func (s *InternalRateStore) IsRateLimited(rate *Rate) (bool, error) {
 }
 
 func (s *InternalRateStore) updateInternalRateCount(old *Rate, new *Rate) {
-	now := time.Now()
-
 	old.Seconds.Count = new.Seconds.Count
-	old.Seconds.Access = now
-	old.Seconds.Expire = now.Add(time.Duration(new.Seconds.Time) * time.Second)
+	old.Seconds.Access = new.Seconds.Access
+
+	if old.Seconds.Access.After(old.Seconds.Expire) {
+		old.Seconds.Expire = new.Seconds.Expire
+	}
 
 	old.Minutes.Count = new.Minutes.Count
-	old.Minutes.Access = now
-	old.Minutes.Expire = now.Add(time.Duration(new.Minutes.Time) * time.Second)
+	old.Minutes.Access = new.Minutes.Access
+
+	if old.Minutes.Access.After(old.Minutes.Expire) {
+		old.Minutes.Expire = new.Minutes.Expire
+	}
 }
