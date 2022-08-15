@@ -55,10 +55,10 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		config.RateLimit = &rate_limit.RateLimit{Enabled: false}
 	}
 
-	logger, err := NewLogger(config)
+	logger := NewLogger(config)
 
-	if err != nil {
-		return nil, err
+	if logger == nil {
+		return nil, fmt.Errorf("error initializing logger")
 	}
 
 	rateEnabled = config.RateLimit.Enabled
@@ -138,7 +138,7 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 	}
 
 	// Sending HTTP request and returning the response
-	_, body, err := c.sendRequest(logger, url, req, false, endpointName, methodName, route)
+	body, err := c.sendRequest(logger, req, url, route, endpointName, methodName, false)
 
 	if err != nil {
 		return err
@@ -148,7 +148,7 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 		err := c.cache.Set(fmt.Sprintf("%s/%s", url, authorizationHeader), body)
 
 		if err != nil {
-			logger.Error("Method failed", zap.Error(err))
+			logger.Error("Error caching item", zap.Error(err))
 		} else {
 			logger.Debug("Cache set")
 		}
@@ -165,7 +165,7 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 }
 
 // Performs a POST request, authorizationHeader can be blank.
-func (c *InternalClient) Post(route interface{}, endpointPath string, requestBody interface{}, target interface{}, endpointName string, method string, authorizationHeader string) error {
+func (c *InternalClient) Post(route interface{}, endpointPath string, requestBody interface{}, target interface{}, endpointName string, methodName string, authorizationHeader string) error {
 	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
 
 	url := fmt.Sprintf("%s%s", baseUrl, endpointPath)
@@ -184,25 +184,10 @@ func (c *InternalClient) Post(route interface{}, endpointPath string, requestBod
 	}
 
 	// Sending HTTP request and returning the response
-	res, body, err := c.sendRequest(logger, url, req, false, endpointName, method, route)
+	body, err := c.sendRequest(logger, req, url, route, endpointName, methodName, false)
 
 	if err != nil {
 		return err
-	}
-
-	// In case of a post request returning just a single, non JSON response
-	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type assertion
-	// This implementation looks horrible, I don't know another way of decoding any non JSON value to the &target
-	if res.Header.Get("Content-Type") == "" {
-		body := []byte(fmt.Sprintf(`{"response":"%s"}`, string(body)))
-
-		err = json.Unmarshal(body, &target)
-
-		if err != nil {
-			return err
-		}
-
-		return nil
 	}
 
 	// Decoding the body into the target
@@ -231,7 +216,7 @@ func (c *InternalClient) Put(route interface{}, endpointPath string, requestBody
 	}
 
 	// Sending HTTP request and returning the response
-	_, _, err = c.sendRequest(logger, url, req, false, endpointName, methodName, route)
+	_, err = c.sendRequest(logger, req, url, route, endpointName, methodName, false)
 
 	if err != nil {
 		return err
@@ -274,13 +259,13 @@ func (c *InternalClient) newRequest(httpMethod string, url string, body interfac
 }
 
 // Sends a HTTP request.
-func (c *InternalClient) sendRequest(logger *zap.Logger, url string, req *http.Request, retrying bool, endpointName string, methodName string, route interface{}) (*http.Response, []byte, error) {
+func (c *InternalClient) sendRequest(logger *zap.Logger, req *http.Request, url string, route interface{}, endpointName string, methodName string, retrying bool) ([]byte, error) {
 	// If rate limiting is enabled
 	if c.isRateLimitEnabled {
 		err := c.checkRateLimit(route, endpointName, methodName)
 
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 	}
 
@@ -290,7 +275,7 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, url string, req *http.R
 	res, err := c.http.Do(req)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	defer res.Body.Close()
@@ -301,14 +286,14 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, url string, req *http.R
 		err := c.rateLimit.SetAppRate(route, &res.Header)
 
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 
 		// Updating method rate limit
 		err = c.rateLimit.Set(route, endpointName, methodName, &res.Header)
 
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 	}
 
@@ -324,29 +309,37 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, url string, req *http.R
 		logger.Debug("Retrying request")
 
 		// If this retry is successful, the body var will be the res.Body
-		res, body, err = c.sendRequest(logger, url, req, true, endpointName, methodName, route)
+		body, err = c.sendRequest(logger, req, url, route, endpointName, methodName, true)
 	}
 
 	// Returns the error from c.checkResponse() if any
 	// If retry is enabled, this error will be the error from the retried request if it failed again
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	logger.Info("Request successful")
 
 	// If the retry was successful, the body won't be nil, so return the result here to avoid reading the body again, causing an error
 	if body != nil {
-		return res, body, nil
+		return body, nil
 	}
 
 	body, err = io.ReadAll(res.Body)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return res, body, nil
+	// In case of a post request returning just a single, non JSON response
+	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type assertion
+	if res.Header.Get("Content-Type") == "" {
+		body = []byte(fmt.Sprintf(`{"response":"%s"}`, string(body)))
+
+		return body, nil
+	}
+
+	return body, nil
 }
 
 func (c *InternalClient) checkResponse(logger *zap.Logger, url string, res *http.Response) error {

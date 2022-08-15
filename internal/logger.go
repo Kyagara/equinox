@@ -7,18 +7,14 @@ import (
 )
 
 // Creates a new zap.Logger from the configuration parameters provided.
-func NewLogger(config *api.EquinoxConfig) (*zap.Logger, error) {
+func NewLogger(config *api.EquinoxConfig) *zap.Logger {
 	zapConfig := zap.NewProductionConfig()
 
 	zapConfig.Level = zap.NewAtomicLevelAt(zapcore.Level(config.LogLevel))
 
-	logger, err := zapConfig.Build(zap.Fields(zap.Object("equinox", config)))
+	logger, _ := zapConfig.Build(zap.Fields(zap.Object("equinox", config)))
 
-	if err != nil {
-		return nil, err
-	}
-
-	return logger, nil
+	return logger
 }
 
 // Used to access the internal logger, this is used to log events from other clients (RiotClient, LOLClient...).

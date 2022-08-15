@@ -29,6 +29,20 @@ func TestDataDragonRealmByName(t *testing.T) {
 	assert.Equal(t, "pt_BR", realm.L, "expecting realm language to be pt_BR")
 }
 
+func TestDataDragonChampionAllChampions(t *testing.T) {
+	version, err := client.DataDragon.Version.Latest()
+
+	require.Nil(t, err, "expecting nil error")
+
+	champions, err := client.DataDragon.Champion.AllChampions(*version, data_dragon.PtBR)
+
+	require.Nil(t, err, "expecting nil error")
+
+	require.NotNil(t, champions, "expecting non-nil champions")
+
+	assert.Equal(t, "Jarvan IV", champions["JarvanIV"].Name, "expecting champion name to be Jarvan IV")
+}
+
 func TestDataDragonChampionByName(t *testing.T) {
 	version, err := client.DataDragon.Version.Latest()
 
@@ -39,8 +53,6 @@ func TestDataDragonChampionByName(t *testing.T) {
 	require.Nil(t, err, "expecting nil error")
 
 	require.NotNil(t, champion, "expecting non-nil champion")
-
-	require.Equal(t, *version, champion.Version, "expecting version in champion to be the same as the metadata")
 
 	assert.Equal(t, "Jarvan IV", champion.Name, "expecting champion name to be Jarvan IV")
 }

@@ -13,6 +13,58 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
+func TestChampionAllChampions(t *testing.T) {
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	require.Nil(t, err, "expecting nil error")
+
+	client := data_dragon.NewDataDragonClient(internalClient)
+
+	json := &data_dragon.DataDragonMetadata{
+		Type:    "",
+		Format:  "",
+		Version: "",
+		Data:    map[string]*data_dragon.ChampionData{},
+	}
+
+	data := map[string]*data_dragon.ChampionData{}
+
+	tests := []struct {
+		name    string
+		code    int
+		want    *data_dragon.DataDragonMetadata
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: http.StatusOK,
+			want: json,
+		},
+		{
+			name:    "not found",
+			code:    http.StatusNotFound,
+			wantErr: api.ErrNotFound,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
+				Get(fmt.Sprintf(data_dragon.ChampionsURL, "1.0", data_dragon.PtBR)).
+				Reply(test.code).
+				JSON(test.want)
+
+			gotData, gotErr := client.Champion.AllChampions("1.0", data_dragon.PtBR)
+
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				assert.Equal(t, data, gotData)
+			}
+		})
+	}
+}
+
 func TestChampionByName(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
@@ -20,16 +72,27 @@ func TestChampionByName(t *testing.T) {
 
 	client := data_dragon.NewDataDragonClient(internalClient)
 
+	json := &data_dragon.DataDragonMetadata{
+		Type:    "",
+		Format:  "",
+		Version: "",
+		Data:    map[string]*data_dragon.ChampionData{},
+	}
+
+	json.Data.(map[string]*data_dragon.ChampionData)["JarvanIV"] = &data_dragon.ChampionData{}
+
+	data := &data_dragon.ChampionData{}
+
 	tests := []struct {
 		name    string
 		code    int
-		want    *data_dragon.ChampionData
+		want    *data_dragon.DataDragonMetadata
 		wantErr error
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: &data_dragon.ChampionData{},
+			want: json,
 		},
 		{
 			name:    "not found",
@@ -50,7 +113,7 @@ func TestChampionByName(t *testing.T) {
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
+				assert.Equal(t, data, gotData)
 			}
 		})
 	}
