@@ -1,10 +1,10 @@
 package data_dragon
 
 type DataDragonMetadata struct {
-	Type    string                  `json:"type"`
-	Format  string                  `json:"format"`
-	Version string                  `json:"version"`
-	Data    map[string]ChampionData `json:"data"`
+	Type    string      `json:"type"`
+	Format  string      `json:"format"`
+	Version string      `json:"version"`
+	Data    interface{} `json:"data"`
 }
 
 type Language string

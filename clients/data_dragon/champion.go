@@ -1,6 +1,7 @@
 package data_dragon
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/Kyagara/equinox/internal"
@@ -12,13 +13,12 @@ type ChampionEndpoint struct {
 }
 
 type ChampionData struct {
-	Version string `json:"version"`
-	ID      string `json:"id"`
-	Key     string `json:"key"`
-	Name    string `json:"name"`
-	Title   string `json:"title"`
-	Blurb   string `json:"blurb"`
-	Info    struct {
+	ID    string `json:"id"`
+	Key   string `json:"key"`
+	Name  string `json:"name"`
+	Title string `json:"title"`
+	Blurb string `json:"blurb"`
+	Info  struct {
 		Attack     int `json:"attack"`
 		Defense    int `json:"defense"`
 		Magic      int `json:"magic"`
@@ -103,6 +103,31 @@ type Image struct {
 	H      int    `json:"h"`
 }
 
+func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[string]*ChampionData, error) {
+	logger := e.internalClient.Logger("Data Dragon", "champion", "AllChampions")
+
+	logger.Debug("Method executed")
+
+	url := fmt.Sprintf(ChampionsURL, version, language)
+
+	var data *DataDragonMetadata
+
+	err := e.internalClient.DataDragonGet(url, &data, "champion", "AllChampions")
+
+	if err != nil {
+		logger.Error("Method failed", zap.Error(err))
+		return nil, err
+	}
+
+	champions, _ := json.Marshal(data.Data)
+
+	var championsData map[string]*ChampionData
+
+	json.Unmarshal(champions, &championsData)
+
+	return championsData, nil
+}
+
 func (e *ChampionEndpoint) ByName(version string, language Language, champion string) (*ChampionData, error) {
 	logger := e.internalClient.Logger("Data Dragon", "champion", "ByName")
 
@@ -119,9 +144,11 @@ func (e *ChampionEndpoint) ByName(version string, language Language, champion st
 		return nil, err
 	}
 
-	championData := data.Data[champion]
+	champions, _ := json.Marshal(data.Data)
 
-	championData.Version = data.Version
+	var championsData map[string]*ChampionData
 
-	return &championData, nil
+	json.Unmarshal(champions, &championsData)
+
+	return championsData[champion], nil
 }

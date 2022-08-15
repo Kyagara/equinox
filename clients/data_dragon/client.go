@@ -10,7 +10,8 @@ const (
 
 	RealmURL = "/realms/%s.json"
 
-	ChampionURL = "/cdn/%s/data/%s/champion/%s.json"
+	ChampionURL  = "/cdn/%s/data/%s/champion/%s.json"
+	ChampionsURL = "/cdn/%s/data/%s/champion.json"
 )
 
 type DataDragonClient struct {
