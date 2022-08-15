@@ -16,23 +16,23 @@ type InternalRateLimitClient interface {
 
 type InternalRateStore struct {
 	client InternalRateLimitClient
-	route  map[interface{}]*Enpoints
+	Route  map[interface{}]*Enpoints
 }
 
 type Enpoints struct {
-	endpoints map[string]*Methods
-	appRate   *Rate
+	Endpoints map[string]*Methods
+	AppRate   *Rate
 }
 
 type Methods struct {
-	methods map[string]*Rate
+	Methods map[string]*Rate
 }
 
 func (s *InternalRateStore) Get(route interface{}, endpointName string, methodName string) (*Rate, error) {
-	if s.route[route] == nil {
-		s.route[route] = &Enpoints{
-			endpoints: map[string]*Methods{},
-			appRate: &Rate{
+	if s.Route[route] == nil {
+		s.Route[route] = &Enpoints{
+			Endpoints: map[string]*Methods{},
+			AppRate: &Rate{
 				Seconds: RateTiming{},
 				Minutes: RateTiming{},
 			},
@@ -41,22 +41,22 @@ func (s *InternalRateStore) Get(route interface{}, endpointName string, methodNa
 		return nil, nil
 	}
 
-	if s.route[route].endpoints[endpointName] == nil {
-		s.route[route].endpoints[endpointName] = &Methods{
-			methods: map[string]*Rate{},
+	if s.Route[route].Endpoints[endpointName] == nil {
+		s.Route[route].Endpoints[endpointName] = &Methods{
+			Methods: map[string]*Rate{},
 		}
 
 		return nil, nil
 	}
 
-	return s.route[route].endpoints[endpointName].methods[methodName], nil
+	return s.Route[route].Endpoints[endpointName].Methods[methodName], nil
 }
 
 func (s *InternalRateStore) GetAppRate(route interface{}) (*Rate, error) {
-	if s.route[route] == nil {
-		s.route[route] = &Enpoints{
-			endpoints: map[string]*Methods{},
-			appRate: &Rate{
+	if s.Route[route] == nil {
+		s.Route[route] = &Enpoints{
+			Endpoints: map[string]*Methods{},
+			AppRate: &Rate{
 				Seconds: RateTiming{},
 				Minutes: RateTiming{},
 			},
@@ -65,23 +65,23 @@ func (s *InternalRateStore) GetAppRate(route interface{}) (*Rate, error) {
 		return nil, nil
 	}
 
-	return s.route[route].appRate, nil
+	return s.Route[route].AppRate, nil
 }
 
 func (s *InternalRateStore) Set(route interface{}, endpointName string, methodName string, headers *http.Header) error {
-	if s.route[route] == nil {
-		s.route[route] = &Enpoints{
-			endpoints: map[string]*Methods{},
-			appRate: &Rate{
+	if s.Route[route] == nil {
+		s.Route[route] = &Enpoints{
+			Endpoints: map[string]*Methods{},
+			AppRate: &Rate{
 				Seconds: RateTiming{},
 				Minutes: RateTiming{},
 			},
 		}
 	}
 
-	if s.route[route].endpoints[endpointName] == nil {
-		s.route[route].endpoints[endpointName] = &Methods{
-			methods: map[string]*Rate{},
+	if s.Route[route].Endpoints[endpointName] == nil {
+		s.Route[route].Endpoints[endpointName] = &Methods{
+			Methods: map[string]*Rate{},
 		}
 	}
 
@@ -95,22 +95,22 @@ func (s *InternalRateStore) Set(route interface{}, endpointName string, methodNa
 		return nil
 	}
 
-	if s.route[route].endpoints[endpointName].methods[methodName] == nil {
-		s.route[route].endpoints[endpointName].methods[methodName] = rate
+	if s.Route[route].Endpoints[endpointName].Methods[methodName] == nil {
+		s.Route[route].Endpoints[endpointName].Methods[methodName] = rate
 
 		return nil
 	}
 
-	s.updateInternalRateCount(s.route[route].endpoints[endpointName].methods[methodName], rate)
+	s.UpdateInternalRateCount(s.Route[route].Endpoints[endpointName].Methods[methodName], rate)
 
 	return nil
 }
 
 func (s *InternalRateStore) SetAppRate(route interface{}, headers *http.Header) error {
-	if s.route[route] == nil {
-		s.route[route] = &Enpoints{
-			endpoints: map[string]*Methods{},
-			appRate: &Rate{
+	if s.Route[route] == nil {
+		s.Route[route] = &Enpoints{
+			Endpoints: map[string]*Methods{},
+			AppRate: &Rate{
 				Seconds: RateTiming{},
 				Minutes: RateTiming{},
 			},
@@ -127,13 +127,13 @@ func (s *InternalRateStore) SetAppRate(route interface{}, headers *http.Header) 
 		return nil
 	}
 
-	if s.route[route].appRate.Seconds.Limit == 0 {
-		s.route[route].appRate = rate
+	if s.Route[route].AppRate.Seconds.Limit == 0 {
+		s.Route[route].AppRate = rate
 
 		return nil
 	}
 
-	s.updateInternalRateCount(s.route[route].appRate, rate)
+	s.UpdateInternalRateCount(s.Route[route].AppRate, rate)
 
 	return nil
 }
@@ -176,7 +176,7 @@ func (s *InternalRateStore) IsRateLimited(rate *Rate) (bool, error) {
 	return rate.Minutes.Count >= rate.Minutes.Limit, nil
 }
 
-func (s *InternalRateStore) updateInternalRateCount(old *Rate, new *Rate) {
+func (s *InternalRateStore) UpdateInternalRateCount(old *Rate, new *Rate) {
 	old.Seconds.Count = new.Seconds.Count
 	old.Seconds.Access = new.Seconds.Access
 

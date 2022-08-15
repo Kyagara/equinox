@@ -61,7 +61,7 @@ func NewInternalRateLimit() (*RateLimit, error) {
 	rate := &RateLimit{
 		store: &InternalRateStore{
 			client: nil,
-			route:  map[interface{}]*Enpoints{},
+			Route:  map[interface{}]*Enpoints{},
 		},
 		Enabled:   true,
 		StoreType: InternalRateLimiter,
