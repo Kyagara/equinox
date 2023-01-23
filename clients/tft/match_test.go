@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/tft"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/stretchr/testify/assert"
@@ -49,12 +50,12 @@ func TestMatchList(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, tft.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.Americas)).
 				Get(fmt.Sprintf(tft.MatchListURL, "PUUID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.List(tft.Americas, "PUUID", test.code)
+			gotData, gotErr := client.Match.List(lol.Americas, "PUUID", test.code)
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -92,12 +93,12 @@ func TestMatchByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, tft.Americas)).
+			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.Americas)).
 				Get(fmt.Sprintf(tft.MatchByIDURL, "matchID")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Match.ByID(tft.Americas, "matchID")
+			gotData, gotErr := client.Match.ByID(lol.Americas, "matchID")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 

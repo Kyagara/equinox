@@ -38,8 +38,13 @@ const (
 	NA1  Region = "na1"
 	OC1  Region = "oc1"
 	PBE1 Region = "PBE1"
+	PH2  Region = "ph2"
 	RU   Region = "ru"
+	SG2  Region = "sg2"
+	TH2  Region = "th2"
 	TR1  Region = "tr1"
+	TW2  Region = "tw2"
+	VN2  Region = "vn2"
 )
 
 type TournamentRegion string

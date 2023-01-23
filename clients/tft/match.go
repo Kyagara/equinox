@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"go.uber.org/zap"
 )
@@ -109,7 +110,7 @@ type InfoDTO struct {
 // Get a list of match IDs by PUUID.
 //
 // Count defaults to 20
-func (e *MatchEndpoint) List(route Route, puuid string, count int) (*[]string, error) {
+func (e *MatchEndpoint) List(route lol.Route, puuid string, count int) (*[]string, error) {
 	logger := e.internalClient.Logger("TFT", "tft-match-v1", "List")
 
 	logger.Debug("Method executed")
@@ -139,7 +140,7 @@ func (e *MatchEndpoint) List(route Route, puuid string, count int) (*[]string, e
 }
 
 // Get a match by match ID.
-func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
+func (e *MatchEndpoint) ByID(route lol.Route, matchID string) (*MatchDTO, error) {
 	logger := e.internalClient.Logger("TFT", "tft-match-v1", "ByID")
 
 	logger.Debug("Method executed")

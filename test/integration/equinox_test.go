@@ -16,8 +16,7 @@ import (
 )
 
 var (
-	client         *equinox.Equinox
-	OnlyDataDragon = false
+	client *equinox.Equinox
 )
 
 func init() {
@@ -25,8 +24,6 @@ func init() {
 
 	if key == "" {
 		fmt.Println("RIOT_GAMES_API_KEY not found. Only Data Dragon tests will run.")
-
-		OnlyDataDragon = true
 
 		key = "RGAPI-TEST"
 	}

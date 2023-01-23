@@ -189,14 +189,14 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
 		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
 		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
-		Name:          "Loveable Senpai",
+		Name:          "Phanes",
 		ProfileIconID: 1386,
 		RevisionDate:  1657211888000,
 		SummonerLevel: 68,
 	}
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-		Get(fmt.Sprintf(lol.SummonerByNameURL, "Loveable Senpai")).
+		Get(fmt.Sprintf(lol.SummonerByNameURL, "Phanes")).
 		Persist().
 		Reply(200).
 		JSON(summoner)
@@ -206,11 +206,11 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.Summoner.ByName(lol.BR1, "Loveable Senpai")
+		data, err := client.LOL.Summoner.ByName(lol.BR1, "Phanes")
 
 		require.Nil(b, err)
 
-		require.Equal(b, "Loveable Senpai", data.Name)
+		require.Equal(b, "Phanes", data.Name)
 	}
 }
 
@@ -229,7 +229,7 @@ func BenchmarkSummonerByName(b *testing.B) {
 		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
 		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
 		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
-		Name:          "Loveable Senpai",
+		Name:          "Phanes",
 		ProfileIconID: 1386,
 		RevisionDate:  1657211888000,
 		SummonerLevel: 68,
@@ -241,7 +241,7 @@ func BenchmarkSummonerByName(b *testing.B) {
 	headers[rate_limit.AppRateLimitCountHeader] = "1:2,5:60"
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-		Get(fmt.Sprintf(lol.SummonerByNameURL, "Loveable Senpai")).
+		Get(fmt.Sprintf(lol.SummonerByNameURL, "Phanes")).
 		Persist().
 		Reply(200).
 		JSON(summoner).SetHeaders(headers)
@@ -256,11 +256,11 @@ func BenchmarkSummonerByName(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.Summoner.ByName(lol.BR1, "Loveable Senpai")
+		data, err := client.LOL.Summoner.ByName(lol.BR1, "Phanes")
 
 		require.Nil(b, err)
 
-		require.Equal(b, "Loveable Senpai", data.Name)
+		require.Equal(b, "Phanes", data.Name)
 	}
 }
 

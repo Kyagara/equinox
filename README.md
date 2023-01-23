@@ -41,8 +41,8 @@
 
 ## Todo
 
--   Review the cache and rate limiting implementation
--   Add a way to define a custom TTL per endpoint method
+-   Review the cache and rate limiting implementation, the rate limit definitely needs work, I don't think its a good implementation
+-   Add a way to define a custom TTL per endpoint method, low priority
 -   Improve Data Dragon support
 
 ## Installation
@@ -90,7 +90,7 @@ Now you can access different games endpoints by their abbreviations. For example
 
 ```go
 // This method uses a lol.Region and a summoner name. Can be accessed with a Development key.
-summoner, err := client.LOL.Summoner.ByName(lol.BR1, "Loveable Senpai")
+summoner, err := client.LOL.Summoner.ByName(lol.BR1, "Phanes")
 
 // This method uses a lol.Route and a match ID. Can be accessed with a Development key.
 summoner, err := client.LOL.Match.ByID(lol.Americas, "BR1_2530718601")
