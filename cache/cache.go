@@ -37,8 +37,8 @@ var (
 // Creates a new Cache using BigCache.
 //
 // Requires a BigCache config that can be created with bigcache.DefaultConfig(n*time.Minute).
-func NewBigCache(config bigcache.Config) (*Cache, error) {
-	bigcache, err := bigcache.NewBigCache(config)
+func NewBigCache(ctx context.Context, config bigcache.Config) (*Cache, error) {
+	bigcache, err := bigcache.New(ctx, config)
 
 	if err != nil {
 		return nil, err
