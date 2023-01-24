@@ -1,6 +1,7 @@
 package equinox
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -36,7 +37,9 @@ type Equinox struct {
 //   - `Cache`      : BigCache with TTL of 4 minutes
 //   - `RateLimit`  : Internal
 func DefaultConfig(key string) (*api.EquinoxConfig, error) {
-	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4 * time.Minute))
+	ctx := context.Background()
+
+	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
 
 	if err != nil {
 		return nil, err

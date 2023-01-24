@@ -1,6 +1,7 @@
 package cache_test
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -12,7 +13,8 @@ import (
 )
 
 func TestNewBigCache(t *testing.T) {
-	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4 * time.Minute))
+	ctx := context.Background()
+	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
 
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
@@ -20,7 +22,8 @@ func TestNewBigCache(t *testing.T) {
 }
 
 func TestBigCacheMethods(t *testing.T) {
-	cache, err := cache.NewBigCache(bigcache.DefaultConfig(4 * time.Minute))
+	ctx := context.Background()
+	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
 
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
