@@ -10,7 +10,7 @@
 			<img src="https://img.shields.io/static/v1?label=Godoc&message=reference&color=blue"/>
 		</a>
 		<a href="https://github.com/Kyagara/equinox/actions?query=workflow%3Atests">
-			<img src="https://img.shields.io/github/workflow/status/Kyagara/equinox/Tests?label=Tests"/>
+			<img src="https://img.shields.io/github/actions/workflow/status/Kyagara/equinox/tests.yaml"/>
 		</a>
 		<a href="https://codecov.io/gh/Kyagara/equinox">
 			<img src="https://codecov.io/gh/Kyagara/equinox/branch/master/graph/badge.svg"/>
