@@ -116,7 +116,7 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 	}
 
 	if c.isCacheEnabled {
-		item, err := c.cache.Get(fmt.Sprintf("%s/%s", url, authorizationHeader))
+		item, err := c.cache.Get(url)
 
 		// If there was an error with retrieving the cached response, only log the error
 		if err != nil {
@@ -145,7 +145,7 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 	}
 
 	if c.isCacheEnabled {
-		err := c.cache.Set(fmt.Sprintf("%s/%s", url, authorizationHeader), body)
+		err := c.cache.Set(url, body)
 
 		if err != nil {
 			logger.Error("Error caching item", zap.Error(err))
