@@ -13,9 +13,9 @@ import (
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/rate_limit"
+	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/h2non/gock.v1"
 )
 
 func TestInternalClient(t *testing.T) {

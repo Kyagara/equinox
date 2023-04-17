@@ -8,9 +8,9 @@ import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/data_dragon"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/h2non/gock.v1"
 )
 
 func TestChampionAllChampions(t *testing.T) {

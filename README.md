@@ -1,6 +1,6 @@
 <div align="center">
 	<h1>Equinox</h1>
-	<p>Interact with all <a href="https://developer.riotgames.com/apis">Riot Games API</a> endpoints in an easy to use interface.
+	<p><a href="https://developer.riotgames.com/apis">Riot Games</a> API client written in Go.
 	</p>
 	<p>
 		<a href="https://github.com/Kyagara/equinox/releases">

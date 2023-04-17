@@ -33,12 +33,21 @@ func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 	if c.RateLimit.Enabled {
 		rate := RateConfig{Store: string(c.RateLimit.StoreType)}
 
-		encoder.AddObject("rate-limit", rate)
+		err := encoder.AddObject("rate-limit", rate)
+
+		if err != nil {
+			return err
+		}
 	}
+
 	if c.Cache.TTL > 0 {
 		cache := CacheConfig{Store: string(c.Cache.StoreType), TTL: c.Cache.TTL}
 
-		encoder.AddObject("cache", cache)
+		err := encoder.AddObject("cache", cache)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

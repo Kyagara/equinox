@@ -119,11 +119,21 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 		return nil, err
 	}
 
-	champions, _ := json.Marshal(data.Data)
+	champions, err := json.Marshal(data.Data)
+
+	if err != nil {
+		logger.Error("Failed to encode champions data", zap.Error(err))
+		return nil, err
+	}
 
 	var championsData map[string]*ChampionData
 
-	json.Unmarshal(champions, &championsData)
+	err = json.Unmarshal(champions, &championsData)
+
+	if err != nil {
+		logger.Error("Failed to encode champions data", zap.Error(err))
+		return nil, err
+	}
 
 	return championsData, nil
 }
@@ -144,11 +154,21 @@ func (e *ChampionEndpoint) ByName(version string, language Language, champion st
 		return nil, err
 	}
 
-	champions, _ := json.Marshal(data.Data)
+	champions, err := json.Marshal(data.Data)
+
+	if err != nil {
+		logger.Error("Failed to encode champion data", zap.Error(err))
+		return nil, err
+	}
 
 	var championsData map[string]*ChampionData
 
-	json.Unmarshal(champions, &championsData)
+	err = json.Unmarshal(champions, &championsData)
+
+	if err != nil {
+		logger.Error("Failed to parse champion data", zap.Error(err))
+		return nil, err
+	}
 
 	return championsData[champion], nil
 }
