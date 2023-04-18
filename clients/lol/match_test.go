@@ -54,7 +54,7 @@ func TestMatchList(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.MatchListURL, "PUUID")
-			test.MockResponse(url, string(lol.Americas), test.AccessToken)
+			test.MockGetResponse(url, string(lol.Americas), test.AccessToken)
 			gotData, gotErr := client.Match.List(lol.Americas, "PUUID", test.Parameters)
 			test.CheckResponse(t, gotData, gotErr)
 		})
@@ -71,7 +71,7 @@ func TestMatchByID(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.MatchByIDURL, "matchID")
-			test.MockResponse(url, string(lol.Americas), test.AccessToken)
+			test.MockGetResponse(url, string(lol.Americas), test.AccessToken)
 			gotData, gotErr := client.Match.ByID(lol.Americas, "matchID")
 			test.CheckResponse(t, gotData, gotErr)
 		})
@@ -88,7 +88,7 @@ func TestMatchTimeline(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.MatchByIDURL, "matchID")
-			test.MockResponse(url, string(lol.Americas), test.AccessToken)
+			test.MockGetResponse(url, string(lol.Americas), test.AccessToken)
 			gotData, gotErr := client.Match.Timeline(lol.Americas, "matchID")
 			test.CheckResponse(t, gotData, gotErr)
 		})

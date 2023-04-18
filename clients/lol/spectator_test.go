@@ -19,7 +19,7 @@ func TestSpectatorFeaturedGames(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := lol.SpectatorFeaturedGamesURL
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Spectator.FeaturedGames(lol.BR1)
 			test.CheckResponse(t, gotData, gotErr)
 		})
@@ -36,7 +36,7 @@ func TestSpectatorCurrentGame(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.SpectatorCurrentGameURL, "summonerID")
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Spectator.CurrentGame(lol.BR1, "summonerID")
 			test.CheckResponse(t, gotData, gotErr)
 		})

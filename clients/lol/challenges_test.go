@@ -20,7 +20,7 @@ func TestChallengesList(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := lol.ChallengesConfigurationsURL
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Challenges.List(lol.BR1)
 			test.CheckResponse(t, gotData, gotErr)
 		})
@@ -37,7 +37,7 @@ func TestChallengesByID(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.ChallengesConfigurationByIDURL, 1)
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Challenges.ByID(lol.BR1, 1)
 			test.CheckResponse(t, gotData, gotErr)
 		})
@@ -54,7 +54,7 @@ func TestChallengesPercentiles(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := lol.ChallengesPercentilesURL
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Challenges.Percentiles(lol.BR1)
 			test.CheckResponse(t, gotData, gotErr)
 		})
@@ -71,7 +71,7 @@ func TestChallengesPercentilesByID(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.ChallengesPercentileByIDURL, 1)
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Challenges.PercentilesByID(lol.BR1, 1)
 			test.CheckResponse(t, gotData, gotErr)
 		})
@@ -98,7 +98,7 @@ func TestChallengesLeaderboards(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.ChallengesLeaderboardsByLevelURL, 1, lol.MasterLevel)
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			limit := 0
 			if test.Options["limit"] != nil {
 				limit = test.Options["limit"].(int)
@@ -119,7 +119,7 @@ func TestChallengesByPUUID(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.ChallengesByPUUIDURL, "PUUID")
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Challenges.ByPUUID(lol.BR1, "PUUID")
 			test.CheckResponse(t, gotData, gotErr)
 		})
