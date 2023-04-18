@@ -43,42 +43,33 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 
 // Returns a new InternalClient using the configuration provided.
 func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
-	var cacheEnabled bool
-
-	if config.Cache == nil {
-		config.Cache = &cache.Cache{TTL: 0}
-	}
-
-	var rateEnabled bool
-
-	if config.RateLimit == nil {
-		config.RateLimit = &rate_limit.RateLimit{Enabled: false}
-	}
-
 	logger := NewLogger(config)
 
 	if logger == nil {
 		return nil, fmt.Errorf("error initializing logger")
 	}
 
-	rateEnabled = config.RateLimit.Enabled
+	if config.Cache == nil {
+		config.Cache = &cache.Cache{TTL: 0}
+	}
+
+	if config.RateLimit == nil {
+		config.RateLimit = &rate_limit.RateLimit{Enabled: false}
+	}
 
 	client := &InternalClient{
-		key:                config.Key,
-		Cluster:            config.Cluster,
-		http:               &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
-		logger:             logger,
-		cache:              config.Cache,
-		rateLimit:          config.RateLimit,
-		IsCacheEnabled:     cacheEnabled,
-		IsRateLimitEnabled: rateEnabled,
-		IsRetryEnabled:     config.Retry,
+		key:            config.Key,
+		Cluster:        config.Cluster,
+		http:           &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
+		logger:         logger,
+		cache:          config.Cache,
+		rateLimit:      config.RateLimit,
+		IsRetryEnabled: config.Retry,
 	}
 
-	if config.Cache.TTL > 0 {
-		client.IsCacheEnabled = true
-		client.cache = config.Cache
-	}
+	client.IsCacheEnabled = config.Cache.TTL > 0
+
+	client.IsRateLimitEnabled = config.RateLimit.Enabled
 
 	return client, nil
 }
@@ -111,9 +102,7 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 		return err
 	}
 
-	if authorizationHeader != "" {
-		req.Header.Set("Authorization", authorizationHeader)
-	}
+	req.Header.Set("Authorization", authorizationHeader)
 
 	if c.IsCacheEnabled {
 		item, err := c.cache.Get(url)
@@ -179,9 +168,7 @@ func (c *InternalClient) Post(route interface{}, endpointPath string, requestBod
 		return err
 	}
 
-	if authorizationHeader != "" {
-		req.Header.Set("Authorization", authorizationHeader)
-	}
+	req.Header.Set("Authorization", authorizationHeader)
 
 	// Sending HTTP request and returning the response
 	body, err := c.sendRequest(logger, req, url, route, endpointName, methodName, false)
