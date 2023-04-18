@@ -23,7 +23,24 @@ func TestInternalClient(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	assert.NotNil(t, internalClient, "expecting non-nil InternalClient")
+	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
+	require.False(t, internalClient.IsCacheEnabled)
+	require.False(t, internalClient.IsRetryEnabled)
+	require.False(t, internalClient.IsRateLimitEnabled)
+
+	config := internal.NewTestEquinoxConfig()
+	config.Cache.TTL = 1
+	config.Retry = true
+	config.RateLimit.Enabled = true
+
+	internalClient, err = internal.NewInternalClient(config)
+
+	require.Nil(t, err, "expecting nil error")
+
+	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
+	require.True(t, internalClient.IsCacheEnabled)
+	require.True(t, internalClient.IsRetryEnabled)
+	require.True(t, internalClient.IsRateLimitEnabled)
 }
 
 func TestInternalClientPut(t *testing.T) {
