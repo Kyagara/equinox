@@ -9,6 +9,7 @@ import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/test"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -111,44 +112,18 @@ func TestTournamentCreateCodes(t *testing.T) {
 }
 
 func TestTournamentByCode(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
-
-	tests := []struct {
-		name    string
-		code    int
-		want    *lol.TournamentCodeDTO
-		wantErr error
-	}{
-		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.TournamentCodeDTO{},
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-		},
-	}
+	tests := test.GetEndpointTestCases(lol.TournamentCodeDTO{}, &lol.TournamentCodeDTO{})
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
-				Get(fmt.Sprintf(lol.TournamentByCodeURL, "tournamentCode")).
-				Reply(test.code).
-				JSON(test.want)
-
+		t.Run(test.Name, func(t *testing.T) {
+			url := fmt.Sprintf(lol.TournamentByCodeURL, "tournamentCode")
+			test.MockGetResponse(url, string(api.AmericasCluster), test.AccessToken)
 			gotData, gotErr := client.Tournament.ByCode("tournamentCode")
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }
@@ -203,87 +178,35 @@ func TestTournamentUpdate(t *testing.T) {
 }
 
 func TestTournamentLobbyEvents(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
-
-	tests := []struct {
-		name    string
-		code    int
-		want    *lol.LobbyEventDTOWrapper
-		wantErr error
-	}{
-		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.LobbyEventDTOWrapper{},
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-		},
-	}
+	tests := test.GetEndpointTestCases(lol.LobbyEventDTOWrapper{}, &lol.LobbyEventDTOWrapper{})
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
-				Get(fmt.Sprintf(lol.TournamentLobbyEventsURL, "tournamentCode")).
-				Reply(test.code).
-				JSON(test.want)
-
+		t.Run(test.Name, func(t *testing.T) {
+			url := fmt.Sprintf(lol.TournamentLobbyEventsURL, "tournamentCode")
+			test.MockGetResponse(url, string(api.AmericasCluster), test.AccessToken)
 			gotData, gotErr := client.Tournament.LobbyEvents("tournamentCode")
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }
 
 func TestTournamentCreate(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
-
-	tests := []struct {
-		name    string
-		code    int
-		want    *int
-		wantErr error
-	}{
-		{
-			name: "found",
-			code: http.StatusOK,
-			want: new(int),
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-		},
-	}
+	tests := test.GetEndpointTestCases(*new(int), new(int))
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
-				Post(lol.TournamentURL).
-				Reply(test.code).
-				JSON(test.want)
-
+		t.Run(test.Name, func(t *testing.T) {
+			url := lol.TournamentURL
+			test.MockPostResponse(url, string(api.AmericasCluster), test.AccessToken)
 			gotData, gotErr := client.Tournament.Create(1, "name")
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }

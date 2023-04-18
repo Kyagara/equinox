@@ -37,6 +37,13 @@ func (testCase TestCase[Model, Parameters]) MockGetResponse(url string, region s
 	}
 }
 
+func (testCase TestCase[Model, Parameters]) MockPostResponse(url string, region string, accessToken string) {
+	gock.New(fmt.Sprintf(api.BaseURLFormat, region)).
+		Post(url).
+		Reply(testCase.Code).
+		JSON(testCase.Want)
+}
+
 func (testCase TestCase[Model, Parameters]) CheckResponse(t *testing.T, gotData *Model, gotErr error) {
 	require.Equal(t, testCase.WantError, gotErr, fmt.Sprintf("want error '%v', got '%v'", testCase.WantError, gotErr))
 

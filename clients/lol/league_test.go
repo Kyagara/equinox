@@ -7,85 +7,57 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/test"
-	"github.com/h2non/gock"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestLeagueEntries(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
+	tests := test.GetEndpointTestCases([]lol.LeagueEntryDTO{}, &[]lol.LeagueEntryDTO{})
 
-	tests := []struct {
-		name    string
-		code    int
-		want    *[]lol.LeagueEntryDTO
-		wantErr error
-		region  lol.Region
-		tier    lol.Tier
-		page    int
-	}{
-		{
-			name:   "found",
-			code:   http.StatusOK,
-			want:   &[]lol.LeagueEntryDTO{},
-			region: lol.BR1,
-			tier:   lol.BronzeTier,
-			page:   1,
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-			region:  lol.BR1,
-			tier:    lol.BronzeTier,
-			page:    1,
-		},
-		{
-			name:    "invalid region",
-			code:    http.StatusNotFound,
-			wantErr: fmt.Errorf("the region PBE1 is not available for this method"),
-			region:  lol.PBE1,
-			tier:    lol.BronzeTier,
-			page:    1,
-		},
-		{
-			name:    "invalid tier",
-			code:    http.StatusNotFound,
-			wantErr: fmt.Errorf("the tier specified is an apex tier, please use the corresponded method instead"),
-			region:  lol.BR1,
-			tier:    lol.ChallengerTier,
-			page:    1,
-		},
-		{
-			name:   "invalid page",
-			code:   http.StatusOK,
-			want:   &[]lol.LeagueEntryDTO{},
-			region: lol.BR1,
-			tier:   lol.BronzeTier,
-			page:   0,
-		},
-	}
+	tests[0].Options = map[string]interface{}{"region": lol.BR1, "tier": lol.BronzeTier, "page": 1}
+	tests[1].Options = map[string]interface{}{"region": lol.BR1, "tier": lol.BronzeTier, "page": 1}
+
+	tests = append(tests, test.TestCase[[]lol.LeagueEntryDTO, []lol.LeagueEntryDTO]{
+		Name:      "invalid region",
+		Code:      http.StatusNotFound,
+		WantError: fmt.Errorf("the region PBE1 is not available for this method"),
+		Options:   map[string]interface{}{"region": lol.PBE1, "tier": lol.BronzeTier, "page": 1},
+	})
+
+	tests = append(tests, test.TestCase[[]lol.LeagueEntryDTO, []lol.LeagueEntryDTO]{
+		Name:      "invalid tier",
+		Code:      http.StatusNotFound,
+		WantError: fmt.Errorf("the tier specified is an apex tier, please use the corresponded method instead"),
+		Options:   map[string]interface{}{"region": lol.BR1, "tier": lol.ChallengerTier, "page": 1},
+	})
+
+	tests = append(tests, test.TestCase[[]lol.LeagueEntryDTO, []lol.LeagueEntryDTO]{
+		Name:    "default values",
+		Code:    http.StatusOK,
+		Want:    &[]lol.LeagueEntryDTO{},
+		Options: map[string]interface{}{"region": lol.BR1, "tier": lol.BronzeTier, "page": 0},
+	})
+
+	tests = append(tests, test.TestCase[[]lol.LeagueEntryDTO, []lol.LeagueEntryDTO]{
+		Name:    "invalid page",
+		Code:    http.StatusOK,
+		Want:    &[]lol.LeagueEntryDTO{},
+		Options: map[string]interface{}{"region": lol.BR1, "tier": lol.BronzeTier, "page": -1},
+	})
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
-				Get(fmt.Sprintf(lol.LeagueEntriesURL, lol.Solo5x5Queue, test.tier, api.I)).
-				Reply(test.code).
-				JSON(test.want)
-
-			gotData, gotErr := client.League.Entries(test.region, lol.Solo5x5Queue, test.tier, api.I, test.page)
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+		t.Run(test.Name, func(t *testing.T) {
+			tier := test.Options["tier"].(lol.Tier)
+			region := test.Options["region"].(lol.Region)
+			page := test.Options["page"].(int)
+			url := fmt.Sprintf(lol.LeagueEntriesURL, lol.Solo5x5Queue, tier, api.I)
+			test.MockGetResponse(url, string(region), test.AccessToken)
+			gotData, gotErr := client.League.Entries(region, lol.Solo5x5Queue, tier, api.I, page)
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }
@@ -108,105 +80,57 @@ func TestLeagueByID(t *testing.T) {
 }
 
 func TestLeagueSummonerEntries(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
+	tests := test.GetEndpointTestCases([]lol.LeagueEntryDTO{}, &[]lol.LeagueEntryDTO{})
 
-	tests := []struct {
-		name    string
-		code    int
-		want    *[]lol.LeagueEntryDTO
-		wantErr error
-		region  lol.Region
-	}{
-		{
-			name:   "found",
-			code:   http.StatusOK,
-			want:   &[]lol.LeagueEntryDTO{},
-			region: lol.BR1,
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-			region:  lol.BR1,
-		},
-		{
-			name:    "invalid region",
-			code:    http.StatusNotFound,
-			wantErr: fmt.Errorf("the region PBE1 is not available for this method"),
-			region:  lol.PBE1,
-		},
-	}
+	tests[0].Options = map[string]interface{}{"region": lol.BR1}
+	tests[1].Options = map[string]interface{}{"region": lol.BR1}
+
+	tests = append(tests, test.TestCase[[]lol.LeagueEntryDTO, []lol.LeagueEntryDTO]{
+		Name:      "invalid region",
+		Code:      http.StatusNotFound,
+		WantError: fmt.Errorf("the region PBE1 is not available for this method"),
+		Options:   map[string]interface{}{"region": lol.PBE1},
+	})
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
-				Get(fmt.Sprintf(lol.LeagueEntriesBySummonerURL, "summonerID")).
-				Reply(test.code).
-				JSON(test.want)
-
-			gotData, gotErr := client.League.SummonerEntries(test.region, "summonerID")
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+		t.Run(test.Name, func(t *testing.T) {
+			url := fmt.Sprintf(lol.LeagueEntriesBySummonerURL, "summonerID")
+			region := test.Options["region"].(lol.Region)
+			test.MockGetResponse(url, string(region), test.AccessToken)
+			gotData, gotErr := client.League.SummonerEntries(region, "summonerID")
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }
 
 func TestLeagueChallengerByQueue(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
+	tests := test.GetEndpointTestCases(lol.LeagueListDTO{}, &lol.LeagueListDTO{})
 
-	tests := []struct {
-		name    string
-		code    int
-		want    *lol.LeagueListDTO
-		wantErr error
-		region  lol.Region
-	}{
-		{
-			name:   "found",
-			code:   http.StatusOK,
-			want:   &lol.LeagueListDTO{},
-			region: lol.BR1,
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-			region:  lol.BR1,
-		},
-		{
-			name:    "invalid region",
-			code:    http.StatusNotFound,
-			wantErr: fmt.Errorf("the region PBE1 is not available for this method"),
-			region:  lol.PBE1,
-		},
-	}
+	tests[0].Options = map[string]interface{}{"region": lol.BR1}
+	tests[1].Options = map[string]interface{}{"region": lol.BR1}
+
+	tests = append(tests, test.TestCase[lol.LeagueListDTO, lol.LeagueListDTO]{
+		Name:      "invalid region",
+		Code:      http.StatusNotFound,
+		WantError: fmt.Errorf("the region PBE1 is not available for this method"),
+		Options:   map[string]interface{}{"region": lol.PBE1},
+	})
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, test.region)).
-				Get(fmt.Sprintf(lol.LeagueChallengerURL, lol.Solo5x5Queue)).
-				Reply(test.code).
-				JSON(test.want)
-
-			gotData, gotErr := client.League.ChallengerByQueue(test.region, lol.Solo5x5Queue)
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+		t.Run(test.Name, func(t *testing.T) {
+			url := fmt.Sprintf(lol.LeagueChallengerURL, lol.Solo5x5Queue)
+			region := test.Options["region"].(lol.Region)
+			test.MockGetResponse(url, string(region), test.AccessToken)
+			gotData, gotErr := client.League.ChallengerByQueue(region, lol.Solo5x5Queue)
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }

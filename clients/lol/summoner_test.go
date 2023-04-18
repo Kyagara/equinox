@@ -97,7 +97,6 @@ func TestSummonerByAccessToken(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			url := lol.SummonerByAccessTokenURL
 			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
-
 			gotData, gotErr := client.Summoner.ByAccessToken(lol.BR1, test.AccessToken)
 			test.CheckResponse(t, gotData, gotErr)
 		})
