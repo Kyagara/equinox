@@ -19,7 +19,7 @@ func TestPlatformStatus(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := lol.StatusURL
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Status.PlatformStatus(lol.BR1)
 			test.CheckResponse(t, gotData, gotErr)
 		})

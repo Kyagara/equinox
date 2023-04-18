@@ -100,7 +100,7 @@ func TestLeagueByID(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.LeagueByIDURL, "leagueID")
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.League.ByID(lol.BR1, "leagueID")
 			test.CheckResponse(t, gotData, gotErr)
 		})
@@ -221,7 +221,7 @@ func TestLeagueGrandmasterByQueue(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.LeagueGrandmasterURL, lol.Solo5x5Queue)
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.League.GrandmasterByQueue(lol.BR1, lol.Solo5x5Queue)
 			test.CheckResponse(t, gotData, gotErr)
 		})
@@ -238,7 +238,7 @@ func TestLeagueMasterByQueue(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			url := fmt.Sprintf(lol.LeagueMasterURL, lol.Solo5x5Queue)
-			test.MockResponse(url, string(lol.BR1), test.AccessToken)
+			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.League.MasterByQueue(lol.BR1, lol.Solo5x5Queue)
 			test.CheckResponse(t, gotData, gotErr)
 		})
