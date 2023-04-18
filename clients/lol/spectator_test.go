@@ -2,99 +2,43 @@ package lol_test
 
 import (
 	"fmt"
-	"net/http"
 	"testing"
 
-	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/Kyagara/equinox/internal"
-	"github.com/h2non/gock"
-	"github.com/stretchr/testify/assert"
+	"github.com/Kyagara/equinox/test"
 	"github.com/stretchr/testify/require"
 )
 
 func TestSpectatorFeaturedGames(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
-
-	tests := []struct {
-		name    string
-		code    int
-		want    *lol.FeaturedGamesDTO
-		wantErr error
-	}{
-		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.FeaturedGamesDTO{},
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-		},
-	}
+	tests := test.GetEndpointTestCases(lol.FeaturedGamesDTO{}, &lol.FeaturedGamesDTO{})
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(lol.SpectatorFeaturedGamesURL).
-				Reply(test.code).
-				JSON(test.want)
-
+		t.Run(test.Name, func(t *testing.T) {
+			url := lol.SpectatorFeaturedGamesURL
+			test.MockResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Spectator.FeaturedGames(lol.BR1)
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }
 
 func TestSpectatorCurrentGame(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
-
-	tests := []struct {
-		name    string
-		code    int
-		want    *lol.CurrentGameInfoDTO
-		wantErr error
-	}{
-		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.CurrentGameInfoDTO{},
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-		},
-	}
+	tests := test.GetEndpointTestCases(lol.CurrentGameInfoDTO{}, &lol.CurrentGameInfoDTO{})
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.SpectatorCurrentGameURL, "summonerID")).
-				Reply(test.code).
-				JSON(test.want)
-
+		t.Run(test.Name, func(t *testing.T) {
+			url := fmt.Sprintf(lol.SpectatorCurrentGameURL, "summonerID")
+			test.MockResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Spectator.CurrentGame(lol.BR1, "summonerID")
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }

@@ -6,23 +6,23 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/Kyagara/equinox/util"
+	"github.com/Kyagara/equinox/test"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMatchList(t *testing.T) {
-	client, err := util.TestingNewLOLClient()
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	tests := util.GetEndpointTestCases([]string{}, &lol.MatchlistOptions{})
+	tests := test.GetEndpointTestCases([]string{}, &lol.MatchlistOptions{})
 
 	tests[0].Parameters = &lol.MatchlistOptions{Start: 0,
 		Count: 20}
 	tests[1].Parameters = &lol.MatchlistOptions{Start: 0,
 		Count: 20}
 
-	tests = append(tests, util.TestCase[[]string, lol.MatchlistOptions]{
+	tests = append(tests, test.TestCase[[]string, lol.MatchlistOptions]{
 		Name: "all optional fields set",
 		Code: http.StatusOK,
 		Want: &[]string{},
@@ -36,14 +36,14 @@ func TestMatchList(t *testing.T) {
 		},
 	})
 
-	tests = append(tests, util.TestCase[[]string, lol.MatchlistOptions]{
+	tests = append(tests, test.TestCase[[]string, lol.MatchlistOptions]{
 		Name:       "nil options",
 		Code:       http.StatusOK,
 		Want:       &[]string{},
 		Parameters: nil,
 	})
 
-	tests = append(tests, util.TestCase[[]string, lol.MatchlistOptions]{
+	tests = append(tests, test.TestCase[[]string, lol.MatchlistOptions]{
 		Name: "count > 100",
 		Code: http.StatusOK,
 		Want: &[]string{},
@@ -62,11 +62,11 @@ func TestMatchList(t *testing.T) {
 }
 
 func TestMatchByID(t *testing.T) {
-	client, err := util.TestingNewLOLClient()
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	tests := util.GetEndpointTestCases(lol.MatchDTO{}, &lol.MatchDTO{})
+	tests := test.GetEndpointTestCases(lol.MatchDTO{}, &lol.MatchDTO{})
 
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
@@ -79,11 +79,11 @@ func TestMatchByID(t *testing.T) {
 }
 
 func TestMatchTimeline(t *testing.T) {
-	client, err := util.TestingNewLOLClient()
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	tests := util.GetEndpointTestCases(lol.MatchTimelineDTO{}, &lol.MatchTimelineDTO{})
+	tests := test.GetEndpointTestCases(lol.MatchTimelineDTO{}, &lol.MatchTimelineDTO{})
 
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {

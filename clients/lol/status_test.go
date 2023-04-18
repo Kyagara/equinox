@@ -5,16 +5,16 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/Kyagara/equinox/util"
+	"github.com/Kyagara/equinox/test"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPlatformStatus(t *testing.T) {
-	client, err := util.TestingNewLOLClient()
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	tests := util.GetEndpointTestCases(api.PlatformDataDTO{}, &api.PlatformDataDTO{})
+	tests := test.GetEndpointTestCases(api.PlatformDataDTO{}, &api.PlatformDataDTO{})
 
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {

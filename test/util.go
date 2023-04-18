@@ -1,4 +1,4 @@
-package util
+package test
 
 import (
 	"fmt"
@@ -9,19 +9,8 @@ import (
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func TestingNewLOLClient() (*lol.LOLClient, error) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
-	if err != nil {
-		return nil, err
-	}
-
-	return lol.NewLOLClient(internalClient), nil
-}
 
 type TestCase[Model any, Parameters any] struct {
 	Name        string
@@ -45,10 +34,10 @@ func (testCase TestCase[Model, Parameters]) MockResponse(url string, region stri
 }
 
 func (testCase TestCase[Model, Parameters]) CheckResponse(t *testing.T, gotData *Model, gotErr error) {
-	require.Equal(t, testCase.WantError, gotErr, fmt.Sprintf("want err %v, got %v", testCase.WantError, gotErr))
+	require.Equal(t, testCase.WantError, gotErr, fmt.Sprintf("want error '%v', got '%v'", testCase.WantError, gotErr))
 
 	if testCase.WantError == nil {
-		assert.Equal(t, testCase.Want, gotData)
+		require.Equal(t, testCase.Want, gotData, "result not expected")
 	}
 }
 
@@ -71,4 +60,14 @@ func GetEndpointTestCases[Model any, Parameters any](model Model, parameters *Pa
 			Parameters:  parameters,
 		},
 	}
+}
+
+func TestingNewLOLClient() (*lol.LOLClient, error) {
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return lol.NewLOLClient(internalClient), nil
 }

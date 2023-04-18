@@ -6,16 +6,16 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/Kyagara/equinox/util"
+	"github.com/Kyagara/equinox/test"
 	"github.com/stretchr/testify/require"
 )
 
 func TestSummonerByAccountID(t *testing.T) {
-	client, err := util.TestingNewLOLClient()
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	tests := util.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
+	tests := test.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
 
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
@@ -28,11 +28,11 @@ func TestSummonerByAccountID(t *testing.T) {
 }
 
 func TestSummonerByName(t *testing.T) {
-	client, err := util.TestingNewLOLClient()
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	tests := util.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
+	tests := test.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
 
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
@@ -45,11 +45,11 @@ func TestSummonerByName(t *testing.T) {
 }
 
 func TestSummonerByPUUID(t *testing.T) {
-	client, err := util.TestingNewLOLClient()
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	tests := util.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
+	tests := test.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
 
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
@@ -62,11 +62,11 @@ func TestSummonerByPUUID(t *testing.T) {
 }
 
 func TestSummonerByID(t *testing.T) {
-	client, err := util.TestingNewLOLClient()
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	tests := util.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
+	tests := test.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
 
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
@@ -79,15 +79,15 @@ func TestSummonerByID(t *testing.T) {
 }
 
 func TestSummonerByAccessToken(t *testing.T) {
-	client, err := util.TestingNewLOLClient()
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	tests := util.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
+	tests := test.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
 	tests[0].AccessToken = "accessToken"
 	tests[1].AccessToken = "accessToken"
 
-	tests = append(tests, util.TestCase[lol.SummonerDTO, lol.SummonerDTO]{
+	tests = append(tests, test.TestCase[lol.SummonerDTO, lol.SummonerDTO]{
 		Name:      "accessToken empty",
 		Code:      http.StatusNotFound,
 		WantError: fmt.Errorf("accessToken is required"),

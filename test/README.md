@@ -1,8 +1,8 @@
 # Equinox tests
 
-> These tests are meant to be run manually.
-
 ## Integration
+
+> Integration tests are meant to be run manually.
 
 The objective of these tests is to test some methods from different games against the live Riot Games API, making sure the different http methods are working as intended.
 

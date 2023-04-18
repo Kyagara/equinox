@@ -8,6 +8,7 @@ import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/test"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -90,44 +91,18 @@ func TestLeagueEntries(t *testing.T) {
 }
 
 func TestLeagueByID(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
-
-	tests := []struct {
-		name    string
-		code    int
-		want    *lol.LeagueListDTO
-		wantErr error
-	}{
-		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-		},
-	}
+	tests := test.GetEndpointTestCases(lol.LeagueListDTO{}, &lol.LeagueListDTO{})
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.LeagueByIDURL, "leagueID")).
-				Reply(test.code).
-				JSON(test.want)
-
+		t.Run(test.Name, func(t *testing.T) {
+			url := fmt.Sprintf(lol.LeagueByIDURL, "leagueID")
+			test.MockResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.League.ByID(lol.BR1, "leagueID")
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }
@@ -237,87 +212,35 @@ func TestLeagueChallengerByQueue(t *testing.T) {
 }
 
 func TestLeagueGrandmasterByQueue(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
-
-	tests := []struct {
-		name    string
-		code    int
-		want    *lol.LeagueListDTO
-		wantErr error
-	}{
-		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-		},
-	}
+	tests := test.GetEndpointTestCases(lol.LeagueListDTO{}, &lol.LeagueListDTO{})
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.LeagueGrandmasterURL, lol.Solo5x5Queue)).
-				Reply(test.code).
-				JSON(test.want)
-
+		t.Run(test.Name, func(t *testing.T) {
+			url := fmt.Sprintf(lol.LeagueGrandmasterURL, lol.Solo5x5Queue)
+			test.MockResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.League.GrandmasterByQueue(lol.BR1, lol.Solo5x5Queue)
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }
 
 func TestLeagueMasterByQueue(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	client, err := test.TestingNewLOLClient()
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := lol.NewLOLClient(internalClient)
-
-	tests := []struct {
-		name    string
-		code    int
-		want    *lol.LeagueListDTO
-		wantErr error
-	}{
-		{
-			name: "found",
-			code: http.StatusOK,
-			want: &lol.LeagueListDTO{},
-		},
-		{
-			name:    "not found",
-			code:    http.StatusNotFound,
-			wantErr: api.ErrNotFound,
-		},
-	}
+	tests := test.GetEndpointTestCases(lol.LeagueListDTO{}, &lol.LeagueListDTO{})
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-				Get(fmt.Sprintf(lol.LeagueMasterURL, lol.Solo5x5Queue)).
-				Reply(test.code).
-				JSON(test.want)
-
+		t.Run(test.Name, func(t *testing.T) {
+			url := fmt.Sprintf(lol.LeagueMasterURL, lol.Solo5x5Queue)
+			test.MockResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.League.MasterByQueue(lol.BR1, lol.Solo5x5Queue)
-
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
-			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
-			}
+			test.CheckResponse(t, gotData, gotErr)
 		})
 	}
 }
