@@ -1,0 +1,19 @@
+# https://github.com/jonhoo/rust-ci-conf/blob/main/.github/codecov.yml
+
+# ref: https://docs.codecov.com/docs/codecovyml-reference
+coverage:
+    # Hold ourselves to a high bar
+    range: 85..100
+    round: down
+    precision: 1
+    status:
+        # ref: https://docs.codecov.com/docs/commit-status
+        project:
+            default:
+                # Avoid false negatives
+                threshold: 1%
+
+# Make comments less noisy
+comment:
+    layout: 'files'
+    require_changes: yes
