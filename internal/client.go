@@ -102,7 +102,9 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 		return err
 	}
 
-	req.Header.Set("Authorization", authorizationHeader)
+	if authorizationHeader != "" {
+		req.Header.Set("Authorization", authorizationHeader)
+	}
 
 	if c.IsCacheEnabled {
 		item, err := c.cache.Get(url)
@@ -116,13 +118,7 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 			logger.Debug("Cache hit")
 
 			// Decoding the cached body into the target
-			err = json.Unmarshal(item, &target)
-
-			if err != nil {
-				return err
-			}
-
-			return nil
+			return json.Unmarshal(item, &target)
 		}
 	}
 
@@ -162,7 +158,9 @@ func (c *InternalClient) Post(route interface{}, endpointPath string, requestBod
 		return err
 	}
 
-	req.Header.Set("Authorization", authorizationHeader)
+	if authorizationHeader != "" {
+		req.Header.Set("Authorization", authorizationHeader)
+	}
 
 	// Sending HTTP request and returning the response
 	body, err := c.sendRequest(logger, req, url, route, endpointName, methodName, false)
