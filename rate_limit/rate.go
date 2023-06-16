@@ -12,7 +12,7 @@ type RateLimitStoreType string
 
 const (
 	InternalRateLimiter RateLimitStoreType = "Internal"
-	RedisRateLimiter    RateLimitStoreType = "Redis"
+	// RedisRateLimiter    RateLimitStoreType = "Redis"
 )
 
 type RateLimit struct {

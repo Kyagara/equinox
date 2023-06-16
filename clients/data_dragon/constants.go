@@ -33,7 +33,7 @@ const (
 	RuRU Language = "ru_RU"
 	ThTH Language = "th_TH"
 	TrTR Language = "tr_TR"
-	VnVN Language = "vn_VN"
+	ViVN Language = "vi_VN"
 	ZhCN Language = "zh_CN"
 	ZhMY Language = "zh_MY"
 	ZhTW Language = "zh_TW"

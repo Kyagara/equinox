@@ -53,7 +53,6 @@ type NamesDTO struct {
 	ThTH LocaleDTO `json:"th_TH"`
 	TrTR LocaleDTO `json:"tr_TR"`
 	ViVN LocaleDTO `json:"vi_VN"`
-	VnVN LocaleDTO `json:"vn_VN"`
 	ZhCN LocaleDTO `json:"zh_CN"`
 	ZhMY LocaleDTO `json:"zh_MY"`
 	ZhTW LocaleDTO `json:"zh_TW"`
