@@ -14,7 +14,7 @@ type EquinoxConfig struct {
 	Key string
 	// Cluster name, using the nearest cluster to you is recommended.
 	Cluster Cluster
-	// Log level, api.FatalLevel effectively disables logging.
+	// Log level, api.NopLevel disables logging.
 	LogLevel LogLevel
 	// Timeout for the internal http.Client in seconds, 0 disables the timeout.
 	Timeout int

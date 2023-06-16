@@ -173,15 +173,14 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	assert.Equal(t, api.ErrNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrNotFound, gotErr))
 }
 
-// Never done a benchmark in go
 // goos: windows
 // goarch: amd64
 // cpu: AMD Ryzen 7 2700 Eight-Core Processor
-// BenchmarkCachedSummonerByName-16 75765 15572 ns/op 9640 B/op 48 allocs/op
-// BenchmarkCachedSummonerByName-16 76281 15520 ns/op 9611 B/op 48 allocs/op
-// BenchmarkCachedSummonerByName-16 77018 15946 ns/op 9569 B/op 48 allocs/op
-// BenchmarkCachedSummonerByName-16 73472 16236 ns/op 9780 B/op 48 allocs/op
-// BenchmarkCachedSummonerByName-16 68229 17395 ns/op 10132 B/op 48 allocs/op
+// BenchmarkCachedSummonerByName-16 106034 11073 ns/op 5766 B/op 36 allocs/op
+// BenchmarkCachedSummonerByName-16  99432 11565 ns/op 5977 B/op 36 allocs/op
+// BenchmarkCachedSummonerByName-16 104392 11258 ns/op 5816 B/op 36 allocs/op
+// BenchmarkCachedSummonerByName-16 106242 11265 ns/op 5760 B/op 36 allocs/op
+// BenchmarkCachedSummonerByName-16 103720 11193 ns/op 5837 B/op 36 allocs/op
 func BenchmarkCachedSummonerByName(b *testing.B) {
 	b.ReportAllocs()
 
@@ -217,11 +216,11 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 // goos: windows
 // goarch: amd64
 // cpu: AMD Ryzen 7 2700 Eight-Core Processor
-// BenchmarkSummonerByName-16 48676 24291 ns/op 7663 B/op 82 allocs/op
-// BenchmarkSummonerByName-16 48651 24363 ns/op 7789 B/op 83 allocs/op
-// BenchmarkSummonerByName-16 45241 24926 ns/op 8047 B/op 84 allocs/op
-// BenchmarkSummonerByName-16 47240 25171 ns/op 8046 B/op 84 allocs/op
-// BenchmarkSummonerByName-16 45874 25856 ns/op 8560 B/op 85 allocs/op
+// BenchmarkSummonerByName-16 59298 20242 ns/op 5240 B/op 76 allocs/op
+// BenchmarkSummonerByName-16 58087 20730 ns/op 5367 B/op 77 allocs/op
+// BenchmarkSummonerByName-16 56473 21340 ns/op 5622 B/op 78 allocs/op
+// BenchmarkSummonerByName-16 52909 21888 ns/op 5622 B/op 78 allocs/op
+// BenchmarkSummonerByName-16 54087 22303 ns/op 6135 B/op 79 allocs/op
 func BenchmarkSummonerByName(b *testing.B) {
 	b.ReportAllocs()
 
@@ -248,7 +247,7 @@ func BenchmarkSummonerByName(b *testing.B) {
 
 	config := internal.NewTestEquinoxConfig()
 
-	config.LogLevel = api.FatalLevel
+	config.LogLevel = api.NopLevel
 	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
@@ -267,11 +266,11 @@ func BenchmarkSummonerByName(b *testing.B) {
 // goos: windows
 // goarch: amd64
 // cpu: AMD Ryzen 7 2700 Eight-Core Processor
-// BenchmarkCachedDataDragonRealm-16 69696 17329 ns/op 10028 B/op 55 allocs/op
-// BenchmarkCachedDataDragonRealm-16 63756 17504 ns/op 10479 B/op 55 allocs/op
-// BenchmarkCachedDataDragonRealm-16 68504 17458 ns/op 10113 B/op 55 allocs/op
-// BenchmarkCachedDataDragonRealm-16 68016 18454 ns/op 10148 B/op 55 allocs/op
-// BenchmarkCachedDataDragonRealm-16 60730 19914 ns/op 10743 B/op 55 allocs/op
+// BenchmarkCachedDataDragonRealm-16 84229 14301 ns/op 6692 B/op 44 allocs/op
+// BenchmarkCachedDataDragonRealm-16 83107 14246 ns/op 6746 B/op 44 allocs/op
+// BenchmarkCachedDataDragonRealm-16 83066 14168 ns/op 6748 B/op 44 allocs/op
+// BenchmarkCachedDataDragonRealm-16 83488 14247 ns/op 6727 B/op 44 allocs/op
+// BenchmarkCachedDataDragonRealm-16 83391 14222 ns/op 6732 B/op 44 allocs/op
 func BenchmarkCachedDataDragonRealm(b *testing.B) {
 	b.ReportAllocs()
 
@@ -329,11 +328,11 @@ func BenchmarkCachedDataDragonRealm(b *testing.B) {
 // goos: windows
 // goarch: amd64
 // cpu: AMD Ryzen 7 2700 Eight-Core Processor
-// BenchmarkDataDragonRealm-16 44347 28088 ns/op 7664 B/op 89 allocs/op
-// BenchmarkDataDragonRealm-16 45283 27041 ns/op 7791 B/op 90 allocs/op
-// BenchmarkDataDragonRealm-16 38968 27811 ns/op 8049 B/op 91 allocs/op
-// BenchmarkDataDragonRealm-16 40266 27107 ns/op 8049 B/op 91 allocs/op
-// BenchmarkDataDragonRealm-16 42764 27618 ns/op 8561 B/op 92 allocs/op
+// BenchmarkDataDragonRealm-16 50066 23434 ns/op 5298 B/op 82 allocs/op
+// BenchmarkDataDragonRealm-16 48817 23760 ns/op 5425 B/op 83 allocs/op
+// BenchmarkDataDragonRealm-16 47798 24149 ns/op 5678 B/op 84 allocs/op
+// BenchmarkDataDragonRealm-16 48996 25465 ns/op 5678 B/op 84 allocs/op
+// BenchmarkDataDragonRealm-16 45928 25454 ns/op 6191 B/op 85 allocs/op
 func BenchmarkDataDragonRealm(b *testing.B) {
 	b.ReportAllocs()
 
@@ -377,7 +376,7 @@ func BenchmarkDataDragonRealm(b *testing.B) {
 
 	config := internal.NewTestEquinoxConfig()
 
-	config.LogLevel = api.FatalLevel
+	config.LogLevel = api.NopLevel
 	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)

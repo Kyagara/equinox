@@ -54,11 +54,16 @@ const (
 type LogLevel int8
 
 const (
-	DebugLevel LogLevel = -1
-	InfoLevel  LogLevel = 0
-	WarnLevel  LogLevel = 1
-	ErrorLevel LogLevel = 2
-	FatalLevel LogLevel = 5
+	// NopLevel won't log anything, this is the default behaviour for the Default client.
+	NopLevel LogLevel = iota - 2
+	// DebugLevel will log everything.
+	DebugLevel
+	// InfoLevel will log the requests being made and if they were successful.
+	InfoLevel
+	// WarnLevel will log when a request was rate limited.
+	WarnLevel
+	// ErrorLevel will log every error.
+	ErrorLevel
 )
 
 type Division string

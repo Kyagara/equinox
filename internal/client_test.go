@@ -23,6 +23,10 @@ func TestInternalClient(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
+	if err != nil {
+		require.ErrorContains(t, err, "error initializing logger")
+	}
+
 	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
 	require.False(t, internalClient.IsCacheEnabled)
 	require.False(t, internalClient.IsRetryEnabled)

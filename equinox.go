@@ -31,7 +31,7 @@ type Equinox struct {
 // Returns the default Equinox config with a provided key.
 //
 //   - `Cluster`    : api.AmericasCluster
-//   - `LogLevel`   : api.FatalLevel
+//   - `LogLevel`   : api.NopLevel
 //   - `Timeout`    : 15 Seconds
 //   - `Retry`      : true
 //   - `Cache`      : BigCache with TTL of 4 minutes
@@ -54,7 +54,7 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 	config := &api.EquinoxConfig{
 		Key:       key,
 		Cluster:   api.AmericasCluster,
-		LogLevel:  api.FatalLevel,
+		LogLevel:  api.NopLevel,
 		Timeout:   15,
 		Retry:     true,
 		Cache:     cache,
@@ -67,7 +67,7 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 // Creates a new Equinox client with a default configuration
 //
 //   - `Cluster`    : api.AmericasCluster
-//   - `LogLevel`   : api.FatalLevel
+//   - `LogLevel`   : api.NopLevel
 //   - `Timeout`    : 15 Seconds
 //   - `Retry`      : true
 //   - `Cache`      : BigCache with TTL of 4 minutes
