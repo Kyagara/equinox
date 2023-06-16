@@ -43,10 +43,10 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 
 // Returns a new InternalClient using the configuration provided.
 func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
-	logger := NewLogger(config)
+	logger, err := NewLogger(config)
 
-	if logger == nil {
-		return nil, fmt.Errorf("error initializing logger")
+	if err != nil {
+		return nil, fmt.Errorf("error initializing logger, %w", err)
 	}
 
 	if config.Cache == nil {
@@ -144,13 +144,7 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 	}
 
 	// Decoding the body into the target
-	err = json.Unmarshal(body, &target)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return json.Unmarshal(body, &target)
 }
 
 // Performs a POST request, authorizationHeader can be blank.

@@ -63,7 +63,7 @@ cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
 config := &api.EquinoxConfig{
 	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
 	Cluster: api.AmericasCluster, // Riot API cluster, use the cluster closest to you.
-	LogLevel: api.FatalLevel, // The logging level, the FatalLevel provided effectively disables logging.
+	LogLevel: api.NopLevel, // The logging level, NopLevel disables logging.
 	Timeout: 15, // http.Client timeout in seconds.
 	Cache: cache.NewBigCache(cacheConfig), // The default client uses BigCache with an eviction time of 4 minutes.
 	Retry: true, // Retries a request if the API returns a 429 response.
