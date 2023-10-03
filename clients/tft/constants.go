@@ -3,8 +3,9 @@ package tft
 type QueueType string
 
 const (
-	RankedTFTTurboQueue QueueType = "RANKED_TFT_TURBO"
-	RankedTFTQueue      QueueType = "RANKED_TFT"
+	RankedTFTTurboQueue    QueueType = "RANKED_TFT_TURBO"
+	RankedTFTQueue         QueueType = "RANKED_TFT"
+	RankedTFTDoubleUPQueue QueueType = "RANKED_TFT_DOUBLE_UP"
 )
 
 type RatedTier string
