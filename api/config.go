@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox/cache"
-	"github.com/Kyagara/equinox/rate_limit"
 	"go.uber.org/zap/zapcore"
 )
 
@@ -22,23 +21,11 @@ type EquinoxConfig struct {
 	Retry bool
 	// The cache used to store all GET requests done by the client.
 	Cache *cache.Cache
-	// The rate limit store.
-	RateLimit *rate_limit.RateLimit
 }
 
 func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 	encoder.AddBool("retry-if-429", c.Retry)
 	encoder.AddInt("http-client-timeout", c.Timeout)
-
-	if c.RateLimit.Enabled {
-		rate := RateConfig{Store: string(c.RateLimit.StoreType)}
-
-		err := encoder.AddObject("rate-limit", rate)
-
-		if err != nil {
-			return err
-		}
-	}
 
 	if c.Cache.TTL > 0 {
 		cache := CacheConfig{Store: string(c.Cache.StoreType), TTL: c.Cache.TTL}

@@ -12,7 +12,6 @@ import (
 	"github.com/Kyagara/equinox/clients/data_dragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/Kyagara/equinox/rate_limit"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -30,12 +29,10 @@ func TestInternalClient(t *testing.T) {
 	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
 	require.False(t, internalClient.IsCacheEnabled)
 	require.False(t, internalClient.IsRetryEnabled)
-	require.False(t, internalClient.IsRateLimitEnabled)
 
 	config := internal.NewTestEquinoxConfig()
 	config.Cache.TTL = 1
 	config.Retry = true
-	config.RateLimit.Enabled = true
 
 	internalClient, err = internal.NewInternalClient(config)
 
@@ -44,7 +41,6 @@ func TestInternalClient(t *testing.T) {
 	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
 	require.True(t, internalClient.IsCacheEnabled)
 	require.True(t, internalClient.IsRetryEnabled)
-	require.True(t, internalClient.IsRateLimitEnabled)
 }
 
 func TestInternalClientPut(t *testing.T) {
@@ -342,37 +338,30 @@ func TestInternalClientErrorResponses(t *testing.T) {
 func TestInternalClientRateLimit(t *testing.T) {
 	config := internal.NewTestEquinoxConfig()
 
-	rate, err := rate_limit.NewInternalRateLimit()
-
-	require.Nil(t, err, "expecting nil error")
-
-	config.RateLimit = rate
-
 	internalClient, err := internal.NewInternalClient(config)
 
 	require.Nil(t, err, "expecting nil error")
 
 	headers := map[string]string{}
 
-	// The app is not rate limited
-	headers["X-App-Rate-Limit"] = "20:1,100:120"
-	headers[rate_limit.AppRateLimitCountHeader] = "1:1,1:120"
-
 	// The method will be rate limited
-	headers[rate_limit.MethodRateLimitHeader] = "1300:60"
-	headers[rate_limit.MethodRateLimitCountHeader] = "1300:60"
+	headers[api.RateLimitTypeHeader] = "method"
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
 		Put("/").
-		Reply(200).SetHeaders(headers)
+		Reply(429).SetHeaders(headers)
+
+	gock.New(fmt.Sprintf(api.BaseURLFormat, "tests")).
+		Put("/").
+		Reply(200)
+
+	err = internalClient.Put("tests", "/", nil, "", "")
+
+	require.Equal(t, api.ErrTooManyRequests, err, fmt.Sprintf("want err %v, got %v", api.ErrTooManyRequests, err))
 
 	err = internalClient.Put("tests", "/", nil, "", "")
 
 	require.Nil(t, err, "expecting nil error")
-
-	err = internalClient.Put("tests", "/", nil, "", "")
-
-	assert.Equal(t, api.ErrTooManyRequests, err, fmt.Sprintf("want err %v, got %v", api.ErrTooManyRequests, err))
 }
 
 func TestCacheIsDisabled(t *testing.T) {
