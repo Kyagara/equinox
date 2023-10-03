@@ -3,19 +3,33 @@ package internal_test
 import (
 	"testing"
 
+	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 func TestNewLogger(t *testing.T) {
-	logger, err := internal.NewLogger(internal.NewTestEquinoxConfig())
+	c := internal.NewTestEquinoxConfig()
+	logger, err := internal.NewLogger(c)
 
 	if err != nil {
 		require.ErrorContains(t, err, "error initializing logger")
 	}
 
-	assert.NotNil(t, logger, "expecting non-nil Logger")
+	require.Equal(t, logger.Level(), zapcore.Level(-1))
+
+	c.LogLevel = api.NopLevel
+
+	logger, err = internal.NewLogger(c)
+
+	if err != nil {
+		require.ErrorContains(t, err, "error initializing logger")
+	}
+
+	assert.Equal(t, logger, zap.NewNop())
 }
 
 func TestLogger(t *testing.T) {

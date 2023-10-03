@@ -131,7 +131,7 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 	err = json.Unmarshal(champions, &championsData)
 
 	if err != nil {
-		logger.Error("Failed to encode champions data", zap.Error(err))
+		logger.Error("Failed to parse champions data", zap.Error(err))
 		return nil, err
 	}
 
