@@ -47,16 +47,16 @@ const (
 	LeagueGrandmasterURL       = "/lol/league/v4/grandmasterleagues/by-queue/%s"
 	LeagueMasterURL            = "/lol/league/v4/masterleagues/by-queue/%s"
 
-	TournamentLobbyEventsURL = "/lol/tournament/v4/lobby-events/by-code/%s"
-	TournamentCodesURL       = "/lol/tournament/v4/codes"
-	TournamentByCodeURL      = "/lol/tournament/v4/codes/%s"
-	TournamentProvidersURL   = "/lol/tournament/v4/providers"
-	TournamentURL            = "/lol/tournament/v4/tournaments"
+	TournamentLobbyEventsURL = "/lol/tournament/v5/lobby-events/by-code/%s"
+	TournamentCodesURL       = "/lol/tournament/v5/codes"
+	TournamentByCodeURL      = "/lol/tournament/v5/codes/%s"
+	TournamentProvidersURL   = "/lol/tournament/v5/providers"
+	TournamentURL            = "/lol/tournament/v5/tournaments"
 
-	TournamentStubLobbyEventsURL = "/lol/tournament-stub/v4/lobby-events/by-code/%s"
-	TournamentStubCodesURL       = "/lol/tournament-stub/v4/codes"
-	TournamentStubProvidersURL   = "/lol/tournament-stub/v4/providers"
-	TournamentStubURL            = "/lol/tournament-stub/v4/tournaments"
+	TournamentStubLobbyEventsURL = "/lol/tournament-stub/v5/lobby-events/by-code/%s"
+	TournamentStubCodesURL       = "/lol/tournament-stub/v5/codes"
+	TournamentStubProvidersURL   = "/lol/tournament-stub/v5/providers"
+	TournamentStubURL            = "/lol/tournament-stub/v5/tournaments"
 )
 
 type LOLClient struct {

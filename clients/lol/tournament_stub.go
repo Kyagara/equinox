@@ -16,7 +16,7 @@ type TournamentStubEndpoint struct {
 
 // Create a mock tournament code for the given tournament.
 func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) (*[]string, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-stub-v4", "CreateCodes")
+	logger := e.internalClient.Logger("LOL", "tournament-stub-v5", "CreateCodes")
 
 	logger.Debug("Method executed")
 
@@ -50,7 +50,7 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 
 	var codes *[]string
 
-	err := e.internalClient.Post(api.AmericasCluster, url, parameters, &codes, "tournament-stub-v4", "CreateCodes", "")
+	err := e.internalClient.Post(api.AmericasCluster, url, parameters, &codes, "tournament-stub-v5", "CreateCodes", "")
 
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
@@ -62,7 +62,7 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 
 // Gets a mock list of lobby events by tournament code.
 func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-stub-v4", "LobbyEvents")
+	logger := e.internalClient.Logger("LOL", "tournament-stub-v5", "LobbyEvents")
 
 	logger.Debug("Method executed")
 
@@ -70,7 +70,7 @@ func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEvent
 
 	var lobbyEvents *LobbyEventDTOWrapper
 
-	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "tournament-stub-v4", "LobbyEvents", "")
+	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "tournament-stub-v5", "LobbyEvents", "")
 
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
@@ -122,7 +122,7 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 //
 // The name of the tournament is optional.
 func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-stub-v4", "Create")
+	logger := e.internalClient.Logger("LOL", "tournament-stub-v5", "Create")
 
 	logger.Debug("Method executed")
 
@@ -133,7 +133,7 @@ func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, erro
 
 	var tournament *int
 
-	err := e.internalClient.Post(api.AmericasCluster, TournamentStubURL, options, &tournament, "tournament-stub-v4", "Create", "")
+	err := e.internalClient.Post(api.AmericasCluster, TournamentStubURL, options, &tournament, "tournament-stub-v5", "Create", "")
 
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))

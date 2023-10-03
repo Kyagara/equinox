@@ -19,8 +19,8 @@ type LobbyEventDTOWrapper struct {
 }
 
 type LobbyEventDTO struct {
-	// The summonerId that triggered the event (Encrypted).
-	SummonerID string `json:"summonerId"`
+	// The PUUID that triggered the event (Encrypted).
+	PUUID string `json:"PUUID"`
 	// The type of event that was triggered.
 	EventType string `json:"eventType"`
 	// Timestamp from the event.
@@ -29,62 +29,64 @@ type LobbyEventDTO struct {
 
 type TournamentCodeDTO struct {
 	// The tournament code.
-	Code string
+	Code string `json:"code"`
 	// The spectator mode for the tournament code game.
-	Spectators SpectatorType
+	Spectators SpectatorType `json:"spectators"`
 	// The lobby name for the tournament code game.
-	LobbyName string
+	LobbyName string `json:"lobbyName"`
 	// The metadata for tournament code.
-	MetaData string
+	MetaData string `json:"metaData"`
 	// The password for the tournament code game.
-	Password string
+	Password string `json:"password"`
 	// The team size for the tournament code game.
-	TeamSize int
+	TeamSize int `json:"teamSize"`
 	// The provider's ID.
-	ProviderId int
+	ProviderId int `json:"providerId"`
 	// The pick mode for tournament code game.
-	PickType PickType
+	PickType PickType `json:"pickType"`
 	// The tournament's ID.
-	TournamentID int
+	TournamentID int `json:"tournamentId"`
 	// The tournament code's ID.
-	ID int
+	ID int `json:"id"`
 	// The tournament code's region.
-	Region TournamentRegion
+	Region TournamentRegion `json:"region"`
 	// The game map for the tournament code game.
-	Map MapType
-	// The summonerIds of the participants (Encrypted).
-	Participants []string
+	Map MapType `json:"map"`
+	// The puuids of the participants (Encrypted).
+	Participants []string `json:"participants"`
 }
 
 type TournamentCodeParametersDTO struct {
-	// Optional list of encrypted summonerIds in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
-	AllowedSummonerIDs []string `json:"allowedSummonerIds,omitempty"`
-	// The map type of the game.
+	// Optional list of encrypted puuids in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
+	AllowedParticipants []string `json:"allowedParticipants,omitempty"`
+	// The map type of the game. (Legal values: SUMMONERS_RIFT, HOWLING_ABYSS).
 	MapType MapType `json:"mapType"`
 	// Optional string that may contain any data in any format, if specified at all. Used to denote any custom information about the game.
 	Metadata string `json:"metadata,omitempty"`
-	// The pick type of the game.
+	// The pick type of the game. (Legal values: BLIND_PICK, DRAFT_MODE, ALL_RANDOM, TOURNAMENT_DRAFT).
 	PickType PickType `json:"pickType"`
-	// The spectator type of the game.
+	// The spectator type of the game. (Legal values: NONE, LOBBYONLY, ALL).
 	SpectatorType SpectatorType `json:"spectatorType"`
 	// The team size of the game. Valid values are 1-5.
 	TeamSize int `json:"teamSize"`
+	// Checks if allowed participants are enough to make full teams.
+	EnoughPlayers int `json:"enoughPlayers"`
 }
 
 type TournamentCodeUpdateParametersDTO struct {
-	// Optional list of encrypted summonerIds in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
-	AllowedSummonerIDs []string `json:"allowedSummonerIds,omitempty"`
-	// The map type of the game.
+	// Optional list of encrypted puuids in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
+	AllowedParticipants []string `json:"allowedParticipants,omitempty"`
+	// The pick type. (Legal values: BLIND_PICK, DRAFT_MODE, ALL_RANDOM, TOURNAMENT_DRAFT).
 	MapType MapType `json:"mapType,omitempty"`
-	// The pick type of the game.
+	// The map type. (Legal values: SUMMONERS_RIFT, HOWLING_ABYSS).
 	PickType PickType `json:"pickType,omitempty"`
-	// The spectator type of the game.
+	// The spectator type. (Legal values: NONE, LOBBYONLY, ALL).
 	SpectatorType SpectatorType `json:"spectatorType,omitempty"`
 }
 
 // Create a tournament code for the given tournament.
 func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) (*[]string, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-v4", "CreateCodes")
+	logger := e.internalClient.Logger("LOL", "tournament-v5", "CreateCodes")
 
 	logger.Debug("Method executed")
 
@@ -118,7 +120,7 @@ func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 
 	var codes *[]string
 
-	err := e.internalClient.Post(api.AmericasCluster, url, parameters, &codes, "tournament-v4", "CreateCodes", "")
+	err := e.internalClient.Post(api.AmericasCluster, url, parameters, &codes, "tournament-v5", "CreateCodes", "")
 
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
@@ -130,7 +132,7 @@ func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 
 // Returns the tournament code DTO associated with a tournament code string.
 func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-v4", "ByCode")
+	logger := e.internalClient.Logger("LOL", "tournament-v5", "ByCode")
 
 	logger.Debug("Method executed")
 
@@ -138,7 +140,7 @@ func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 
 	var tournament *TournamentCodeDTO
 
-	err := e.internalClient.Get(api.AmericasCluster, url, &tournament, "tournament-v4", "ByCode", "")
+	err := e.internalClient.Get(api.AmericasCluster, url, &tournament, "tournament-v5", "ByCode", "")
 
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
@@ -150,7 +152,7 @@ func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 
 // Update the pick type, map, spectator type, or allowed summoners for a code.
 func (e *TournamentEndpoint) Update(tournamentCode string, parameters *TournamentCodeUpdateParametersDTO) error {
-	logger := e.internalClient.Logger("LOL", "tournament-v4", "Update")
+	logger := e.internalClient.Logger("LOL", "tournament-v5", "Update")
 
 	logger.Debug("Method executed")
 
@@ -160,7 +162,7 @@ func (e *TournamentEndpoint) Update(tournamentCode string, parameters *Tournamen
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
-	err := e.internalClient.Put(api.AmericasCluster, url, parameters, "tournament-v4", "Update")
+	err := e.internalClient.Put(api.AmericasCluster, url, parameters, "tournament-v5", "Update")
 
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
@@ -172,7 +174,7 @@ func (e *TournamentEndpoint) Update(tournamentCode string, parameters *Tournamen
 
 // Gets a list of lobby events by tournament code.
 func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-v4", "LobbyEvents")
+	logger := e.internalClient.Logger("LOL", "tournament-v5", "LobbyEvents")
 
 	logger.Debug("Method executed")
 
@@ -180,7 +182,7 @@ func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 
 	var lobbyEvents *LobbyEventDTOWrapper
 
-	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "tournament-v4", "LobbyEvents", "")
+	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "tournament-v5", "LobbyEvents", "")
 
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
@@ -198,7 +200,7 @@ func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
 func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (*int, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-v4", "CreateProvider")
+	logger := e.internalClient.Logger("LOL", "tournament-v5", "CreateProvider")
 
 	logger.Debug("Method executed")
 
@@ -216,7 +218,7 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 
 	var provider *int
 
-	err = e.internalClient.Post(api.AmericasCluster, TournamentProvidersURL, options, &provider, "tournament-v4", "CreateProvider", "")
+	err = e.internalClient.Post(api.AmericasCluster, TournamentProvidersURL, options, &provider, "tournament-v5", "CreateProvider", "")
 
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
@@ -232,7 +234,7 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 //
 // The name of the tournament is optional.
 func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
-	logger := e.internalClient.Logger("LOL", "tournament-v4", "Create")
+	logger := e.internalClient.Logger("LOL", "tournament-v5", "Create")
 
 	logger.Debug("Method executed")
 
@@ -243,7 +245,7 @@ func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
 
 	var tournament *int
 
-	err := e.internalClient.Post(api.AmericasCluster, TournamentURL, options, &tournament, "tournament-v4", "Create", "")
+	err := e.internalClient.Post(api.AmericasCluster, TournamentURL, options, &tournament, "tournament-v5", "Create", "")
 
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
