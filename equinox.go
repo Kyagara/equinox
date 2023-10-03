@@ -14,7 +14,6 @@ import (
 	"github.com/Kyagara/equinox/clients/tft"
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/Kyagara/equinox/rate_limit"
 	"github.com/allegro/bigcache/v3"
 )
 
@@ -45,20 +44,13 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 		return nil, err
 	}
 
-	rate, err := rate_limit.NewInternalRateLimit()
-
-	if err != nil {
-		return nil, err
-	}
-
 	config := &api.EquinoxConfig{
-		Key:       key,
-		Cluster:   api.AmericasCluster,
-		LogLevel:  api.NopLevel,
-		Timeout:   15,
-		Retry:     true,
-		Cache:     cache,
-		RateLimit: rate,
+		Key:      key,
+		Cluster:  api.AmericasCluster,
+		LogLevel: api.NopLevel,
+		Timeout:  15,
+		Retry:    true,
+		Cache:    cache,
 	}
 
 	return config, nil

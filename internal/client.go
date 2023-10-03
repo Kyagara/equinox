@@ -12,32 +12,28 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
-	"github.com/Kyagara/equinox/rate_limit"
 	"go.uber.org/zap"
 )
 
 type InternalClient struct {
-	key                string
-	Cluster            api.Cluster
-	http               *http.Client
-	logger             *zap.Logger
-	cache              *cache.Cache
-	rateLimit          *rate_limit.RateLimit
-	IsCacheEnabled     bool
-	IsRateLimitEnabled bool
-	IsRetryEnabled     bool
+	key            string
+	Cluster        api.Cluster
+	http           *http.Client
+	logger         *zap.Logger
+	cache          *cache.Cache
+	IsCacheEnabled bool
+	IsRetryEnabled bool
 }
 
 // Creates an EquinoxConfig for tests.
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
-		Key:       "RGAPI-TEST",
-		Cluster:   api.AmericasCluster,
-		LogLevel:  api.DebugLevel,
-		Timeout:   15,
-		Retry:     false,
-		Cache:     &cache.Cache{TTL: 0},
-		RateLimit: &rate_limit.RateLimit{Enabled: false},
+		Key:      "RGAPI-TEST",
+		Cluster:  api.AmericasCluster,
+		LogLevel: api.DebugLevel,
+		Timeout:  15,
+		Retry:    false,
+		Cache:    &cache.Cache{TTL: 0},
 	}
 }
 
@@ -53,23 +49,16 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
 
-	if config.RateLimit == nil {
-		config.RateLimit = &rate_limit.RateLimit{Enabled: false}
-	}
-
 	client := &InternalClient{
 		key:            config.Key,
 		Cluster:        config.Cluster,
 		http:           &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
 		logger:         logger,
 		cache:          config.Cache,
-		rateLimit:      config.RateLimit,
 		IsRetryEnabled: config.Retry,
 	}
 
 	client.IsCacheEnabled = config.Cache.TTL > 0
-
-	client.IsRateLimitEnabled = config.RateLimit.Enabled
 
 	return client, nil
 }
@@ -111,7 +100,7 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 
 		// If there was an error with retrieving the cached response, only log the error
 		if err != nil {
-			logger.Error("Method failed", zap.Error(err))
+			logger.Error("Error retrieving cached response", zap.Error(err))
 		}
 
 		if item != nil {
@@ -239,15 +228,6 @@ func (c *InternalClient) newRequest(httpMethod string, url string, body interfac
 
 // Sends a HTTP request.
 func (c *InternalClient) sendRequest(logger *zap.Logger, req *http.Request, url string, route interface{}, endpointName string, methodName string, retrying bool) ([]byte, error) {
-	// If rate limiting is enabled
-	if c.IsRateLimitEnabled {
-		err := c.checkRateLimit(route, endpointName, methodName)
-
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	logger.Info("Sending request")
 
 	// Sending request
@@ -258,23 +238,6 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, req *http.Request, url 
 	}
 
 	defer res.Body.Close()
-
-	// Update rate limits
-	if c.IsRateLimitEnabled {
-		// Updating app rate limit
-		err := c.rateLimit.SetAppRate(route, &res.Header)
-
-		if err != nil {
-			return nil, err
-		}
-
-		// Updating method rate limit
-		err = c.rateLimit.Set(route, endpointName, methodName, &res.Header)
-
-		if err != nil {
-			return nil, err
-		}
-	}
 
 	// Checking the response
 	err = c.checkResponse(logger, url, res)
@@ -323,27 +286,37 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, req *http.Request, url 
 
 func (c *InternalClient) checkResponse(logger *zap.Logger, url string, res *http.Response) error {
 	// If the API returns a 429 code
-	if c.IsRetryEnabled && res.StatusCode == http.StatusTooManyRequests {
-		retryAfter := res.Header.Get("Retry-After")
+	if res.StatusCode == http.StatusTooManyRequests {
+		limit_type := res.Header.Get(api.RateLimitTypeHeader)
 
-		// If the header isn't found, don't retry and return error
-		if retryAfter == "" {
-			logger.Error("Request failed", zap.Error(api.ErrRetryAfterHeaderNotFound))
-			return api.ErrRetryAfterHeaderNotFound
+		if limit_type == "" {
+			logger.Warn("Rate limited but no service was specified")
+		} else {
+			logger.Warn(fmt.Sprintf("Rate limited, type: %s", limit_type))
 		}
 
-		seconds, err := strconv.Atoi(retryAfter)
+		if c.IsRetryEnabled {
+			retryAfter := res.Header.Get(api.RetryAfterHeader)
 
-		if err != nil {
-			logger.Error("Error converting Retry-After header", zap.Error(err))
-			return err
+			// If the header isn't found, don't retry and return error
+			if retryAfter == "" {
+				logger.Error("Request failed", zap.Error(api.ErrRetryAfterHeaderNotFound))
+				return api.ErrRetryAfterHeaderNotFound
+			}
+
+			seconds, err := strconv.Atoi(retryAfter)
+
+			if err != nil {
+				logger.Error("Error converting Retry-After header", zap.Error(err))
+				return err
+			}
+
+			logger.Warn(fmt.Sprintf("Retrying request in %ds", seconds))
+
+			time.Sleep(time.Duration(seconds) * time.Second)
+
+			return api.ErrTooManyRequests
 		}
-
-		logger.Warn(fmt.Sprintf("Too Many Requests, retrying request in %ds", seconds))
-
-		time.Sleep(time.Duration(seconds) * time.Second)
-
-		return api.ErrTooManyRequests
 	}
 
 	// If the status code is lower than 200 or higher than 299, return an error
@@ -364,49 +337,6 @@ func (c *InternalClient) checkResponse(logger *zap.Logger, url string, res *http
 		}
 
 		return err
-	}
-
-	return nil
-}
-
-// Checks the app and method rate limit, returns true if rate limited.
-func (c *InternalClient) checkRateLimit(route interface{}, endpointName string, methodName string) error {
-	if route == "" {
-		return nil
-	}
-
-	// Checking rate limits for the app
-	rate, err := c.rateLimit.GetAppRate(route)
-
-	if err != nil {
-		return err
-	}
-
-	isRateLimited, err := c.rateLimit.IsRateLimited(rate)
-
-	if err != nil {
-		return err
-	}
-
-	if isRateLimited {
-		return api.ErrTooManyRequests
-	}
-
-	// Checking rate limits for the endpoint method
-	rate, err = c.rateLimit.Get(route, endpointName, methodName)
-
-	if err != nil {
-		return err
-	}
-
-	isRateLimited, err = c.rateLimit.IsRateLimited(rate)
-
-	if err != nil {
-		return err
-	}
-
-	if isRateLimited {
-		return api.ErrTooManyRequests
 	}
 
 	return nil

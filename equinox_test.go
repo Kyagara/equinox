@@ -11,7 +11,6 @@ import (
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/riot"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/Kyagara/equinox/rate_limit"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -234,16 +233,11 @@ func BenchmarkSummonerByName(b *testing.B) {
 		SummonerLevel: 68,
 	}
 
-	headers := map[string]string{}
-
-	headers[rate_limit.AppRateLimitHeader] = "1300:2,1300:60"
-	headers[rate_limit.AppRateLimitCountHeader] = "1:2,5:60"
-
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
 		Get(fmt.Sprintf(lol.SummonerByNameURL, "Phanes")).
 		Persist().
 		Reply(200).
-		JSON(summoner).SetHeaders(headers)
+		JSON(summoner)
 
 	config := internal.NewTestEquinoxConfig()
 

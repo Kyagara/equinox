@@ -16,6 +16,12 @@ const (
 	EsportsCluster  Cluster = "esports"
 )
 
+// Rate limit headers
+const (
+	RateLimitTypeHeader = "X-Rate-Limit-Type"
+	RetryAfterHeader    = "Retry-After"
+)
+
 type PublishLocation string
 
 const (

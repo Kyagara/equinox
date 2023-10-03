@@ -26,21 +26,19 @@
 
 ## Features
 
--   Riot APIs implemented:
-    -   Riot Account
-    -   League of Legends
-    -   Teamfight Tactics
-    -   Valorant
-    -   Legends of Runeterra
--   Data Dragon
--   Caching
--   Rate Limiting
+- Riot APIs implemented:
+  - Riot Account
+  - League of Legends
+  - Teamfight Tactics
+  - Valorant
+  - Legends of Runeterra
+- Data Dragon (Incomplete)
+- Caching
 
 ## Todo
 
--   New rate limiting implementation
--   Add Redis as an option for rate limit
--   Improve Data Dragon support
+- New rate limiting implementation with Redis support
+- Improve Data Dragon support
 
 ## Usage
 
@@ -67,7 +65,6 @@ config := &api.EquinoxConfig{
 	Timeout: 15, // http.Client timeout in seconds.
 	Cache: cache.NewBigCache(cacheConfig), // The default client uses BigCache with an eviction time of 4 minutes.
 	Retry: true, // Retries a request if the API returns a 429 response.
-	RateLimit: rate_limit.NewInternalRateLimit() // In-memory rate limit.
 }
 ```
 
@@ -134,8 +131,8 @@ This is my first time developing and publishing an API client, I am constantly c
 
 These two projects helped me learn a lot:
 
--   [go-github](https://github.com/google/go-github)
--   [golio](https://github.com/KnutZuidema/golio)
+- [go-github](https://github.com/google/go-github)
+- [golio](https://github.com/KnutZuidema/golio)
 
 ## Disclaimer
 
