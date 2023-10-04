@@ -9,14 +9,13 @@ import (
 	"github.com/Kyagara/equinox/cache"
 	"github.com/alicebob/miniredis/v2"
 	"github.com/redis/go-redis/v9"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewRedis(t *testing.T) {
 	s := miniredis.RunT(t)
 
-	assert.NotNil(t, s, "expecting non-nil miniredis instance")
+	require.NotNil(t, s, "expecting non-nil miniredis instance")
 
 	ctx := context.Background()
 
@@ -35,13 +34,13 @@ func TestNewRedis(t *testing.T) {
 
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
-	assert.NotNil(t, cache, "expecting non-nil Redis")
+	require.NotNil(t, cache, "expecting non-nil Redis")
 }
 
 func TestRedisMethods(t *testing.T) {
 	s := miniredis.RunT(t)
 
-	assert.NotNil(t, s, "expecting non-nil miniredis instance")
+	require.NotNil(t, s, "expecting non-nil miniredis instance")
 
 	ctx := context.Background()
 
@@ -78,5 +77,5 @@ func TestRedisMethods(t *testing.T) {
 	data, err = cache.Get("test")
 	require.Nil(t, err, "expecting nil error")
 
-	assert.Empty(t, data)
+	require.Empty(t, data)
 }

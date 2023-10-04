@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,7 +17,7 @@ func TestLOLChampionsRotations(t *testing.T) {
 
 	require.NotNil(t, rotations, "expecting non-nil rotations")
 
-	assert.Greater(t, len(rotations.FreeChampionIDs), 0, "expecting free champions length greater than 0")
+	require.Greater(t, len(rotations.FreeChampionIDs), 0, "expecting free champions length greater than 0")
 }
 
 func TestLOLTournamentStubCreateProvider(t *testing.T) {
@@ -26,5 +25,5 @@ func TestLOLTournamentStubCreateProvider(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	assert.NotNil(t, provider, "expecting non-nil provider")
+	require.NotNil(t, provider, "expecting non-nil provider")
 }

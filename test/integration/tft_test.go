@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,5 +17,5 @@ func TestTFTSummonerByName(t *testing.T) {
 
 	require.NotNil(t, summoner, "expecting non-nil summoner")
 
-	assert.Equal(t, "Phanes", summoner.Name, "expecting name to be equal to Phanes")
+	require.Equal(t, "Phanes", summoner.Name, "expecting name to be equal to Phanes")
 }

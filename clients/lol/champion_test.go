@@ -9,7 +9,6 @@ import (
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -59,7 +58,7 @@ func TestChampionRotations(t *testing.T) {
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, test.want, gotData)
+				require.Equal(t, test.want, gotData)
 			}
 		})
 	}

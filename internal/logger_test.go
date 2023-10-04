@@ -5,7 +5,6 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -29,7 +28,7 @@ func TestNewLogger(t *testing.T) {
 		require.ErrorContains(t, err, "error initializing logger")
 	}
 
-	assert.Equal(t, logger, zap.NewNop())
+	require.Equal(t, logger, zap.NewNop())
 }
 
 func TestLogger(t *testing.T) {

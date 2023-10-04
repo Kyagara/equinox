@@ -5,11 +5,11 @@ import (
 
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestVALClient(t *testing.T) {
 	client := val.NewVALClient(&internal.InternalClient{})
 
-	assert.NotNil(t, client, "expecting non-nil VALClient")
+	require.NotNil(t, client, "expecting non-nil VALClient")
 }

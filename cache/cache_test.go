@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/cache"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -32,5 +31,5 @@ func TestCacheMethods(t *testing.T) {
 	require.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
 	_, err = cacheStore.Get("test")
-	assert.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", nil, err))
+	require.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", nil, err))
 }

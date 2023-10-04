@@ -274,7 +274,7 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, req *http.Request, url 
 	}
 
 	// In case of a post request returning just a single, non JSON response
-	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type assertion
+	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type requireion
 	if res.Header.Get("Content-Type") == "" {
 		body = []byte(fmt.Sprintf(`{"response":"%s"}`, string(body)))
 
