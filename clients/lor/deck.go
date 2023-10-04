@@ -21,7 +21,7 @@ func (e *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, erro
 	logger := e.internalClient.Logger("LOR", "lor-deck-v1", "List")
 	logger.Debug("Method executed")
 
-	var deck *[]DeckDTO
+	var deck []DeckDTO
 
 	err := e.internalClient.Get(region, DeckURL, &deck, "lor-deck-v1", "List", accessToken)
 	if err != nil {
@@ -29,7 +29,7 @@ func (e *DeckEndpoint) List(region Region, accessToken string) (*[]DeckDTO, erro
 		return nil, err
 	}
 
-	return deck, nil
+	return &deck, nil
 }
 
 // Create a new deck for the calling user.
@@ -42,7 +42,7 @@ func (e *DeckEndpoint) Create(region Region, accessToken string, code string, na
 		Name string `json:"name"`
 	}{Code: code, Name: name}
 
-	var deck *api.PlainTextResponse
+	var deck api.PlainTextResponse
 
 	err := e.internalClient.Post(region, DeckURL, options, &deck, "lor-deck-v1", "Create", accessToken)
 	if err != nil {

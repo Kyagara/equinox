@@ -118,7 +118,7 @@ func (e *ChallengesEndpoint) List(region Region) (*[]ChallengeConfigInfoDTO, err
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "List")
 	logger.Debug("Method executed")
 
-	var challenges *[]ChallengeConfigInfoDTO
+	var challenges []ChallengeConfigInfoDTO
 
 	err := e.internalClient.Get(region, ChallengesConfigurationsURL, &challenges, "lol-challenges-v1", "List", "")
 	if err != nil {
@@ -126,7 +126,7 @@ func (e *ChallengesEndpoint) List(region Region) (*[]ChallengeConfigInfoDTO, err
 		return nil, err
 	}
 
-	return challenges, nil
+	return &challenges, nil
 }
 
 // Get challenge configuration.
@@ -134,7 +134,7 @@ func (e *ChallengesEndpoint) ByID(region Region, challengeID int64) (*ChallengeC
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "ByID")
 	logger.Debug("Method executed")
 
-	var challenge *ChallengeConfigInfoDTO
+	var challenge ChallengeConfigInfoDTO
 
 	url := fmt.Sprintf(ChallengesConfigurationByIDURL, challengeID)
 
@@ -144,7 +144,7 @@ func (e *ChallengesEndpoint) ByID(region Region, challengeID int64) (*ChallengeC
 		return nil, err
 	}
 
-	return challenge, nil
+	return &challenge, nil
 }
 
 // Map of level to percentile of players who have achieved it - keys: ChallengeId -> Season -> Level -> percentile of players who achieved it.
@@ -152,7 +152,7 @@ func (e *ChallengesEndpoint) Percentiles(region Region) (*map[int64]PercentileDT
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "Percentiles")
 	logger.Debug("Method executed")
 
-	var percentiles *map[int64]PercentileDTO
+	var percentiles map[int64]PercentileDTO
 
 	err := e.internalClient.Get(region, ChallengesPercentilesURL, &percentiles, "lol-challenges-v1", "Percentiles", "")
 	if err != nil {
@@ -160,7 +160,7 @@ func (e *ChallengesEndpoint) Percentiles(region Region) (*map[int64]PercentileDT
 		return nil, err
 	}
 
-	return percentiles, nil
+	return &percentiles, nil
 }
 
 // Map of level to percentile of players who have achieved it.
@@ -168,7 +168,7 @@ func (e *ChallengesEndpoint) PercentilesByID(region Region, challengeID int64) (
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "PercentileByID")
 	logger.Debug("Method executed")
 
-	var percentile *PercentileDTO
+	var percentile PercentileDTO
 
 	url := fmt.Sprintf(ChallengesPercentileByIDURL, challengeID)
 
@@ -178,7 +178,7 @@ func (e *ChallengesEndpoint) PercentilesByID(region Region, challengeID int64) (
 		return nil, err
 	}
 
-	return percentile, nil
+	return &percentile, nil
 }
 
 // Return top players for each level. Level must be MASTER, GRANDMASTER or CHALLENGER.
@@ -188,7 +188,7 @@ func (e *ChallengesEndpoint) Leaderboards(region Region, challengeID int64, leve
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "Leaderboards")
 	logger.Debug("Method executed")
 
-	var leaderboards *[]ApexPlayerInfoDTO
+	var leaderboards []ApexPlayerInfoDTO
 
 	url := fmt.Sprintf(ChallengesLeaderboardsByLevelURL, challengeID, level)
 
@@ -202,7 +202,7 @@ func (e *ChallengesEndpoint) Leaderboards(region Region, challengeID int64, leve
 		return nil, err
 	}
 
-	return leaderboards, nil
+	return &leaderboards, nil
 }
 
 // Returns player information with list of all progressed challenges.
@@ -210,7 +210,7 @@ func (e *ChallengesEndpoint) ByPUUID(region Region, puuid string) (*PlayerInfoDT
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "ByPUUID")
 	logger.Debug("Method executed")
 
-	var challenges *PlayerInfoDTO
+	var challenges PlayerInfoDTO
 
 	url := fmt.Sprintf(ChallengesByPUUIDURL, puuid)
 
@@ -220,5 +220,5 @@ func (e *ChallengesEndpoint) ByPUUID(region Region, puuid string) (*PlayerInfoDT
 		return nil, err
 	}
 
-	return challenges, nil
+	return &challenges, nil
 }

@@ -29,7 +29,7 @@ func (e *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, erro
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}
 
-	var rotations *ChampionRotationsDTO
+	var rotations ChampionRotationsDTO
 
 	err := e.internalClient.Get(region, ChampionURL, &rotations, "champion-v3", "Rotations", "")
 	if err != nil {
@@ -37,5 +37,5 @@ func (e *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, erro
 		return nil, err
 	}
 
-	return rotations, nil
+	return &rotations, nil
 }

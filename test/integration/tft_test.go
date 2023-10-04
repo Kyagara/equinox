@@ -11,6 +11,7 @@ import (
 )
 
 func TestTFTSummonerByName(t *testing.T) {
+	checkIfOnlyDataDragon(t)
 	summoner, err := client.TFT.Summoner.ByName(lol.BR1, "Phanes")
 
 	require.Nil(t, err, "expecting nil error")

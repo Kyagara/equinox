@@ -15,7 +15,7 @@ func (e *StatusEndpoint) PlatformStatus(region Region) (*api.PlatformDataDTO, er
 	logger := e.internalClient.Logger("LOL", "lol-status-v4", "PlatformStatus")
 	logger.Debug("Method executed")
 
-	var status *api.PlatformDataDTO
+	var status api.PlatformDataDTO
 
 	err := e.internalClient.Get(region, StatusURL, &status, "lol-status-v4", "PlatformStatus", "")
 	if err != nil {
@@ -23,5 +23,5 @@ func (e *StatusEndpoint) PlatformStatus(region Region) (*api.PlatformDataDTO, er
 		return nil, err
 	}
 
-	return status, nil
+	return &status, nil
 }

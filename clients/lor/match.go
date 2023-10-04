@@ -55,7 +55,7 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
-	var match *MatchDTO
+	var match MatchDTO
 
 	err := e.internalClient.Get(region, url, &match, "lor-match-v1", "ByID", "")
 	if err != nil {
@@ -63,7 +63,7 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 		return nil, err
 	}
 
-	return match, nil
+	return &match, nil
 }
 
 // Get a list of match ids by PUUID.

@@ -76,7 +76,7 @@ func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 	method := fmt.Sprintf(LeagueEntriesURL, queue, tier, division)
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
-	var entries *[]LeagueEntryDTO
+	var entries []LeagueEntryDTO
 
 	err := e.internalClient.Get(region, url, &entries, "league-v4", "Entries", "")
 	if err != nil {
@@ -84,7 +84,7 @@ func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 		return nil, err
 	}
 
-	return entries, nil
+	return &entries, nil
 }
 
 // Get league entries in all queues for a given summoner ID.
@@ -98,7 +98,7 @@ func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]L
 
 	url := fmt.Sprintf(LeagueEntriesBySummonerURL, summonerID)
 
-	var entries *[]LeagueEntryDTO
+	var entries []LeagueEntryDTO
 
 	err := e.internalClient.Get(region, url, &entries, "league-v4", "SummonerEntries", "")
 	if err != nil {
@@ -106,7 +106,7 @@ func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]L
 		return nil, err
 	}
 
-	return entries, nil
+	return &entries, nil
 }
 
 // Get the challenger league for given queue.
@@ -139,7 +139,7 @@ func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueTy
 
 	url := fmt.Sprintf(endpointMethod, queueType)
 
-	var league *LeagueListDTO
+	var league LeagueListDTO
 
 	err := e.internalClient.Get(region, url, &league, "league-v4", methodName, "")
 	if err != nil {
@@ -147,5 +147,5 @@ func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueTy
 		return nil, err
 	}
 
-	return league, nil
+	return &league, nil
 }

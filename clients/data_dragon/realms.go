@@ -39,7 +39,7 @@ func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {
 
 	url := fmt.Sprintf(RealmURL, realm)
 
-	var data *RealmData
+	var data RealmData
 
 	err := e.internalClient.DataDragonGet(url, &data, "realm", "ByName")
 	if err != nil {
@@ -47,5 +47,5 @@ func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {
 		return nil, err
 	}
 
-	return data, nil
+	return &data, nil
 }

@@ -179,14 +179,16 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	require.Equal(t, api.ErrNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrNotFound, gotErr))
 }
 
-// goos: windows
-// goarch: amd64
-// cpu: AMD Ryzen 7 2700 Eight-Core Processor
-// BenchmarkCachedSummonerByName-16 106034 11073 ns/op 5766 B/op 36 allocs/op
-// BenchmarkCachedSummonerByName-16  99432 11565 ns/op 5977 B/op 36 allocs/op
-// BenchmarkCachedSummonerByName-16 104392 11258 ns/op 5816 B/op 36 allocs/op
-// BenchmarkCachedSummonerByName-16 106242 11265 ns/op 5760 B/op 36 allocs/op
-// BenchmarkCachedSummonerByName-16 103720 11193 ns/op 5837 B/op 36 allocs/op
+/*
+goos: windows
+goarch: amd64
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkCachedSummonerByName-16  113149 10367 ns/op 5543 B/op 34 allocs/op
+BenchmarkCachedSummonerByName-16  106800 10656 ns/op 5720 B/op 34 allocs/op
+BenchmarkCachedSummonerByName-16  109754 10439 ns/op 5635 B/op 34 allocs/op
+BenchmarkCachedSummonerByName-16  110697 10672 ns/op 5609 B/op 34 allocs/op
+BenchmarkCachedSummonerByName-16  100819 11005 ns/op 5907 B/op 34 allocs/op
+*/
 func BenchmarkCachedSummonerByName(b *testing.B) {
 	b.ReportAllocs()
 
@@ -212,21 +214,21 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		data, err := client.LOL.Summoner.ByName(lol.BR1, "Phanes")
-
 		require.Nil(b, err)
-
 		require.Equal(b, "Phanes", data.Name)
 	}
 }
 
-// goos: windows
-// goarch: amd64
-// cpu: AMD Ryzen 7 2700 Eight-Core Processor
-// BenchmarkSummonerByName-16 59298 20242 ns/op 5240 B/op 76 allocs/op
-// BenchmarkSummonerByName-16 58087 20730 ns/op 5367 B/op 77 allocs/op
-// BenchmarkSummonerByName-16 56473 21340 ns/op 5622 B/op 78 allocs/op
-// BenchmarkSummonerByName-16 52909 21888 ns/op 5622 B/op 78 allocs/op
-// BenchmarkSummonerByName-16 54087 22303 ns/op 6135 B/op 79 allocs/op
+/*
+goos: windows
+goarch: amd64
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkSummonerByName-16 67662 17969 ns/op 5169 B/op 71 allocs/op
+BenchmarkSummonerByName-16 65629 17823 ns/op 5293 B/op 72 allocs/op
+BenchmarkSummonerByName-16 64528 18342 ns/op 5549 B/op 73 allocs/op
+BenchmarkSummonerByName-16 64230 18831 ns/op 5550 B/op 73 allocs/op
+BenchmarkSummonerByName-16 61237 19108 ns/op 6062 B/op 74 allocs/op
+*/
 func BenchmarkSummonerByName(b *testing.B) {
 	b.ReportAllocs()
 
@@ -257,21 +259,21 @@ func BenchmarkSummonerByName(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		data, err := client.LOL.Summoner.ByName(lol.BR1, "Phanes")
-
 		require.Nil(b, err)
-
 		require.Equal(b, "Phanes", data.Name)
 	}
 }
 
-// goos: windows
-// goarch: amd64
-// cpu: AMD Ryzen 7 2700 Eight-Core Processor
-// BenchmarkCachedDataDragonRealm-16 84229 14301 ns/op 6692 B/op 44 allocs/op
-// BenchmarkCachedDataDragonRealm-16 83107 14246 ns/op 6746 B/op 44 allocs/op
-// BenchmarkCachedDataDragonRealm-16 83066 14168 ns/op 6748 B/op 44 allocs/op
-// BenchmarkCachedDataDragonRealm-16 83488 14247 ns/op 6727 B/op 44 allocs/op
-// BenchmarkCachedDataDragonRealm-16 83391 14222 ns/op 6732 B/op 44 allocs/op
+/*
+goos: windows
+goarch: amd64
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkCachedDataDragonRealm-16  81088 14627 ns/op 6823 B/op 42 allocs/op
+BenchmarkCachedDataDragonRealm-16  82737 13190 ns/op 6740 B/op 42 allocs/op
+BenchmarkCachedDataDragonRealm-16  83905 13898 ns/op 6684 B/op 42 allocs/op
+BenchmarkCachedDataDragonRealm-16  82736 14826 ns/op 6740 B/op 42 allocs/op
+BenchmarkCachedDataDragonRealm-16  83233 14297 ns/op 6716 B/op 42 allocs/op
+*/
 func BenchmarkCachedDataDragonRealm(b *testing.B) {
 	b.ReportAllocs()
 
@@ -319,21 +321,21 @@ func BenchmarkCachedDataDragonRealm(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		data, err := client.DataDragon.Realm.ByName(data_dragon.NA)
-
 		require.Nil(b, err)
-
 		require.Equal(b, "en_US", data.L)
 	}
 }
 
-// goos: windows
-// goarch: amd64
-// cpu: AMD Ryzen 7 2700 Eight-Core Processor
-// BenchmarkDataDragonRealm-16 50066 23434 ns/op 5298 B/op 82 allocs/op
-// BenchmarkDataDragonRealm-16 48817 23760 ns/op 5425 B/op 83 allocs/op
-// BenchmarkDataDragonRealm-16 47798 24149 ns/op 5678 B/op 84 allocs/op
-// BenchmarkDataDragonRealm-16 48996 25465 ns/op 5678 B/op 84 allocs/op
-// BenchmarkDataDragonRealm-16 45928 25454 ns/op 6191 B/op 85 allocs/op
+/*
+goos: windows
+goarch: amd64
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkDataDragonRealm-16 56840 21223 ns/op 5255 B/op 79 allocs/op
+BenchmarkDataDragonRealm-16 54490 21758 ns/op 5382 B/op 80 allocs/op
+BenchmarkDataDragonRealm-16 54898 21924 ns/op 5638 B/op 81 allocs/op
+BenchmarkDataDragonRealm-16 54536 22074 ns/op 5638 B/op 81 allocs/op
+BenchmarkDataDragonRealm-16 53311 23353 ns/op 6155 B/op 82 allocs/op
+*/
 func BenchmarkDataDragonRealm(b *testing.B) {
 	b.ReportAllocs()
 
@@ -386,9 +388,7 @@ func BenchmarkDataDragonRealm(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		data, err := client.DataDragon.Realm.ByName(data_dragon.NA)
-
 		require.Nil(b, err)
-
 		require.Equal(b, "en_US", data.L)
 	}
 }

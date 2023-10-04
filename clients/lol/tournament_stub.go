@@ -45,7 +45,7 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 
 	url := fmt.Sprintf("%s?%s", TournamentStubCodesURL, query.Encode())
 
-	var codes *[]string
+	var codes []string
 
 	err := e.internalClient.Post(api.AmericasCluster, url, parameters, &codes, "tournament-stub-v5", "CreateCodes", "")
 	if err != nil {
@@ -53,7 +53,7 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 		return nil, err
 	}
 
-	return codes, nil
+	return &codes, nil
 }
 
 // Gets a mock list of lobby events by tournament code.

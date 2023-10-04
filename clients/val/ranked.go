@@ -83,7 +83,7 @@ func (e *RankedEndpoint) LeaderboardsByActID(shard Shard, actID string, size uin
 	method := fmt.Sprintf(RankedURL, actID)
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
-	var leaderboard *LeaderboardDTO
+	var leaderboard LeaderboardDTO
 
 	err := e.internalClient.Get(shard, url, &leaderboard, "val-ranked-v1", "LeaderboardsByActID", "")
 	if err != nil {
@@ -91,5 +91,5 @@ func (e *RankedEndpoint) LeaderboardsByActID(shard Shard, actID string, size uin
 		return nil, err
 	}
 
-	return leaderboard, nil
+	return &leaderboard, nil
 }

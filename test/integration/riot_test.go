@@ -10,6 +10,7 @@ import (
 )
 
 func TestRiotAccountByID(t *testing.T) {
+	checkIfOnlyDataDragon(t)
 	account, err := client.Riot.Account.ByID("Loveable Senpai", "SUN")
 
 	require.Nil(t, err, "expecting nil error")

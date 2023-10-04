@@ -58,7 +58,7 @@ func (e *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}
 
-	var tournaments *[]ClashTournamentDTO
+	var tournaments []ClashTournamentDTO
 
 	err := e.internalClient.Get(region, ClashURL, &tournaments, "clash-v1", "Tournaments", "")
 	if err != nil {
@@ -66,7 +66,7 @@ func (e *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error
 		return nil, err
 	}
 
-	return tournaments, nil
+	return &tournaments, nil
 }
 
 // Get players by summoner ID.
@@ -82,7 +82,7 @@ func (e *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]To
 
 	url := fmt.Sprintf(ClashSummonerEntriesURL, summonerID)
 
-	var players *[]TournamentPlayerDTO
+	var players []TournamentPlayerDTO
 
 	err := e.internalClient.Get(region, url, &players, "clash-v1", "SummonerEntries", "")
 	if err != nil {
@@ -90,7 +90,7 @@ func (e *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]To
 		return nil, err
 	}
 
-	return players, nil
+	return &players, nil
 }
 
 // Get team by ID.
@@ -104,7 +104,7 @@ func (e *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*Tourn
 
 	url := fmt.Sprintf(ClashTournamentTeamByIDURL, teamID)
 
-	var team *TournamentTeamDto
+	var team TournamentTeamDto
 
 	err := e.internalClient.Get(region, url, &team, "clash-v1", "TournamentTeamByID", "")
 	if err != nil {
@@ -112,7 +112,7 @@ func (e *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*Tourn
 		return nil, err
 	}
 
-	return team, nil
+	return &team, nil
 }
 
 // Get tournament by ID.
@@ -135,7 +135,7 @@ func (e *ClashEndpoint) getClash(endpointMethod string, region Region, id string
 
 	url := fmt.Sprintf(endpointMethod, id)
 
-	var tournament *ClashTournamentDTO
+	var tournament ClashTournamentDTO
 
 	err := e.internalClient.Get(region, url, &tournament, "clash-v1", methodName, "")
 	if err != nil {
@@ -143,5 +143,5 @@ func (e *ClashEndpoint) getClash(endpointMethod string, region Region, id string
 		return nil, err
 	}
 
-	return tournament, nil
+	return &tournament, nil
 }
