@@ -55,7 +55,6 @@ type MiniSeriesDTO struct {
 // Page defaults to 1
 func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
 	logger := e.internalClient.Logger("LOL", "league-v4", "Entries")
-
 	logger.Debug("Method executed")
 
 	if region == PBE1 {
@@ -75,13 +74,11 @@ func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 	query.Set("page", strconv.Itoa(page))
 
 	method := fmt.Sprintf(LeagueEntriesURL, queue, tier, division)
-
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
 	var entries *[]LeagueEntryDTO
 
 	err := e.internalClient.Get(region, url, &entries, "league-v4", "Entries", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -93,7 +90,6 @@ func (e *LeagueEndpoint) Entries(region Region, queue QueueType, tier Tier, divi
 // Get league entries in all queues for a given summoner ID.
 func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]LeagueEntryDTO, error) {
 	logger := e.internalClient.Logger("LOL", "league-v4", "SummonerEntries")
-
 	logger.Debug("Method executed")
 
 	if region == PBE1 {
@@ -105,7 +101,6 @@ func (e *LeagueEndpoint) SummonerEntries(region Region, summonerID string) (*[]L
 	var entries *[]LeagueEntryDTO
 
 	err := e.internalClient.Get(region, url, &entries, "league-v4", "SummonerEntries", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -136,7 +131,6 @@ func (e *LeagueEndpoint) ByID(region Region, leagueID string) (*LeagueListDTO, e
 
 func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueType interface{}, methodName string) (*LeagueListDTO, error) {
 	logger := e.internalClient.Logger("LOL", "league-v4", methodName)
-
 	logger.Debug("Method executed")
 
 	if region == PBE1 {
@@ -148,7 +142,6 @@ func (e *LeagueEndpoint) getLeague(endpointMethod string, region Region, queueTy
 	var league *LeagueListDTO
 
 	err := e.internalClient.Get(region, url, &league, "league-v4", methodName, "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

@@ -69,7 +69,6 @@ type TopRatedLadderEntryDTO struct {
 // Page defaults to 1
 func (e *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.Division, page int) (*[]LeagueEntryDTO, error) {
 	logger := e.internalClient.Logger("TFT", "tft-league-v1", "Entries")
-
 	logger.Debug("Method executed")
 
 	if tier == lol.MasterTier || tier == lol.GrandmasterTier || tier == lol.ChallengerTier {
@@ -89,13 +88,11 @@ func (e *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.
 	query.Set("page", strconv.Itoa(page))
 
 	method := fmt.Sprintf(LeagueEntriesURL, tier, division)
-
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
 	var entries *[]LeagueEntryDTO
 
 	err := e.internalClient.Get(region, url, &entries, "tft-league-v1", "Entries", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -112,7 +109,6 @@ func (e *LeagueEndpoint) ByID(region lol.Region, leagueID string) (*LeagueListDT
 // Get league entries in all queues for a given summoner ID.
 func (e *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (*[]LeagueEntryDTO, error) {
 	logger := e.internalClient.Logger("TFT", "tft-league-v1", "SummonerEntries")
-
 	logger.Debug("Method executed")
 
 	if region == lol.PBE1 {
@@ -124,7 +120,6 @@ func (e *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (
 	var entries *[]LeagueEntryDTO
 
 	err := e.internalClient.Get(region, url, &entries, "tft-league-v1", "SummonerEntries", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -136,7 +131,6 @@ func (e *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (
 // Get the top rated ladder for given queue.
 func (e *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]TopRatedLadderEntryDTO, error) {
 	logger := e.internalClient.Logger("TFT", "tft-league-v1", "TopRatedLadder")
-
 	logger.Debug("Method executed")
 
 	if queue == RankedTFTQueue {
@@ -152,7 +146,6 @@ func (e *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]
 	var entries *[]TopRatedLadderEntryDTO
 
 	err := e.internalClient.Get(region, url, &entries, "tft-league-v1", "TopRatedLadder", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -178,7 +171,6 @@ func (e *LeagueEndpoint) Master(region lol.Region) (*LeagueListDTO, error) {
 
 func (e *LeagueEndpoint) getLeague(url string, region lol.Region, methodName string) (*LeagueListDTO, error) {
 	logger := e.internalClient.Logger("TFT", "tft-league-v1", methodName)
-
 	logger.Debug("Method executed")
 
 	if region == lol.PBE1 {
@@ -188,7 +180,6 @@ func (e *LeagueEndpoint) getLeague(url string, region lol.Region, methodName str
 	var league *LeagueListDTO
 
 	err := e.internalClient.Get(region, url, &league, "tft-league-v1", methodName, "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

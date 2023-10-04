@@ -20,7 +20,6 @@ type BigCacheStore struct {
 
 func (s *BigCacheStore) Get(key string) ([]byte, error) {
 	item, err := s.client.Get(key)
-
 	if err != nil {
 		if errors.Is(err, bigcache.ErrEntryNotFound) {
 			return nil, nil

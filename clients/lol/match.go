@@ -520,7 +520,6 @@ type MatchlistOptions struct {
 // MatchlistOptions.Count defaults to 20
 func (e *MatchEndpoint) List(route Route, puuid string, options *MatchlistOptions) (*[]string, error) {
 	logger := e.internalClient.Logger("LOL", "match-v5", "List")
-
 	logger.Debug("Method executed")
 
 	if options == nil {
@@ -550,17 +549,14 @@ func (e *MatchEndpoint) List(route Route, puuid string, options *MatchlistOption
 	}
 
 	query.Set("start", strconv.Itoa(options.Start))
-
 	query.Set("count", strconv.Itoa(options.Count))
 
 	method := fmt.Sprintf(MatchListURL, puuid)
-
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
 	var list *[]string
 
 	err := e.internalClient.Get(route, url, &list, "match-v5", "List", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -572,7 +568,6 @@ func (e *MatchEndpoint) List(route Route, puuid string, options *MatchlistOption
 // Get a match by match ID.
 func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
 	logger := e.internalClient.Logger("LOL", "match-v5", "ByID")
-
 	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
@@ -580,7 +575,6 @@ func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
 	var match *MatchDTO
 
 	err := e.internalClient.Get(route, url, &match, "match-v5", "ByID", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -592,7 +586,6 @@ func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
 // Get a match timeline by match ID.
 func (e *MatchEndpoint) Timeline(route Route, matchID string) (*MatchTimelineDTO, error) {
 	logger := e.internalClient.Logger("LOL", "match-v5", "Timeline")
-
 	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
@@ -600,7 +593,6 @@ func (e *MatchEndpoint) Timeline(route Route, matchID string) (*MatchTimelineDTO
 	var timeline *MatchTimelineDTO
 
 	err := e.internalClient.Get(route, url, &timeline, "match-v5", "Timeline", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

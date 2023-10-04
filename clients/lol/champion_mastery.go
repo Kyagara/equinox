@@ -59,7 +59,6 @@ func (e *ChampionMasteryEndpoint) SummonerMasteries(region Region, summonerID st
 // Get a champion mastery by player ID and champion ID.
 func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string, championID int) (*ChampionMasteryDTO, error) {
 	logger := e.internalClient.Logger("LOL", "champion-mastery-v4", "ChampionScore")
-
 	logger.Debug("Method executed")
 
 	if region == PBE1 {
@@ -71,7 +70,6 @@ func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 	var score *ChampionMasteryDTO
 
 	err := e.internalClient.Get(region, url, &score, "champion-mastery-v4", "ChampionScore", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -83,7 +81,6 @@ func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
 func (e *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID string) (*int, error) {
 	logger := e.internalClient.Logger("LOL", "champion-mastery-v4", "MasteryScoreSum")
-
 	logger.Debug("Method executed")
 
 	if region == PBE1 {
@@ -95,7 +92,6 @@ func (e *ChampionMasteryEndpoint) MasteryScoreSum(region Region, summonerID stri
 	var sum *int
 
 	err := e.internalClient.Get(region, url, &sum, "champion-mastery-v4", "MasteryScoreSum", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

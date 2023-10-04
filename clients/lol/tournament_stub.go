@@ -17,7 +17,6 @@ type TournamentStubEndpoint struct {
 // Create a mock tournament code for the given tournament.
 func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, parameters *TournamentCodeParametersDTO) (*[]string, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-stub-v5", "CreateCodes")
-
 	logger.Debug("Method executed")
 
 	if count < 1 || count > 1000 {
@@ -41,9 +40,7 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 	}
 
 	query := url.Values{}
-
 	query.Set("count", strconv.Itoa(count))
-
 	query.Set("tournamentId", strconv.FormatInt(tournamentID, 10))
 
 	url := fmt.Sprintf("%s?%s", TournamentStubCodesURL, query.Encode())
@@ -51,7 +48,6 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 	var codes *[]string
 
 	err := e.internalClient.Post(api.AmericasCluster, url, parameters, &codes, "tournament-stub-v5", "CreateCodes", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -63,7 +59,6 @@ func (e *TournamentStubEndpoint) CreateCodes(tournamentID int64, count int, para
 // Gets a mock list of lobby events by tournament code.
 func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOWrapper, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-stub-v5", "LobbyEvents")
-
 	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(TournamentStubLobbyEventsURL, tournamentCode)
@@ -71,7 +66,6 @@ func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEvent
 	var lobbyEvents *LobbyEventDTOWrapper
 
 	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "tournament-stub-v5", "LobbyEvents", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -89,11 +83,9 @@ func (e *TournamentStubEndpoint) LobbyEvents(tournamentCode string) (*LobbyEvent
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
 func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (*int, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-stub", "CreateProvider")
-
 	logger.Debug("Method executed")
 
 	_, err := url.ParseRequestURI(callbackURL)
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -107,7 +99,6 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 	var provider *int
 
 	err = e.internalClient.Post(api.AmericasCluster, TournamentStubProvidersURL, options, &provider, "tournament-stub", "CreateProvider", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -123,7 +114,6 @@ func (e *TournamentStubEndpoint) CreateProvider(region TournamentRegion, callbac
 // The name of the tournament is optional.
 func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-stub-v5", "Create")
-
 	logger.Debug("Method executed")
 
 	options := struct {
@@ -134,7 +124,6 @@ func (e *TournamentStubEndpoint) Create(providerID int, name string) (*int, erro
 	var tournament *int
 
 	err := e.internalClient.Post(api.AmericasCluster, TournamentStubURL, options, &tournament, "tournament-stub-v5", "Create", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

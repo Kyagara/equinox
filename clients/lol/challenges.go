@@ -116,13 +116,11 @@ type ChallengeInfo struct {
 // List of all basic challenge configuration information (includes all translations for names and descriptions.
 func (e *ChallengesEndpoint) List(region Region) (*[]ChallengeConfigInfoDTO, error) {
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "List")
-
 	logger.Debug("Method executed")
 
 	var challenges *[]ChallengeConfigInfoDTO
 
 	err := e.internalClient.Get(region, ChallengesConfigurationsURL, &challenges, "lol-challenges-v1", "List", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -134,7 +132,6 @@ func (e *ChallengesEndpoint) List(region Region) (*[]ChallengeConfigInfoDTO, err
 // Get challenge configuration.
 func (e *ChallengesEndpoint) ByID(region Region, challengeID int64) (*ChallengeConfigInfoDTO, error) {
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "ByID")
-
 	logger.Debug("Method executed")
 
 	var challenge *ChallengeConfigInfoDTO
@@ -142,7 +139,6 @@ func (e *ChallengesEndpoint) ByID(region Region, challengeID int64) (*ChallengeC
 	url := fmt.Sprintf(ChallengesConfigurationByIDURL, challengeID)
 
 	err := e.internalClient.Get(region, url, &challenge, "lol-challenges-v1", "ByID", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -154,13 +150,11 @@ func (e *ChallengesEndpoint) ByID(region Region, challengeID int64) (*ChallengeC
 // Map of level to percentile of players who have achieved it - keys: ChallengeId -> Season -> Level -> percentile of players who achieved it.
 func (e *ChallengesEndpoint) Percentiles(region Region) (*map[int64]PercentileDTO, error) {
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "Percentiles")
-
 	logger.Debug("Method executed")
 
 	var percentiles *map[int64]PercentileDTO
 
 	err := e.internalClient.Get(region, ChallengesPercentilesURL, &percentiles, "lol-challenges-v1", "Percentiles", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -172,7 +166,6 @@ func (e *ChallengesEndpoint) Percentiles(region Region) (*map[int64]PercentileDT
 // Map of level to percentile of players who have achieved it.
 func (e *ChallengesEndpoint) PercentilesByID(region Region, challengeID int64) (*PercentileDTO, error) {
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "PercentileByID")
-
 	logger.Debug("Method executed")
 
 	var percentile *PercentileDTO
@@ -180,7 +173,6 @@ func (e *ChallengesEndpoint) PercentilesByID(region Region, challengeID int64) (
 	url := fmt.Sprintf(ChallengesPercentileByIDURL, challengeID)
 
 	err := e.internalClient.Get(region, url, &percentile, "lol-challenges-v1", "PercentileByID", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -194,7 +186,6 @@ func (e *ChallengesEndpoint) PercentilesByID(region Region, challengeID int64) (
 // Limit is optional, if 0 is provided, a limit will not be set.
 func (e *ChallengesEndpoint) Leaderboards(region Region, challengeID int64, level Level, limit int) (*[]ApexPlayerInfoDTO, error) {
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "Leaderboards")
-
 	logger.Debug("Method executed")
 
 	var leaderboards *[]ApexPlayerInfoDTO
@@ -206,7 +197,6 @@ func (e *ChallengesEndpoint) Leaderboards(region Region, challengeID int64, leve
 	}
 
 	err := e.internalClient.Get(region, url, &leaderboards, "lol-challenges-v1", "Leaderboards", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -218,7 +208,6 @@ func (e *ChallengesEndpoint) Leaderboards(region Region, challengeID int64, leve
 // Returns player information with list of all progressed challenges.
 func (e *ChallengesEndpoint) ByPUUID(region Region, puuid string) (*PlayerInfoDTO, error) {
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "ByPUUID")
-
 	logger.Debug("Method executed")
 
 	var challenges *PlayerInfoDTO
@@ -226,7 +215,6 @@ func (e *ChallengesEndpoint) ByPUUID(region Region, puuid string) (*PlayerInfoDT
 	url := fmt.Sprintf(ChallengesByPUUIDURL, puuid)
 
 	err := e.internalClient.Get(region, url, &challenges, "lol-challenges-v1", "ByPUUID", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

@@ -107,7 +107,6 @@ type LocalizedActDTO struct {
 // Locale defaults to en-US
 func (e *ContentEndpoint) ByLocale(shard Shard, locale Locale) (*LocalizedContentDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-content-v1", "ByLocale")
-
 	logger.Debug("Method executed")
 
 	if locale != "" {
@@ -119,7 +118,6 @@ func (e *ContentEndpoint) ByLocale(shard Shard, locale Locale) (*LocalizedConten
 	var content *LocalizedContentDTO
 
 	err := e.internalClient.Get(shard, url, &content, "val-content-v1", "ByLocale", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -131,13 +129,11 @@ func (e *ContentEndpoint) ByLocale(shard Shard, locale Locale) (*LocalizedConten
 // Get content with all available locales.
 func (e *ContentEndpoint) AllLocales(shard Shard) (*ContentDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-content-v1", "AllLocales")
-
 	logger.Debug("Method executed")
 
 	var content *ContentDTO
 
 	err := e.internalClient.Get(shard, ContentURL, &content, "val-content-v1", "AllLocales", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

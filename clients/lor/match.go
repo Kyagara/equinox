@@ -51,7 +51,6 @@ type PlayersDTO struct {
 // Get match by ID.
 func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 	logger := e.internalClient.Logger("LOR", "lor-match-v1", "ByID")
-
 	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
@@ -59,7 +58,6 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 	var match *MatchDTO
 
 	err := e.internalClient.Get(region, url, &match, "lor-match-v1", "ByID", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -71,7 +69,6 @@ func (e *MatchEndpoint) ByID(region Region, matchID string) (*MatchDTO, error) {
 // Get a list of match ids by PUUID.
 func (e *MatchEndpoint) List(region Region, puuid string) (*[]string, error) {
 	logger := e.internalClient.Logger("LOR", "lor-match-v1", "List")
-
 	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(MatchListURL, puuid)
@@ -79,7 +76,6 @@ func (e *MatchEndpoint) List(region Region, puuid string) (*[]string, error) {
 	var list *[]string
 
 	err := e.internalClient.Get(region, url, &list, "lor-match-v1", "List", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
