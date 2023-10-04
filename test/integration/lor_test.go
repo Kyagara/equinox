@@ -11,6 +11,7 @@ import (
 )
 
 func TestLORPlatformStatus(t *testing.T) {
+	checkIfOnlyDataDragon(t)
 	status, err := client.LOR.Status.PlatformStatus(lor.Americas)
 
 	require.Nil(t, err, "expecting nil error")

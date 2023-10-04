@@ -28,7 +28,7 @@ func (e *RankedEndpoint) Leaderboards(region Region) (*LeaderboardDTO, error) {
 	logger := e.internalClient.Logger("LOR", "lor-ranked-v1", "Leaderboards")
 	logger.Debug("Method executed")
 
-	var leaderboard *LeaderboardDTO
+	var leaderboard LeaderboardDTO
 
 	err := e.internalClient.Get(region, RankedURL, &leaderboard, "lor-ranked-v1", "Leaderboards", "")
 	if err != nil {
@@ -36,5 +36,5 @@ func (e *RankedEndpoint) Leaderboards(region Region) (*LeaderboardDTO, error) {
 		return nil, err
 	}
 
-	return leaderboard, nil
+	return &leaderboard, nil
 }

@@ -115,7 +115,7 @@ func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 
 	url := fmt.Sprintf("%s?%s", TournamentCodesURL, query.Encode())
 
-	var codes *[]string
+	var codes []string
 
 	err := e.internalClient.Post(api.AmericasCluster, url, parameters, &codes, "tournament-v5", "CreateCodes", "")
 	if err != nil {
@@ -123,7 +123,7 @@ func (e *TournamentEndpoint) CreateCodes(tournamentID int64, count int, paramete
 		return nil, err
 	}
 
-	return codes, nil
+	return &codes, nil
 }
 
 // Returns the tournament code DTO associated with a tournament code string.
@@ -133,7 +133,7 @@ func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 
 	url := fmt.Sprintf(TournamentByCodeURL, tournamentCode)
 
-	var tournament *TournamentCodeDTO
+	var tournament TournamentCodeDTO
 
 	err := e.internalClient.Get(api.AmericasCluster, url, &tournament, "tournament-v5", "ByCode", "")
 	if err != nil {
@@ -141,7 +141,7 @@ func (e *TournamentEndpoint) ByCode(tournamentCode string) (*TournamentCodeDTO, 
 		return nil, err
 	}
 
-	return tournament, nil
+	return &tournament, nil
 }
 
 // Update the pick type, map, spectator type, or allowed summoners for a code.
@@ -171,7 +171,7 @@ func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 
 	url := fmt.Sprintf(TournamentLobbyEventsURL, tournamentCode)
 
-	var lobbyEvents *LobbyEventDTOWrapper
+	var lobbyEvents LobbyEventDTOWrapper
 
 	err := e.internalClient.Get(api.AmericasCluster, url, &lobbyEvents, "tournament-v5", "LobbyEvents", "")
 	if err != nil {
@@ -179,7 +179,7 @@ func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 		return nil, err
 	}
 
-	return lobbyEvents, nil
+	return &lobbyEvents, nil
 }
 
 // Creates a tournament provider and returns its ID.
@@ -189,14 +189,14 @@ func (e *TournamentEndpoint) LobbyEvents(tournamentCode string) (*LobbyEventDTOW
 // The region in which the provider will be running tournaments.
 //
 // The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
-func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (*int, error) {
+func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL string) (int, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-v5", "CreateProvider")
 	logger.Debug("Method executed")
 
 	_, err := url.ParseRequestURI(callbackURL)
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
-		return nil, err
+		return -1, err
 	}
 
 	options := struct {
@@ -204,12 +204,12 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 		URL    string           `json:"url"`
 	}{Region: region, URL: callbackURL}
 
-	var provider *int
+	var provider int
 
 	err = e.internalClient.Post(api.AmericasCluster, TournamentProvidersURL, options, &provider, "tournament-v5", "CreateProvider", "")
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
-		return nil, err
+		return -1, err
 	}
 
 	return provider, nil
@@ -220,7 +220,7 @@ func (e *TournamentEndpoint) CreateProvider(region TournamentRegion, callbackURL
 // The provider ID to specify the regional registered provider data to associate this tournament.
 //
 // The name of the tournament is optional.
-func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
+func (e *TournamentEndpoint) Create(providerID int, name string) (int, error) {
 	logger := e.internalClient.Logger("LOL", "tournament-v5", "Create")
 	logger.Debug("Method executed")
 
@@ -229,12 +229,12 @@ func (e *TournamentEndpoint) Create(providerID int, name string) (*int, error) {
 		ProviderId int    `json:"providerId"`
 	}{Name: name, ProviderId: providerID}
 
-	var tournament *int
+	var tournament int
 
 	err := e.internalClient.Post(api.AmericasCluster, TournamentURL, options, &tournament, "tournament-v5", "Create", "")
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
-		return nil, err
+		return -1, err
 	}
 
 	return tournament, nil

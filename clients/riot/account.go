@@ -33,7 +33,7 @@ func (e *AccountEndpoint) PlayerActiveShard(puuid string, game api.Game) (*Activ
 
 	url := fmt.Sprintf(AccountActiveShardURL, game, puuid)
 
-	var shard *ActiveShardDTO
+	var shard ActiveShardDTO
 
 	err := e.internalClient.Get(e.internalClient.Cluster, url, &shard, "account-v1", "PlayerActiveShard", "")
 	if err != nil {
@@ -41,7 +41,7 @@ func (e *AccountEndpoint) PlayerActiveShard(puuid string, game api.Game) (*Activ
 		return nil, err
 	}
 
-	return shard, nil
+	return &shard, nil
 }
 
 // Get account by PUUID.
@@ -63,7 +63,7 @@ func (e *AccountEndpoint) getAccount(url string, accessToken string, methodName 
 	logger := e.internalClient.Logger("Riot", "account-v1", methodName)
 	logger.Debug("Method executed")
 
-	var account *AccountDTO
+	var account AccountDTO
 
 	err := e.internalClient.Get(e.internalClient.Cluster, url, &account, "account-v1", methodName, accessToken)
 	if err != nil {
@@ -71,5 +71,5 @@ func (e *AccountEndpoint) getAccount(url string, accessToken string, methodName 
 		return nil, err
 	}
 
-	return account, nil
+	return &account, nil
 }

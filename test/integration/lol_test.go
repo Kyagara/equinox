@@ -11,6 +11,7 @@ import (
 )
 
 func TestLOLChampionsRotations(t *testing.T) {
+	checkIfOnlyDataDragon(t)
 	rotations, err := client.LOL.Champion.Rotations(lol.BR1)
 
 	require.Nil(t, err, "expecting nil error")
@@ -21,6 +22,7 @@ func TestLOLChampionsRotations(t *testing.T) {
 }
 
 func TestLOLTournamentStubCreateProvider(t *testing.T) {
+	checkIfOnlyDataDragon(t)
 	provider, err := client.LOL.TournamentStub.CreateProvider(lol.BR, "http://example.com/")
 
 	require.Nil(t, err, "expecting nil error")

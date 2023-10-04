@@ -69,7 +69,7 @@ func (c *InternalClient) Get(route interface{}, endpointPath string, target inte
 
 	logger := c.logger.With(zap.String("httpMethod", http.MethodGet), zap.String("url", url))
 
-	return c.get(logger, url, route, target, endpointName, methodName, authorizationHeader)
+	return c.get(logger, url, target, authorizationHeader)
 }
 
 // Performs a GET request to the Data Dragon API.
@@ -78,18 +78,18 @@ func (c *InternalClient) DataDragonGet(endpointPath string, target interface{}, 
 
 	logger := c.logger.With(zap.String("httpMethod", http.MethodGet), zap.String("url", url))
 
-	return c.get(logger, url, "", target, endpointName, methodName, "")
+	return c.get(logger, url, target, "")
 }
 
-func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, target interface{}, endpointName string, methodName string, authorizationHeader string) error {
+func (c *InternalClient) get(logger *zap.Logger, url string, target interface{}, authorizationHeader string) error {
 	// Creating a new HTTP Request
-	req, err := c.newRequest(http.MethodGet, url, nil)
+	request, err := c.newRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return err
 	}
 
 	if authorizationHeader != "" {
-		req.Header.Set("Authorization", authorizationHeader)
+		request.Header.Set("Authorization", authorizationHeader)
 	}
 
 	if c.IsCacheEnabled {
@@ -109,7 +109,7 @@ func (c *InternalClient) get(logger *zap.Logger, url string, route interface{}, 
 	}
 
 	// Sending HTTP request and returning the response
-	body, err := c.sendRequest(logger, req, url, route, endpointName, methodName, false)
+	body, err := c.sendRequest(logger, request, url, false)
 	if err != nil {
 		return err
 	}
@@ -135,17 +135,17 @@ func (c *InternalClient) Post(route interface{}, endpointPath string, requestBod
 	logger := c.logger.With(zap.String("httpMethod", http.MethodPost), zap.String("url", url))
 
 	// Creating a new HTTP Request
-	req, err := c.newRequest(http.MethodPost, url, requestBody)
+	request, err := c.newRequest(http.MethodPost, url, requestBody)
 	if err != nil {
 		return err
 	}
 
 	if authorizationHeader != "" {
-		req.Header.Set("Authorization", authorizationHeader)
+		request.Header.Set("Authorization", authorizationHeader)
 	}
 
 	// Sending HTTP request and returning the response
-	body, err := c.sendRequest(logger, req, url, route, endpointName, methodName, false)
+	body, err := c.sendRequest(logger, request, url, false)
 	if err != nil {
 		return err
 	}
@@ -167,13 +167,13 @@ func (c *InternalClient) Put(route interface{}, endpointPath string, requestBody
 	logger := c.logger.With(zap.String("httpMethod", http.MethodPut), zap.String("url", url))
 
 	// Creating a new HTTP Request
-	req, err := c.newRequest(http.MethodPut, url, requestBody)
+	request, err := c.newRequest(http.MethodPut, url, requestBody)
 	if err != nil {
 		return err
 	}
 
 	// Sending HTTP request and returning the response
-	_, err = c.sendRequest(logger, req, url, route, endpointName, methodName, false)
+	_, err = c.sendRequest(logger, request, url, false)
 	if err != nil {
 		return err
 	}
@@ -194,36 +194,36 @@ func (c *InternalClient) newRequest(httpMethod string, url string, body interfac
 		}
 	}
 
-	req, err := http.NewRequest(httpMethod, url, buffer)
+	request, err := http.NewRequest(httpMethod, url, buffer)
 	if err != nil {
 		return nil, err
 	}
 
 	if body != nil {
-		req.Header.Set("Content-Type", "application/json")
+		request.Header.Set("Content-Type", "application/json")
 	}
 
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("X-Riot-Token", c.key)
-	req.Header.Set("User-Agent", "equinox")
+	request.Header.Set("Accept", "application/json")
+	request.Header.Set("X-Riot-Token", c.key)
+	request.Header.Set("User-Agent", "equinox")
 
-	return req, nil
+	return request, nil
 }
 
 // Sends a HTTP request.
-func (c *InternalClient) sendRequest(logger *zap.Logger, req *http.Request, url string, route interface{}, endpointName string, methodName string, retrying bool) ([]byte, error) {
+func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, url string, retrying bool) ([]byte, error) {
 	logger.Info("Sending request")
 
 	// Sending request
-	res, err := c.http.Do(req)
+	response, err := c.http.Do(request)
 	if err != nil {
 		return nil, err
 	}
 
-	defer res.Body.Close()
+	defer response.Body.Close()
 
 	// Checking the response
-	err = c.checkResponse(logger, url, res)
+	err = c.checkResponse(logger, response)
 
 	// The body is defined here so if we retry the request we can later return the value
 	// without having to read the body again, causing an error
@@ -233,8 +233,8 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, req *http.Request, url 
 	if c.IsRetryEnabled && !retrying && errors.Is(err, api.ErrTooManyRequests) {
 		logger.Info("Retrying request")
 
-		// If this retry is successful, the body var will be the res.Body
-		body, err = c.sendRequest(logger, req, url, route, endpointName, methodName, true)
+		// If this retry is successful, the body var will be the response.Body
+		body, err = c.sendRequest(logger, request, url, true)
 	}
 
 	// Returns the error from c.checkResponse() if any
@@ -250,14 +250,14 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, req *http.Request, url 
 		return body, nil
 	}
 
-	body, err = io.ReadAll(res.Body)
+	body, err = io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	// In case of a post request returning just a single, non JSON response
 	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type requireion
-	if res.Header.Get("Content-Type") == "" {
+	if response.Header.Get("Content-Type") == "" {
 		body = []byte(fmt.Sprintf(`{"response":"%s"}`, string(body)))
 		return body, nil
 	}
@@ -265,7 +265,7 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, req *http.Request, url 
 	return body, nil
 }
 
-func (c *InternalClient) checkResponse(logger *zap.Logger, url string, response *http.Response) error {
+func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Response) error {
 	// If the API returns a 429 code
 	if response.StatusCode == http.StatusTooManyRequests {
 		limit_type := response.Header.Get(api.RateLimitTypeHeader)

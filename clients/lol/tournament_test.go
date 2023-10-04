@@ -198,14 +198,37 @@ func TestTournamentCreate(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	tests := test.GetEndpointTestCases(*new(int), new(int))
+	tests := []struct {
+		name    string
+		want    int
+		code    int
+		wantErr error
+	}{
+		{
+			name: "found",
+			code: 200,
+			want: 0,
+		}, {
+			name:    "found",
+			code:    404,
+			wantErr: api.ErrNotFound,
+		},
+	}
 
 	for _, test := range tests {
-		t.Run(test.Name, func(t *testing.T) {
-			url := lol.TournamentURL
-			test.MockPostResponse(url, string(api.AmericasCluster), test.AccessToken)
+		t.Run(test.name, func(t *testing.T) {
+			gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
+				Post(lol.TournamentURL).
+				Reply(test.code).
+				JSON(test.want)
+
 			gotData, gotErr := client.Tournament.Create(1, "name")
-			test.CheckResponse(t, gotData, gotErr)
+
+			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
+
+			if test.wantErr == nil {
+				require.Equal(t, test.want, gotData)
+			}
 		})
 	}
 }
@@ -220,14 +243,14 @@ func TestTournamentCreateProvider(t *testing.T) {
 	tests := []struct {
 		name    string
 		code    int
-		want    *int
+		want    int
 		wantErr error
 		url     string
 	}{
 		{
 			name: "found",
 			code: http.StatusOK,
-			want: new(int),
+			want: 0,
 			url:  "http://localhost:80",
 		},
 		{

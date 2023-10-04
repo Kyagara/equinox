@@ -554,7 +554,7 @@ func (e *MatchEndpoint) List(route Route, puuid string, options *MatchlistOption
 	method := fmt.Sprintf(MatchListURL, puuid)
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
-	var list *[]string
+	var list []string
 
 	err := e.internalClient.Get(route, url, &list, "match-v5", "List", "")
 	if err != nil {
@@ -562,7 +562,7 @@ func (e *MatchEndpoint) List(route Route, puuid string, options *MatchlistOption
 		return nil, err
 	}
 
-	return list, nil
+	return &list, nil
 }
 
 // Get a match by match ID.
@@ -572,7 +572,7 @@ func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
-	var match *MatchDTO
+	var match MatchDTO
 
 	err := e.internalClient.Get(route, url, &match, "match-v5", "ByID", "")
 	if err != nil {
@@ -580,7 +580,7 @@ func (e *MatchEndpoint) ByID(route Route, matchID string) (*MatchDTO, error) {
 		return nil, err
 	}
 
-	return match, nil
+	return &match, nil
 }
 
 // Get a match timeline by match ID.
@@ -590,7 +590,7 @@ func (e *MatchEndpoint) Timeline(route Route, matchID string) (*MatchTimelineDTO
 
 	url := fmt.Sprintf(MatchTimelineURL, matchID)
 
-	var timeline *MatchTimelineDTO
+	var timeline MatchTimelineDTO
 
 	err := e.internalClient.Get(route, url, &timeline, "match-v5", "Timeline", "")
 	if err != nil {
@@ -598,5 +598,5 @@ func (e *MatchEndpoint) Timeline(route Route, matchID string) (*MatchTimelineDTO
 		return nil, err
 	}
 
-	return timeline, nil
+	return &timeline, nil
 }

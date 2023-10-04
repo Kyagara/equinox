@@ -21,7 +21,7 @@ func (e *StatusEndpoint) PlatformStatus(shard Shard) (*api.PlatformDataDTO, erro
 		return nil, fmt.Errorf("the region ESPORTS is not available for this method")
 	}
 
-	var status *api.PlatformDataDTO
+	var status api.PlatformDataDTO
 
 	err := e.internalClient.Get(shard, StatusURL, &status, "val-status-v1", "PlatformStatus", "")
 	if err != nil {
@@ -29,5 +29,5 @@ func (e *StatusEndpoint) PlatformStatus(shard Shard) (*api.PlatformDataDTO, erro
 		return nil, err
 	}
 
-	return status, nil
+	return &status, nil
 }

@@ -67,7 +67,7 @@ func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 
 	url := fmt.Sprintf(ChampionMasteriesByChampionURL, summonerID, championID)
 
-	var score *ChampionMasteryDTO
+	var score ChampionMasteryDTO
 
 	err := e.internalClient.Get(region, url, &score, "champion-mastery-v4", "ChampionScore", "")
 	if err != nil {
@@ -75,7 +75,7 @@ func (e *ChampionMasteryEndpoint) ChampionScore(region Region, summonerID string
 		return nil, err
 	}
 
-	return score, nil
+	return &score, nil
 }
 
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.

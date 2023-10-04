@@ -50,7 +50,7 @@ func TestVersionLatest(t *testing.T) {
 
 			if test.wantErr == nil {
 				ver := "1.0"
-				require.Equal(t, &ver, gotData)
+				require.Equal(t, ver, gotData)
 			}
 		})
 	}

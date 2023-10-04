@@ -143,7 +143,7 @@ func (e *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, err
 	logger := e.internalClient.Logger("LOL", "spectator-v4", "FeaturedGames")
 	logger.Debug("Method executed")
 
-	var games *FeaturedGamesDTO
+	var games FeaturedGamesDTO
 
 	err := e.internalClient.Get(region, SpectatorFeaturedGamesURL, &games, "spectator-v4", "FeaturedGames", "")
 	if err != nil {
@@ -151,7 +151,7 @@ func (e *SpectatorEndpoint) FeaturedGames(region Region) (*FeaturedGamesDTO, err
 		return nil, err
 	}
 
-	return games, nil
+	return &games, nil
 }
 
 // Get the current game information for the given summoner ID.
@@ -159,7 +159,7 @@ func (e *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*Curr
 	logger := e.internalClient.Logger("LOL", "spectator-v4", "CurrentGame")
 	logger.Debug("Method executed")
 
-	var game *CurrentGameInfoDTO
+	var game CurrentGameInfoDTO
 
 	err := e.internalClient.Get(region, fmt.Sprintf(SpectatorCurrentGameURL, summonerID), &game, "spectator-v4", "CurrentGame", "")
 	if err != nil {
@@ -167,5 +167,5 @@ func (e *SpectatorEndpoint) CurrentGame(region Region, summonerID string) (*Curr
 		return nil, err
 	}
 
-	return game, nil
+	return &game, nil
 }

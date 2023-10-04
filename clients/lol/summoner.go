@@ -61,7 +61,7 @@ func (e *SummonerEndpoint) getSummoner(url string, region Region, accessToken st
 		return nil, fmt.Errorf("accessToken is required")
 	}
 
-	var summoner *SummonerDTO
+	var summoner SummonerDTO
 
 	err := e.internalClient.Get(region, url, &summoner, "summoner-v4", methodName, accessToken)
 	if err != nil {
@@ -69,5 +69,5 @@ func (e *SummonerEndpoint) getSummoner(url string, region Region, accessToken st
 		return nil, err
 	}
 
-	return summoner, nil
+	return &summoner, nil
 }

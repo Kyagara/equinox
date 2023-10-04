@@ -115,7 +115,7 @@ func (e *ContentEndpoint) ByLocale(shard Shard, locale Locale) (*LocalizedConten
 
 	url := fmt.Sprintf("%s?locale=%s", ContentURL, locale)
 
-	var content *LocalizedContentDTO
+	var content LocalizedContentDTO
 
 	err := e.internalClient.Get(shard, url, &content, "val-content-v1", "ByLocale", "")
 	if err != nil {
@@ -123,7 +123,7 @@ func (e *ContentEndpoint) ByLocale(shard Shard, locale Locale) (*LocalizedConten
 		return nil, err
 	}
 
-	return content, nil
+	return &content, nil
 }
 
 // Get content with all available locales.
@@ -131,7 +131,7 @@ func (e *ContentEndpoint) AllLocales(shard Shard) (*ContentDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-content-v1", "AllLocales")
 	logger.Debug("Method executed")
 
-	var content *ContentDTO
+	var content ContentDTO
 
 	err := e.internalClient.Get(shard, ContentURL, &content, "val-content-v1", "AllLocales", "")
 	if err != nil {
@@ -139,5 +139,5 @@ func (e *ContentEndpoint) AllLocales(shard Shard) (*ContentDTO, error) {
 		return nil, err
 	}
 
-	return content, nil
+	return &content, nil
 }

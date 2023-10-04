@@ -90,7 +90,7 @@ func (e *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.
 	method := fmt.Sprintf(LeagueEntriesURL, tier, division)
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
-	var entries *[]LeagueEntryDTO
+	var entries []LeagueEntryDTO
 
 	err := e.internalClient.Get(region, url, &entries, "tft-league-v1", "Entries", "")
 	if err != nil {
@@ -98,7 +98,7 @@ func (e *LeagueEndpoint) Entries(region lol.Region, tier lol.Tier, division api.
 		return nil, err
 	}
 
-	return entries, nil
+	return &entries, nil
 }
 
 // Get league with given ID, including inactive entries.
@@ -117,7 +117,7 @@ func (e *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (
 
 	url := fmt.Sprintf(LeagueEntriesBySummonerURL, summonerID)
 
-	var entries *[]LeagueEntryDTO
+	var entries []LeagueEntryDTO
 
 	err := e.internalClient.Get(region, url, &entries, "tft-league-v1", "SummonerEntries", "")
 	if err != nil {
@@ -125,7 +125,7 @@ func (e *LeagueEndpoint) SummonerEntries(region lol.Region, summonerID string) (
 		return nil, err
 	}
 
-	return entries, nil
+	return &entries, nil
 }
 
 // Get the top rated ladder for given queue.
@@ -143,7 +143,7 @@ func (e *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]
 
 	url := fmt.Sprintf(LeagueRatedLaddersURL, queue)
 
-	var entries *[]TopRatedLadderEntryDTO
+	var entries []TopRatedLadderEntryDTO
 
 	err := e.internalClient.Get(region, url, &entries, "tft-league-v1", "TopRatedLadder", "")
 	if err != nil {
@@ -151,7 +151,7 @@ func (e *LeagueEndpoint) TopRatedLadder(region lol.Region, queue QueueType) (*[]
 		return nil, err
 	}
 
-	return entries, nil
+	return &entries, nil
 }
 
 // Get the challenger league.
@@ -177,7 +177,7 @@ func (e *LeagueEndpoint) getLeague(url string, region lol.Region, methodName str
 		return nil, fmt.Errorf("the region PBE1 is not available for this method")
 	}
 
-	var league *LeagueListDTO
+	var league LeagueListDTO
 
 	err := e.internalClient.Get(region, url, &league, "tft-league-v1", methodName, "")
 	if err != nil {
@@ -185,5 +185,5 @@ func (e *LeagueEndpoint) getLeague(url string, region lol.Region, methodName str
 		return nil, err
 	}
 
-	return league, nil
+	return &league, nil
 }

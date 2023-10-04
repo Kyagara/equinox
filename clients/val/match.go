@@ -177,7 +177,7 @@ func (e *MatchEndpoint) List(shard Shard, puuid string) (*MatchListDTO, error) {
 
 	url := fmt.Sprintf(MatchListURL, puuid)
 
-	var list *MatchListDTO
+	var list MatchListDTO
 
 	err := e.internalClient.Get(shard, url, &list, "val-match-v1", "List", "")
 	if err != nil {
@@ -185,7 +185,7 @@ func (e *MatchEndpoint) List(shard Shard, puuid string) (*MatchListDTO, error) {
 		return nil, err
 	}
 
-	return list, nil
+	return &list, nil
 }
 
 // Get match by ID.
@@ -195,7 +195,7 @@ func (e *MatchEndpoint) ByID(shard Shard, matchID string) (*MatchDTO, error) {
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
 
-	var match *MatchDTO
+	var match MatchDTO
 
 	err := e.internalClient.Get(shard, url, &match, "val-match-v1", "ByID", "")
 	if err != nil {
@@ -203,7 +203,7 @@ func (e *MatchEndpoint) ByID(shard Shard, matchID string) (*MatchDTO, error) {
 		return nil, err
 	}
 
-	return match, nil
+	return &match, nil
 }
 
 // Get recent matches.
@@ -219,7 +219,7 @@ func (e *MatchEndpoint) Recent(shard Shard, queue Queue) (*RecentMatchesDTO, err
 
 	url := fmt.Sprintf(MatchRecentURL, queue)
 
-	var recent *RecentMatchesDTO
+	var recent RecentMatchesDTO
 
 	err := e.internalClient.Get(shard, url, &recent, "val-match-v1", "Recent", "")
 	if err != nil {
@@ -227,5 +227,5 @@ func (e *MatchEndpoint) Recent(shard Shard, queue Queue) (*RecentMatchesDTO, err
 		return nil, err
 	}
 
-	return recent, nil
+	return &recent, nil
 }

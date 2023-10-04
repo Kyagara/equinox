@@ -109,7 +109,7 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 
 	url := fmt.Sprintf(ChampionsURL, version, language)
 
-	var data *DataDragonMetadata
+	var data DataDragonMetadata
 
 	err := e.internalClient.DataDragonGet(url, &data, "champion", "AllChampions")
 	if err != nil {
@@ -140,7 +140,7 @@ func (e *ChampionEndpoint) ByName(version string, language Language, champion st
 
 	url := fmt.Sprintf(ChampionURL, version, language, champion)
 
-	var data *DataDragonMetadata
+	var data DataDragonMetadata
 
 	err := e.internalClient.DataDragonGet(url, &data, "champion", "ByName")
 	if err != nil {

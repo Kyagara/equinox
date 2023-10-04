@@ -11,6 +11,7 @@ import (
 )
 
 func TestVALContentAllLocales(t *testing.T) {
+	checkIfOnlyDataDragon(t)
 	content, err := client.VAL.Content.AllLocales(val.BR)
 
 	require.Nil(t, err, "expecting nil error")
@@ -23,6 +24,7 @@ func TestVALContentAllLocales(t *testing.T) {
 }
 
 func TestVALRankedLeaderboard(t *testing.T) {
+	checkIfOnlyDataDragon(t)
 	leaderboard, err := client.VAL.Ranked.LeaderboardsByActID(val.BR, "3e47230a-463c-a301-eb7d-67bb60357d4f", 2, 0)
 
 	require.Nil(t, err, "expecting nil error")

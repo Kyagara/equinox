@@ -19,7 +19,7 @@ func (e *InventoryEndpoint) Cards(region Region, accessToken string) (*[]CardDTO
 	logger := e.internalClient.Logger("LOR", "lor-inventory-v1", "Cards")
 	logger.Debug("Method executed")
 
-	var cards *[]CardDTO
+	var cards []CardDTO
 
 	err := e.internalClient.Get(region, InventoryURL, &cards, "lor-inventory-v1", "Cards", accessToken)
 	if err != nil {
@@ -27,5 +27,5 @@ func (e *InventoryEndpoint) Cards(region Region, accessToken string) (*[]CardDTO
 		return nil, err
 	}
 
-	return cards, nil
+	return &cards, nil
 }

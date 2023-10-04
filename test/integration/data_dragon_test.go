@@ -33,7 +33,7 @@ func TestDataDragonChampionAllChampions(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	champions, err := client.DataDragon.Champion.AllChampions(*version, data_dragon.PtBR)
+	champions, err := client.DataDragon.Champion.AllChampions(version, data_dragon.PtBR)
 
 	require.Nil(t, err, "expecting nil error")
 
@@ -47,7 +47,7 @@ func TestDataDragonChampionByName(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	champion, err := client.DataDragon.Champion.ByName(*version, data_dragon.PtBR, "JarvanIV")
+	champion, err := client.DataDragon.Champion.ByName(version, data_dragon.PtBR, "JarvanIV")
 
 	require.Nil(t, err, "expecting nil error")
 

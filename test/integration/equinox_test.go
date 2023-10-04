@@ -19,24 +19,29 @@ var (
 	client *equinox.Equinox
 )
 
+var onlyDataDragon = false
+
+func checkIfOnlyDataDragon(t *testing.T) {
+	if onlyDataDragon {
+		t.Skip()
+	}
+}
+
 func init() {
 	key := os.Getenv("RIOT_GAMES_API_KEY")
 
 	if key == "" {
 		fmt.Println("RIOT_GAMES_API_KEY not found. Only Data Dragon tests will run.")
-
+		onlyDataDragon = true
 		key = "RGAPI-TEST"
 	}
 
 	config, err := equinox.DefaultConfig(key)
-
 	config.LogLevel = api.DebugLevel
 
 	c, err := equinox.NewClientWithConfig(config)
-
 	if err != nil {
 		fmt.Println(err)
-
 		return
 	}
 
@@ -44,6 +49,7 @@ func init() {
 }
 
 func TestClientCache(t *testing.T) {
+	checkIfOnlyDataDragon(t)
 	rotations, err := client.LOL.Champion.Rotations(lol.BR1)
 
 	require.Nil(t, err, "expecting nil error")
