@@ -34,12 +34,9 @@ type Equinox struct {
 //   - `Timeout`    : 15 Seconds
 //   - `Retry`      : true
 //   - `Cache`      : BigCache with TTL of 4 minutes
-//   - `RateLimit`  : Internal
 func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 	ctx := context.Background()
-
 	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
-
 	if err != nil {
 		return nil, err
 	}
@@ -63,20 +60,17 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 //   - `Timeout`    : 15 Seconds
 //   - `Retry`      : true
 //   - `Cache`      : BigCache with TTL of 4 minutes
-//   - `RateLimit`  : Internal
 func NewClient(key string) (*Equinox, error) {
 	if key == "" {
 		return nil, fmt.Errorf("API Key not provided")
 	}
 
 	config, err := DefaultConfig(key)
-
 	if err != nil {
 		return nil, err
 	}
 
 	client, err := internal.NewInternalClient(config)
-
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +105,6 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	}
 
 	client, err := internal.NewInternalClient(config)
-
 	if err != nil {
 		return nil, err
 	}

@@ -52,7 +52,6 @@ type TournamentPlayerDTO struct {
 // Get all active or upcoming tournaments.
 func (e *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error) {
 	logger := e.internalClient.Logger("LOL", "clash-v1", "Tournaments")
-
 	logger.Debug("Method executed")
 
 	if region == PBE1 {
@@ -62,7 +61,6 @@ func (e *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error
 	var tournaments *[]ClashTournamentDTO
 
 	err := e.internalClient.Get(region, ClashURL, &tournaments, "clash-v1", "Tournaments", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -76,7 +74,6 @@ func (e *ClashEndpoint) Tournaments(region Region) (*[]ClashTournamentDTO, error
 // This endpoint returns a list of active Clash players for a given summoner ID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
 func (e *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]TournamentPlayerDTO, error) {
 	logger := e.internalClient.Logger("LOL", "clash-v1", "SummonerEntries")
-
 	logger.Debug("Method executed")
 
 	if region == PBE1 {
@@ -88,7 +85,6 @@ func (e *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]To
 	var players *[]TournamentPlayerDTO
 
 	err := e.internalClient.Get(region, url, &players, "clash-v1", "SummonerEntries", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -100,7 +96,6 @@ func (e *ClashEndpoint) SummonerEntries(region Region, summonerID string) (*[]To
 // Get team by ID.
 func (e *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*TournamentTeamDto, error) {
 	logger := e.internalClient.Logger("LOL", "clash-v1", "TournamentTeamByID")
-
 	logger.Debug("Method executed")
 
 	if region == PBE1 {
@@ -112,7 +107,6 @@ func (e *ClashEndpoint) TournamentTeamByID(region Region, teamID string) (*Tourn
 	var team *TournamentTeamDto
 
 	err := e.internalClient.Get(region, url, &team, "clash-v1", "TournamentTeamByID", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -133,7 +127,6 @@ func (e *ClashEndpoint) ByTeamID(region Region, teamID string) (*ClashTournament
 
 func (e *ClashEndpoint) getClash(endpointMethod string, region Region, id string, methodName string) (*ClashTournamentDTO, error) {
 	logger := e.internalClient.Logger("LOL", "clash-v1", methodName)
-
 	logger.Debug("Method executed")
 
 	if region == PBE1 {
@@ -145,7 +138,6 @@ func (e *ClashEndpoint) getClash(endpointMethod string, region Region, id string
 	var tournament *ClashTournamentDTO
 
 	err := e.internalClient.Get(region, url, &tournament, "clash-v1", methodName, "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

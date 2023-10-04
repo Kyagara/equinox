@@ -23,7 +23,6 @@ type ChampionRotationsDTO struct {
 // Get champion rotations, including free-to-play and low-level free-to-play rotations.
 func (e *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, error) {
 	logger := e.internalClient.Logger("LOL", "champion-v3", "Rotations")
-
 	logger.Debug("Method executed")
 
 	if region == PBE1 {
@@ -33,7 +32,6 @@ func (e *ChampionEndpoint) Rotations(region Region) (*ChampionRotationsDTO, erro
 	var rotations *ChampionRotationsDTO
 
 	err := e.internalClient.Get(region, ChampionURL, &rotations, "champion-v3", "Rotations", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

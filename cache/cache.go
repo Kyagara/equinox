@@ -39,7 +39,6 @@ var (
 // Requires a BigCache config that can be created with bigcache.DefaultConfig(n*time.Minute).
 func NewBigCache(ctx context.Context, config bigcache.Config) (*Cache, error) {
 	bigcache, err := bigcache.New(ctx, config)
-
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +61,6 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 	redis := redis.NewClient(options)
 
 	err := redis.Ping(ctx).Err()
-
 	if err != nil {
 		return nil, err
 	}

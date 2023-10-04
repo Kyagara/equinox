@@ -35,7 +35,6 @@ type RealmData struct {
 
 func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {
 	logger := e.internalClient.Logger("Data Dragon", "realm", "ByName")
-
 	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(RealmURL, realm)
@@ -43,7 +42,6 @@ func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {
 	var data *RealmData
 
 	err := e.internalClient.DataDragonGet(url, &data, "realm", "ByName")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

@@ -75,7 +75,6 @@ func GetEndpointTestCases[Model any, Parameters any](model Model, parameters *Pa
 
 func TestingNewRiotClient() (*riot.RiotClient, error) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +84,6 @@ func TestingNewRiotClient() (*riot.RiotClient, error) {
 
 func TestingNewLOLClient() (*lol.LOLClient, error) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +93,6 @@ func TestingNewLOLClient() (*lol.LOLClient, error) {
 
 func TestingNewTFTClient() (*tft.TFTClient, error) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +102,6 @@ func TestingNewTFTClient() (*tft.TFTClient, error) {
 
 func TestingNewVALClient() (*val.VALClient, error) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +111,6 @@ func TestingNewVALClient() (*val.VALClient, error) {
 
 func TestingNewLORClient() (*lor.LORClient, error) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	if err != nil {
 		return nil, err
 	}

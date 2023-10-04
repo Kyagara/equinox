@@ -62,7 +62,6 @@ type TierDetailsDTO struct {
 // Start defaults to 0
 func (e *RankedEndpoint) LeaderboardsByActID(shard Shard, actID string, size uint8, start int) (*LeaderboardDTO, error) {
 	logger := e.internalClient.Logger("VAL", "val-ranked-v1", "LeaderboardsByActID")
-
 	logger.Debug("Method executed")
 
 	if shard == ESPORTS {
@@ -78,19 +77,15 @@ func (e *RankedEndpoint) LeaderboardsByActID(shard Shard, actID string, size uin
 	}
 
 	query := url.Values{}
-
 	query.Set("size", strconv.Itoa(int(size)))
-
 	query.Set("start", strconv.Itoa(int(start)))
 
 	method := fmt.Sprintf(RankedURL, actID)
-
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
 	var leaderboard *LeaderboardDTO
 
 	err := e.internalClient.Get(shard, url, &leaderboard, "val-ranked-v1", "LeaderboardsByActID", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

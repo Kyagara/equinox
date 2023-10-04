@@ -105,7 +105,6 @@ type Image struct {
 
 func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[string]*ChampionData, error) {
 	logger := e.internalClient.Logger("Data Dragon", "champion", "AllChampions")
-
 	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(ChampionsURL, version, language)
@@ -113,14 +112,12 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 	var data *DataDragonMetadata
 
 	err := e.internalClient.DataDragonGet(url, &data, "champion", "AllChampions")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
 	champions, err := json.Marshal(data.Data)
-
 	if err != nil {
 		logger.Error("Failed to encode champions data", zap.Error(err))
 		return nil, err
@@ -129,7 +126,6 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 	var championsData map[string]*ChampionData
 
 	err = json.Unmarshal(champions, &championsData)
-
 	if err != nil {
 		logger.Error("Failed to parse champions data", zap.Error(err))
 		return nil, err
@@ -140,7 +136,6 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 
 func (e *ChampionEndpoint) ByName(version string, language Language, champion string) (*ChampionData, error) {
 	logger := e.internalClient.Logger("Data Dragon", "champion", "ByName")
-
 	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(ChampionURL, version, language, champion)
@@ -148,14 +143,12 @@ func (e *ChampionEndpoint) ByName(version string, language Language, champion st
 	var data *DataDragonMetadata
 
 	err := e.internalClient.DataDragonGet(url, &data, "champion", "ByName")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
 	}
 
 	champions, err := json.Marshal(data.Data)
-
 	if err != nil {
 		logger.Error("Failed to encode champion data", zap.Error(err))
 		return nil, err
@@ -164,7 +157,6 @@ func (e *ChampionEndpoint) ByName(version string, language Language, champion st
 	var championsData map[string]*ChampionData
 
 	err = json.Unmarshal(champions, &championsData)
-
 	if err != nil {
 		logger.Error("Failed to parse champion data", zap.Error(err))
 		return nil, err

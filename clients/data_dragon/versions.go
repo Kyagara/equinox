@@ -11,13 +11,11 @@ type VersionEndpoint struct {
 
 func (e *VersionEndpoint) Latest() (*string, error) {
 	logger := e.internalClient.Logger("Data Dragon", "version", "Latest")
-
 	logger.Debug("Method executed")
 
 	var versions *[]string
 
 	err := e.internalClient.DataDragonGet(VersionsURL, &versions, "version", "Latest")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -28,13 +26,11 @@ func (e *VersionEndpoint) Latest() (*string, error) {
 
 func (e *VersionEndpoint) List() (*[]string, error) {
 	logger := e.internalClient.Logger("Data Dragon", "version", "List")
-
 	logger.Debug("Method executed")
 
 	var versions *[]string
 
 	err := e.internalClient.DataDragonGet(VersionsURL, &versions, "version", "List")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err

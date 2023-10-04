@@ -29,9 +29,7 @@ func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 
 	if c.Cache.TTL > 0 {
 		cache := CacheConfig{Store: string(c.Cache.StoreType), TTL: c.Cache.TTL}
-
 		err := encoder.AddObject("cache", cache)
-
 		if err != nil {
 			return err
 		}
@@ -48,16 +46,5 @@ type CacheConfig struct {
 func (c CacheConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 	encoder.AddString("store", c.Store)
 	encoder.AddDuration("cache-ttl", c.TTL)
-
-	return nil
-}
-
-type RateConfig struct {
-	Store string
-}
-
-func (c RateConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
-	encoder.AddString("store", c.Store)
-
 	return nil
 }

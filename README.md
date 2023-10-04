@@ -104,7 +104,6 @@ func main() {
 	// For custom configurations, you can use NewClientWithConfig(),
 	// you will need to provide an &api.EquinoxConfig{}.
 	client, err := equinox.NewClient("RIOT_API_KEY")
-
 	if err != nil {
 		fmt.Println("error creating client: ", err)
 		return
@@ -112,7 +111,6 @@ func main() {
 
 	// Get this week's champion rotations.
 	rotation, err := client.LOL.Champion.Rotations(lol.BR1)
-
 	if err != nil {
 		fmt.Println("error retrieving champion rotations: ", err)
 		return

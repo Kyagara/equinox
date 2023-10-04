@@ -23,7 +23,6 @@ type RedisStore struct {
 
 func (s *RedisStore) Get(key string) ([]byte, error) {
 	item, err := s.client.Get(s.ctx, key).Result()
-
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			return nil, nil

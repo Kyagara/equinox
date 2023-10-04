@@ -112,7 +112,6 @@ type InfoDTO struct {
 // Count defaults to 20
 func (e *MatchEndpoint) List(route lol.Route, puuid string, count int) (*[]string, error) {
 	logger := e.internalClient.Logger("TFT", "tft-match-v1", "List")
-
 	logger.Debug("Method executed")
 
 	if count > 100 || count < 1 {
@@ -120,17 +119,14 @@ func (e *MatchEndpoint) List(route lol.Route, puuid string, count int) (*[]strin
 	}
 
 	query := url.Values{}
-
 	query.Set("count", strconv.Itoa(count))
 
 	method := fmt.Sprintf(MatchListURL, puuid)
-
 	url := fmt.Sprintf("%s?%s", method, query.Encode())
 
 	var list *[]string
 
 	err := e.internalClient.Get(route, url, &list, "tft-match-v1", "List", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
@@ -142,7 +138,6 @@ func (e *MatchEndpoint) List(route lol.Route, puuid string, count int) (*[]strin
 // Get a match by match ID.
 func (e *MatchEndpoint) ByID(route lol.Route, matchID string) (*MatchDTO, error) {
 	logger := e.internalClient.Logger("TFT", "tft-match-v1", "ByID")
-
 	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(MatchByIDURL, matchID)
@@ -150,7 +145,6 @@ func (e *MatchEndpoint) ByID(route lol.Route, matchID string) (*MatchDTO, error)
 	var match *MatchDTO
 
 	err := e.internalClient.Get(route, url, &match, "tft-match-v1", "ByID", "")
-
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
