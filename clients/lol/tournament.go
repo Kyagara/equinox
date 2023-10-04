@@ -52,12 +52,12 @@ type TournamentCodeDTO struct {
 	Region TournamentRegion `json:"region"`
 	// The game map for the tournament code game.
 	Map MapType `json:"map"`
-	// The puuids of the participants (Encrypted).
+	// The PUUIDs of the participants (Encrypted).
 	Participants []string `json:"participants"`
 }
 
 type TournamentCodeParametersDTO struct {
-	// Optional list of encrypted puuids in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
+	// Optional list of encrypted PUUIDs in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
 	AllowedParticipants []string `json:"allowedParticipants,omitempty"`
 	// The map type of the game. (Legal values: SUMMONERS_RIFT, HOWLING_ABYSS).
 	MapType MapType `json:"mapType"`
@@ -74,7 +74,7 @@ type TournamentCodeParametersDTO struct {
 }
 
 type TournamentCodeUpdateParametersDTO struct {
-	// Optional list of encrypted puuids in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
+	// Optional list of encrypted PUUIDs in order to validate the players eligible to join the lobby. NOTE: We currently do not enforce participants at the team level, but rather the aggregate of teamOne and teamTwo. We may add the ability to enforce at the team level in the future.
 	AllowedParticipants []string `json:"allowedParticipants,omitempty"`
 	// The pick type. (Legal values: BLIND_PICK, DRAFT_MODE, ALL_RANDOM, TOURNAMENT_DRAFT).
 	MapType MapType `json:"mapType,omitempty"`

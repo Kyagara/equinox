@@ -9,7 +9,6 @@ import (
 	"github.com/Kyagara/equinox/clients/data_dragon"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -51,7 +50,7 @@ func TestVersionLatest(t *testing.T) {
 
 			if test.wantErr == nil {
 				ver := "1.0"
-				assert.Equal(t, &ver, gotData)
+				require.Equal(t, &ver, gotData)
 			}
 		})
 	}
@@ -94,7 +93,7 @@ func TestVersionList(t *testing.T) {
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, &[]string{"1.0", "0.9"}, gotData)
+				require.Equal(t, &[]string{"1.0", "0.9"}, gotData)
 			}
 		})
 	}

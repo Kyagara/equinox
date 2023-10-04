@@ -9,7 +9,6 @@ import (
 	"github.com/Kyagara/equinox/clients/data_dragon"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -59,7 +58,7 @@ func TestChampionAllChampions(t *testing.T) {
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, data, gotData)
+				require.Equal(t, data, gotData)
 			}
 		})
 	}
@@ -113,7 +112,7 @@ func TestChampionByName(t *testing.T) {
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
 			if test.wantErr == nil {
-				assert.Equal(t, data, gotData)
+				require.Equal(t, data, gotData)
 			}
 		})
 	}

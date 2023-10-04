@@ -12,7 +12,6 @@ import (
 	"github.com/Kyagara/equinox/clients/riot"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -70,6 +69,12 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 			config:  nil,
 		},
 		{
+			name:    "no cache",
+			want:    &equinox.Equinox{},
+			config:  internal.NewTestEquinoxConfig(),
+			wantErr: nil,
+		},
+		{
 			name:    "api key nil",
 			wantErr: fmt.Errorf("API Key not provided"),
 			config: &api.EquinoxConfig{
@@ -94,14 +99,14 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			client, err := equinox.NewClientWithConfig(test.config)
 
-			if test.name != "success" {
-				require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
+			require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
 
-				if test.wantErr == nil {
-					require.Equal(t, test.want, client)
-				}
-			} else {
-				require.NotNil(t, client, "expecting non-nil Client")
+			if test.wantErr == nil {
+				require.NotNil(t, client, "expecting non-nil client")
+			}
+
+			if test.name == "no cache" {
+				require.Equal(t, client.Cache.TTL, time.Duration(0), "expecting cache disabled")
 			}
 		})
 	}
@@ -118,6 +123,8 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	client, err := equinox.NewClientWithConfig(config)
 
 	require.Nil(t, err, "expecting nil error")
+
+	require.Equal(t, client.Cache.TTL, 4*time.Minute, "expecting cache enabled")
 
 	account := &riot.AccountDTO{
 		PUUID:    "puuid",
@@ -169,7 +176,7 @@ func TestEquinoxClientClearCache(t *testing.T) {
 
 	require.Nil(t, gotData)
 
-	assert.Equal(t, api.ErrNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrNotFound, gotErr))
+	require.Equal(t, api.ErrNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrNotFound, gotErr))
 }
 
 // goos: windows

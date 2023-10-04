@@ -6,7 +6,6 @@ package integration
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,5 +18,5 @@ func TestRiotAccountByID(t *testing.T) {
 
 	require.Equal(t, "Loveable Senpai", account.GameName, "expecting gameName to be equal to Loveable Senpai")
 
-	assert.Equal(t, "SUN", account.TagLine, "expecting tagLine to be equal to SUN")
+	require.Equal(t, "SUN", account.TagLine, "expecting tagLine to be equal to SUN")
 }

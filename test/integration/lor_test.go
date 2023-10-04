@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/clients/lor"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -16,5 +15,5 @@ func TestLORPlatformStatus(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	assert.NotNil(t, status, "expecting non-nil status")
+	require.NotNil(t, status, "expecting non-nil status")
 }

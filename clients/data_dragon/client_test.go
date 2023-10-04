@@ -5,11 +5,11 @@ import (
 
 	"github.com/Kyagara/equinox/clients/data_dragon"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDataDragonClient(t *testing.T) {
 	client := data_dragon.NewDataDragonClient(&internal.InternalClient{})
 
-	assert.NotNil(t, client, "expecting non-nil DataDragonClient")
+	require.NotNil(t, client, "expecting non-nil DataDragonClient")
 }

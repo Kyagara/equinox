@@ -8,7 +8,6 @@ import (
 
 	"github.com/Kyagara/equinox/cache"
 	"github.com/allegro/bigcache/v3"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,7 +17,7 @@ func TestNewBigCache(t *testing.T) {
 
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
-	assert.NotNil(t, cache, "expecting non-nil BigCache")
+	require.NotNil(t, cache, "expecting non-nil BigCache")
 }
 
 func TestBigCacheMethods(t *testing.T) {
@@ -51,5 +50,5 @@ func TestBigCacheMethods(t *testing.T) {
 	data, err = cache.Get("test")
 	require.Nil(t, err, "expecting nil error")
 
-	assert.Empty(t, data)
+	require.Empty(t, data)
 }

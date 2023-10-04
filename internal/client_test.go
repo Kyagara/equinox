@@ -13,7 +13,6 @@ import (
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -54,7 +53,7 @@ func TestInternalClientPut(t *testing.T) {
 
 	err = internalClient.Put("tests", "/", nil, "", "")
 
-	assert.Nil(t, err, "expecting nil error")
+	require.Nil(t, err, "expecting nil error")
 }
 
 func TestInternalClientDataDragonGet(t *testing.T) {
@@ -71,7 +70,7 @@ func TestInternalClientDataDragonGet(t *testing.T) {
 
 	err = internalClient.DataDragonGet("/", target, "endpoint", "method")
 
-	assert.Nil(t, err, "expecting nil error")
+	require.Nil(t, err, "expecting nil error")
 }
 
 func TestInternalClientRetries(t *testing.T) {
@@ -100,7 +99,7 @@ func TestInternalClientRetries(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	assert.NotNil(t, res, "expecting non-nil response")
+	require.NotNil(t, res, "expecting non-nil response")
 }
 
 func TestInternalClientFailingRetry(t *testing.T) {
@@ -125,7 +124,7 @@ func TestInternalClientFailingRetry(t *testing.T) {
 	// This will take 2 seconds
 	gotErr := internalClient.Get("tests", "/", &object, "", "", "")
 
-	assert.Equal(t, api.ErrTooManyRequests, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrTooManyRequests, gotErr))
+	require.Equal(t, api.ErrTooManyRequests, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrTooManyRequests, gotErr))
 }
 
 func TestInternalClientRetryHeaderNotFound(t *testing.T) {
@@ -145,7 +144,7 @@ func TestInternalClientRetryHeaderNotFound(t *testing.T) {
 
 	gotErr := internalClient.Get("tests", "/", &object, "", "", "")
 
-	assert.Equal(t, api.ErrRetryAfterHeaderNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrRetryAfterHeaderNotFound, gotErr))
+	require.Equal(t, api.ErrRetryAfterHeaderNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrRetryAfterHeaderNotFound, gotErr))
 }
 
 // Testing if InternalClient.Post() can properly decode a plain text response.
@@ -164,7 +163,7 @@ func TestInternalClientPlainTextResponse(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	assert.NotNil(t, object, "expecting non-nil response")
+	require.NotNil(t, object, "expecting non-nil response")
 }
 
 func TestInternalClientPost(t *testing.T) {
@@ -182,7 +181,7 @@ func TestInternalClientPost(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	assert.NotNil(t, object, "expecting non-nil response")
+	require.NotNil(t, object, "expecting non-nil response")
 }
 
 // Testing if the InternalClient can properly handle a status code not specified in the Riot api.
@@ -371,5 +370,5 @@ func TestCacheIsDisabled(t *testing.T) {
 
 	err = client.Cache.Clear()
 
-	assert.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", cache.ErrCacheIsDisabled, err))
+	require.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", cache.ErrCacheIsDisabled, err))
 }
