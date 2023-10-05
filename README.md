@@ -101,8 +101,6 @@ import (
 )
 
 func main() {
-	// For custom configurations, you can use NewClientWithConfig(),
-	// you will need to provide an &api.EquinoxConfig{}.
 	client, err := equinox.NewClient("RIOT_API_KEY")
 	if err != nil {
 		fmt.Println("error creating client: ", err)
