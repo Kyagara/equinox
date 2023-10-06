@@ -56,7 +56,7 @@ func TestChallengesPercentiles(t *testing.T) {
 			url := lol.ChallengesPercentilesURL
 			test.MockGetResponse(url, string(lol.BR1), test.AccessToken)
 			gotData, gotErr := client.Challenges.Percentiles(lol.BR1)
-			test.CheckResponse(t, gotData, gotErr)
+			test.CheckResponse(t, &gotData, gotErr)
 		})
 	}
 }
