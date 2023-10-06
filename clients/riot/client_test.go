@@ -9,7 +9,15 @@ import (
 )
 
 func TestRiotClient(t *testing.T) {
-	client := riot.NewRiotClient(&internal.InternalClient{})
+	c := &internal.InternalClient{}
+	require.Equal(t, false, c.IsDataDragonOnly, "expecting non-nil RiotClient")
+	client := riot.NewRiotClient(c)
 
 	require.NotNil(t, client, "expecting non-nil RiotClient")
+
+	c = &internal.InternalClient{IsDataDragonOnly: true}
+	require.Equal(t, true, c.IsDataDragonOnly, "expecting non-nil RiotClient")
+	client = riot.NewRiotClient(c)
+
+	require.Nil(t, client, "expecting nil RiotClient")
 }

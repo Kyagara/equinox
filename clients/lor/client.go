@@ -27,6 +27,10 @@ type LORClient struct {
 
 // Returns a new LORClient using the InternalClient provided.
 func NewLORClient(client *internal.InternalClient) *LORClient {
+	if client.IsDataDragonOnly {
+		return nil
+	}
+
 	return &LORClient{
 		internalClient: client,
 		Deck:           &DeckEndpoint{internalClient: client},

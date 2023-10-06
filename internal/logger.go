@@ -19,6 +19,10 @@ func NewLogger(config *api.EquinoxConfig) (*zap.Logger, error) {
 	return zapConfig.Build(zap.Fields(zap.Object("equinox", config)))
 }
 
+func (c *InternalClient) GetInternalLogger() *zap.Logger {
+	return c.logger
+}
+
 // Used to access the internal logger, this is used to log events from other clients (RiotClient, LOLClient...).
 func (c *InternalClient) Logger(client string, endpoint string, method string) *zap.Logger {
 	return c.logger.With(zap.String("client", client), zap.String("endpoint", endpoint), zap.String("method", method))
