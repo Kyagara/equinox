@@ -7,7 +7,7 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/clients/data_dragon"
+	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/riot"
 	"github.com/Kyagara/equinox/internal"
@@ -48,7 +48,8 @@ func TestNewEquinoxClient(t *testing.T) {
 				require.NotNil(t, client.TFT, "expecting nil Client")
 				require.NotNil(t, client.VAL, "expecting nil Client")
 				require.NotNil(t, client.Riot, "expecting nil Client")
-				require.NotNil(t, client.DataDragon, "expecting non-nil Client")
+				require.NotNil(t, client.CDragon, "expecting non-nil Client")
+				require.NotNil(t, client.DDragon, "expecting non-nil Client")
 			} else {
 				require.NotNil(t, client, "expecting non-nil Client")
 				require.NotNil(t, client.Cache, "expecting non-nil Client")
@@ -59,7 +60,8 @@ func TestNewEquinoxClient(t *testing.T) {
 				require.Nil(t, client.TFT, "expecting nil Client")
 				require.Nil(t, client.VAL, "expecting nil Client")
 				require.Nil(t, client.Riot, "expecting nil Client")
-				require.NotNil(t, client.DataDragon, "expecting non-nil Client")
+				require.NotNil(t, client.DDragon, "expecting non-nil Client")
+				require.NotNil(t, client.CDragon, "expecting non-nil Client")
 			}
 		})
 	}
@@ -282,7 +284,7 @@ BenchmarkCachedDataDragonRealm-16  83233 14297 ns/op 6716 B/op 42 allocs/op
 func BenchmarkCachedDataDragonRealm(b *testing.B) {
 	b.ReportAllocs()
 
-	realm := &data_dragon.RealmData{
+	realm := &ddragon.RealmData{
 		N: struct {
 			Item        string "json:\"item\""
 			Rune        string "json:\"rune\""
@@ -315,7 +317,7 @@ func BenchmarkCachedDataDragonRealm(b *testing.B) {
 	}
 
 	gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
-		Get(fmt.Sprintf(data_dragon.RealmURL, "na")).
+		Get(fmt.Sprintf(ddragon.RealmURL, "na")).
 		Persist().
 		Reply(200).
 		JSON(realm)
@@ -325,7 +327,7 @@ func BenchmarkCachedDataDragonRealm(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.DataDragon.Realm.ByName(data_dragon.NA)
+		data, err := client.DDragon.Realm.ByName(ddragon.NA)
 		require.Nil(b, err)
 		require.Equal(b, "en_US", data.L)
 	}
@@ -344,7 +346,7 @@ BenchmarkDataDragonRealm-16 53311 23353 ns/op 6155 B/op 82 allocs/op
 func BenchmarkDataDragonRealm(b *testing.B) {
 	b.ReportAllocs()
 
-	realm := &data_dragon.RealmData{
+	realm := &ddragon.RealmData{
 		N: struct {
 			Item        string "json:\"item\""
 			Rune        string "json:\"rune\""
@@ -377,7 +379,7 @@ func BenchmarkDataDragonRealm(b *testing.B) {
 	}
 
 	gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
-		Get(fmt.Sprintf(data_dragon.RealmURL, "na")).
+		Get(fmt.Sprintf(ddragon.RealmURL, "na")).
 		Persist().
 		Reply(200).
 		JSON(realm)
@@ -392,7 +394,7 @@ func BenchmarkDataDragonRealm(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.DataDragon.Realm.ByName(data_dragon.NA)
+		data, err := client.DDragon.Realm.ByName(ddragon.NA)
 		require.Nil(b, err)
 		require.Equal(b, "en_US", data.L)
 	}

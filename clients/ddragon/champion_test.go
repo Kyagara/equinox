@@ -1,4 +1,4 @@
-package data_dragon_test
+package ddragon_test
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/clients/data_dragon"
+	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
@@ -17,21 +17,21 @@ func TestChampionAllChampions(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := data_dragon.NewDataDragonClient(internalClient)
+	client := ddragon.NewDDragonClient(internalClient)
 
-	json := &data_dragon.DataDragonMetadata{
+	json := &ddragon.DDragonMetadata{
 		Type:    "",
 		Format:  "",
 		Version: "",
-		Data:    map[string]data_dragon.ChampionData{},
+		Data:    map[string]ddragon.ChampionData{},
 	}
 
-	data := map[string]data_dragon.ChampionData{}
+	data := map[string]ddragon.ChampionData{}
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *data_dragon.DataDragonMetadata
+		want    *ddragon.DDragonMetadata
 		wantErr error
 	}{
 		{
@@ -49,11 +49,11 @@ func TestChampionAllChampions(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
-				Get(fmt.Sprintf(data_dragon.ChampionsURL, "1.0", data_dragon.PtBR)).
+				Get(fmt.Sprintf(ddragon.ChampionsURL, "1.0", ddragon.PtBR)).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Champion.AllChampions("1.0", data_dragon.PtBR)
+			gotData, gotErr := client.Champion.AllChampions("1.0", ddragon.PtBR)
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -69,23 +69,23 @@ func TestChampionByName(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := data_dragon.NewDataDragonClient(internalClient)
+	client := ddragon.NewDDragonClient(internalClient)
 
-	json := &data_dragon.DataDragonMetadata{
+	json := &ddragon.DDragonMetadata{
 		Type:    "",
 		Format:  "",
 		Version: "",
-		Data:    map[string]data_dragon.FullChampionData{},
+		Data:    map[string]ddragon.FullChampionData{},
 	}
 
-	json.Data.(map[string]data_dragon.FullChampionData)["JarvanIV"] = data_dragon.FullChampionData{}
+	json.Data.(map[string]ddragon.FullChampionData)["JarvanIV"] = ddragon.FullChampionData{}
 
-	data := &data_dragon.FullChampionData{}
+	data := &ddragon.FullChampionData{}
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *data_dragon.DataDragonMetadata
+		want    *ddragon.DDragonMetadata
 		wantErr error
 	}{
 		{
@@ -103,11 +103,11 @@ func TestChampionByName(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
-				Get(fmt.Sprintf(data_dragon.ChampionURL, "1.0", data_dragon.PtBR, "JarvanIV")).
+				Get(fmt.Sprintf(ddragon.ChampionURL, "1.0", ddragon.PtBR, "JarvanIV")).
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Champion.ByName("1.0", data_dragon.PtBR, "JarvanIV")
+			gotData, gotErr := client.Champion.ByName("1.0", ddragon.PtBR, "JarvanIV")
 
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 
@@ -123,9 +123,9 @@ func TestChampionAllChampionsBadlyFormattedJson(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := data_dragon.NewDataDragonClient(internalClient)
+	client := ddragon.NewDDragonClient(internalClient)
 
-	json := &data_dragon.DataDragonMetadata{
+	json := &ddragon.DDragonMetadata{
 		Type:    "",
 		Format:  "",
 		Version: "",
@@ -133,15 +133,15 @@ func TestChampionAllChampionsBadlyFormattedJson(t *testing.T) {
 	}
 
 	gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
-		Get(fmt.Sprintf(data_dragon.ChampionsURL, "1.0", data_dragon.PtBR)).
+		Get(fmt.Sprintf(ddragon.ChampionsURL, "1.0", ddragon.PtBR)).
 		Reply(200).
 		JSON(json)
 
-	gotData, gotErr := client.Champion.AllChampions("1.0", data_dragon.PtBR)
+	gotData, gotErr := client.Champion.AllChampions("1.0", ddragon.PtBR)
 
 	require.Nil(t, gotData, "expecting nil data")
 
-	error_string := "cannot unmarshal string into Go value of type map[string]data_dragon.ChampionData"
+	error_string := "cannot unmarshal string into Go value of type map[string]ddragon.ChampionData"
 
 	require.ErrorContains(t, gotErr, error_string)
 }
@@ -151,9 +151,9 @@ func TestChampionByNameBadlyFormattedJson(t *testing.T) {
 
 	require.Nil(t, err, "expecting nil error")
 
-	client := data_dragon.NewDataDragonClient(internalClient)
+	client := ddragon.NewDDragonClient(internalClient)
 
-	json := &data_dragon.DataDragonMetadata{
+	json := &ddragon.DDragonMetadata{
 		Type:    "",
 		Format:  "",
 		Version: "",
@@ -161,15 +161,15 @@ func TestChampionByNameBadlyFormattedJson(t *testing.T) {
 	}
 
 	gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
-		Get(fmt.Sprintf(data_dragon.ChampionURL, "1.0", data_dragon.PtBR, "JarvanIV")).
+		Get(fmt.Sprintf(ddragon.ChampionURL, "1.0", ddragon.PtBR, "JarvanIV")).
 		Reply(200).
 		JSON(json)
 
-	gotData, gotErr := client.Champion.ByName("1.0", data_dragon.PtBR, "JarvanIV")
+	gotData, gotErr := client.Champion.ByName("1.0", ddragon.PtBR, "JarvanIV")
 
 	require.Nil(t, gotData, "expecting nil data")
 
-	error_string := "cannot unmarshal string into Go value of type map[string]data_dragon.FullChampionData"
+	error_string := "cannot unmarshal string into Go value of type map[string]ddragon.FullChampionData"
 
 	require.ErrorContains(t, gotErr, error_string)
 }

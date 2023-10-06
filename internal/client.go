@@ -74,8 +74,17 @@ func (c *InternalClient) Get(route interface{}, endpointPath string, target inte
 }
 
 // Performs a GET request to the Data Dragon API.
-func (c *InternalClient) DataDragonGet(endpointPath string, target interface{}, endpointName string, methodName string) error {
+func (c *InternalClient) DDragonGet(endpointPath string, target interface{}, endpointName string, methodName string) error {
 	url := fmt.Sprintf(api.DataDragonURLFormat, endpointPath)
+
+	logger := c.logger.With(zap.String("httpMethod", http.MethodGet), zap.String("url", url))
+
+	return c.get(logger, url, target, "")
+}
+
+// Performs a GET request to the Community Dragon API.
+func (c *InternalClient) CDragonGet(endpointPath string, target interface{}, endpointName string, methodName string) error {
+	url := fmt.Sprintf(api.CommunityDragonURLFormat, endpointPath)
 
 	logger := c.logger.With(zap.String("httpMethod", http.MethodGet), zap.String("url", url))
 
@@ -318,4 +327,19 @@ func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Respon
 	}
 
 	return nil
+}
+
+func (c *InternalClient) GetDDragonLOLVersions(client string, endpoint string, method string) ([]string, error) {
+	logger := c.Logger(client, endpoint, method)
+	logger.Debug("Method executed")
+
+	var versions []string
+
+	err := c.DDragonGet(api.DataDragonLOLVersionURL, &versions, "version", method)
+	if err != nil {
+		logger.Error("Method failed", zap.Error(err))
+		return nil, err
+	}
+
+	return versions, nil
 }

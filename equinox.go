@@ -7,7 +7,8 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
-	"github.com/Kyagara/equinox/clients/data_dragon"
+	"github.com/Kyagara/equinox/clients/cdragon"
+	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/lor"
 	"github.com/Kyagara/equinox/clients/riot"
@@ -18,13 +19,14 @@ import (
 )
 
 type Equinox struct {
-	Cache      *cache.Cache
-	DataDragon *data_dragon.DataDragonClient
-	Riot       *riot.RiotClient
-	LOL        *lol.LOLClient
-	TFT        *tft.TFTClient
-	LOR        *lor.LORClient
-	VAL        *val.VALClient
+	Cache   *cache.Cache
+	DDragon *ddragon.DDragonClient
+	CDragon *cdragon.CDragonClient
+	Riot    *riot.RiotClient
+	LOL     *lol.LOLClient
+	TFT     *tft.TFTClient
+	LOR     *lor.LORClient
+	VAL     *val.VALClient
 }
 
 // Returns the default Equinox config with a provided key.
@@ -77,13 +79,14 @@ func NewClient(key string) (*Equinox, error) {
 	}
 
 	equinox := &Equinox{
-		Cache:      config.Cache,
-		DataDragon: data_dragon.NewDataDragonClient(client),
-		Riot:       riot.NewRiotClient(client),
-		LOL:        lol.NewLOLClient(client),
-		TFT:        tft.NewTFTClient(client),
-		LOR:        lor.NewLORClient(client),
-		VAL:        val.NewVALClient(client),
+		Cache:   config.Cache,
+		DDragon: ddragon.NewDDragonClient(client),
+		CDragon: cdragon.NewCDragonClient(client),
+		Riot:    riot.NewRiotClient(client),
+		LOL:     lol.NewLOLClient(client),
+		TFT:     tft.NewTFTClient(client),
+		LOR:     lor.NewLORClient(client),
+		VAL:     val.NewVALClient(client),
 	}
 
 	return equinox, nil
@@ -116,13 +119,14 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	}
 
 	equinox := &Equinox{
-		Cache:      config.Cache,
-		DataDragon: data_dragon.NewDataDragonClient(client),
-		Riot:       riot.NewRiotClient(client),
-		LOL:        lol.NewLOLClient(client),
-		TFT:        tft.NewTFTClient(client),
-		LOR:        lor.NewLORClient(client),
-		VAL:        val.NewVALClient(client),
+		Cache:   config.Cache,
+		DDragon: ddragon.NewDDragonClient(client),
+		CDragon: cdragon.NewCDragonClient(client),
+		Riot:    riot.NewRiotClient(client),
+		LOL:     lol.NewLOLClient(client),
+		TFT:     tft.NewTFTClient(client),
+		LOR:     lor.NewLORClient(client),
+		VAL:     val.NewVALClient(client),
 	}
 
 	return equinox, nil

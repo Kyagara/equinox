@@ -1,6 +1,6 @@
-package data_dragon
+package ddragon
 
-type DataDragonMetadata struct {
+type DDragonMetadata struct {
 	Type    string      `json:"type"`
 	Format  string      `json:"format"`
 	Version string      `json:"version"`

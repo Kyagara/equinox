@@ -1,4 +1,4 @@
-package data_dragon
+package ddragon
 
 import (
 	"fmt"
@@ -34,14 +34,14 @@ type RealmData struct {
 }
 
 func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {
-	logger := e.internalClient.Logger("Data Dragon", "realm", "ByName")
+	logger := e.internalClient.Logger("DDragon", "realm", "ByName")
 	logger.Debug("Method executed")
 
 	url := fmt.Sprintf(RealmURL, realm)
 
 	var data RealmData
 
-	err := e.internalClient.DataDragonGet(url, &data, "realm", "ByName")
+	err := e.internalClient.DDragonGet(url, &data, "realm", "ByName")
 	if err != nil {
 		logger.Error("Method failed", zap.Error(err))
 		return nil, err
