@@ -54,4 +54,20 @@ func TestDataDragonChampionByName(t *testing.T) {
 	require.NotNil(t, champion, "expecting non-nil champion")
 
 	require.Equal(t, "Jarvan IV", champion.Name, "expecting champion name to be Jarvan IV")
+
+	champion, err = client.DataDragon.Champion.ByName(version, data_dragon.PtBR, "Briar")
+
+	require.Nil(t, err, "expecting nil error")
+
+	require.NotNil(t, champion, "expecting non-nil champion")
+
+	require.Equal(t, "Briar", champion.Name, "expecting champion name to be Briar")
+
+	champion, err = client.DataDragon.Champion.ByName(version, data_dragon.PtBR, "Zoe")
+
+	require.Nil(t, err, "expecting nil error")
+
+	require.NotNil(t, champion, "expecting non-nil champion")
+
+	require.Equal(t, "Zoe", champion.Name, "expecting champion name to be Zoe")
 }

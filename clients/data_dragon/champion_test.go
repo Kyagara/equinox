@@ -23,10 +23,10 @@ func TestChampionAllChampions(t *testing.T) {
 		Type:    "",
 		Format:  "",
 		Version: "",
-		Data:    map[string]*data_dragon.ChampionData{},
+		Data:    map[string]data_dragon.ChampionData{},
 	}
 
-	data := map[string]*data_dragon.ChampionData{}
+	data := map[string]data_dragon.ChampionData{}
 
 	tests := []struct {
 		name    string
@@ -75,12 +75,12 @@ func TestChampionByName(t *testing.T) {
 		Type:    "",
 		Format:  "",
 		Version: "",
-		Data:    map[string]*data_dragon.ChampionData{},
+		Data:    map[string]data_dragon.FullChampionData{},
 	}
 
-	json.Data.(map[string]*data_dragon.ChampionData)["JarvanIV"] = &data_dragon.ChampionData{}
+	json.Data.(map[string]data_dragon.FullChampionData)["JarvanIV"] = data_dragon.FullChampionData{}
 
-	data := &data_dragon.ChampionData{}
+	data := &data_dragon.FullChampionData{}
 
 	tests := []struct {
 		name    string
@@ -141,7 +141,7 @@ func TestChampionAllChampionsBadlyFormattedJson(t *testing.T) {
 
 	require.Nil(t, gotData, "expecting nil data")
 
-	error_string := "cannot unmarshal string into Go value of type map[string]*data_dragon.ChampionData"
+	error_string := "cannot unmarshal string into Go value of type map[string]data_dragon.ChampionData"
 
 	require.ErrorContains(t, gotErr, error_string)
 }
@@ -169,7 +169,7 @@ func TestChampionByNameBadlyFormattedJson(t *testing.T) {
 
 	require.Nil(t, gotData, "expecting nil data")
 
-	error_string := "cannot unmarshal string into Go value of type map[string]*data_dragon.ChampionData"
+	error_string := "cannot unmarshal string into Go value of type map[string]data_dragon.FullChampionData"
 
 	require.ErrorContains(t, gotErr, error_string)
 }
