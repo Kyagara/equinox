@@ -9,7 +9,15 @@ import (
 )
 
 func TestVALClient(t *testing.T) {
-	client := val.NewVALClient(&internal.InternalClient{})
+	c := &internal.InternalClient{}
+	require.Equal(t, false, c.IsDataDragonOnly, "expecting non-nil VALClient")
+	client := val.NewVALClient(c)
 
 	require.NotNil(t, client, "expecting non-nil VALClient")
+
+	c = &internal.InternalClient{IsDataDragonOnly: true}
+	require.Equal(t, true, c.IsDataDragonOnly, "expecting non-nil VALClient")
+	client = val.NewVALClient(c)
+
+	require.Nil(t, client, "expecting nil VALClient")
 }

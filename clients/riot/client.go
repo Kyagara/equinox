@@ -19,6 +19,10 @@ type RiotClient struct {
 
 // Returns a new RiotClient using the InternalClient provided.
 func NewRiotClient(client *internal.InternalClient) *RiotClient {
+	if client.IsDataDragonOnly {
+		return nil
+	}
+
 	return &RiotClient{
 		internalClient: client,
 		Account:        &AccountEndpoint{internalClient: client},

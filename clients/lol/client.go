@@ -76,6 +76,10 @@ type LOLClient struct {
 
 // Creates a new LOLClient using the InternalClient provided.
 func NewLOLClient(client *internal.InternalClient) *LOLClient {
+	if client.IsDataDragonOnly {
+		return nil
+	}
+
 	return &LOLClient{
 		internalClient:    client,
 		Challenges:        &ChallengesEndpoint{internalClient: client},

@@ -28,9 +28,9 @@ func TestNewEquinoxClient(t *testing.T) {
 			key:  "RGAPI-TEST",
 		},
 		{
-			name:    "nil key",
-			wantErr: fmt.Errorf("API Key not provided"),
-			key:     "",
+			name: "nil key",
+			key:  "",
+			want: &equinox.Equinox{},
 		},
 	}
 
@@ -38,14 +38,28 @@ func TestNewEquinoxClient(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			client, err := equinox.NewClient(test.key)
 
-			if test.name != "success" {
-				require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
+			require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
 
-				if test.wantErr == nil {
-					require.Equal(t, test.want, client)
-				}
+			if test.name == "success" {
+				require.NotNil(t, client, "expecting non-nil Client")
+				require.NotNil(t, client.Cache, "expecting non-nil Client")
+				require.NotNil(t, client.LOL, "expecting nil Client")
+				require.NotNil(t, client.LOR, "expecting nil Client")
+				require.NotNil(t, client.TFT, "expecting nil Client")
+				require.NotNil(t, client.VAL, "expecting nil Client")
+				require.NotNil(t, client.Riot, "expecting nil Client")
+				require.NotNil(t, client.DataDragon, "expecting non-nil Client")
 			} else {
 				require.NotNil(t, client, "expecting non-nil Client")
+				require.NotNil(t, client.Cache, "expecting non-nil Client")
+
+				// Clients other than Data Dragon should be nil
+				require.Nil(t, client.LOL, "expecting nil Client")
+				require.Nil(t, client.LOR, "expecting nil Client")
+				require.Nil(t, client.TFT, "expecting nil Client")
+				require.Nil(t, client.VAL, "expecting nil Client")
+				require.Nil(t, client.Riot, "expecting nil Client")
+				require.NotNil(t, client.DataDragon, "expecting non-nil Client")
 			}
 		})
 	}
@@ -73,15 +87,6 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 			want:    &equinox.Equinox{},
 			config:  internal.NewTestEquinoxConfig(),
 			wantErr: nil,
-		},
-		{
-			name:    "api key nil",
-			wantErr: fmt.Errorf("API Key not provided"),
-			config: &api.EquinoxConfig{
-				LogLevel: api.DebugLevel,
-				Timeout:  15,
-				Retry:    true,
-			},
 		},
 		{
 			name:    "cluster nil",

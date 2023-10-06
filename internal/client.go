@@ -16,13 +16,14 @@ import (
 )
 
 type InternalClient struct {
-	key            string
-	Cluster        api.Cluster
-	http           *http.Client
-	logger         *zap.Logger
-	cache          *cache.Cache
-	IsCacheEnabled bool
-	IsRetryEnabled bool
+	key              string
+	Cluster          api.Cluster
+	http             *http.Client
+	logger           *zap.Logger
+	cache            *cache.Cache
+	IsCacheEnabled   bool
+	IsRetryEnabled   bool
+	IsDataDragonOnly bool
 }
 
 // Creates an EquinoxConfig for tests.

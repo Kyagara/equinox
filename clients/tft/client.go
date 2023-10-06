@@ -31,6 +31,10 @@ type TFTClient struct {
 
 // Returns a new TFTClient using the InternalClient provided.
 func NewTFTClient(client *internal.InternalClient) *TFTClient {
+	if client.IsDataDragonOnly {
+		return nil
+	}
+
 	return &TFTClient{
 		internalClient: client,
 		Match:          &MatchEndpoint{internalClient: client},

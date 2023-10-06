@@ -42,5 +42,9 @@ func TestLogger(t *testing.T) {
 
 	require.NotNil(t, logger, "expecting non-nil Logger")
 
+	logger = internalClient.GetInternalLogger()
+
+	require.NotNil(t, logger, "expecting non-nil Logger")
+
 	logger.Info("Info logger")
 }

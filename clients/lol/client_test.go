@@ -9,7 +9,15 @@ import (
 )
 
 func TestLOLClient(t *testing.T) {
-	client := lol.NewLOLClient(&internal.InternalClient{})
+	c := &internal.InternalClient{}
+	require.Equal(t, false, c.IsDataDragonOnly, "expecting non-nil LOLClient")
+	client := lol.NewLOLClient(c)
 
 	require.NotNil(t, client, "expecting non-nil LOLClient")
+
+	c = &internal.InternalClient{IsDataDragonOnly: true}
+	require.Equal(t, true, c.IsDataDragonOnly, "expecting non-nil LOLClient")
+	client = lol.NewLOLClient(c)
+
+	require.Nil(t, client, "expecting nil LOLClient")
 }

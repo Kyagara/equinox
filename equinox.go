@@ -61,10 +61,6 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 //   - `Retry`      : true
 //   - `Cache`      : BigCache with TTL of 4 minutes
 func NewClient(key string) (*Equinox, error) {
-	if key == "" {
-		return nil, fmt.Errorf("API Key not provided")
-	}
-
 	config, err := DefaultConfig(key)
 	if err != nil {
 		return nil, err
@@ -73,6 +69,11 @@ func NewClient(key string) (*Equinox, error) {
 	client, err := internal.NewInternalClient(config)
 	if err != nil {
 		return nil, err
+	}
+
+	if key == "" {
+		client.GetInternalLogger().Warn("API key was not provided, only Data Dragon methods will be enabled.")
+		client.IsDataDragonOnly = true
 	}
 
 	equinox := &Equinox{
@@ -96,10 +97,6 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 		return nil, fmt.Errorf("equinox configuration not provided")
 	}
 
-	if config.Key == "" {
-		return nil, fmt.Errorf("API Key not provided")
-	}
-
 	if config.Cluster == "" {
 		return nil, fmt.Errorf("cluster not provided")
 	}
@@ -107,6 +104,11 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	client, err := internal.NewInternalClient(config)
 	if err != nil {
 		return nil, err
+	}
+
+	if config.Key == "" {
+		client.GetInternalLogger().Warn("API key was not provided, only Data Dragon methods will be enabled.")
+		client.IsDataDragonOnly = true
 	}
 
 	if config.Cache == nil {

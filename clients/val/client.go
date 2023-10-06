@@ -25,6 +25,10 @@ type VALClient struct {
 
 // Returns a new VALClient using the InternalClient provided.
 func NewVALClient(client *internal.InternalClient) *VALClient {
+	if client.IsDataDragonOnly {
+		return nil
+	}
+
 	return &VALClient{
 		internalClient: client,
 		Content:        &ContentEndpoint{internalClient: client},
