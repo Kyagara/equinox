@@ -9,7 +9,7 @@ import (
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
-	"github.com/Kyagara/equinox/clients/data_dragon"
+	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
@@ -56,7 +56,7 @@ func TestInternalClientPut(t *testing.T) {
 	require.Nil(t, err, "expecting nil error")
 }
 
-func TestInternalClientDataDragonGet(t *testing.T) {
+func TestInternalClientDDragonGet(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 
 	require.Nil(t, err, "expecting nil error")
@@ -64,13 +64,44 @@ func TestInternalClientDataDragonGet(t *testing.T) {
 	gock.New(fmt.Sprintf(api.DataDragonURLFormat, "/")).
 		Get("").
 		Reply(200).
-		JSON(&data_dragon.DataDragonMetadata{})
+		JSON(&ddragon.DDragonMetadata{})
 
-	target := &data_dragon.DataDragonMetadata{}
+	target := &ddragon.DDragonMetadata{}
 
-	err = internalClient.DataDragonGet("/", target, "endpoint", "method")
+	err = internalClient.DDragonGet("/", target, "endpoint", "method")
 
 	require.Nil(t, err, "expecting nil error")
+}
+
+func TestInternalClientCDragonGet(t *testing.T) {
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+
+	require.Nil(t, err, "expecting nil error")
+
+	gock.New(fmt.Sprintf(api.CommunityDragonURLFormat, "/")).
+		Get("").
+		Reply(200).
+		JSON(&ddragon.ChampionData{})
+
+	target := &ddragon.ChampionData{}
+
+	err = internalClient.CDragonGet("/", target, "endpoint", "method")
+
+	require.Nil(t, err, "expecting nil error")
+}
+
+func TestGetDDragonLOLVersions(t *testing.T) {
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	require.Nil(t, err, "expecting nil error")
+
+	gock.New(fmt.Sprintf(api.DataDragonURLFormat, api.DataDragonLOLVersionURL)).
+		Get("").
+		Reply(200).
+		JSON("[\"1.0\"]")
+
+	versions, err := internalClient.GetDDragonLOLVersions("test", "endpoint", "method")
+	require.Nil(t, err, "expecting nil error")
+	require.Equal(t, "1.0", versions[0], "expecting nil error")
 }
 
 func TestInternalClientRetries(t *testing.T) {
