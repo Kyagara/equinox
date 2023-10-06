@@ -33,6 +33,7 @@
   - Valorant
   - Legends of Runeterra
 - Data Dragon (Incomplete)
+- Community Dragon (Incomplete)
 - Caching
 
 ## Todo

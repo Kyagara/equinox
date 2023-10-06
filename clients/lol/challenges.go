@@ -148,7 +148,7 @@ func (e *ChallengesEndpoint) ByID(region Region, challengeID int64) (*ChallengeC
 }
 
 // Map of level to percentile of players who have achieved it - keys: ChallengeId -> Season -> Level -> percentile of players who achieved it.
-func (e *ChallengesEndpoint) Percentiles(region Region) (*map[int64]PercentileDTO, error) {
+func (e *ChallengesEndpoint) Percentiles(region Region) (map[int64]PercentileDTO, error) {
 	logger := e.internalClient.Logger("LOL", "lol-challenges-v1", "Percentiles")
 	logger.Debug("Method executed")
 
@@ -160,7 +160,7 @@ func (e *ChallengesEndpoint) Percentiles(region Region) (*map[int64]PercentileDT
 		return nil, err
 	}
 
-	return &percentiles, nil
+	return percentiles, nil
 }
 
 // Map of level to percentile of players who have achieved it.
