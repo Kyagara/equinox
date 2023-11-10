@@ -1272,6 +1272,37 @@ type SummonerV4 struct {
 	internalClient *internal.InternalClient
 }
 
+// Get a summoner by its RSO encrypted PUUID.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `rso_puuid` (required, in path) - Summoner ID
+//
+// # Riot API Reference
+//
+// [summoner-v4.getByRSOPUUID]
+//
+// Note: this method is automatically generated.
+//
+// [summoner-v4.getByRSOPUUID]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByRSOPUUID
+func (e *SummonerV4) ByRSOPUUID(route PlatformRoute, rsoPUUID string) (*SummonerV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "SummonerV4", "ByRSOPUUID")
+  logger.Debug("Method started execution")
+  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/fulfillment/v1/summoners/by-puuid/%v", rsoPUUID), nil)
+  if err != nil {
+    logger.Error("Error creating request", zap.Error(err))
+    return nil, err
+	}
+  var data SummonerV4DTO
+  err = e.internalClient.Execute(request, &data)
+  if err != nil {
+    logger.Error("Error executing request", zap.Error(err))
+    return nil, err
+  }
+  logger.Debug("Method executed successfully")
+  return &data, nil
+}
+
 // Get a summoner by account ID.
 //
 // # Parameters
