@@ -48,6 +48,12 @@ function getEndpointGroupsByName(paths, name) {
   const endpointGroups = {}
   for (let path of Object.entries(paths)) {
     let api = path[0].split('/')[1]
+    if (api === 'fulfillment' && name === 'lol') {
+      let ep = path[1]['x-endpoint']
+      endpointGroups[ep] = endpointGroups[ep] || []
+      endpointGroups[ep].push(path)
+      continue
+    }
     if (api !== name) continue
     let ep = path[1]['x-endpoint']
     endpointGroups[ep] = endpointGroups[ep] || []
@@ -152,6 +158,9 @@ function normalizeMethodName(method) {
   }
   if (temp.endsWith('Puuid')) {
     temp = temp.slice(0, temp.length - 5) + 'PUUID'
+  }
+  if (temp.endsWith('Rsopuuid')) {
+    temp = temp.slice(0, temp.length - 8) + 'RSOPUUID'
   }
   switch (temp) {
     case 'CurrentGameInfoBySummoner':
