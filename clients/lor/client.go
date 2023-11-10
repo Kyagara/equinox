@@ -1,3 +1,5 @@
+// This package is used to interact with LOR endpoints.
+//
 // Automatically generated package.
 package lor
 

@@ -1,3 +1,5 @@
+// This package is used to interact with LOL endpoints.
+//
 // Automatically generated package.
 package lol
 

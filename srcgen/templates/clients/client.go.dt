@@ -3,7 +3,10 @@
     const dotUtils = require('./dotUtils.js');
     const clientName = "{{# def.clientName}}";
     const clientNormalizedName = "{{# def.clientNormalizedName}}";
-}}
+}}// This package is used to interact with {{=clientNormalizedName}} endpoints.
+//
+// Automatically generated package.
+
 {{= dotUtils.preamble(clientName, spec.info.version) }}
 
 import (

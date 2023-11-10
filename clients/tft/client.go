@@ -1,3 +1,5 @@
+// This package is used to interact with TFT endpoints.
+//
 // Automatically generated package.
 package tft
 

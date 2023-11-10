@@ -150,6 +150,18 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	require.Equal(t, api.ErrNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrNotFound, gotErr))
 }
 
+func TestPutClient(t *testing.T) {
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	require.Nil(t, err, "expecting nil error")
+	client := lol.NewLOLClient(internalClient)
+	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AMERICAS)).
+		Put("/lol/tournament/v5/codes/tournamentCode").
+		Reply(200)
+
+	err = client.TournamentV5.UpdateCode(api.AMERICAS, nil, "tournamentCode")
+	require.Nil(t, err, "expecting nil error")
+}
+
 /*
 goos: windows
 goarch: amd64
