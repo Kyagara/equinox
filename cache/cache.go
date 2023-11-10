@@ -1,3 +1,4 @@
+// Cache package to provide an interface to interact with stores like BigCache and Redis.
 package cache
 
 import (

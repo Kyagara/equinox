@@ -30,7 +30,6 @@ Array.prototype.sortBy = function (lambda) {
 
 function preamble(packageName, version) {
   return `\
-// Automatically generated package.
 package ${packageName}
 
 ///////////////////////////////////////////////

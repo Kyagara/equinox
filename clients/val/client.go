@@ -1,3 +1,5 @@
+// This package is used to interact with VAL endpoints.
+//
 // Automatically generated package.
 package val
 
