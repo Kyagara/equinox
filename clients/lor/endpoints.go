@@ -165,8 +165,8 @@ type MatchV1 struct {
 // Note: this method is automatically generated.
 //
 // [lor-match-v1.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#lor-match-v1/GET_getMatchIdsByPUUID
-func (e *MatchV1) List(route api.RegionalRoute, puuid string) ([]string, error) {
-  logger := e.internalClient.Logger("LOR", "MatchV1", "List")
+func (e *MatchV1) ListByPUUID(route api.RegionalRoute, puuid string) ([]string, error) {
+  logger := e.internalClient.Logger("LOR", "MatchV1", "ListByPUUID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/by-puuid/%v/ids", puuid), nil)
   if err != nil {
@@ -274,8 +274,8 @@ type StatusV1 struct {
 // Note: this method is automatically generated.
 //
 // [lor-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#lor-status-v1/GET_getPlatformData
-func (e *StatusV1) PlatformStatus(route api.RegionalRoute) (*PlatformDataV1DTO, error) {
-  logger := e.internalClient.Logger("LOR", "StatusV1", "PlatformStatus")
+func (e *StatusV1) Platform(route api.RegionalRoute) (*PlatformDataV1DTO, error) {
+  logger := e.internalClient.Logger("LOR", "StatusV1", "Platform")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, "/lor/status/v1/platform-data", nil)
   if err != nil {
