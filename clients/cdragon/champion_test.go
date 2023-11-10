@@ -14,11 +14,8 @@ import (
 
 func TestChampionByName(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	require.Nil(t, err, "expecting nil error")
-
 	client := cdragon.NewCDragonClient(internalClient)
-
 	data := &cdragon.ChampionData{Name: "Jarvan IV"}
 
 	tests := []struct {
@@ -47,9 +44,7 @@ func TestChampionByName(t *testing.T) {
 				JSON(test.want)
 
 			gotData, gotErr := client.Champion.ByName("1.0", "JarvanIV")
-
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
 			if test.wantErr == nil {
 				require.Equal(t, data, gotData)
 			}
@@ -59,11 +54,8 @@ func TestChampionByName(t *testing.T) {
 
 func TestChampionByID(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	require.Nil(t, err, "expecting nil error")
-
 	client := cdragon.NewCDragonClient(internalClient)
-
 	data := &cdragon.ChampionData{Name: "Jarvan IV"}
 
 	tests := []struct {
@@ -92,9 +84,7 @@ func TestChampionByID(t *testing.T) {
 				JSON(test.want)
 
 			gotData, gotErr := client.Champion.ByID("1.0", 223)
-
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
 			if test.wantErr == nil {
 				require.Equal(t, data, gotData)
 			}

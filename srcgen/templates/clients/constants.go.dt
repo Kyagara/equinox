@@ -1,0 +1,278 @@
+{{
+    const dotUtils = require('./dotUtils.js');
+    const maps = require('./specs/.maps.json');
+    const gameTypes = require('./specs/.gameTypes.json');
+    const gameModes = require('./specs/.gameModes.json');
+    const queueTypes = require('./specs/.queueTypes.json');
+    const queues = require('./specs/.queues.json');
+    const routesTable = require('./specs/.routesTable.json');
+    const spec = require('./specs/.spec.json');
+    const clientName = "{{# def.clientName}}";
+    const clientNormalizedName = "{{# def.clientNormalizedName}}";
+}}
+{{= dotUtils.preamble(clientName, spec.info.version) }}
+
+{{? clientName === "val"}}
+// Platform routes for Valorant.
+type ValPlatformRoute string
+
+const (
+{{
+    for (const [ name, { id, description, deprecated } ] of Object.entries(routesTable['val-platform'])) {
+        if (name) {
+            const desc = description.split('\n');
+}}
+{{~ desc :line }}
+    // {{= line }}
+{{~}}
+{{? deprecated }}
+    // Deprecated
+{{?}}
+    {{= name.toUpperCase() }} ValPlatformRoute = "{{= name }}"
+{{
+        }
+    }
+}}
+)
+{{?}}
+{{? clientName === "lol"}}
+// LoL ranked tiers, such as gold, diamond, challenger, etc.
+type Tier string
+
+const (
+	Iron        Tier = "IRON"
+	Bronze      Tier = "BRONZE"
+	Silver      Tier = "SILVER"
+	Gold        Tier = "GOLD"
+	Platinum    Tier = "PLATINUM"
+    Emerald     Tier = "EMERALD"
+	Diamond     Tier = "DIAMOND"
+	Master      Tier = "MASTER"
+	Grandmaster Tier = "GRANDMASTER"
+	Challenger  Tier = "CHALLENGER"
+)
+
+// LoL rank divisions, I, II, III, IV, and (deprecated) V.
+type Division string
+
+const (
+	I   Division = "I"
+	II  Division = "II"
+	III Division = "III"
+	IV  Division = "IV"
+    // Deprecated
+    V   Division = "V"
+)
+
+// Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
+type PlatformRoute string
+
+const (
+{{
+    for (const [ name, { id, description, altName, deprecated } ] of Object.entries(routesTable['platform'])) {
+        const desc = description.split('\n');
+}}
+{{~ desc :line }}
+    // {{= line }}
+{{~}}
+{{? deprecated }}
+    // Deprecated
+{{?}}
+    {{= name.toUpperCase() }} PlatformRoute = "{{= name }}"
+{{
+    }
+}}
+)
+
+// Tournament regions for League of Legends (LoL).
+type TournamentRegion string
+
+const (
+{{
+    for (const [ name, { id, description, tournamentRegion, deprecated } ] of Object.entries(routesTable['platform'])) {
+        if (tournamentRegion) {
+            const desc = description.split('\n');
+}}
+{{~ desc :line }}
+    // {{= line }}
+{{~}}
+{{? deprecated }}
+    // Deprecated
+{{?}}
+    {{= tournamentRegion }} TournamentRegion = "{{= name }}"
+{{
+        }
+    }
+}}
+)
+
+// A League of Legends map.
+type Map int
+
+const (
+{{
+    for (const e of maps) {
+        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
+}}
+{{~ desc :line }}
+    // {{= line }}
+    //
+{{~}}
+    {{= dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," ")) }} Map = {{= e['x-value'] }}
+{{
+    }
+}}
+)
+
+// League of Legends game type: matched game, custom game, or tutorial game.
+type GameType string
+
+const (
+{{
+    for (const e of gameTypes) {
+        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
+}}
+{{~ desc :line }}
+    // {{= line }}
+{{~}}
+    {{= dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," ")) }} GameType = "{{= e['x-name'] }}"
+{{
+    }
+}}
+)
+
+// League of Legends game mode, such as Classic,
+// ARAM, URF, One For All, Ascension, etc.
+type GameMode string
+
+const (
+{{
+    for (const e of gameModes) {
+        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
+}}
+{{~ desc :line }}
+    // {{= line }}
+{{~}}
+    {{= dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," ")) }} GameMode = "{{= e['x-name'] }}"
+{{
+    }
+}}
+)
+
+// LoL ranked queue types.
+type QueueType string
+
+const (
+{{
+    for (const e of queueTypes) {
+        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
+        if (e['x-name'].includes("TFT")) continue;
+}}
+{{~ desc :line }}
+    // {{= line }}
+    //
+{{~}}
+{{? e['x-deprecated'] }}
+    // {{= e.notes }}
+{{?}}
+    {{= dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," ")) }} QueueType = "{{= e['x-name'] }}"
+{{
+    }
+}}
+)
+
+// A League of Legends matchmaking queue.
+type Queue int
+
+const (
+{{
+    for (const e of queues) {
+        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
+        let queueName = dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," "));
+        if (queueName === "NexusBlitz") {
+            queueName = "NexusBlitzQueue"
+        }
+}}
+{{~ desc :line }}
+    // {{= line }}
+    //
+{{~}}
+{{? e['x-deprecated'] }}
+    // {{= e.notes }}
+{{?}}
+    {{= queueName }} Queue = {{= e['x-value'] }}
+{{
+    }
+}}
+)
+{{?}}
+{{? clientName === "tft"}}
+// TFT ranked tiers, such as gold, diamond, challenger, etc.
+type Tier string
+
+const (
+	Iron        Tier = "IRON"
+	Bronze      Tier = "BRONZE"
+	Silver      Tier = "SILVER"
+	Gold        Tier = "GOLD"
+	Platinum    Tier = "PLATINUM"
+	Diamond     Tier = "DIAMOND"
+	Master      Tier = "MASTER"
+	Grandmaster Tier = "GRANDMASTER"
+	Challenger  Tier = "CHALLENGER"
+)
+
+// TFT rank divisions, I, II, III, IV, and (deprecated) V.
+type Division string
+
+const (
+	I   Division = "I"
+	II  Division = "II"
+	III Division = "III"
+	IV  Division = "IV"
+    // Deprecated
+    V   Division = "V"
+)
+
+// Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
+type PlatformRoute string
+
+const (
+{{
+    for (const [ name, { id, description, altName, deprecated } ] of Object.entries(routesTable['platform'])) {
+        const desc = description.split('\n');
+}}
+{{~ desc :line }}
+    // {{= line }}
+{{~}}
+{{? deprecated }}
+    // Deprecated
+{{?}}
+    {{= name.toUpperCase() }} PlatformRoute = "{{= name }}"
+{{
+    }
+}}
+)
+
+// LoL ranked queue types.
+type QueueType string
+
+const (
+{{
+    for (const e of queueTypes) {
+        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
+        if (!e['x-name'].includes("TFT")) continue;
+}}
+{{~ desc :line }}
+    // {{= line }}
+    //
+{{~}}
+{{? e['x-deprecated'] }}
+    // {{= e.notes }}
+{{?}}
+    {{= dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," ")) }} QueueType = "{{= e['x-name'] }}"
+{{
+    }
+}}
+)
+{{?}}

@@ -26,9 +26,7 @@ func TestDDragonRealmByName(t *testing.T) {
 func TestDDragonChampionAllChampions(t *testing.T) {
 	version, err := client.DDragon.Version.Latest()
 	require.Nil(t, err, "expecting nil error")
-
 	champions, err := client.DDragon.Champion.AllChampions(version, ddragon.PtBR)
-
 	require.Nil(t, err, "expecting nil error")
 	require.NotNil(t, champions, "expecting non-nil champions")
 	require.Equal(t, true, len(champions) > 1, "expecting list to have more than one champions")
@@ -38,7 +36,6 @@ func TestDDragonChampionAllChampions(t *testing.T) {
 func TestDDragonChampionByName(t *testing.T) {
 	version, err := client.DDragon.Version.Latest()
 	require.Nil(t, err, "expecting nil error")
-
 	champion, err := client.DDragon.Champion.ByName(version, ddragon.PtBR, "Lux")
 	require.Nil(t, err, "expecting nil error")
 	require.NotNil(t, champion, "expecting non-nil champion")

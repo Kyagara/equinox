@@ -37,32 +37,16 @@ func TestNewEquinoxClient(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			client, err := equinox.NewClient(test.key)
-
 			require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
-
-			if test.name == "success" {
-				require.NotNil(t, client, "expecting non-nil Client")
-				require.NotNil(t, client.Cache, "expecting non-nil Client")
-				require.NotNil(t, client.LOL, "expecting nil Client")
-				require.NotNil(t, client.LOR, "expecting nil Client")
-				require.NotNil(t, client.TFT, "expecting nil Client")
-				require.NotNil(t, client.VAL, "expecting nil Client")
-				require.NotNil(t, client.Riot, "expecting nil Client")
-				require.NotNil(t, client.CDragon, "expecting non-nil Client")
-				require.NotNil(t, client.DDragon, "expecting non-nil Client")
-			} else {
-				require.NotNil(t, client, "expecting non-nil Client")
-				require.NotNil(t, client.Cache, "expecting non-nil Client")
-
-				// Clients other than Data Dragon should be nil
-				require.Nil(t, client.LOL, "expecting nil Client")
-				require.Nil(t, client.LOR, "expecting nil Client")
-				require.Nil(t, client.TFT, "expecting nil Client")
-				require.Nil(t, client.VAL, "expecting nil Client")
-				require.Nil(t, client.Riot, "expecting nil Client")
-				require.NotNil(t, client.DDragon, "expecting non-nil Client")
-				require.NotNil(t, client.CDragon, "expecting non-nil Client")
-			}
+			require.NotNil(t, client, "expecting non-nil Client")
+			require.NotNil(t, client.Cache, "expecting non-nil Client")
+			require.NotNil(t, client.LOL, "expecting nil Client")
+			require.NotNil(t, client.LOR, "expecting nil Client")
+			require.NotNil(t, client.TFT, "expecting nil Client")
+			require.NotNil(t, client.VAL, "expecting nil Client")
+			require.NotNil(t, client.Riot, "expecting nil Client")
+			require.NotNil(t, client.CDragon, "expecting non-nil Client")
+			require.NotNil(t, client.DDragon, "expecting non-nil Client")
 		})
 	}
 }
@@ -90,22 +74,11 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 			config:  internal.NewTestEquinoxConfig(),
 			wantErr: nil,
 		},
-		{
-			name:    "cluster nil",
-			wantErr: fmt.Errorf("cluster not provided"),
-			config: &api.EquinoxConfig{
-				Key:      "RGAPI-TEST",
-				LogLevel: api.DebugLevel,
-				Timeout:  15,
-				Retry:    true,
-			},
-		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			client, err := equinox.NewClientWithConfig(test.config)
-
 			require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
 
 			if test.wantErr == nil {
@@ -121,19 +94,15 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 
 func TestEquinoxClientClearCache(t *testing.T) {
 	config, err := equinox.DefaultConfig("RGAPI-TEST")
-
 	config.LogLevel = api.DebugLevel
 	config.Retry = false
-
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
 	client, err := equinox.NewClientWithConfig(config)
-
 	require.Nil(t, err, "expecting nil error")
-
 	require.Equal(t, client.Cache.TTL, 4*time.Minute, "expecting cache enabled")
 
-	account := &riot.AccountDTO{
+	account := &riot.AccountV1DTO{
 		PUUID:    "puuid",
 		GameName: "gamename",
 		TagLine:  "tagline",
@@ -141,28 +110,25 @@ func TestEquinoxClientClearCache(t *testing.T) {
 
 	delay := 2 * time.Second
 
-	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
-		Get(fmt.Sprintf(riot.AccountByPUUIDURL, "puuid")).
+	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AMERICAS)).
+		Get("/riot/account/v1/accounts/by-puuid/puuid").
 		Reply(200).
 		JSON(account).Delay(delay)
 
-	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AmericasCluster)).
-		Get(fmt.Sprintf(riot.AccountByPUUIDURL, "puuid")).
+	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AMERICAS)).
+		Get("/riot/account/v1/accounts/by-puuid/puuid").
 		Reply(404).
 		JSON(account).Delay(delay)
 
-	gotData, gotErr := client.Riot.Account.ByPUUID("puuid")
-
+	gotData, gotErr := client.Riot.AccountV1.ByPUUID(api.AMERICAS, "puuid")
 	require.Equal(t, account, gotData)
-
 	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
 
 	start := time.Now()
-	gotData, gotErr = client.Riot.Account.ByPUUID("puuid")
+	gotData, gotErr = client.Riot.AccountV1.ByPUUID(api.AMERICAS, "puuid")
 	duration := int(time.Since(start).Seconds())
 
 	require.Equal(t, account, gotData, fmt.Sprintf("want data %v, got %v", account, gotData))
-
 	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
 
 	if duration >= 2 {
@@ -170,11 +136,10 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	}
 
 	gotErr = client.Cache.Clear()
-
 	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
 
 	start = time.Now()
-	gotData, gotErr = client.Riot.Account.ByPUUID("puuid")
+	gotData, gotErr = client.Riot.AccountV1.ByPUUID(api.AMERICAS, "puuid")
 	duration = int(time.Since(start).Seconds())
 
 	if duration <= 1 {
@@ -182,7 +147,6 @@ func TestEquinoxClientClearCache(t *testing.T) {
 	}
 
 	require.Nil(t, gotData)
-
 	require.Equal(t, api.ErrNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrNotFound, gotErr))
 }
 
@@ -198,9 +162,8 @@ BenchmarkCachedSummonerByName-16  100819 11005 ns/op 5907 B/op 34 allocs/op
 */
 func BenchmarkCachedSummonerByName(b *testing.B) {
 	b.ReportAllocs()
-
-	summoner := &lol.SummonerDTO{
-		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
+	summoner := &lol.SummonerV4DTO{
+		Id:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
 		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
 		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
 		Name:          "Phanes",
@@ -210,17 +173,15 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 	}
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-		Get(fmt.Sprintf(lol.SummonerByNameURL, "Phanes")).
+		Get("/lol/summoner/v4/summoners/by-name/Phanes").
 		Persist().
 		Reply(200).
 		JSON(summoner)
 
 	client, err := equinox.NewClient("RGAPI-TEST")
-
 	require.Nil(b, err)
-
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.Summoner.ByName(lol.BR1, "Phanes")
+		data, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
 		require.Nil(b, err)
 		require.Equal(b, "Phanes", data.Name)
 	}
@@ -238,9 +199,8 @@ BenchmarkSummonerByName-16 61237 19108 ns/op 6062 B/op 74 allocs/op
 */
 func BenchmarkSummonerByName(b *testing.B) {
 	b.ReportAllocs()
-
-	summoner := &lol.SummonerDTO{
-		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
+	summoner := &lol.SummonerV4DTO{
+		Id:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
 		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
 		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
 		Name:          "Phanes",
@@ -250,22 +210,19 @@ func BenchmarkSummonerByName(b *testing.B) {
 	}
 
 	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
-		Get(fmt.Sprintf(lol.SummonerByNameURL, "Phanes")).
+		Get("/lol/summoner/v4/summoners/by-name/Phanes").
 		Persist().
 		Reply(200).
 		JSON(summoner)
 
 	config := internal.NewTestEquinoxConfig()
-
 	config.LogLevel = api.NopLevel
 	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
-
 	require.Nil(b, err)
-
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.Summoner.ByName(lol.BR1, "Phanes")
+		data, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
 		require.Nil(b, err)
 		require.Equal(b, "Phanes", data.Name)
 	}
@@ -283,7 +240,6 @@ BenchmarkCachedDataDragonRealm-16  83233 14297 ns/op 6716 B/op 42 allocs/op
 */
 func BenchmarkCachedDataDragonRealm(b *testing.B) {
 	b.ReportAllocs()
-
 	realm := &ddragon.RealmData{
 		N: struct {
 			Item        string "json:\"item\""
@@ -323,9 +279,7 @@ func BenchmarkCachedDataDragonRealm(b *testing.B) {
 		JSON(realm)
 
 	client, err := equinox.NewClient("RGAPI-TEST")
-
 	require.Nil(b, err)
-
 	for i := 0; i < b.N; i++ {
 		data, err := client.DDragon.Realm.ByName(ddragon.NA)
 		require.Nil(b, err)
@@ -345,7 +299,6 @@ BenchmarkDataDragonRealm-16 53311 23353 ns/op 6155 B/op 82 allocs/op
 */
 func BenchmarkDataDragonRealm(b *testing.B) {
 	b.ReportAllocs()
-
 	realm := &ddragon.RealmData{
 		N: struct {
 			Item        string "json:\"item\""
@@ -385,14 +338,11 @@ func BenchmarkDataDragonRealm(b *testing.B) {
 		JSON(realm)
 
 	config := internal.NewTestEquinoxConfig()
-
 	config.LogLevel = api.NopLevel
 	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
-
 	require.Nil(b, err)
-
 	for i := 0; i < b.N; i++ {
 		data, err := client.DDragon.Realm.ByName(ddragon.NA)
 		require.Nil(b, err)

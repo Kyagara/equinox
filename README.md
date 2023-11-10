@@ -24,6 +24,9 @@
 	</p>
 </div>
 
+> **Warning**
+> Undergoing major changes!
+
 ## Features
 
 - Riot APIs implemented:
@@ -38,6 +41,8 @@
 
 ## Todo
 
+- Improve endpoint methods names
+- Tests for the generated code?
 - New rate limiting implementation with Redis support
 - Improve Data Dragon support
 
@@ -61,7 +66,6 @@ A client without a configuration comes with the default options:
 cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
 config := &api.EquinoxConfig{
 	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
-	Cluster: api.AmericasCluster, // Riot API cluster, use the cluster closest to you.
 	LogLevel: api.NopLevel, // The logging level, NopLevel disables logging.
 	Timeout: 15, // http.Client timeout in seconds.
 	Cache: cache.NewBigCache(cacheConfig), // The default client uses BigCache with an eviction time of 4 minutes.
@@ -77,16 +81,16 @@ Now you can access different games endpoints by their abbreviations. For example
 
 ```go
 // This method uses a lol.Region and a summoner name. Can be accessed with a Development key.
-summoner, err := client.LOL.Summoner.ByName(lol.BR1, "Phanes")
+summoner, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
 
 // This method uses a lol.Route and a match ID. Can be accessed with a Development key.
-summoner, err := client.LOL.Match.ByID(lol.Americas, "BR1_2530718601")
+summoner, err := client.LOL.MatchV5.ByID(api.AMERICAS, "BR1_2530718601")
 
 // The client.Cluster will be used as the region. Can be accessed with a Development key.
-account, err := client.Riot.Account.ByPUUID("puuid")
+account, err := client.Riot.AccountV1.ByPUUID(api.AMERICAS, "puuid")
 
 // This method uses a val.Shard an a val.Queue. May not be available in your policy.
-matches, err := client.VAL.Match.Recent(val.BR, val.CompetitiveQueue)
+matches, err := client.VAL.MatchV1.Recent(val.BR, "competitive")
 ```
 
 ## Example
@@ -107,14 +111,12 @@ func main() {
 		fmt.Println("error creating client: ", err)
 		return
 	}
-
-	// Get this week's champion rotations.
-	rotation, err := client.LOL.Champion.Rotations(lol.BR1)
+	// Get this week's champion rotation.
+	rotation, err := client.LOL.ChampionV3.Rotation(lol.BR1)
 	if err != nil {
-		fmt.Println("error retrieving champion rotations: ", err)
+		fmt.Println("error retrieving champion rotation: ", err)
 		return
 	}
-
 	fmt.Printf("%+v\n", rotation)
 	// &{FreeChampionIDs:[17 43 56 62 67 79 85 90 133 145 147 157 201 203 245 518]
 	// FreeChampionIDsForNewPlayers:[222 254 427 82 131 147 54 17 18 37]
@@ -130,6 +132,7 @@ These two projects helped me learn a lot:
 
 - [go-github](https://github.com/google/go-github)
 - [golio](https://github.com/KnutZuidema/golio)
+- [Riven](https://github.com/MingweiSamuel/Riven)
 
 ## Disclaimer
 

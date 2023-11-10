@@ -10,7 +10,7 @@ import (
 
 type RedisClient interface {
 	Get(ctx context.Context, key string) *redis.StringCmd
-	Set(ctx context.Context, key string, value interface{}, ttl time.Duration) *redis.StatusCmd
+	Set(ctx context.Context, key string, value any, ttl time.Duration) *redis.StatusCmd
 	Del(ctx context.Context, keys ...string) *redis.IntCmd
 	FlushAll(ctx context.Context) *redis.StatusCmd
 }
@@ -27,10 +27,8 @@ func (s *RedisStore) Get(key string) ([]byte, error) {
 		if errors.Is(err, redis.Nil) {
 			return nil, nil
 		}
-
 		return nil, err
 	}
-
 	return []byte(item), nil
 }
 

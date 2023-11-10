@@ -1,0 +1,32 @@
+{{
+    const spec = require('./specs/.spec.json');
+    const dotUtils = require('./dotUtils.js');
+    const clientName = "{{# def.clientName}}";
+    const clientNormalizedName = "{{# def.clientNormalizedName}}";
+}}
+{{= dotUtils.preamble(clientName, spec.info.version) }}
+
+import (
+	"github.com/Kyagara/equinox/internal"
+)
+{{
+    const endpointGroups = dotUtils.getEndpointGroupsByName(spec.paths, clientName);
+}}
+
+// Note: this struct is automatically generated.
+type {{= clientNormalizedName}}Client struct {
+	internalClient  *internal.InternalClient
+{{~ Object.keys(endpointGroups) :k}}
+	{{=dotUtils.removeClientName(dotUtils.changeCase.pascalCase(k))}}  *{{=dotUtils.removeClientName(dotUtils.changeCase.pascalCase(k))}}
+{{~}}
+}
+
+// Creates a new {{= clientNormalizedName}}Client using the InternalClient provided.
+func New{{= clientNormalizedName}}Client(client *internal.InternalClient) *{{= clientNormalizedName}}Client {
+	return &{{= clientNormalizedName}}Client{
+        internalClient: client,
+{{~ Object.keys(endpointGroups) :k}}
+        {{=dotUtils.removeClientName(dotUtils.changeCase.pascalCase(k))}}: &{{=dotUtils.removeClientName(dotUtils.changeCase.pascalCase(k))}}{internalClient: client},
+{{~}}
+	}
+}

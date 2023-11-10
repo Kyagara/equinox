@@ -14,9 +14,7 @@ import (
 
 func TestRealmByName(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	require.Nil(t, err, "expecting nil error")
-
 	client := ddragon.NewDDragonClient(internalClient)
 
 	tests := []struct {
@@ -45,9 +43,7 @@ func TestRealmByName(t *testing.T) {
 				JSON(test.want)
 
 			gotData, gotErr := client.Realm.ByName(ddragon.BR)
-
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
 			if test.wantErr == nil {
 				require.Equal(t, test.want, gotData)
 			}

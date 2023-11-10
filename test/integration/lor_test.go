@@ -6,15 +6,13 @@ package integration
 import (
 	"testing"
 
-	"github.com/Kyagara/equinox/clients/lor"
+	"github.com/Kyagara/equinox/api"
 	"github.com/stretchr/testify/require"
 )
 
 func TestLORPlatformStatus(t *testing.T) {
 	checkIfOnlyDataDragon(t)
-	status, err := client.LOR.Status.PlatformStatus(lor.Americas)
-
+	status, err := client.LOR.StatusV1.PlatformStatus(api.AMERICAS)
 	require.Nil(t, err, "expecting nil error")
-
 	require.NotNil(t, status, "expecting non-nil status")
 }

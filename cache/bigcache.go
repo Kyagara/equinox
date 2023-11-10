@@ -24,10 +24,8 @@ func (s *BigCacheStore) Get(key string) ([]byte, error) {
 		if errors.Is(err, bigcache.ErrEntryNotFound) {
 			return nil, nil
 		}
-
 		return nil, err
 	}
-
 	return item, nil
 }
 

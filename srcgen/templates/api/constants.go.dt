@@ -1,0 +1,105 @@
+{{
+    const dotUtils = require('./dotUtils.js');
+    const maps = require('./specs/.maps.json');
+    const gameTypes = require('./specs/.gameTypes.json');
+    const gameModes = require('./specs/.gameModes.json');
+    const queueTypes = require('./specs/.queueTypes.json');
+    const queues = require('./specs/.queues.json');
+    const routesTable = require('./specs/.routesTable.json');
+    const spec = require('./specs/.spec.json');
+}}
+{{= dotUtils.preamble("api", spec.info.version) }}
+
+import (
+	"time"
+
+	"github.com/Kyagara/equinox/cache"
+	"go.uber.org/zap/zapcore"
+)
+
+// Configuration for the Equinox client.
+type EquinoxConfig struct {
+	// Riot API Key.
+	Key string
+	// Log level, api.NopLevel disables logging.
+	LogLevel LogLevel
+	// Timeout for the internal http.Client in seconds, 0 disables the timeout.
+	Timeout int
+	// Allows retrying a request if it returns a 429 status code.
+	Retry bool
+	// The cache used to store all GET requests done by the client.
+	Cache *cache.Cache
+}
+
+func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
+	encoder.AddBool("retry-if-429", c.Retry)
+	encoder.AddInt("http-client-timeout", c.Timeout)
+	if c.Cache.TTL > 0 {
+		cache := CacheConfig{Store: string(c.Cache.StoreType), TTL: c.Cache.TTL}
+		err := encoder.AddObject("cache", cache)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+type CacheConfig struct {
+	TTL   time.Duration
+	Store string
+}
+
+func (c CacheConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
+	encoder.AddString("store", c.Store)
+	encoder.AddDuration("cache-ttl", c.TTL)
+	return nil
+}
+
+// Base API URLs formats.
+const (
+	BaseURLFormat = "https://%s.api.riotgames.com"
+	DataDragonURLFormat      = "https://ddragon.leagueoflegends.com%s"
+	CommunityDragonURLFormat = "https://cdn.communitydragon.org%s"
+	DataDragonLOLVersionURL = "/api/versions.json"
+)
+
+// Rate limit headers
+const (
+	RateLimitTypeHeader = "X-Rate-Limit-Type"
+	RetryAfterHeader    = "Retry-After"
+)
+
+type LogLevel int8
+
+const (
+	// NopLevel won't log anything, this is the default behaviour for the Default client.
+	NopLevel LogLevel = iota - 2
+	// DebugLevel will log everything.
+	DebugLevel
+	// InfoLevel will log the requests being made and if they were successful.
+	InfoLevel
+	// WarnLevel will log when a request was rate limited.
+	WarnLevel
+	// ErrorLevel will log every error.
+	ErrorLevel
+)
+
+// Regional routes, used in tournament services, Legends of Runeterra (LoR), and some other endpoints.
+type RegionalRoute string
+
+const (
+{{
+    for (const [ name, { id, description, deprecated } ] of Object.entries(routesTable['regional'])) {
+        const desc = description.split('\n');
+}}
+{{~ desc :line }}
+    // {{= line }}
+{{~}}
+{{? deprecated }}
+    // Deprecated
+{{?}}
+    {{= name.toUpperCase() }} RegionalRoute = "{{= name }}"
+{{
+    }
+}}
+)

@@ -3,7 +3,9 @@ package ddragon
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 
+	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"go.uber.org/zap"
 )
@@ -128,66 +130,59 @@ type Image struct {
 
 // Get all champions basic information, includes stats, tags, title and blurb.
 func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[string]ChampionData, error) {
-	logger := e.internalClient.Logger("DDragon", "champion", "AllChampions")
-	logger.Debug("Method executed")
-
-	url := fmt.Sprintf(ChampionsURL, version, language)
-
-	var data DDragonMetadata
-
-	err := e.internalClient.DDragonGet(url, &data, "champion", "AllChampions")
+	logger := e.internalClient.Logger("DDragon", "Champion", "AllChampions")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.DataDragonURLFormat, http.MethodGet, "", fmt.Sprintf(ChampionsURL, version, language), nil)
 	if err != nil {
-		logger.Error("Method failed", zap.Error(err))
+		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
-
+	var data DDragonMetadata
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
 	champions, err := json.Marshal(data.Data)
 	if err != nil {
 		logger.Error("Failed to encode champions data", zap.Error(err))
 		return nil, err
 	}
-
 	var championsData map[string]ChampionData
-
 	err = json.Unmarshal(champions, &championsData)
 	if err != nil {
 		logger.Error("Failed to parse champions data", zap.Error(err))
 		return nil, err
 	}
-
 	return championsData, nil
 }
 
 // Retrieves more information about a champion, includes skins, spells and tips.
 func (e *ChampionEndpoint) ByName(version string, language Language, champion string) (*FullChampionData, error) {
-	logger := e.internalClient.Logger("DDragon", "champion", "ByName")
-	logger.Debug("Method executed")
-
-	url := fmt.Sprintf(ChampionURL, version, language, champion)
-
-	var data DDragonMetadata
-
-	err := e.internalClient.DDragonGet(url, &data, "champion", "ByName")
+	logger := e.internalClient.Logger("DDragon", "Champion", "ByName")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.DataDragonURLFormat, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, language, champion), nil)
 	if err != nil {
-		logger.Error("Method failed", zap.Error(err))
+		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
-
+	var data DDragonMetadata
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
 	champions, err := json.Marshal(data.Data)
 	if err != nil {
 		logger.Error("Failed to encode champion data", zap.Error(err))
 		return nil, err
 	}
-
 	var championsData map[string]FullChampionData
-
 	err = json.Unmarshal(champions, &championsData)
 	if err != nil {
 		logger.Error("Failed to parse champion data", zap.Error(err))
 		return nil, err
 	}
-
 	c := championsData[champion]
-
 	return &c, nil
 }

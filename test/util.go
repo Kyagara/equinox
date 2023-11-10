@@ -7,10 +7,6 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/Kyagara/equinox/clients/lor"
-	"github.com/Kyagara/equinox/clients/riot"
-	"github.com/Kyagara/equinox/clients/tft"
-	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
@@ -46,7 +42,6 @@ func (testCase TestCase[Model, Parameters]) MockPostResponse(url string, region 
 
 func (testCase TestCase[Model, Parameters]) CheckResponse(t *testing.T, gotData *Model, gotErr error) {
 	require.Equal(t, testCase.WantError, gotErr, fmt.Sprintf("want error '%v', got '%v'", testCase.WantError, gotErr))
-
 	if testCase.WantError == nil {
 		require.Equal(t, testCase.Want, gotData, "result not expected")
 	}
@@ -73,47 +68,10 @@ func GetEndpointTestCases[Model any, Parameters any](model Model, parameters *Pa
 	}
 }
 
-func TestingNewRiotClient() (*riot.RiotClient, error) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-	if err != nil {
-		return nil, err
-	}
-
-	return riot.NewRiotClient(internalClient), nil
-}
-
 func TestingNewLOLClient() (*lol.LOLClient, error) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 	if err != nil {
 		return nil, err
 	}
-
 	return lol.NewLOLClient(internalClient), nil
-}
-
-func TestingNewTFTClient() (*tft.TFTClient, error) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-	if err != nil {
-		return nil, err
-	}
-
-	return tft.NewTFTClient(internalClient), nil
-}
-
-func TestingNewVALClient() (*val.VALClient, error) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-	if err != nil {
-		return nil, err
-	}
-
-	return val.NewVALClient(internalClient), nil
-}
-
-func TestingNewLORClient() (*lor.LORClient, error) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-	if err != nil {
-		return nil, err
-	}
-
-	return lor.NewLORClient(internalClient), nil
 }
