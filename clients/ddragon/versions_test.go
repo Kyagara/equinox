@@ -14,9 +14,7 @@ import (
 
 func TestVersionLatest(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	require.Nil(t, err, "expecting nil error")
-
 	client := ddragon.NewDDragonClient(internalClient)
 
 	tests := []struct {
@@ -45,9 +43,7 @@ func TestVersionLatest(t *testing.T) {
 				JSON(test.want)
 
 			gotData, gotErr := client.Version.Latest()
-
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
 			if test.wantErr == nil {
 				ver := "1.0"
 				require.Equal(t, ver, gotData)
@@ -58,9 +54,7 @@ func TestVersionLatest(t *testing.T) {
 
 func TestVersionList(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	require.Nil(t, err, "expecting nil error")
-
 	client := ddragon.NewDDragonClient(internalClient)
 
 	tests := []struct {
@@ -89,9 +83,7 @@ func TestVersionList(t *testing.T) {
 				JSON(test.want)
 
 			gotData, gotErr := client.Version.List()
-
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
 			if test.wantErr == nil {
 				require.Equal(t, []string{"1.0", "0.9"}, gotData)
 			}

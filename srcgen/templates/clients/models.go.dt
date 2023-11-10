@@ -1,0 +1,58 @@
+{{
+    const spec = require('./specs/.spec.json');
+    const dotUtils = require('./dotUtils.js');
+    const clientName = "{{# def.clientName}}";
+}}
+{{= dotUtils.preamble(clientName, spec.info.version) }}
+{{
+    const endpointGroups = dotUtils.getEndpointGroupsByName(spec.paths, clientName);
+    const apis = [];
+    for (let path in endpointGroups) {
+        apis.push(path)
+    }
+
+    let schemas = spec.components.schemas;
+    let schemaKeyByEndpoint = Object.keys(schemas)
+        .filter(schemaKey => 'Error' != schemaKey)
+        .filter(schemaKey => apis.includes(schemaKey.split('.')[0]))
+        .groupBy(schemaKey => schemaKey.split('.')[0]);
+
+    for (let [endpoint, schemaKeyGroup] of schemaKeyByEndpoint) {
+        const endpoint_pascal_case = dotUtils.changeCase.pascalCase(endpoint);
+
+        for (let schemaKey of schemaKeyGroup) {
+            const [, rawSchemaName] = schemaKey.split('.');
+            const schemaName = dotUtils.normalizeSchemaName(rawSchemaName);
+            const schema = schemas[schemaKey];
+            const props = schema.properties;
+            const requiredSet = new Set(schema.required);
+            const structName = dotUtils.getNormalizedDTOStructName(schemaName, endpoint_pascal_case, endpoint);
+}}
+
+// {{= schemaName }} data object.
+{{? schema.description }}
+//
+// {{= schema.description.split('\n').map(x => x.trim()).join('\r\n// ') }}
+//
+// Note: This struct is automatically generated
+{{?}}
+type {{= structName }} struct {
+{{
+            for (let [ propKey, prop ] of Object.entries(props)) {
+                const name = dotUtils.normalizePropName(propKey);
+                const dto = dotUtils.getNormalizedDTOStructName(dotUtils.stringifyType(prop), endpoint_pascal_case, endpoint);
+}}
+{{? prop.description }}
+    // {{= prop.description.split('\n').map(x => x.trim()).join('\r\n    // ') }}
+{{?}}
+    {{= dotUtils.getNormalizedFieldName(name) }} {{= dto }} {{= dotUtils.formatJsonProperty(propKey) }}
+{{
+            }
+}}
+}
+{{
+        }
+}}
+{{
+    }
+}}

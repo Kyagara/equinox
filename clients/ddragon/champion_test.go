@@ -14,18 +14,14 @@ import (
 
 func TestChampionAllChampions(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
 	require.Nil(t, err, "expecting nil error")
-
 	client := ddragon.NewDDragonClient(internalClient)
-
 	json := &ddragon.DDragonMetadata{
 		Type:    "",
 		Format:  "",
 		Version: "",
 		Data:    map[string]ddragon.ChampionData{},
 	}
-
 	data := map[string]ddragon.ChampionData{}
 
 	tests := []struct {
@@ -54,9 +50,7 @@ func TestChampionAllChampions(t *testing.T) {
 				JSON(test.want)
 
 			gotData, gotErr := client.Champion.AllChampions("1.0", ddragon.PtBR)
-
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
 			if test.wantErr == nil {
 				require.Equal(t, data, gotData)
 			}

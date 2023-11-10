@@ -2,7 +2,9 @@ package cdragon
 
 import (
 	"fmt"
+	"net/http"
 
+	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"go.uber.org/zap"
 )
@@ -118,36 +120,36 @@ type ChampionData struct {
 
 // Retrieves more information about a champion, includes skins, spells and tips.
 func (e *ChampionEndpoint) ByName(version string, champion string) (*ChampionData, error) {
-	logger := e.internalClient.Logger("CDragon", "champion", "ByName")
-	logger.Debug("Method executed")
-
-	url := fmt.Sprintf(ChampionURL, version, champion)
-
-	var championData ChampionData
-
-	err := e.internalClient.CDragonGet(url, &championData, "champion", "ByName")
+	logger := e.internalClient.Logger("CDragon", "Champion", "ByName")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.CommunityDragonURLFormat, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, champion), nil)
 	if err != nil {
-		logger.Error("Method failed", zap.Error(err))
+		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
-
-	return &championData, nil
+	var data ChampionData
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	return &data, nil
 }
 
 // Retrieves more information about a champion, includes skins, spells and tips.
 func (e *ChampionEndpoint) ByID(version string, id int) (*ChampionData, error) {
-	logger := e.internalClient.Logger("CDragon", "champion", "ByID")
-	logger.Debug("Method executed")
-
-	url := fmt.Sprintf(ChampionURL, version, id)
-
-	var championData ChampionData
-
-	err := e.internalClient.CDragonGet(url, &championData, "champion", "ByID")
+	logger := e.internalClient.Logger("CDragon", "Champion", "ByID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.CommunityDragonURLFormat, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, id), nil)
 	if err != nil {
-		logger.Error("Method failed", zap.Error(err))
+		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
-
-	return &championData, nil
+	var data ChampionData
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	return &data, nil
 }

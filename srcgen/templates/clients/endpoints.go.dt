@@ -1,0 +1,222 @@
+{{
+    const spec = require('./specs/.spec.json');
+    const dotUtils = require('./dotUtils.js');
+    const clientName = "{{# def.clientName}}";
+    const clientNormalizedName = "{{# def.clientNormalizedName}}";
+    const optQueryParamsReg = dotUtils.optQueryParamsReg;
+}}
+{{= dotUtils.preamble(clientName, spec.info.version) }}
+
+import (
+	"fmt"
+	"net/http"
+    
+	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/internal"
+	"go.uber.org/zap"
+)
+
+{{
+    const endpointGroups = dotUtils.getEndpointGroupsByName(spec.paths, clientName);
+
+    for (const [ endpointName, endpointMethods ] of Object.entries(endpointGroups))
+    {
+        const endpoint = dotUtils.changeCase.pascalCase(endpointName);
+        const normalizedStructName = dotUtils.removeClientName(endpoint);
+}}
+// {{= endpoint }} endpoints handle.
+//
+// Note: this struct is automatically generated.
+//
+// [{{= endpointName}}]: https://developer.riotgames.com/apis#{{= endpointName }}
+type {{= normalizedStructName }} struct {
+	internalClient *internal.InternalClient
+}
+
+{{
+    for (const [ route, path ] of endpointMethods) {
+        for (const [ verb, operation ] of Object.entries(path)) {
+            if (verb.startsWith('x-')) continue;
+
+            const operationId = operation.operationId;
+            let method = dotUtils.changeCase.pascalCase(operationId.slice(operationId.indexOf('.') + 1));
+            method = dotUtils.normalizeMethodName(method);
+            method = method === "ByPuuid" ? "ByPUUID" : method;
+            
+            const resp200 = operation.responses['200'];
+
+            /* Return type checks. */
+            let hasReturn = false;
+            let returnType = "_";
+            if (resp200 && resp200.content) {
+                hasReturn = true;
+                const jsonInfo = resp200.content['application/json'];
+                returnType = dotUtils.stringifyType(jsonInfo.schema);
+            }
+
+            /* Body content checks. */
+            let bodyType = null;
+            if (operation.requestBody) {
+                const jsonInfo = operation.requestBody.content['application/json'];
+                bodyType = dotUtils.getNormalizedDTOStructName(dotUtils.stringifyType(jsonInfo.schema), endpointName.toUpperCase(), endpointName);
+            }
+
+            /* Description processing. */
+            const descArr = operation.description.replace("##", "#").split('\n');
+
+            /* Build argument comment & string. */
+            const normalizedRoute = dotUtils.changeCase.pascalCase(operation['x-route-enum']);
+            const argBuilder = ['route ' + (normalizedRoute === "Regional" ? "api.Regional" : normalizedRoute) + 'Route'];
+
+            /* Add body params before path/query. */
+            if (bodyType) {
+                argBuilder.push('body *' + bodyType);
+            }
+
+            /* Path and query params. */
+            const allParams = operation.parameters;
+            let queryParams = [];
+            let headerParams = [];
+            let routeArgument = "";
+            if (allParams && allParams.length) {
+                const pathParams = allParams.filter(p => 'path' === p.in)
+                    .sortBy(({ name }) => route.indexOf(name));
+
+                const reqQueryParams = allParams.filter(p => 'query' === p.in && p.required);
+                const optQueryParams = allParams.filter(p => 'query' === p.in && !p.required)
+                    .sortBy(({ name }) => {
+                        const match = optQueryParamsReg.exec(name);
+                        return match.slice(1).reverse().join('');
+                    });
+
+                queryParams = reqQueryParams.concat(optQueryParams);
+
+                headerParams = allParams.filter(p => 'header' === p.in);
+
+                for (const paramList of [ pathParams, reqQueryParams, optQueryParams, headerParams ]) {
+                    const required = paramList === pathParams;
+                    for (const param of paramList) {
+                        argBuilder.push(dotUtils.normalizePropName(param.name) + " " + dotUtils.stringifyType(param.schema));
+                    }
+                }
+
+                routeArgument = dotUtils.formatRouteArgument(route, pathParams);
+            } else {
+                routeArgument = dotUtils.formatRouteArgument(route);
+            }
+
+            for (var descLine of descArr) {
+}}
+//{{= descLine ? ' ' + descLine : '' }}
+//
+{{
+            }
+}}
+// # Parameters
+//   - `route` - Route to query.
+{{
+            if (allParams) {
+                for (const param of allParams) {
+}}
+//   - `{{= dotUtils.changeCase.snakeCase(param.name) }}` ({{= param.required ? 'required' : 'optional' }}, in {{= param.in }}){{= param.description ? ' - ' + param.description : ''}}
+{{
+                }
+            }
+
+            const returnValue = dotUtils.getNormalizedDTOStructName(returnType, endpointName.toUpperCase(), endpointName);
+            let isPrimitiveType = false;
+            if (returnType === "int32" || returnType === "int64") {
+              isPrimitiveType = true;
+            }
+            if (returnType === "float32" || returnType === "float64") {
+              isPrimitiveType = true;
+            }
+            if (returnType === "string" || returnType === "[]string") {
+              isPrimitiveType = true;
+            }
+            if (returnType.startsWith("map[") || returnType.startsWith("[]")) {
+              isPrimitiveType = true;
+            }
+            
+}}
+//
+// # Riot API Reference
+//
+// [{{= operationId }}]
+//
+// Note: this method is automatically generated.
+//
+// [{{= operationId }}]: {{= operation.externalDocs.url }}
+func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}) {{= returnType === "_" ? "error" : `(${isPrimitiveType ? "" : "*"}${returnValue}, error)` }} {
+  logger := e.internalClient.Logger("{{= clientNormalizedName}}", "{{= normalizedStructName }}", "{{= method }}")
+  logger.Debug("Method started execution")
+{{? bodyType }}
+  request, err := e.internalClient.Request(api.BaseURLFormat, http.Method{{= dotUtils.capitalize(verb) }}, route, {{= routeArgument }}, body)
+{{?? true }}
+  request, err := e.internalClient.Request(api.BaseURLFormat, http.Method{{= dotUtils.capitalize(verb) }}, route, {{= routeArgument }}, nil)
+{{?}}
+  if err != nil {
+    logger.Error("Error creating request", zap.Error(err))
+{{? returnType !== "_" }}
+    return {{= isPrimitiveType ? `*new(${returnValue})` : "nil"}}, err
+{{?? true }}
+    return {{= isPrimitiveType ? `*new(${returnValue})` : "nil"}}
+{{?}}
+	}
+{{
+            if (queryParams.length > 0) {
+}}
+  values := request.URL.Query()
+{{
+            }
+}}
+{{
+            for (const queryParam of queryParams) {
+}}
+  {{= dotUtils.formatAddQueryParam(queryParam) }}
+{{
+            }
+}}
+{{
+            if (queryParams.length > 0) {
+}}
+  request.URL.RawQuery = values.Encode()
+{{
+            }
+}}
+{{
+            for (const headerParam of headerParams) {
+}}
+  {{= dotUtils.formatAddHeaderParam(headerParam, returnValue, isPrimitiveType) }}
+{{
+            }
+}}
+{{? returnType !== "_" }}
+  var data {{= returnValue}}
+  err = e.internalClient.Execute(request, &data)
+{{?? true }}
+  err = e.internalClient.Execute(request, nil)
+{{?}}
+  if err != nil {
+    logger.Error("Error executing request", zap.Error(err))
+{{? returnType !== "_" }}
+    return {{= isPrimitiveType ? `*new(${returnValue})` : "nil"}}, err
+{{?? true }}
+    return {{= isPrimitiveType ? `*new(${returnValue})` : "nil"}}
+{{?}}
+  }
+  logger.Debug("Method executed successfully")
+{{? returnType !== "_" }}
+  return {{= isPrimitiveType ? "data" : "&data"}}, nil
+{{?? true }}
+  return {{= isPrimitiveType ? `*new(${returnValue})` : "nil"}}
+{{?}}
+}
+
+{{
+            }
+        }
+}}
+{{
+    }
+}}

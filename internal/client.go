@@ -16,21 +16,18 @@ import (
 )
 
 type InternalClient struct {
-	key              string
-	Cluster          api.Cluster
-	http             *http.Client
-	logger           *zap.Logger
-	cache            *cache.Cache
-	IsCacheEnabled   bool
-	IsRetryEnabled   bool
-	IsDataDragonOnly bool
+	key            string
+	http           *http.Client
+	logger         *zap.Logger
+	cache          *cache.Cache
+	IsCacheEnabled bool
+	IsRetryEnabled bool
 }
 
 // Creates an EquinoxConfig for tests.
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
 		Key:      "RGAPI-TEST",
-		Cluster:  api.AmericasCluster,
 		LogLevel: api.DebugLevel,
 		Timeout:  15,
 		Retry:    false,
@@ -44,157 +41,25 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error initializing logger, %w", err)
 	}
-
 	if config.Cache == nil {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
-
 	client := &InternalClient{
 		key:            config.Key,
-		Cluster:        config.Cluster,
 		http:           &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
 		logger:         logger,
 		cache:          config.Cache,
 		IsRetryEnabled: config.Retry,
 	}
-
 	client.IsCacheEnabled = config.Cache.TTL > 0
-
 	return client, nil
 }
 
-// Performs a GET request to the Riot API.
-func (c *InternalClient) Get(route interface{}, endpointPath string, target interface{}, endpointName string, methodName string, authorizationHeader string) error {
-	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
-	url := fmt.Sprintf("%s%s", baseUrl, endpointPath)
-
-	logger := c.logger.With(zap.String("httpMethod", http.MethodGet), zap.String("url", url))
-
-	return c.get(logger, url, target, authorizationHeader)
-}
-
-// Performs a GET request to the Data Dragon API.
-func (c *InternalClient) DDragonGet(endpointPath string, target interface{}, endpointName string, methodName string) error {
-	url := fmt.Sprintf(api.DataDragonURLFormat, endpointPath)
-
-	logger := c.logger.With(zap.String("httpMethod", http.MethodGet), zap.String("url", url))
-
-	return c.get(logger, url, target, "")
-}
-
-// Performs a GET request to the Community Dragon API.
-func (c *InternalClient) CDragonGet(endpointPath string, target interface{}, endpointName string, methodName string) error {
-	url := fmt.Sprintf(api.CommunityDragonURLFormat, endpointPath)
-
-	logger := c.logger.With(zap.String("httpMethod", http.MethodGet), zap.String("url", url))
-
-	return c.get(logger, url, target, "")
-}
-
-func (c *InternalClient) get(logger *zap.Logger, url string, target interface{}, authorizationHeader string) error {
-	// Creating a new HTTP Request
-	request, err := c.newRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return err
-	}
-
-	if authorizationHeader != "" {
-		request.Header.Set("Authorization", authorizationHeader)
-	}
-
-	if c.IsCacheEnabled {
-		item, err := c.cache.Get(url)
-
-		// If there was an error with retrieving the cached response, only log the error
-		if err != nil {
-			logger.Error("Error retrieving cached response", zap.Error(err))
-		}
-
-		if item != nil {
-			logger.Debug("Cache hit")
-
-			// Decoding the cached body into the target
-			return json.Unmarshal(item, &target)
-		}
-	}
-
-	// Sending HTTP request and returning the response
-	body, err := c.sendRequest(logger, request, url, false)
-	if err != nil {
-		return err
-	}
-
-	if c.IsCacheEnabled {
-		err := c.cache.Set(url, body)
-		if err == nil {
-			logger.Debug("Cache set")
-		} else {
-			logger.Error("Error caching item", zap.Error(err))
-		}
-	}
-
-	// Decoding the body into the target
-	return json.Unmarshal(body, &target)
-}
-
-// Performs a POST request, authorizationHeader can be blank.
-func (c *InternalClient) Post(route interface{}, endpointPath string, requestBody interface{}, target interface{}, endpointName string, methodName string, authorizationHeader string) error {
-	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
-	url := fmt.Sprintf("%s%s", baseUrl, endpointPath)
-
-	logger := c.logger.With(zap.String("httpMethod", http.MethodPost), zap.String("url", url))
-
-	// Creating a new HTTP Request
-	request, err := c.newRequest(http.MethodPost, url, requestBody)
-	if err != nil {
-		return err
-	}
-
-	if authorizationHeader != "" {
-		request.Header.Set("Authorization", authorizationHeader)
-	}
-
-	// Sending HTTP request and returning the response
-	body, err := c.sendRequest(logger, request, url, false)
-	if err != nil {
-		return err
-	}
-
-	// Decoding the body into the target
-	err = json.Unmarshal(body, &target)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Performs a PUT request.
-func (c *InternalClient) Put(route interface{}, endpointPath string, requestBody interface{}, endpointName string, methodName string) error {
-	baseUrl := fmt.Sprintf(api.BaseURLFormat, route)
-	url := fmt.Sprintf("%s%s", baseUrl, endpointPath)
-
-	logger := c.logger.With(zap.String("httpMethod", http.MethodPut), zap.String("url", url))
-
-	// Creating a new HTTP Request
-	request, err := c.newRequest(http.MethodPut, url, requestBody)
-	if err != nil {
-		return err
-	}
-
-	// Sending HTTP request and returning the response
-	_, err = c.sendRequest(logger, request, url, false)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Creates a new HTTP Request and sets headers.
-func (c *InternalClient) newRequest(httpMethod string, url string, body interface{}) (*http.Request, error) {
+// Creates a request to the provided route and url.
+func (c *InternalClient) Request(base string, method string, route any, url string, body any) (*http.Request, error) {
+	baseUrl := fmt.Sprintf(base, route)
+	url = fmt.Sprintf("%s%s", baseUrl, url)
 	var buffer io.ReadWriter
-
 	if body != nil {
 		buffer = &bytes.Buffer{}
 		encoder := json.NewEncoder(buffer)
@@ -203,33 +68,60 @@ func (c *InternalClient) newRequest(httpMethod string, url string, body interfac
 			return nil, err
 		}
 	}
-
-	request, err := http.NewRequest(httpMethod, url, buffer)
+	request, err := http.NewRequest(method, url, buffer)
 	if err != nil {
 		return nil, err
 	}
-
 	if body != nil {
 		request.Header.Set("Content-Type", "application/json")
 	}
-
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("X-Riot-Token", c.key)
-	request.Header.Set("User-Agent", "equinox")
-
+	request.Header.Set("User-Agent", "equinox - https://github.com/Kyagara/equinox")
 	return request, nil
 }
 
-// Sends a HTTP request.
-func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, url string, retrying bool) ([]byte, error) {
-	logger.Info("Sending request")
+// Performs a GET request to the Riot API.
+func (c *InternalClient) Execute(request *http.Request, target any) error {
+	url := request.URL.String()
+	logger := c.logger.With(zap.String("httpMethod", request.Method), zap.String("url", url))
+	if c.IsCacheEnabled {
+		item, err := c.cache.Get(url)
+		// If there was an error with retrieving the cached response, only log the error
+		if err != nil {
+			logger.Error("Error retrieving cached response", zap.Error(err))
+		}
+		if item != nil {
+			logger.Debug("Cache hit")
+			// Decoding the cached body into the target
+			return json.Unmarshal(item, &target)
+		}
+	}
+	// Sending HTTP request and returning the response
+	body, err := c.sendRequest(logger, request, false)
+	if err != nil {
+		return err
+	}
+	if c.IsCacheEnabled {
+		err := c.cache.Set(url, body)
+		if err == nil {
+			logger.Debug("Cache set")
+		} else {
+			logger.Error("Error caching item", zap.Error(err))
+		}
+	}
+	// Decoding the body into the target
+	return json.Unmarshal(body, &target)
+}
 
+// Sends a HTTP request.
+func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, retrying bool) ([]byte, error) {
+	logger.Info("Sending request")
 	// Sending request
 	response, err := c.http.Do(request)
 	if err != nil {
 		return nil, err
 	}
-
 	defer response.Body.Close()
 
 	// Checking the response
@@ -242,9 +134,8 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, 
 	// If retry is enabled and c.checkResponse() returns an error, retry the request
 	if c.IsRetryEnabled && !retrying && errors.Is(err, api.ErrTooManyRequests) {
 		logger.Info("Retrying request")
-
 		// If this retry is successful, the body var will be the response.Body
-		body, err = c.sendRequest(logger, request, url, true)
+		body, err = c.sendRequest(logger, request, true)
 	}
 
 	// Returns the error from c.checkResponse() if any
@@ -254,7 +145,6 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, 
 	}
 
 	logger.Info("Request successful")
-
 	// If the retry was successful, the body won't be nil, so return the result here to avoid reading the body again, causing an error
 	if body != nil {
 		return body, nil
@@ -271,7 +161,6 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, 
 		body = []byte(fmt.Sprintf(`{"response":"%s"}`, string(body)))
 		return body, nil
 	}
-
 	return body, nil
 }
 
@@ -310,7 +199,6 @@ func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Respon
 	// If the status code is lower than 200 or higher than 299, return an error
 	if response.StatusCode < http.StatusOK || response.StatusCode > 299 {
 		logger.Error("Request failed", zap.Error(fmt.Errorf("endpoint method returned an error code: %v", response.Status)))
-
 		// Handling errors documented in the Riot API docs
 		// This StatusCodeToError solution is from https://github.com/KnutZuidema/golio
 		err, ok := api.StatusCodeToError[response.StatusCode]
@@ -322,24 +210,24 @@ func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Respon
 				},
 			}
 		}
-
 		return err
 	}
-
 	return nil
 }
 
 func (c *InternalClient) GetDDragonLOLVersions(client string, endpoint string, method string) ([]string, error) {
 	logger := c.Logger(client, endpoint, method)
-	logger.Debug("Method executed")
-
-	var versions []string
-
-	err := c.DDragonGet(api.DataDragonLOLVersionURL, &versions, "version", method)
+	logger.Debug("Method started execution")
+	request, err := c.Request(api.DataDragonURLFormat, http.MethodGet, "", api.DataDragonLOLVersionURL, nil)
 	if err != nil {
-		logger.Error("Method failed", zap.Error(err))
+		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
-
-	return versions, nil
+	var data []string
+	err = c.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	return data, nil
 }

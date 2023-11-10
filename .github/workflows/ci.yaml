@@ -1,4 +1,4 @@
-name: Continuous integration
+name: Continuous Integration
 
 on:
     push:
@@ -33,6 +33,20 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
+
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                node-version: 18
+
+            - name: Install node dependencies
+              run: npm ci --prefix srcgen
+
+            - name: Download specs
+              run: node srcgen/update.js
+
+            - name: Generate clients
+              run: node srcgen
 
             - name: Set up Go
               uses: actions/setup-go@v4

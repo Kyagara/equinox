@@ -42,13 +42,11 @@ func NewBigCache(ctx context.Context, config bigcache.Config) (*Cache, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	cache := &Cache{
 		store:     &BigCacheStore{client: bigcache},
 		TTL:       config.LifeWindow,
 		StoreType: BigCache,
 	}
-
 	return cache, nil
 }
 
@@ -57,14 +55,11 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 	if options == nil {
 		return nil, fmt.Errorf("redis options is empty")
 	}
-
 	redis := redis.NewClient(options)
-
 	err := redis.Ping(ctx).Err()
 	if err != nil {
 		return nil, err
 	}
-
 	cache := &Cache{
 		store: &RedisStore{
 			client: redis,
@@ -74,7 +69,6 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 		TTL:       ttl,
 		StoreType: RedisCache,
 	}
-
 	return cache, nil
 }
 
@@ -83,7 +77,6 @@ func (c *Cache) Get(key string) ([]byte, error) {
 	if c.TTL == 0 {
 		return nil, ErrCacheIsDisabled
 	}
-
 	return c.store.Get(key)
 }
 
@@ -92,7 +85,6 @@ func (c *Cache) Set(key string, item []byte) error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled
 	}
-
 	return c.store.Set(key, item, c.TTL)
 }
 
@@ -101,7 +93,6 @@ func (c *Cache) Delete(key string) error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled
 	}
-
 	return c.store.Delete(key)
 }
 
@@ -110,6 +101,5 @@ func (c *Cache) Clear() error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled
 	}
-
 	return c.store.Clear()
 }

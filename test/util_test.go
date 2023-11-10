@@ -11,80 +11,29 @@ import (
 )
 
 func TestGetEndpointTestCases(t *testing.T) {
-	tests := test.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
-
+	tests := test.GetEndpointTestCases(lol.SummonerV4DTO{}, &lol.SummonerV4DTO{})
 	require.Equal(t, "found", tests[0].Name, "expecting Name to be equal to found")
 }
 
 func TestMockGetResponse(t *testing.T) {
 	client, err := test.TestingNewLOLClient()
-
 	require.Nil(t, err, "expecting nil error")
-
-	tests := test.GetEndpointTestCases(lol.SummonerDTO{}, &lol.SummonerDTO{})
-
-	url := fmt.Sprintf(lol.SummonerByAccountIDURL, "summonerName")
+	tests := test.GetEndpointTestCases(lol.SummonerV4DTO{}, &lol.SummonerV4DTO{})
+	url := fmt.Sprintf("/lol/summoner/v4/summoners/by-name/%v", "summonerName")
 	tests[0].MockGetResponse(url, string(lol.BR1), "")
-	gotData, gotErr := client.Summoner.ByAccountID(lol.BR1, "summonerName")
+	gotData, gotErr := client.SummonerV4.ByName(lol.BR1, "summonerName")
 	tests[0].CheckResponse(t, gotData, gotErr)
-
-	url = lol.SummonerByAccessTokenURL
-
 	tests[0].AccessToken = "accessToken"
-	tests[0].MockGetResponse(url, string(lol.BR1), "accessToken")
-	gotData, gotErr = client.Summoner.ByAccessToken(lol.BR1, "accessToken")
+	tests[0].MockGetResponse("/lol/summoner/v4/summoners/me", string(lol.BR1), "accessToken")
+	gotData, gotErr = client.SummonerV4.ByAccessToken(lol.BR1, "accessToken")
 	tests[0].CheckResponse(t, gotData, gotErr)
 }
 
 func TestMockPostResponse(t *testing.T) {
 	client, err := test.TestingNewLOLClient()
-
 	require.Nil(t, err, "expecting nil error")
-
-	tests := test.GetEndpointTestCases(*new(int), new(int))
-
-	url := lol.TournamentURL
-	tests[0].MockPostResponse(url, string(api.AmericasCluster), "")
-	gotData, gotErr := client.Tournament.Create(1, "name")
+	tests := test.GetEndpointTestCases(*new(int32), new(int32))
+	tests[0].MockPostResponse("/lol/tournament/v5/tournaments", string(api.AMERICAS), "")
+	gotData, gotErr := client.TournamentV5.RegisterTournament(api.AMERICAS, &lol.TournamentRegistrationParametersV5DTO{})
 	tests[0].CheckResponse(t, &gotData, gotErr)
-}
-
-func TestNewRiotClientForTesting(t *testing.T) {
-	client, err := test.TestingNewRiotClient()
-
-	require.Nil(t, err, "expecting nil error")
-
-	require.NotNil(t, client, "expecting non-nil client")
-}
-
-func TestNewLOLClientForTesting(t *testing.T) {
-	client, err := test.TestingNewLOLClient()
-
-	require.Nil(t, err, "expecting nil error")
-
-	require.NotNil(t, client, "expecting non-nil client")
-}
-
-func TestNewTFTClientForTesting(t *testing.T) {
-	client, err := test.TestingNewTFTClient()
-
-	require.Nil(t, err, "expecting nil error")
-
-	require.NotNil(t, client, "expecting non-nil client")
-}
-
-func TestNewVALClientForTesting(t *testing.T) {
-	client, err := test.TestingNewVALClient()
-
-	require.Nil(t, err, "expecting nil error")
-
-	require.NotNil(t, client, "expecting non-nil client")
-}
-
-func TestNewLORClientForTesting(t *testing.T) {
-	client, err := test.TestingNewLORClient()
-
-	require.Nil(t, err, "expecting nil error")
-
-	require.NotNil(t, client, "expecting non-nil client")
 }

@@ -25,13 +25,12 @@ type Equinox struct {
 	Riot    *riot.RiotClient
 	LOL     *lol.LOLClient
 	TFT     *tft.TFTClient
-	LOR     *lor.LORClient
 	VAL     *val.VALClient
+	LOR     *lor.LORClient
 }
 
 // Returns the default Equinox config with a provided key.
 //
-//   - `Cluster`    : api.AmericasCluster
 //   - `LogLevel`   : api.NopLevel
 //   - `Timeout`    : 15 Seconds
 //   - `Retry`      : true
@@ -42,22 +41,18 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	config := &api.EquinoxConfig{
 		Key:      key,
-		Cluster:  api.AmericasCluster,
 		LogLevel: api.NopLevel,
 		Timeout:  15,
 		Retry:    true,
 		Cache:    cache,
 	}
-
 	return config, nil
 }
 
 // Creates a new Equinox client with a default configuration
 //
-//   - `Cluster`    : api.AmericasCluster
 //   - `LogLevel`   : api.NopLevel
 //   - `Timeout`    : 15 Seconds
 //   - `Retry`      : true
@@ -67,17 +62,13 @@ func NewClient(key string) (*Equinox, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	client, err := internal.NewInternalClient(config)
 	if err != nil {
 		return nil, err
 	}
-
 	if key == "" {
-		client.GetInternalLogger().Warn("API key was not provided, only Data Dragon methods will be enabled.")
-		client.IsDataDragonOnly = true
+		client.GetInternalLogger().Warn("API key was not provided, requests using other clients will result in errors.")
 	}
-
 	equinox := &Equinox{
 		Cache:   config.Cache,
 		DDragon: ddragon.NewDDragonClient(client),
@@ -85,10 +76,9 @@ func NewClient(key string) (*Equinox, error) {
 		Riot:    riot.NewRiotClient(client),
 		LOL:     lol.NewLOLClient(client),
 		TFT:     tft.NewTFTClient(client),
-		LOR:     lor.NewLORClient(client),
 		VAL:     val.NewVALClient(client),
+		LOR:     lor.NewLORClient(client),
 	}
-
 	return equinox, nil
 }
 
@@ -99,25 +89,16 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	if config == nil {
 		return nil, fmt.Errorf("equinox configuration not provided")
 	}
-
-	if config.Cluster == "" {
-		return nil, fmt.Errorf("cluster not provided")
-	}
-
 	client, err := internal.NewInternalClient(config)
 	if err != nil {
 		return nil, err
 	}
-
 	if config.Key == "" {
-		client.GetInternalLogger().Warn("API key was not provided, only Data Dragon methods will be enabled.")
-		client.IsDataDragonOnly = true
+		client.GetInternalLogger().Warn("API key was not provided, requests using other clients will result in errors.")
 	}
-
 	if config.Cache == nil {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
-
 	equinox := &Equinox{
 		Cache:   config.Cache,
 		DDragon: ddragon.NewDDragonClient(client),
@@ -125,9 +106,8 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 		Riot:    riot.NewRiotClient(client),
 		LOL:     lol.NewLOLClient(client),
 		TFT:     tft.NewTFTClient(client),
-		LOR:     lor.NewLORClient(client),
 		VAL:     val.NewVALClient(client),
+		LOR:     lor.NewLORClient(client),
 	}
-
 	return equinox, nil
 }

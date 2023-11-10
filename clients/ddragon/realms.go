@@ -2,7 +2,9 @@ package ddragon
 
 import (
 	"fmt"
+	"net/http"
 
+	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"go.uber.org/zap"
 )
@@ -35,17 +37,17 @@ type RealmData struct {
 
 func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {
 	logger := e.internalClient.Logger("DDragon", "realm", "ByName")
-	logger.Debug("Method executed")
-
-	url := fmt.Sprintf(RealmURL, realm)
-
-	var data RealmData
-
-	err := e.internalClient.DDragonGet(url, &data, "realm", "ByName")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.DataDragonURLFormat, http.MethodGet, "", fmt.Sprintf(RealmURL, realm), nil)
 	if err != nil {
-		logger.Error("Method failed", zap.Error(err))
+		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
-
+	var data RealmData
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
 	return &data, nil
 }

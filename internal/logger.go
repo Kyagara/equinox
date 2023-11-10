@@ -11,11 +11,8 @@ func NewLogger(config *api.EquinoxConfig) (*zap.Logger, error) {
 	if config.LogLevel == api.NopLevel {
 		return zap.NewNop(), nil
 	}
-
 	zapConfig := zap.NewProductionConfig()
-
 	zapConfig.Level = zap.NewAtomicLevelAt(zapcore.Level(config.LogLevel))
-
 	return zapConfig.Build(zap.Fields(zap.Object("equinox", config)))
 }
 

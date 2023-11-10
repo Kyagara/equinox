@@ -18,7 +18,6 @@ func TestCDragonVersionLatest(t *testing.T) {
 func TestCDragonChampionByName(t *testing.T) {
 	version, err := client.CDragon.Version.Latest()
 	require.Nil(t, err, "expecting nil error")
-
 	champion, err := client.CDragon.Champion.ByName(version, "Lux")
 	require.Nil(t, err, "expecting nil error")
 	require.NotNil(t, champion, "expecting non-nil champion")
@@ -28,7 +27,6 @@ func TestCDragonChampionByName(t *testing.T) {
 func TestCDragonChampionByID(t *testing.T) {
 	version, err := client.CDragon.Version.Latest()
 	require.Nil(t, err, "expecting nil error")
-
 	champion, err := client.CDragon.Champion.ByID(version, 223)
 	require.Nil(t, err, "expecting nil error")
 	require.NotNil(t, champion, "expecting non-nil champion")
