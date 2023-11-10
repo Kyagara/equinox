@@ -136,7 +136,6 @@ function normalizeSchemaName(name) {
   return name.replace('Dto', 'DTO')
 }
 
-// TODO: Improve this based on which client is being generated
 function normalizeMethodName(method) {
   let temp = method
   if (temp.startsWith('Get')) {
@@ -148,33 +147,82 @@ function normalizeMethodName(method) {
   if (temp.includes('Challenge') && temp !== 'Challenger') {
     temp = temp.replace('Challenge', '')
   }
-  switch (temp) {
-    case 'ByPuuid':
-      return 'ByPUUID'
-    case 'CurrentGameInfoBySummoner':
-      return 'CurrentGame'
-    case 'BySummonerId':
-      return 'ByID'
-    case 'ChampionInfo':
-      return 'Rotation'
-    case 'BySummonerName':
-      return 'ByName'
-    case 'MatchIdsByPuuid':
-      return 'List'
-    case 'Matchlist':
-      return 'List'
-    case 'PlayerData':
-      return 'ByPuuid'
-    case 'PlatformData':
-      return 'PlatformStatus'
-    case 'Match':
-      return 'ByID'
-  }
   if (temp.endsWith('Id')) {
     temp = temp.slice(0, temp.length - 2) + 'ID'
   }
   if (temp.endsWith('Puuid')) {
     temp = temp.slice(0, temp.length - 5) + 'PUUID'
+  }
+  switch (temp) {
+    case 'CurrentGameInfoBySummoner':
+      return 'CurrentGameBySummonerID'
+    case 'ChampionMasteryScoreByPUUID':
+      return 'MasteryScoreByPUUID'
+    case 'AllChampionMasteriesByPUUID':
+      return 'AllMasteriesByPUUID'
+    case 'ChampionMasteryByPUUID':
+      return 'MasteryByPUUID'
+    case 'TopChampionMasteriesByPUUID':
+      return 'TopMasteriesByPUUID'
+    case 'AllChampionMasteries':
+      return 'AllMasteriesBySummonerID'
+    case 'ChampionMastery':
+      return 'MasteryBySummonerID'
+    case 'TopChampionMasteries':
+      return 'TopMasteriesBySummonerID'
+    case 'ChampionMasteryScore':
+      return 'ScoreBySummonerID'
+
+    case 'PlayersByPUUID':
+      return 'SummonerEntriesByPUUID'
+    case 'PlayersBySummoner':
+      return 'SummonerEntriesBySummonerID'
+    case 'FeaturedGames':
+      return 'Featured'
+
+    case 'ShardData':
+      return 'Shard'
+
+    case 'TeamByID':
+      return 'TeamByTeamID'
+
+    case 'ChampionInfo':
+      return 'Rotation'
+
+    case 'BySummonerName':
+      return 'ByName'
+
+    case 'MatchIdsByPUUID':
+      return 'ListByPUUID'
+    case 'Matchlist':
+      return 'ListByPUUID'
+
+    case 'Configs':
+      return 'ConfigByID'
+
+    case 'PlayerData':
+      return 'ByPUUID'
+
+    case 'PlatformData':
+      return 'Platform'
+
+    case 'EntriesForSummoner':
+      return 'SummonerEntries'
+
+    case 'Challenger':
+      return 'ChallengerByQueue'
+    case 'Grandmaster':
+      return 'GrandmasterByQueue'
+    case 'Master':
+      return 'MasterByQueue'
+
+    case 'TournamentByID':
+      return 'ByID'
+    case 'TournamentByTeam':
+      return 'ByTeamID'
+
+    case 'Match':
+      return 'ByID'
   }
   return temp
 }

@@ -118,8 +118,8 @@ func (e *MatchV1) ByID(route ValPlatformRoute, matchId string) (*MatchV1DTO, err
 // Note: this method is automatically generated.
 //
 // [val-match-v1.getMatchlist]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatchlist
-func (e *MatchV1) List(route ValPlatformRoute, puuid string) (*MatchlistV1DTO, error) {
-  logger := e.internalClient.Logger("VAL", "MatchV1", "List")
+func (e *MatchV1) ListByPUUID(route ValPlatformRoute, puuid string) (*MatchlistV1DTO, error) {
+  logger := e.internalClient.Logger("VAL", "MatchV1", "ListByPUUID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matchlists/by-puuid/%v", puuid), nil)
   if err != nil {
@@ -242,8 +242,8 @@ type StatusV1 struct {
 // Note: this method is automatically generated.
 //
 // [val-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#val-status-v1/GET_getPlatformData
-func (e *StatusV1) PlatformStatus(route ValPlatformRoute) (*PlatformDataV1DTO, error) {
-  logger := e.internalClient.Logger("VAL", "StatusV1", "PlatformStatus")
+func (e *StatusV1) Platform(route ValPlatformRoute) (*PlatformDataV1DTO, error) {
+  logger := e.internalClient.Logger("VAL", "StatusV1", "Platform")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, "/val/status/v1/platform-data", nil)
   if err != nil {

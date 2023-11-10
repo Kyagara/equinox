@@ -41,7 +41,6 @@
 
 ## Todo
 
-- Improve endpoint methods names
 - Tests for the generated code?
 - New rate limiting implementation with Redis support
 - Improve Data Dragon support

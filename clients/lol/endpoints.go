@@ -42,8 +42,8 @@ type ChampionMasteryV4 struct {
 // Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getAllChampionMasteriesByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getAllChampionMasteriesByPUUID
-func (e *ChampionMasteryV4) AllChampionMasteriesByPUUID(route PlatformRoute, encryptedPUUID string) ([]ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "AllChampionMasteriesByPUUID")
+func (e *ChampionMasteryV4) AllMasteriesByPUUID(route PlatformRoute, encryptedPUUID string) ([]ChampionMasteryV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "AllMasteriesByPUUID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v", encryptedPUUID), nil)
   if err != nil {
@@ -74,8 +74,8 @@ func (e *ChampionMasteryV4) AllChampionMasteriesByPUUID(route PlatformRoute, enc
 // Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getChampionMasteryByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryByPUUID
-func (e *ChampionMasteryV4) ChampionMasteryByPUUID(route PlatformRoute, encryptedPUUID string, championId int) (*ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "ChampionMasteryByPUUID")
+func (e *ChampionMasteryV4) MasteryByPUUID(route PlatformRoute, encryptedPUUID string, championId int) (*ChampionMasteryV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "MasteryByPUUID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v/by-champion/%v", encryptedPUUID, championId), nil)
   if err != nil {
@@ -106,8 +106,8 @@ func (e *ChampionMasteryV4) ChampionMasteryByPUUID(route PlatformRoute, encrypte
 // Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getTopChampionMasteriesByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getTopChampionMasteriesByPUUID
-func (e *ChampionMasteryV4) TopChampionMasteriesByPUUID(route PlatformRoute, encryptedPUUID string, count int32) ([]ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "TopChampionMasteriesByPUUID")
+func (e *ChampionMasteryV4) TopMasteriesByPUUID(route PlatformRoute, encryptedPUUID string, count int32) ([]ChampionMasteryV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "TopMasteriesByPUUID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v/top", encryptedPUUID), nil)
   if err != nil {
@@ -142,8 +142,8 @@ func (e *ChampionMasteryV4) TopChampionMasteriesByPUUID(route PlatformRoute, enc
 // Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getAllChampionMasteries]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getAllChampionMasteries
-func (e *ChampionMasteryV4) AllChampionMasteries(route PlatformRoute, encryptedSummonerId string) ([]ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "AllChampionMasteries")
+func (e *ChampionMasteryV4) AllMasteriesBySummonerID(route PlatformRoute, encryptedSummonerId string) ([]ChampionMasteryV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "AllMasteriesBySummonerID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v", encryptedSummonerId), nil)
   if err != nil {
@@ -174,8 +174,8 @@ func (e *ChampionMasteryV4) AllChampionMasteries(route PlatformRoute, encryptedS
 // Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getChampionMastery]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMastery
-func (e *ChampionMasteryV4) ChampionMastery(route PlatformRoute, encryptedSummonerId string, championId int) (*ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "ChampionMastery")
+func (e *ChampionMasteryV4) MasteryBySummonerID(route PlatformRoute, encryptedSummonerId string, championId int) (*ChampionMasteryV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "MasteryBySummonerID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v/by-champion/%v", encryptedSummonerId, championId), nil)
   if err != nil {
@@ -206,8 +206,8 @@ func (e *ChampionMasteryV4) ChampionMastery(route PlatformRoute, encryptedSummon
 // Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getTopChampionMasteries]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getTopChampionMasteries
-func (e *ChampionMasteryV4) TopChampionMasteries(route PlatformRoute, encryptedSummonerId string, count int32) ([]ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "TopChampionMasteries")
+func (e *ChampionMasteryV4) TopMasteriesBySummonerID(route PlatformRoute, encryptedSummonerId string, count int32) ([]ChampionMasteryV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "TopMasteriesBySummonerID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v/top", encryptedSummonerId), nil)
   if err != nil {
@@ -242,8 +242,8 @@ func (e *ChampionMasteryV4) TopChampionMasteries(route PlatformRoute, encryptedS
 // Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getChampionMasteryScoreByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScoreByPUUID
-func (e *ChampionMasteryV4) ChampionMasteryScoreByPUUID(route PlatformRoute, encryptedPUUID string) (int32, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "ChampionMasteryScoreByPUUID")
+func (e *ChampionMasteryV4) MasteryScoreByPUUID(route PlatformRoute, encryptedPUUID string) (int32, error) {
+  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "MasteryScoreByPUUID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-puuid/%v", encryptedPUUID), nil)
   if err != nil {
@@ -273,8 +273,8 @@ func (e *ChampionMasteryV4) ChampionMasteryScoreByPUUID(route PlatformRoute, enc
 // Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getChampionMasteryScore]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScore
-func (e *ChampionMasteryV4) ChampionMasteryScore(route PlatformRoute, encryptedSummonerId string) (int32, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "ChampionMasteryScore")
+func (e *ChampionMasteryV4) ScoreBySummonerID(route PlatformRoute, encryptedSummonerId string) (int32, error) {
+  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "ScoreBySummonerID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-summoner/%v", encryptedSummonerId), nil)
   if err != nil {
@@ -356,8 +356,8 @@ type ClashV1 struct {
 // Note: this method is automatically generated.
 //
 // [clash-v1.getPlayersByPUUID]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getPlayersByPUUID
-func (e *ClashV1) PlayersByPUUID(route PlatformRoute, puuid string) ([]PlayerV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "PlayersByPUUID")
+func (e *ClashV1) SummonerEntriesByPUUID(route PlatformRoute, puuid string) ([]PlayerV1DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ClashV1", "SummonerEntriesByPUUID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/players/by-puuid/%v", puuid), nil)
   if err != nil {
@@ -391,8 +391,8 @@ func (e *ClashV1) PlayersByPUUID(route PlatformRoute, puuid string) ([]PlayerV1D
 // Note: this method is automatically generated.
 //
 // [clash-v1.getPlayersBySummoner]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getPlayersBySummoner
-func (e *ClashV1) PlayersBySummoner(route PlatformRoute, summonerId string) ([]PlayerV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "PlayersBySummoner")
+func (e *ClashV1) SummonerEntriesBySummonerID(route PlatformRoute, summonerId string) ([]PlayerV1DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ClashV1", "SummonerEntriesBySummonerID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/players/by-summoner/%v", summonerId), nil)
   if err != nil {
@@ -422,8 +422,8 @@ func (e *ClashV1) PlayersBySummoner(route PlatformRoute, summonerId string) ([]P
 // Note: this method is automatically generated.
 //
 // [clash-v1.getTeamById]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTeamById
-func (e *ClashV1) TeamByID(route PlatformRoute, teamId string) (*TeamV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "TeamByID")
+func (e *ClashV1) TeamByTeamID(route PlatformRoute, teamId string) (*TeamV1DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ClashV1", "TeamByTeamID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/teams/%v", teamId), nil)
   if err != nil {
@@ -483,8 +483,8 @@ func (e *ClashV1) Tournaments(route PlatformRoute) ([]TournamentV1DTO, error) {
 // Note: this method is automatically generated.
 //
 // [clash-v1.getTournamentByTeam]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentByTeam
-func (e *ClashV1) TournamentByTeam(route PlatformRoute, teamId string) (*TournamentV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "TournamentByTeam")
+func (e *ClashV1) ByTeamID(route PlatformRoute, teamId string) (*TournamentV1DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ClashV1", "ByTeamID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/tournaments/by-team/%v", teamId), nil)
   if err != nil {
@@ -514,8 +514,8 @@ func (e *ClashV1) TournamentByTeam(route PlatformRoute, teamId string) (*Tournam
 // Note: this method is automatically generated.
 //
 // [clash-v1.getTournamentById]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentById
-func (e *ClashV1) TournamentByID(route PlatformRoute, tournamentId int32) (*TournamentV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "TournamentByID")
+func (e *ClashV1) ByID(route PlatformRoute, tournamentId int32) (*TournamentV1DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ClashV1", "ByID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/tournaments/%v", tournamentId), nil)
   if err != nil {
@@ -602,8 +602,8 @@ type LeagueV4 struct {
 // Note: this method is automatically generated.
 //
 // [league-v4.getChallengerLeague]: https://developer.riotgames.com/api-methods/#league-v4/GET_getChallengerLeague
-func (e *LeagueV4) Challenger(route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueV4", "Challenger")
+func (e *LeagueV4) ChallengerByQueue(route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "LeagueV4", "ChallengerByQueue")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/challengerleagues/by-queue/%v", queue), nil)
   if err != nil {
@@ -633,8 +633,8 @@ func (e *LeagueV4) Challenger(route PlatformRoute, queue QueueType) (*LeagueList
 // Note: this method is automatically generated.
 //
 // [league-v4.getLeagueEntriesForSummoner]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueEntriesForSummoner
-func (e *LeagueV4) EntriesForSummoner(route PlatformRoute, encryptedSummonerId string) ([]LeagueEntryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueV4", "EntriesForSummoner")
+func (e *LeagueV4) SummonerEntries(route PlatformRoute, encryptedSummonerId string) ([]LeagueEntryV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "LeagueV4", "SummonerEntries")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/entries/by-summoner/%v", encryptedSummonerId), nil)
   if err != nil {
@@ -703,8 +703,8 @@ func (e *LeagueV4) Entries(route PlatformRoute, queue QueueType, tier Tier, divi
 // Note: this method is automatically generated.
 //
 // [league-v4.getGrandmasterLeague]: https://developer.riotgames.com/api-methods/#league-v4/GET_getGrandmasterLeague
-func (e *LeagueV4) Grandmaster(route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueV4", "Grandmaster")
+func (e *LeagueV4) GrandmasterByQueue(route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "LeagueV4", "GrandmasterByQueue")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/grandmasterleagues/by-queue/%v", queue), nil)
   if err != nil {
@@ -765,8 +765,8 @@ func (e *LeagueV4) ByID(route PlatformRoute, leagueId string) (*LeagueListV4DTO,
 // Note: this method is automatically generated.
 //
 // [league-v4.getMasterLeague]: https://developer.riotgames.com/api-methods/#league-v4/GET_getMasterLeague
-func (e *LeagueV4) Master(route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueV4", "Master")
+func (e *LeagueV4) MasterByQueue(route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "LeagueV4", "MasterByQueue")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/masterleagues/by-queue/%v", queue), nil)
   if err != nil {
@@ -865,8 +865,8 @@ func (e *ChallengesV1) AllPercentiles(route PlatformRoute) (map[int64]map[Tier]f
 // Note: this method is automatically generated.
 //
 // [lol-challenges-v1.getChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeConfigs
-func (e *ChallengesV1) Configs(route PlatformRoute, challengeId int64) (*ChallengeConfigInfoV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChallengesV1", "Configs")
+func (e *ChallengesV1) ConfigByID(route PlatformRoute, challengeId int64) (*ChallengeConfigInfoV1DTO, error) {
+  logger := e.internalClient.Logger("LOL", "ChallengesV1", "ConfigByID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/config", challengeId), nil)
   if err != nil {
@@ -1008,8 +1008,8 @@ type StatusV3 struct {
 // Note: this method is automatically generated.
 //
 // [lol-status-v3.getShardData]: https://developer.riotgames.com/api-methods/#lol-status-v3/GET_getShardData
-func (e *StatusV3) ShardData(route PlatformRoute) (*ShardStatusV3DTO, error) {
-  logger := e.internalClient.Logger("LOL", "StatusV3", "ShardData")
+func (e *StatusV3) Shard(route PlatformRoute) (*ShardStatusV3DTO, error) {
+  logger := e.internalClient.Logger("LOL", "StatusV3", "Shard")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, "/lol/status/v3/shard-data", nil)
   if err != nil {
@@ -1047,8 +1047,8 @@ type StatusV4 struct {
 // Note: this method is automatically generated.
 //
 // [lol-status-v4.getPlatformData]: https://developer.riotgames.com/api-methods/#lol-status-v4/GET_getPlatformData
-func (e *StatusV4) PlatformStatus(route PlatformRoute) (*PlatformDataV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "StatusV4", "PlatformStatus")
+func (e *StatusV4) Platform(route PlatformRoute) (*PlatformDataV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "StatusV4", "Platform")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, "/lol/status/v4/platform-data", nil)
   if err != nil {
@@ -1093,8 +1093,8 @@ type MatchV5 struct {
 // Note: this method is automatically generated.
 //
 // [match-v5.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#match-v5/GET_getMatchIdsByPUUID
-func (e *MatchV5) List(route api.RegionalRoute, puuid string, count int32, endTime int64, queue Queue, startTime int64, start int32, type_ string) ([]string, error) {
-  logger := e.internalClient.Logger("LOL", "MatchV5", "List")
+func (e *MatchV5) ListByPUUID(route api.RegionalRoute, puuid string, count int32, endTime int64, queue Queue, startTime int64, start int32, type_ string) ([]string, error) {
+  logger := e.internalClient.Logger("LOL", "MatchV5", "ListByPUUID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/match/v5/matches/by-puuid/%v/ids", puuid), nil)
   if err != nil {
@@ -1215,8 +1215,8 @@ type SpectatorV4 struct {
 // Note: this method is automatically generated.
 //
 // [spectator-v4.getCurrentGameInfoBySummoner]: https://developer.riotgames.com/api-methods/#spectator-v4/GET_getCurrentGameInfoBySummoner
-func (e *SpectatorV4) CurrentGame(route PlatformRoute, encryptedSummonerId string) (*CurrentGameInfoV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SpectatorV4", "CurrentGame")
+func (e *SpectatorV4) CurrentGameBySummonerID(route PlatformRoute, encryptedSummonerId string) (*CurrentGameInfoV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "SpectatorV4", "CurrentGameBySummonerID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/spectator/v4/active-games/by-summoner/%v", encryptedSummonerId), nil)
   if err != nil {
@@ -1245,8 +1245,8 @@ func (e *SpectatorV4) CurrentGame(route PlatformRoute, encryptedSummonerId strin
 // Note: this method is automatically generated.
 //
 // [spectator-v4.getFeaturedGames]: https://developer.riotgames.com/api-methods/#spectator-v4/GET_getFeaturedGames
-func (e *SpectatorV4) FeaturedGames(route PlatformRoute) (*FeaturedGamesV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SpectatorV4", "FeaturedGames")
+func (e *SpectatorV4) Featured(route PlatformRoute) (*FeaturedGamesV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "SpectatorV4", "Featured")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, "/lol/spectator/v4/featured-games", nil)
   if err != nil {
@@ -1413,8 +1413,8 @@ func (e *SummonerV4) ByAccessToken(route PlatformRoute, authorization string) (*
 // Note: this method is automatically generated.
 //
 // [summoner-v4.getBySummonerId]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getBySummonerId
-func (e *SummonerV4) ByID(route PlatformRoute, encryptedSummonerId string) (*SummonerV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SummonerV4", "ByID")
+func (e *SummonerV4) BySummonerID(route PlatformRoute, encryptedSummonerId string) (*SummonerV4DTO, error) {
+  logger := e.internalClient.Logger("LOL", "SummonerV4", "BySummonerID")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/summoner/v4/summoners/%v", encryptedSummonerId), nil)
   if err != nil {
