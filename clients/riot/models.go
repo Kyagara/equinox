@@ -8,7 +8,7 @@ package riot
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 95a5cf31a385d91b952e19190af5a828d2e60ed8
+// Spec version = ed83574d1b85ef4c52f267ee5558e3c1c3ffb412
 
 // AccountDTO data object.
 type AccountV1DTO struct {

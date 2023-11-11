@@ -1,5 +1,5 @@
 {{
-    const spec = require('./specs/.spec.json');
+    const spec = require('./specs/spec.json');
     const dotUtils = require('./dotUtils.js');
     const clientName = "{{# def.clientName}}";
 }}

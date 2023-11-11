@@ -107,6 +107,9 @@ function getNormalizedDTOStructName(name, version, endpoint) {
       }
     }
   }
+  if (temp.endsWith('DTOWrapperDTO')) {
+    temp = temp.replace(version[0] + 'DTOWrapperDTO', 'Wrapper' + version[0] + 'DTO')
+  }
   if (temp.startsWith('ChampionInfoV')) {
     temp = temp.replace('ChampionInfoV', 'ChampionRotationV')
   }

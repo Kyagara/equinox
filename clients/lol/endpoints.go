@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 95a5cf31a385d91b952e19190af5a828d2e60ed8
+// Spec version = ed83574d1b85ef4c52f267ee5558e3c1c3ffb412
 
 import (
 	"fmt"
@@ -1554,7 +1554,7 @@ func (e *TournamentStubV5) TournamentCode(route api.RegionalRoute, tournamentCod
 // Note: this method is automatically generated.
 //
 // [tournament-stub-v5.getLobbyEventsByCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/GET_getLobbyEventsByCode
-func (e *TournamentStubV5) LobbyEventsByCode(route api.RegionalRoute, tournamentCode string) (*StubLobbyEventV5DTOWrapperDTO, error) {
+func (e *TournamentStubV5) LobbyEventsByCode(route api.RegionalRoute, tournamentCode string) (*StubLobbyEventWrapperV5DTO, error) {
   logger := e.internalClient.Logger("LOL", "TournamentStubV5", "LobbyEventsByCode")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/tournament-stub/v5/lobby-events/by-code/%v", tournamentCode), nil)
@@ -1562,7 +1562,7 @@ func (e *TournamentStubV5) LobbyEventsByCode(route api.RegionalRoute, tournament
     logger.Error("Error creating request", zap.Error(err))
     return nil, err
 	}
-  var data StubLobbyEventV5DTOWrapperDTO
+  var data StubLobbyEventWrapperV5DTO
   err = e.internalClient.Execute(request, &data)
   if err != nil {
     logger.Error("Error executing request", zap.Error(err))
@@ -1746,6 +1746,45 @@ func (e *TournamentV5) UpdateCode(route api.RegionalRoute, body *TournamentCodeU
   return nil
 }
 
+// Get games details
+//
+// # Implementation Notes
+//
+// Additional endpoint to get tournament games. From this endpoint you are able to get participants puuid (callback doesn't contain this info).
+//
+//
+//
+// Also use it to check if the game was recorded and validate callbacks. If the endpoint returns the game it means a callback was attempted.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `tournament_code` (required, in path)
+//
+// # Riot API Reference
+//
+// [tournament-v5.getGames]
+//
+// Note: this method is automatically generated.
+//
+// [tournament-v5.getGames]: https://developer.riotgames.com/api-methods/#tournament-v5/GET_getGames
+func (e *TournamentV5) Games(route api.RegionalRoute, tournamentCode string) ([]TournamentGamesV5DTO, error) {
+  logger := e.internalClient.Logger("LOL", "TournamentV5", "Games")
+  logger.Debug("Method started execution")
+  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/games/by-code/%v", tournamentCode), nil)
+  if err != nil {
+    logger.Error("Error creating request", zap.Error(err))
+    return *new([]TournamentGamesV5DTO), err
+	}
+  var data []TournamentGamesV5DTO
+  err = e.internalClient.Execute(request, &data)
+  if err != nil {
+    logger.Error("Error executing request", zap.Error(err))
+    return *new([]TournamentGamesV5DTO), err
+  }
+  logger.Debug("Method executed successfully")
+  return data, nil
+}
+
 // Gets a list of lobby events by tournament code.
 //
 // # Parameters
@@ -1759,7 +1798,7 @@ func (e *TournamentV5) UpdateCode(route api.RegionalRoute, body *TournamentCodeU
 // Note: this method is automatically generated.
 //
 // [tournament-v5.getLobbyEventsByCode]: https://developer.riotgames.com/api-methods/#tournament-v5/GET_getLobbyEventsByCode
-func (e *TournamentV5) LobbyEventsByCode(route api.RegionalRoute, tournamentCode string) (*LobbyEventV5DTOWrapperDTO, error) {
+func (e *TournamentV5) LobbyEventsByCode(route api.RegionalRoute, tournamentCode string) (*LobbyEventWrapperV5DTO, error) {
   logger := e.internalClient.Logger("LOL", "TournamentV5", "LobbyEventsByCode")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/lobby-events/by-code/%v", tournamentCode), nil)
@@ -1767,7 +1806,7 @@ func (e *TournamentV5) LobbyEventsByCode(route api.RegionalRoute, tournamentCode
     logger.Error("Error creating request", zap.Error(err))
     return nil, err
 	}
-  var data LobbyEventV5DTOWrapperDTO
+  var data LobbyEventWrapperV5DTO
   err = e.internalClient.Execute(request, &data)
   if err != nil {
     logger.Error("Error executing request", zap.Error(err))

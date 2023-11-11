@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 95a5cf31a385d91b952e19190af5a828d2e60ed8
+// Spec version = ed83574d1b85ef4c52f267ee5558e3c1c3ffb412
 
 // ChampionMasteryDTO data object.
 //
@@ -1113,7 +1113,7 @@ type StubTournamentCodeV5DTO struct {
 }
 
 // LobbyEventV5DTOWrapperDTO data object.
-type StubLobbyEventV5DTOWrapperDTO struct {
+type StubLobbyEventWrapperV5DTO struct {
     EventList []LobbyEventV5DTO `json:"eventList"`
 }
 
@@ -1211,8 +1211,32 @@ type TournamentCodeUpdateParametersV5DTO struct {
     SpectatorType string `json:"spectatorType"`
 }
 
+// TournamentGamesV5DTO data object.
+type TournamentGamesV5DTO struct {
+    WinningTeam []TournamentTeamV5DTO `json:"winningTeam"`
+    LosingTeam []TournamentTeamV5DTO `json:"losingTeam"`
+    // Tournament Code
+    ShortCode string `json:"shortCode"`
+    // Metadata for the TournamentCode
+    MetaData string `json:"metaData"`
+    GameID int64 `json:"gameId"`
+    GameName string `json:"gameName"`
+    GameType string `json:"gameType"`
+    // Game Map ID
+    GameMap int32 `json:"gameMap"`
+    GameMode string `json:"gameMode"`
+    // Region of the game
+    Region string `json:"region"`
+}
+
+// TournamentTeamV5DTO data object.
+type TournamentTeamV5DTO struct {
+    // Player Unique UUID (Encrypted)
+    PUUID string `json:"puuid"`
+}
+
 // LobbyEventV5DTOWrapperDTO data object.
-type LobbyEventV5DTOWrapperDTO struct {
+type LobbyEventWrapperV5DTO struct {
     EventList []LobbyEventV5DTO `json:"eventList"`
 }
 
