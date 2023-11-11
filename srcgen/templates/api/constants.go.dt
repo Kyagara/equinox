@@ -1,12 +1,12 @@
 {{
     const dotUtils = require('./dotUtils.js');
-    const maps = require('./specs/.maps.json');
-    const gameTypes = require('./specs/.gameTypes.json');
-    const gameModes = require('./specs/.gameModes.json');
-    const queueTypes = require('./specs/.queueTypes.json');
-    const queues = require('./specs/.queues.json');
-    const routesTable = require('./specs/.routesTable.json');
-    const spec = require('./specs/.spec.json');
+    const maps = require('./specs/maps.json');
+    const gameTypes = require('./specs/gameTypes.json');
+    const gameModes = require('./specs/gameModes.json');
+    const queueTypes = require('./specs/queueTypes.json');
+    const queues = require('./specs/queues.json');
+    const routesTable = require('./specs/routesTable.json');
+    const spec = require('./specs/spec.json');
 }}
 {{= dotUtils.preamble("api", spec.info.version) }}
 
