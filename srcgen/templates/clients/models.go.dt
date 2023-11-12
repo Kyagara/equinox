@@ -5,7 +5,7 @@
 }}
 {{= dotUtils.preamble(clientName, spec.info.version) }}
 {{
-    const endpointGroups = dotUtils.getEndpointGroupsByName(clientName);
+    const endpointGroups = dotUtils.getClientEndpoints(clientName);
     const apis = [];
     for (let path in endpointGroups) {
         apis.push(path)

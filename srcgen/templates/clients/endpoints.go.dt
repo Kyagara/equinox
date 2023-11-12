@@ -16,7 +16,7 @@ import (
 )
 
 {{
-    const endpointGroups = dotUtils.getEndpointGroupsByName(clientName);
+    const endpointGroups = dotUtils.getClientEndpoints(clientName);
     for (const [ endpointName, endpointMethods ] of Object.entries(endpointGroups)) {
         const endpoint = dotUtils.changeCase.pascalCase(endpointName);
         const normalizedStructName = dotUtils.removeClientName(endpoint);

@@ -8,7 +8,7 @@ import (
 
 // Creates a new zap.Logger from the configuration parameters provided.
 func NewLogger(config *api.EquinoxConfig) (*zap.Logger, error) {
-	if config.LogLevel == api.NopLevel {
+	if config.LogLevel == api.NOP_LOG_LEVEL {
 		return zap.NewNop(), nil
 	}
 	zapConfig := zap.NewProductionConfig()

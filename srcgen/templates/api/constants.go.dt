@@ -16,7 +16,7 @@ import (
 type EquinoxConfig struct {
 	// Riot API Key.
 	Key string
-	// Log level, api.NopLevel disables logging.
+	// Log level, api.NOP_LOG_LEVEL disables logging.
 	LogLevel LogLevel
 	// Timeout for the internal http.Client in seconds, 0 disables the timeout.
 	Timeout int
@@ -66,16 +66,16 @@ const (
 type LogLevel int8
 
 const (
-	// NopLevel won't log anything, this is the default behaviour for the Default client.
-	NopLevel LogLevel = iota - 2
-	// DebugLevel will log everything.
-	DebugLevel
-	// InfoLevel will log the requests being made and if they were successful.
-	InfoLevel
-	// WarnLevel will log when a request was rate limited.
-	WarnLevel
-	// ErrorLevel will log every error.
-	ErrorLevel
+	// NOP_LOG_LEVEL won't log anything, this is the default behaviour for the Default client.
+	NOP_LOG_LEVEL LogLevel = iota - 2
+	// DEBUG_LOG_LEVEL will log everything.
+	DEBUG_LOG_LEVEL
+	// INFO_LOG_LEVEL will log the requests being made and if they were successful.
+	INFO_LOG_LEVEL
+	// WARN_LOG_LEVEL will log when a request was rate limited.
+	WARN_LOG_LEVEL
+	// ERROR_LOG_LEVEL will log every error.
+	ERROR_LOG_LEVEL
 )
 
 // Regional routes, used in tournament services, Legends of Runeterra (LoR), and some other endpoints.
