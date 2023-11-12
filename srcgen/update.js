@@ -18,8 +18,8 @@ if (!fs.existsSync('./specs')) {
 
 files.forEach(async (file) => {
   console.log(`Downloading '${file[1]}'.`)
-  let res = await fetch(file[0])
-  let data = await res.json()
+  const res = await fetch(file[0])
+  const data = await res.json()
   console.log(`Writing '${file[1]}'.`)
   fs.writeFileSync(file[1], JSON.stringify(data))
 })

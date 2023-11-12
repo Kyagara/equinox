@@ -12,10 +12,10 @@ Removed promises, removed `glob-promise`, `request`, `request-promise-native`.
 
 Added `node-fetch-commonjs`.
 
-Added a prettier configuration file.
+Added a prettier and eslint.
 
 Separated the download and compilation process different files.
 
 ## Usage
 
-From the project root, update the specs using `node srcgen/update.js`, then compile using `node srcgen`.
+After installing the dependencies with `npm i`, update the specs using `node update.js` then compile using `node srcgen`.
