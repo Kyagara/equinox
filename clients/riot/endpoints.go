@@ -19,7 +19,9 @@ import (
 	"go.uber.org/zap"
 )
 
-// AccountV1 endpoints handle.
+// # Riot API Reference
+//
+// [account-v1]
 //
 // Note: this struct is automatically generated.
 //
@@ -44,7 +46,7 @@ type AccountV1 struct {
 func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DTO, error) {
   logger := e.internalClient.Logger("Riot", "AccountV1", "ByPUUID")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-puuid/%v", puuid), nil)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-puuid/%v", puuid), nil)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return nil, err
@@ -63,8 +65,8 @@ func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DT
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `tag_line` (required, in path) - When querying for a player by their riot id, the gameName and tagLine query params are required. However not all accounts have a gameName and tagLine associated so these fields may not be included in the response.
-//   - `game_name` (required, in path) - When querying for a player by their riot id, the gameName and tagLine query params are required. However not all accounts have a gameName and tagLine associated so these fields may not be included in the response.
+//   - `tagLine` (required, in path) - When querying for a player by their riot id, the gameName and tagLine query params are required. However not all accounts have a gameName and tagLine associated so these fields may not be included in the response.
+//   - `gameName` (required, in path) - When querying for a player by their riot id, the gameName and tagLine query params are required. However not all accounts have a gameName and tagLine associated so these fields may not be included in the response.
 //
 // # Riot API Reference
 //
@@ -76,7 +78,7 @@ func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DT
 func (e *AccountV1) ByRiotID(route api.RegionalRoute, gameName string, tagLine string) (*AccountV1DTO, error) {
   logger := e.internalClient.Logger("Riot", "AccountV1", "ByRiotID")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-riot-id/%v/%v", gameName, tagLine), nil)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-riot-id/%v/%v", gameName, tagLine), nil)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return nil, err
@@ -107,7 +109,7 @@ func (e *AccountV1) ByRiotID(route api.RegionalRoute, gameName string, tagLine s
 func (e *AccountV1) ByAccessToken(route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
   logger := e.internalClient.Logger("Riot", "AccountV1", "ByAccessToken")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, "/riot/account/v1/accounts/me", nil)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/riot/account/v1/accounts/me", nil)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return nil, err
@@ -143,7 +145,7 @@ func (e *AccountV1) ByAccessToken(route api.RegionalRoute, authorization string)
 func (e *AccountV1) ActiveShard(route api.RegionalRoute, game string, puuid string) (*ActiveShardV1DTO, error) {
   logger := e.internalClient.Logger("Riot", "AccountV1", "ActiveShard")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), nil)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), nil)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return nil, err

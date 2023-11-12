@@ -110,12 +110,12 @@ func TestEquinoxClientClearCache(t *testing.T) {
 
 	delay := 2 * time.Second
 
-	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AMERICAS)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
 		Get("/riot/account/v1/accounts/by-puuid/puuid").
 		Reply(200).
 		JSON(account).Delay(delay)
 
-	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AMERICAS)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
 		Get("/riot/account/v1/accounts/by-puuid/puuid").
 		Reply(404).
 		JSON(account).Delay(delay)
@@ -154,7 +154,7 @@ func TestPutClient(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 	client := lol.NewLOLClient(internalClient)
-	gock.New(fmt.Sprintf(api.BaseURLFormat, api.AMERICAS)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
 		Put("/lol/tournament/v5/codes/tournamentCode").
 		Reply(200)
 
@@ -184,7 +184,7 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 		SummonerLevel: 68,
 	}
 
-	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
 		Get("/lol/summoner/v4/summoners/by-name/Phanes").
 		Persist().
 		Reply(200).
@@ -221,7 +221,7 @@ func BenchmarkSummonerByName(b *testing.B) {
 		SummonerLevel: 68,
 	}
 
-	gock.New(fmt.Sprintf(api.BaseURLFormat, lol.BR1)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
 		Get("/lol/summoner/v4/summoners/by-name/Phanes").
 		Persist().
 		Reply(200).
@@ -284,7 +284,7 @@ func BenchmarkCachedDataDragonRealm(b *testing.B) {
 		Store:          nil,
 	}
 
-	gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
+	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
 		Get(fmt.Sprintf(ddragon.RealmURL, "na")).
 		Persist().
 		Reply(200).
@@ -343,7 +343,7 @@ func BenchmarkDataDragonRealm(b *testing.B) {
 		Store:          nil,
 	}
 
-	gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
+	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
 		Get(fmt.Sprintf(ddragon.RealmURL, "na")).
 		Persist().
 		Reply(200).

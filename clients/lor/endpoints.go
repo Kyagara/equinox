@@ -19,7 +19,9 @@ import (
 	"go.uber.org/zap"
 )
 
-// LorDeckV1 endpoints handle.
+// # Riot API Reference
+//
+// [lor-deck-v1]
 //
 // Note: this struct is automatically generated.
 //
@@ -44,7 +46,7 @@ type DeckV1 struct {
 func (e *DeckV1) Decks(route api.RegionalRoute, authorization string) ([]DeckV1DTO, error) {
   logger := e.internalClient.Logger("LOR", "DeckV1", "Decks")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, "/lor/deck/v1/decks/me", nil)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/deck/v1/decks/me", nil)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return *new([]DeckV1DTO), err
@@ -79,7 +81,7 @@ func (e *DeckV1) Decks(route api.RegionalRoute, authorization string) ([]DeckV1D
 func (e *DeckV1) CreateDeck(route api.RegionalRoute, body *NewDeckV1DTO, authorization string) (string, error) {
   logger := e.internalClient.Logger("LOR", "DeckV1", "CreateDeck")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodPost, route, "/lor/deck/v1/decks/me", body)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lor/deck/v1/decks/me", body)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return *new(string), err
@@ -98,7 +100,9 @@ func (e *DeckV1) CreateDeck(route api.RegionalRoute, body *NewDeckV1DTO, authori
   return data, nil
 }
 
-// LorInventoryV1 endpoints handle.
+// # Riot API Reference
+//
+// [lor-inventory-v1]
 //
 // Note: this struct is automatically generated.
 //
@@ -123,7 +127,7 @@ type InventoryV1 struct {
 func (e *InventoryV1) Cards(route api.RegionalRoute, authorization string) ([]CardV1DTO, error) {
   logger := e.internalClient.Logger("LOR", "InventoryV1", "Cards")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, "/lor/inventory/v1/cards/me", nil)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/inventory/v1/cards/me", nil)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return *new([]CardV1DTO), err
@@ -142,7 +146,9 @@ func (e *InventoryV1) Cards(route api.RegionalRoute, authorization string) ([]Ca
   return data, nil
 }
 
-// LorMatchV1 endpoints handle.
+// # Riot API Reference
+//
+// [lor-match-v1]
 //
 // Note: this struct is automatically generated.
 //
@@ -167,7 +173,7 @@ type MatchV1 struct {
 func (e *MatchV1) ListByPUUID(route api.RegionalRoute, puuid string) ([]string, error) {
   logger := e.internalClient.Logger("LOR", "MatchV1", "ListByPUUID")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/by-puuid/%v/ids", puuid), nil)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/by-puuid/%v/ids", puuid), nil)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return *new([]string), err
@@ -186,7 +192,7 @@ func (e *MatchV1) ListByPUUID(route api.RegionalRoute, puuid string) ([]string, 
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `match_id` (required, in path)
+//   - `matchId` (required, in path)
 //
 // # Riot API Reference
 //
@@ -198,7 +204,7 @@ func (e *MatchV1) ListByPUUID(route api.RegionalRoute, puuid string) ([]string, 
 func (e *MatchV1) ByID(route api.RegionalRoute, matchId string) (*MatchV1DTO, error) {
   logger := e.internalClient.Logger("LOR", "MatchV1", "ByID")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/%v", matchId), nil)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/%v", matchId), nil)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return nil, err
@@ -213,7 +219,9 @@ func (e *MatchV1) ByID(route api.RegionalRoute, matchId string) (*MatchV1DTO, er
   return &data, nil
 }
 
-// LorRankedV1 endpoints handle.
+// # Riot API Reference
+//
+// [lor-ranked-v1]
 //
 // Note: this struct is automatically generated.
 //
@@ -237,7 +245,7 @@ type RankedV1 struct {
 func (e *RankedV1) Leaderboards(route api.RegionalRoute) (*LeaderboardV1DTO, error) {
   logger := e.internalClient.Logger("LOR", "RankedV1", "Leaderboards")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, "/lor/ranked/v1/leaderboards", nil)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/ranked/v1/leaderboards", nil)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return nil, err
@@ -252,7 +260,9 @@ func (e *RankedV1) Leaderboards(route api.RegionalRoute) (*LeaderboardV1DTO, err
   return &data, nil
 }
 
-// LorStatusV1 endpoints handle.
+// # Riot API Reference
+//
+// [lor-status-v1]
 //
 // Note: this struct is automatically generated.
 //
@@ -276,7 +286,7 @@ type StatusV1 struct {
 func (e *StatusV1) Platform(route api.RegionalRoute) (*PlatformDataV1DTO, error) {
   logger := e.internalClient.Logger("LOR", "StatusV1", "Platform")
   logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.BaseURLFormat, http.MethodGet, route, "/lor/status/v1/platform-data", nil)
+  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/status/v1/platform-data", nil)
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return nil, err

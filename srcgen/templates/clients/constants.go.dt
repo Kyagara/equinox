@@ -1,14 +1,12 @@
 {{
     const dotUtils = require('./dotUtils.js');
-    const maps = require('./specs/maps.json');
+    const spec = dotUtils.spec;
     const gameTypes = require('./specs/gameTypes.json');
     const gameModes = require('./specs/gameModes.json');
     const queueTypes = require('./specs/queueTypes.json');
-    const queues = require('./specs/queues.json');
     const routesTable = require('./specs/routesTable.json');
-    const spec = require('./specs/spec.json');
-    const clientName = "{{# def.clientName}}";
-    const clientNormalizedName = "{{# def.clientNormalizedName}}";
+    const clientName = "{{# def.clientName }}";
+    const clientNormalizedName = "{{# def.clientNormalizedName }}";
 }}
 {{= dotUtils.preamble(clientName, spec.info.version) }}
 
@@ -18,7 +16,7 @@ type ValPlatformRoute string
 
 const (
 {{
-    for (const [ name, { id, description, deprecated } ] of Object.entries(routesTable['val-platform'])) {
+    for (const [ name, { description, deprecated } ] of Object.entries(routesTable['val-platform'])) {
         if (name) {
             const desc = description.split('\n');
 }}
@@ -28,7 +26,7 @@ const (
 {{? deprecated }}
     // Deprecated
 {{?}}
-    {{= name.toUpperCase() }} ValPlatformRoute = "{{= name }}"
+    {{= dotUtils.changeCase.constantCase(name) }} ValPlatformRoute = "{{= name }}"
 {{
         }
     }
@@ -40,16 +38,16 @@ const (
 type Tier string
 
 const (
-	Iron        Tier = "IRON"
-	Bronze      Tier = "BRONZE"
-	Silver      Tier = "SILVER"
-	Gold        Tier = "GOLD"
-	Platinum    Tier = "PLATINUM"
-    Emerald     Tier = "EMERALD"
-	Diamond     Tier = "DIAMOND"
-	Master      Tier = "MASTER"
-	Grandmaster Tier = "GRANDMASTER"
-	Challenger  Tier = "CHALLENGER"
+	IRON        Tier = "IRON"
+	BRONZE      Tier = "BRONZE"
+	SILVER      Tier = "SILVER"
+	GOLD        Tier = "GOLD"
+	PLATINUM    Tier = "PLATINUM"
+    EMERALD     Tier = "EMERALD"
+	DIAMOND     Tier = "DIAMOND"
+	MASTER      Tier = "MASTER"
+	GRANDMASTER Tier = "GRANDMASTER"
+	CHALLENGER  Tier = "CHALLENGER"
 )
 
 // LoL rank divisions, I, II, III, IV, and (deprecated) V.
@@ -69,7 +67,7 @@ type PlatformRoute string
 
 const (
 {{
-    for (const [ name, { id, description, altName, deprecated } ] of Object.entries(routesTable['platform'])) {
+    for (const [ name, { description, deprecated } ] of Object.entries(routesTable['platform'])) {
         const desc = description.split('\n');
 }}
 {{~ desc :line }}
@@ -78,7 +76,7 @@ const (
 {{? deprecated }}
     // Deprecated
 {{?}}
-    {{= name.toUpperCase() }} PlatformRoute = "{{= name }}"
+    {{= dotUtils.changeCase.constantCase(name) }} PlatformRoute = "{{= name }}"
 {{
     }
 }}
@@ -89,7 +87,7 @@ type TournamentRegion string
 
 const (
 {{
-    for (const [ name, { id, description, tournamentRegion, deprecated } ] of Object.entries(routesTable['platform'])) {
+    for (const [ name, { description, tournamentRegion, deprecated } ] of Object.entries(routesTable['platform'])) {
         if (tournamentRegion) {
             const desc = description.split('\n');
 }}
@@ -99,27 +97,9 @@ const (
 {{? deprecated }}
     // Deprecated
 {{?}}
-    {{= tournamentRegion }} TournamentRegion = "{{= name }}"
+    {{= dotUtils.changeCase.constantCase(tournamentRegion) }} TournamentRegion = "{{= name }}"
 {{
         }
-    }
-}}
-)
-
-// A League of Legends map.
-type Map int
-
-const (
-{{
-    for (const e of maps) {
-        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
-}}
-{{~ desc :line }}
-    // {{= line }}
-    //
-{{~}}
-    {{= dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," ")) }} Map = {{= e['x-value'] }}
-{{
     }
 }}
 )
@@ -129,13 +109,13 @@ type GameType string
 
 const (
 {{
-    for (const e of gameTypes) {
-        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
+    for (const gameType of gameTypes) {
+        const desc = gameType['x-desc'] ? gameType['x-desc'].split('\n') : [];
 }}
 {{~ desc :line }}
     // {{= line }}
 {{~}}
-    {{= dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," ")) }} GameType = "{{= e['x-name'] }}"
+    {{= dotUtils.changeCase.constantCase(gameType['x-name']) }} GameType = "{{= gameType['x-name'] }}"
 {{
     }
 }}
@@ -147,13 +127,13 @@ type GameMode string
 
 const (
 {{
-    for (const e of gameModes) {
-        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
+    for (const gameMode of gameModes) {
+        const desc = gameMode['x-desc'] ? gameMode['x-desc'].split('\n') : [];
 }}
 {{~ desc :line }}
     // {{= line }}
 {{~}}
-    {{= dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," ")) }} GameMode = "{{= e['x-name'] }}"
+    {{= dotUtils.changeCase.constantCase(gameMode['x-name']) }} GameMode = "{{= gameMode['x-name'] }}"
 {{
     }
 }}
@@ -164,43 +144,18 @@ type QueueType string
 
 const (
 {{
-    for (const e of queueTypes) {
-        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
-        if (e['x-name'].includes("TFT")) continue;
+    for (const queueType of queueTypes) {
+        const desc = queueType['x-desc'] ? queueType['x-desc'].split('\n') : [];
+        if (queueType['x-name'].includes("TFT")) continue;
 }}
 {{~ desc :line }}
     // {{= line }}
     //
 {{~}}
-{{? e['x-deprecated'] }}
-    // {{= e.notes }}
+{{? queueType['x-deprecated'] }}
+    // {{= queueType.notes }}
 {{?}}
-    {{= dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," ")) }} QueueType = "{{= e['x-name'] }}"
-{{
-    }
-}}
-)
-
-// A League of Legends matchmaking queue.
-type Queue int
-
-const (
-{{
-    for (const e of queues) {
-        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
-        let queueName = dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," "));
-        if (queueName === "NexusBlitz") {
-            queueName = "NexusBlitzQueue"
-        }
-}}
-{{~ desc :line }}
-    // {{= line }}
-    //
-{{~}}
-{{? e['x-deprecated'] }}
-    // {{= e.notes }}
-{{?}}
-    {{= queueName }} Queue = {{= e['x-value'] }}
+    {{= dotUtils.changeCase.constantCase(queueType['x-name']) }} QueueType = "{{= queueType['x-name'] }}"
 {{
     }
 }}
@@ -211,15 +166,15 @@ const (
 type Tier string
 
 const (
-	Iron        Tier = "IRON"
-	Bronze      Tier = "BRONZE"
-	Silver      Tier = "SILVER"
-	Gold        Tier = "GOLD"
-	Platinum    Tier = "PLATINUM"
-	Diamond     Tier = "DIAMOND"
-	Master      Tier = "MASTER"
-	Grandmaster Tier = "GRANDMASTER"
-	Challenger  Tier = "CHALLENGER"
+	IRON        Tier = "IRON"
+	BRONZE      Tier = "BRONZE"
+	SILVER      Tier = "SILVER"
+	GOLD        Tier = "GOLD"
+	PLATINUM    Tier = "PLATINUM"
+	DIAMOND     Tier = "DIAMOND"
+	MASTER      Tier = "MASTER"
+	GRANDMASTER Tier = "GRANDMASTER"
+	CHALLENGER  Tier = "CHALLENGER"
 )
 
 // TFT rank divisions, I, II, III, IV, and (deprecated) V.
@@ -239,7 +194,7 @@ type PlatformRoute string
 
 const (
 {{
-    for (const [ name, { id, description, altName, deprecated } ] of Object.entries(routesTable['platform'])) {
+    for (const [ name, { description, deprecated } ] of Object.entries(routesTable['platform'])) {
         const desc = description.split('\n');
 }}
 {{~ desc :line }}
@@ -248,29 +203,29 @@ const (
 {{? deprecated }}
     // Deprecated
 {{?}}
-    {{= name.toUpperCase() }} PlatformRoute = "{{= name }}"
+    {{= dotUtils.changeCase.constantCase(name) }} PlatformRoute = "{{= name }}"
 {{
     }
 }}
 )
 
-// LoL ranked queue types.
+// TFT ranked queue types.
 type QueueType string
 
 const (
 {{
-    for (const e of queueTypes) {
-        const desc = e['x-desc'] ? e['x-desc'].split('\n') : [];
-        if (!e['x-name'].includes("TFT")) continue;
+    for (const queueType of queueTypes) {
+        const desc = queueType['x-desc'] ? queueType['x-desc'].split('\n') : [];
+        if (!queueType['x-name'].includes("TFT")) continue;
 }}
 {{~ desc :line }}
     // {{= line }}
     //
 {{~}}
-{{? e['x-deprecated'] }}
-    // {{= e.notes }}
+{{? queueType['x-deprecated'] }}
+    // {{= queueType.notes }}
 {{?}}
-    {{= dotUtils.changeCase.pascalCase(e['x-name'].toLowerCase().replace("_"," ")) }} QueueType = "{{= e['x-name'] }}"
+    {{= dotUtils.changeCase.constantCase(queueType['x-name']) }} QueueType = "{{= queueType['x-name'] }}"
 {{
     }
 }}

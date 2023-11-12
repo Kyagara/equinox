@@ -14,15 +14,15 @@ package tft
 type Tier string
 
 const (
-	Iron        Tier = "IRON"
-	Bronze      Tier = "BRONZE"
-	Silver      Tier = "SILVER"
-	Gold        Tier = "GOLD"
-	Platinum    Tier = "PLATINUM"
-	Diamond     Tier = "DIAMOND"
-	Master      Tier = "MASTER"
-	Grandmaster Tier = "GRANDMASTER"
-	Challenger  Tier = "CHALLENGER"
+	IRON        Tier = "IRON"
+	BRONZE      Tier = "BRONZE"
+	SILVER      Tier = "SILVER"
+	GOLD        Tier = "GOLD"
+	PLATINUM    Tier = "PLATINUM"
+	DIAMOND     Tier = "DIAMOND"
+	MASTER      Tier = "MASTER"
+	GRANDMASTER Tier = "GRANDMASTER"
+	CHALLENGER  Tier = "CHALLENGER"
 )
 
 // TFT rank divisions, I, II, III, IV, and (deprecated) V.
@@ -77,21 +77,21 @@ const (
     PBE1 PlatformRoute = "pbe1"
 )
 
-// LoL ranked queue types.
+// TFT ranked queue types.
 type QueueType string
 
 const (
     // Ranked Teamfight Tactics games
     //
-    RankedTft QueueType = "RANKED_TFT"
+    RANKED_TFT QueueType = "RANKED_TFT"
     // Ranked Teamfight Tactics (Hyper Roll) games
     //
-    RankedTftTurbo QueueType = "RANKED_TFT_TURBO"
+    RANKED_TFT_TURBO QueueType = "RANKED_TFT_TURBO"
     // Ranked Teamfight Tactics (Double Up Workshop) games
     //
     // Deprecated in patch 12.11 in favor of queueId 1160
-    RankedTftPairs QueueType = "RANKED_TFT_PAIRS"
+    RANKED_TFT_PAIRS QueueType = "RANKED_TFT_PAIRS"
     // Ranked Teamfight Tactics (Double Up Workshop) games
     //
-    RankedTftDoubleUp QueueType = "RANKED_TFT_DOUBLE_UP"
+    RANKED_TFT_DOUBLE_UP QueueType = "RANKED_TFT_DOUBLE_UP"
 )

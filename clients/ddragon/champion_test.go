@@ -44,7 +44,7 @@ func TestChampionAllChampions(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
+			gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
 				Get(fmt.Sprintf(ddragon.ChampionsURL, "1.0", ddragon.PtBR)).
 				Reply(test.code).
 				JSON(test.want)
@@ -96,7 +96,7 @@ func TestChampionByName(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
+			gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
 				Get(fmt.Sprintf(ddragon.ChampionURL, "1.0", ddragon.PtBR, "JarvanIV")).
 				Reply(test.code).
 				JSON(test.want)
@@ -126,7 +126,7 @@ func TestChampionAllChampionsBadlyFormattedJson(t *testing.T) {
 		Data:    "{bad:json}",
 	}
 
-	gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
+	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
 		Get(fmt.Sprintf(ddragon.ChampionsURL, "1.0", ddragon.PtBR)).
 		Reply(200).
 		JSON(json)
@@ -154,7 +154,7 @@ func TestChampionByNameBadlyFormattedJson(t *testing.T) {
 		Data:    "{bad:json}",
 	}
 
-	gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
+	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
 		Get(fmt.Sprintf(ddragon.ChampionURL, "1.0", ddragon.PtBR, "JarvanIV")).
 		Reply(200).
 		JSON(json)

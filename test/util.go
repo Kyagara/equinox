@@ -23,7 +23,7 @@ type TestCase[Model any, Parameters any] struct {
 }
 
 func (testCase TestCase[Model, Parameters]) MockGetResponse(url string, region string, accessToken string) {
-	mock := gock.New(fmt.Sprintf(api.BaseURLFormat, region)).
+	mock := gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, region)).
 		Get(url).
 		Reply(testCase.Code).
 		JSON(testCase.Want)
@@ -34,7 +34,7 @@ func (testCase TestCase[Model, Parameters]) MockGetResponse(url string, region s
 }
 
 func (testCase TestCase[Model, Parameters]) MockPostResponse(url string, region string, accessToken string) {
-	gock.New(fmt.Sprintf(api.BaseURLFormat, region)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, region)).
 		Post(url).
 		Reply(testCase.Code).
 		JSON(testCase.Want)

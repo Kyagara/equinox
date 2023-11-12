@@ -167,35 +167,29 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, 
 func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Response) error {
 	// If the API returns a 429 code
 	if response.StatusCode == http.StatusTooManyRequests {
-		limit_type := response.Header.Get(api.RateLimitTypeHeader)
-
+		limit_type := response.Header.Get(api.X_RATE_LIMIT_TYPE_HEADER)
 		if limit_type != "" {
 			logger.Warn(fmt.Sprintf("Rate limited, type: %s", limit_type))
 		} else {
 			logger.Warn("Rate limited but no service was specified")
 		}
-
 		if c.IsRetryEnabled {
-			retryAfter := response.Header.Get(api.RetryAfterHeader)
-
+			retryAfter := response.Header.Get(api.RETRY_AFTER_HEADER)
 			// If the header isn't found, don't retry and return error
 			if retryAfter == "" {
 				logger.Error("Request failed", zap.Error(api.ErrRetryAfterHeaderNotFound))
 				return api.ErrRetryAfterHeaderNotFound
 			}
-
 			seconds, err := strconv.Atoi(retryAfter)
 			if err != nil {
 				logger.Error("Error converting Retry-After header", zap.Error(err))
 				return err
 			}
-
 			logger.Warn(fmt.Sprintf("Retrying request in %ds", seconds))
 			time.Sleep(time.Duration(seconds) * time.Second)
 			return api.ErrTooManyRequests
 		}
 	}
-
 	// If the status code is lower than 200 or higher than 299, return an error
 	if response.StatusCode < http.StatusOK || response.StatusCode > 299 {
 		logger.Error("Request failed", zap.Error(fmt.Errorf("endpoint method returned an error code: %v", response.Status)))
@@ -218,7 +212,7 @@ func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Respon
 func (c *InternalClient) GetDDragonLOLVersions(client string, endpoint string, method string) ([]string, error) {
 	logger := c.Logger(client, endpoint, method)
 	logger.Debug("Method started execution")
-	request, err := c.Request(api.DataDragonURLFormat, http.MethodGet, "", api.DataDragonLOLVersionURL, nil)
+	request, err := c.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "/api/versions.json", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
