@@ -132,7 +132,7 @@ type Image struct {
 func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[string]ChampionData, error) {
 	logger := e.internalClient.Logger("DDragon", "Champion", "AllChampions")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.DataDragonURLFormat, http.MethodGet, "", fmt.Sprintf(ChampionsURL, version, language), nil)
+	request, err := e.internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionsURL, version, language), nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
@@ -161,7 +161,7 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 func (e *ChampionEndpoint) ByName(version string, language Language, champion string) (*FullChampionData, error) {
 	logger := e.internalClient.Logger("DDragon", "Champion", "ByName")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.DataDragonURLFormat, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, language, champion), nil)
+	request, err := e.internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, language, champion), nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err

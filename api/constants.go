@@ -57,16 +57,15 @@ func (c CacheConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 
 // Base API URLs formats.
 const (
-	BaseURLFormat = "https://%s.api.riotgames.com"
-	DataDragonURLFormat      = "https://ddragon.leagueoflegends.com%s"
-	CommunityDragonURLFormat = "https://cdn.communitydragon.org%s"
-	DataDragonLOLVersionURL = "/api/versions.json"
+	RIOT_API_BASE_URL_FORMAT = "https://%s.api.riotgames.com"
+	D_DRAGON_BASE_URL_FORMAT = "https://ddragon.leagueoflegends.com%s"
+	C_DRAGON_BASE_URL_FORMAT = "https://cdn.communitydragon.org%s"
 )
 
 // Rate limit headers
 const (
-	RateLimitTypeHeader = "X-Rate-Limit-Type"
-	RetryAfterHeader    = "Retry-After"
+	X_RATE_LIMIT_TYPE_HEADER = "X-Rate-Limit-Type"
+	RETRY_AFTER_HEADER     = "Retry-After"
 )
 
 type LogLevel int8

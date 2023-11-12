@@ -14,16 +14,16 @@ package lol
 type Tier string
 
 const (
-	Iron        Tier = "IRON"
-	Bronze      Tier = "BRONZE"
-	Silver      Tier = "SILVER"
-	Gold        Tier = "GOLD"
-	Platinum    Tier = "PLATINUM"
-    Emerald     Tier = "EMERALD"
-	Diamond     Tier = "DIAMOND"
-	Master      Tier = "MASTER"
-	Grandmaster Tier = "GRANDMASTER"
-	Challenger  Tier = "CHALLENGER"
+	IRON        Tier = "IRON"
+	BRONZE      Tier = "BRONZE"
+	SILVER      Tier = "SILVER"
+	GOLD        Tier = "GOLD"
+	PLATINUM    Tier = "PLATINUM"
+    EMERALD     Tier = "EMERALD"
+	DIAMOND     Tier = "DIAMOND"
+	MASTER      Tier = "MASTER"
+	GRANDMASTER Tier = "GRANDMASTER"
+	CHALLENGER  Tier = "CHALLENGER"
 )
 
 // LoL rank divisions, I, II, III, IV, and (deprecated) V.
@@ -104,102 +104,16 @@ const (
     PBE TournamentRegion = "pbe1"
 )
 
-// A League of Legends map.
-type Map int
-
-const (
-    // Summoner's Rift
-    //
-    // Original Summer variant
-    //
-    SummonersRiftOriginalSummerVariant Map = 1
-    // Summoner's Rift
-    //
-    // Original Autumn variant
-    //
-    SummonersRiftOriginalAutumnVariant Map = 2
-    // The Proving Grounds
-    //
-    // Tutorial Map
-    //
-    TheProvingGrounds Map = 3
-    // Twisted Treeline
-    //
-    // Original Version
-    //
-    TwistedTreelineOriginalVersion Map = 4
-    // The Crystal Scar
-    //
-    // Dominion map
-    //
-    TheCrystalScar Map = 8
-    // Twisted Treeline
-    //
-    // Last TT map
-    //
-    TwistedTreeline Map = 10
-    // Summoner's Rift
-    //
-    // Current Version
-    //
-    SummonersRift Map = 11
-    // Howling Abyss
-    //
-    // ARAM map
-    //
-    HowlingAbyss Map = 12
-    // Butcher's Bridge
-    //
-    // Alternate ARAM map
-    //
-    ButchersBridge Map = 14
-    // Cosmic Ruins
-    //
-    // Dark Star: Singularity map
-    //
-    CosmicRuins Map = 16
-    // Valoran City Park
-    //
-    // Star Guardian Invasion map
-    //
-    ValoranCityPark Map = 18
-    // Substructure 43
-    //
-    // PROJECT: Hunters map
-    //
-    Substructure_43 Map = 19
-    // Crash Site
-    //
-    // Odyssey: Extraction map
-    //
-    CrashSite Map = 20
-    // Nexus Blitz
-    //
-    // Nexus Blitz map
-    //
-    NexusBlitz Map = 21
-    // Convergence
-    //
-    // Teamfight Tactics map
-    //
-    Convergence Map = 22
-    // Arena
-    //
-    // Map for 2v2v2v2 (`CHERRY`). Team up with a friend or venture solo in this new game mode. Face against multiple teams in chaotic battles across diverse arenas
-    //
-    Arena Map = 30
-)
-
 // League of Legends game type: matched game, custom game, or tutorial game.
 type GameType string
 
 const (
     // Custom games
-    CustomGame GameType = "CUSTOM_GAME"
+    CUSTOM_GAME GameType = "CUSTOM_GAME"
     // all other games
-    MatchedGame GameType = "MATCHED_GAME"
+    MATCHED_GAME GameType = "MATCHED_GAME"
     // Tutorial games
-    TutorialGame GameType = "TUTORIAL_GAME"
+    TUTORIAL_GAME GameType = "TUTORIAL_GAME"
 )
 
 // League of Legends game mode, such as Classic,
@@ -208,55 +122,55 @@ type GameMode string
 
 const (
     // ARAM games
-    Aram GameMode = "ARAM"
+    ARAM GameMode = "ARAM"
     // All Random Summoner's Rift games
-    Arsr GameMode = "ARSR"
+    ARSR GameMode = "ARSR"
     // Ascension games
-    Ascension GameMode = "ASCENSION"
+    ASCENSION GameMode = "ASCENSION"
     // Blood Hunt Assassin games
-    Assassinate GameMode = "ASSASSINATE"
+    ASSASSINATE GameMode = "ASSASSINATE"
     // 2v2v2v2
-    Cherry GameMode = "CHERRY"
+    CHERRY GameMode = "CHERRY"
     // Classic Summoner's Rift and Twisted Treeline games
-    Classic GameMode = "CLASSIC"
+    CLASSIC GameMode = "CLASSIC"
     // Dark Star: Singularity games
-    Darkstar GameMode = "DARKSTAR"
+    DARKSTAR GameMode = "DARKSTAR"
     // Doom Bot games
-    Doombotsteemo GameMode = "DOOMBOTSTEEMO"
+    DOOMBOTSTEEMO GameMode = "DOOMBOTSTEEMO"
     // Snowdown Showdown games
-    Firstblood GameMode = "FIRSTBLOOD"
+    FIRSTBLOOD GameMode = "FIRSTBLOOD"
     // Nexus Blitz games
-    Gamemodex GameMode = "GAMEMODEX"
+    GAMEMODEX GameMode = "GAMEMODEX"
     // Legend of the Poro King games
-    Kingporo GameMode = "KINGPORO"
+    KINGPORO GameMode = "KINGPORO"
     // Nexus Blitz games
-    Nexusblitz GameMode = "NEXUSBLITZ"
+    NEXUSBLITZ GameMode = "NEXUSBLITZ"
     // Dominion/Crystal Scar games
-    Odin GameMode = "ODIN"
+    ODIN GameMode = "ODIN"
     // Odyssey: Extraction games
-    Odyssey GameMode = "ODYSSEY"
+    ODYSSEY GameMode = "ODYSSEY"
     // One for All games
-    Oneforall GameMode = "ONEFORALL"
+    ONEFORALL GameMode = "ONEFORALL"
     // Practice tool training games.
-    Practicetool GameMode = "PRACTICETOOL"
+    PRACTICETOOL GameMode = "PRACTICETOOL"
     // PROJECT: Hunters games
-    Project GameMode = "PROJECT"
+    PROJECT GameMode = "PROJECT"
     // Nexus Siege games
-    Siege GameMode = "SIEGE"
+    SIEGE GameMode = "SIEGE"
     // Star Guardian Invasion games
-    Starguardian GameMode = "STARGUARDIAN"
+    STARGUARDIAN GameMode = "STARGUARDIAN"
     // Tutorial games
-    Tutorial GameMode = "TUTORIAL"
+    TUTORIAL GameMode = "TUTORIAL"
     // Tutorial: Welcome to League.
-    TutorialModule_1 GameMode = "TUTORIAL_MODULE_1"
+    TUTORIAL_MODULE_1 GameMode = "TUTORIAL_MODULE_1"
     // Tutorial: Power Up.
-    TutorialModule_2 GameMode = "TUTORIAL_MODULE_2"
+    TUTORIAL_MODULE_2 GameMode = "TUTORIAL_MODULE_2"
     // Tutorial: Shop for Gear.
-    TutorialModule_3 GameMode = "TUTORIAL_MODULE_3"
+    TUTORIAL_MODULE_3 GameMode = "TUTORIAL_MODULE_3"
     // Ultimate Spellbook games
-    Ultbook GameMode = "ULTBOOK"
+    ULTBOOK GameMode = "ULTBOOK"
     // URF games
-    Urf GameMode = "URF"
+    URF GameMode = "URF"
 )
 
 // LoL ranked queue types.
@@ -265,325 +179,12 @@ type QueueType string
 const (
     // 5v5 Ranked Solo games
     //
-    RankedSolo_5x5 QueueType = "RANKED_SOLO_5x5"
+    RANKED_SOLO_5X5 QueueType = "RANKED_SOLO_5x5"
     // 5v5 Ranked Flex games
     //
-    RankedFlexSr QueueType = "RANKED_FLEX_SR"
+    RANKED_FLEX_SR QueueType = "RANKED_FLEX_SR"
     // 3v3 Ranked Flex games
     //
     // Deprecated in patch 9.23
-    RankedFlexTt QueueType = "RANKED_FLEX_TT"
-)
-
-// A League of Legends matchmaking queue.
-type Queue int
-
-const (
-    // Games on Custom games
-    //
-    Custom Queue = 0
-    // 5v5 Blind Pick games on Summoner's Rift
-    //
-    // Deprecated in patch 7.19 in favor of queueId 430
-    SummonersRift_5v5BlindPickDeprecated_2 Queue = 2
-    // 5v5 Ranked Solo games on Summoner's Rift
-    //
-    // Deprecated in favor of queueId 420
-    SummonersRift_5v5RankedSoloDeprecated_4 Queue = 4
-    // 5v5 Ranked Premade games on Summoner's Rift
-    //
-    // Game mode deprecated
-    SummonersRift_5v5RankedPremade Queue = 6
-    // Co-op vs AI games on Summoner's Rift
-    //
-    // Deprecated in favor of queueId 32 and 33
-    SummonersRiftCoOpVsAi Queue = 7
-    // 3v3 Normal games on Twisted Treeline
-    //
-    // Deprecated in patch 7.19 in favor of queueId 460
-    TwistedTreeline_3v3Normal Queue = 8
-    // 3v3 Ranked Flex games on Twisted Treeline
-    //
-    // Deprecated in patch 7.19 in favor of queueId 470
-    TwistedTreeline_3v3RankedFlexDeprecated_9 Queue = 9
-    // 5v5 Draft Pick games on Summoner's Rift
-    //
-    // Deprecated in favor of queueId 400
-    SummonersRift_5v5DraftPickDeprecated_14 Queue = 14
-    // 5v5 Dominion Blind Pick games on Crystal Scar
-    //
-    // Game mode deprecated
-    CrystalScar_5v5DominionBlindPick Queue = 16
-    // 5v5 Dominion Draft Pick games on Crystal Scar
-    //
-    // Game mode deprecated
-    CrystalScar_5v5DominionDraftPick Queue = 17
-    // Dominion Co-op vs AI games on Crystal Scar
-    //
-    // Game mode deprecated
-    CrystalScarDominionCoOpVsAi Queue = 25
-    // Co-op vs AI Intro Bot games on Summoner's Rift
-    //
-    // Deprecated in patch 7.19 in favor of queueId 830
-    SummonersRiftCoOpVsAiIntroBotDeprecated_31 Queue = 31
-    // Co-op vs AI Beginner Bot games on Summoner's Rift
-    //
-    // Deprecated in patch 7.19 in favor of queueId 840
-    SummonersRiftCoOpVsAiBeginnerBotDeprecated_32 Queue = 32
-    // Co-op vs AI Intermediate Bot games on Summoner's Rift
-    //
-    // Deprecated in patch 7.19 in favor of queueId 850
-    SummonersRiftCoOpVsAiIntermediateBotDeprecated_33 Queue = 33
-    // 3v3 Ranked Team games on Twisted Treeline
-    //
-    // Game mode deprecated
-    TwistedTreeline_3v3RankedTeam Queue = 41
-    // 5v5 Ranked Team games on Summoner's Rift
-    //
-    // Game mode deprecated
-    SummonersRift_5v5RankedTeam Queue = 42
-    // Co-op vs AI games on Twisted Treeline
-    //
-    // Deprecated in patch 7.19 in favor of queueId 800
-    TwistedTreelineCoOpVsAi Queue = 52
-    // 5v5 Team Builder games on Summoner's Rift
-    //
-    // Game mode deprecated
-    SummonersRift_5v5TeamBuilder Queue = 61
-    // 5v5 ARAM games on Howling Abyss
-    //
-    // Deprecated in patch 7.19 in favor of queueId 450
-    HowlingAbyss_5v5AramDeprecated_65 Queue = 65
-    // ARAM Co-op vs AI games on Howling Abyss
-    //
-    // Game mode deprecated
-    HowlingAbyssAramCoOpVsAi Queue = 67
-    // One for All games on Summoner's Rift
-    //
-    // Deprecated in patch 8.6 in favor of queueId 1020
-    SummonersRiftOneForAllDeprecated_70 Queue = 70
-    // 1v1 Snowdown Showdown games on Howling Abyss
-    //
-    HowlingAbyss_1v1SnowdownShowdown Queue = 72
-    // 2v2 Snowdown Showdown games on Howling Abyss
-    //
-    HowlingAbyss_2v2SnowdownShowdown Queue = 73
-    // 6v6 Hexakill games on Summoner's Rift
-    //
-    SummonersRift_6v6Hexakill Queue = 75
-    // Ultra Rapid Fire games on Summoner's Rift
-    //
-    SummonersRiftUltraRapidFire Queue = 76
-    // One For All: Mirror Mode games on Howling Abyss
-    //
-    HowlingAbyssOneForAllMirrorMode Queue = 78
-    // Co-op vs AI Ultra Rapid Fire games on Summoner's Rift
-    //
-    SummonersRiftCoOpVsAiUltraRapidFire Queue = 83
-    // Doom Bots Rank 1 games on Summoner's Rift
-    //
-    // Deprecated in patch 7.19 in favor of queueId 950
-    SummonersRiftDoomBotsRank_1 Queue = 91
-    // Doom Bots Rank 2 games on Summoner's Rift
-    //
-    // Deprecated in patch 7.19 in favor of queueId 950
-    SummonersRiftDoomBotsRank_2 Queue = 92
-    // Doom Bots Rank 5 games on Summoner's Rift
-    //
-    // Deprecated in patch 7.19 in favor of queueId 950
-    SummonersRiftDoomBotsRank_5 Queue = 93
-    // Ascension games on Crystal Scar
-    //
-    // Deprecated in patch 7.19 in favor of queueId 910
-    CrystalScarAscensionDeprecated_96 Queue = 96
-    // 6v6 Hexakill games on Twisted Treeline
-    //
-    TwistedTreeline_6v6Hexakill Queue = 98
-    // 5v5 ARAM games on Butcher's Bridge
-    //
-    ButchersBridge_5v5Aram Queue = 100
-    // Legend of the Poro King games on Howling Abyss
-    //
-    // Deprecated in patch 7.19 in favor of queueId 920
-    HowlingAbyssLegendOfThePoroKingDeprecated_300 Queue = 300
-    // Nemesis games on Summoner's Rift
-    //
-    SummonersRiftNemesis Queue = 310
-    // Black Market Brawlers games on Summoner's Rift
-    //
-    SummonersRiftBlackMarketBrawlers Queue = 313
-    // Nexus Siege games on Summoner's Rift
-    //
-    // Deprecated in patch 7.19 in favor of queueId 940
-    SummonersRiftNexusSiegeDeprecated_315 Queue = 315
-    // Definitely Not Dominion games on Crystal Scar
-    //
-    CrystalScarDefinitelyNotDominion Queue = 317
-    // ARURF games on Summoner's Rift
-    //
-    // Deprecated in patch 7.19 in favor of queueId 900
-    SummonersRiftArurfDeprecated_318 Queue = 318
-    // All Random games on Summoner's Rift
-    //
-    SummonersRiftAllRandom Queue = 325
-    // 5v5 Draft Pick games on Summoner's Rift
-    //
-    SummonersRift_5v5DraftPick Queue = 400
-    // 5v5 Ranked Dynamic games on Summoner's Rift
-    //
-    // Game mode deprecated in patch 6.22
-    SummonersRift_5v5RankedDynamic Queue = 410
-    // 5v5 Ranked Solo games on Summoner's Rift
-    //
-    SummonersRift_5v5RankedSolo Queue = 420
-    // 5v5 Blind Pick games on Summoner's Rift
-    //
-    SummonersRift_5v5BlindPick Queue = 430
-    // 5v5 Ranked Flex games on Summoner's Rift
-    //
-    SummonersRift_5v5RankedFlex Queue = 440
-    // 5v5 ARAM games on Howling Abyss
-    //
-    HowlingAbyss_5v5Aram Queue = 450
-    // 3v3 Blind Pick games on Twisted Treeline
-    //
-    // Deprecated in patch 9.23
-    TwistedTreeline_3v3BlindPick Queue = 460
-    // 3v3 Ranked Flex games on Twisted Treeline
-    //
-    // Deprecated in patch 9.23
-    TwistedTreeline_3v3RankedFlexDeprecated_470 Queue = 470
-    // Blood Hunt Assassin games on Summoner's Rift
-    //
-    SummonersRiftBloodHuntAssassin Queue = 600
-    // Dark Star: Singularity games on Cosmic Ruins
-    //
-    CosmicRuinsDarkStarSingularity Queue = 610
-    // Summoner's Rift Clash games on Summoner's Rift
-    //
-    SummonersRiftClash Queue = 700
-    // ARAM Clash games on Howling Abyss
-    //
-    HowlingAbyssAramClash Queue = 720
-    // Co-op vs. AI Intermediate Bot games on Twisted Treeline
-    //
-    // Deprecated in patch 9.23
-    TwistedTreelineCoOpVsAiIntermediateBot Queue = 800
-    // Co-op vs. AI Intro Bot games on Twisted Treeline
-    //
-    // Deprecated in patch 9.23
-    TwistedTreelineCoOpVsAiIntroBot Queue = 810
-    // Co-op vs. AI Beginner Bot games on Twisted Treeline
-    //
-    TwistedTreelineCoOpVsAiBeginnerBot Queue = 820
-    // Co-op vs. AI Intro Bot games on Summoner's Rift
-    //
-    SummonersRiftCoOpVsAiIntroBot Queue = 830
-    // Co-op vs. AI Beginner Bot games on Summoner's Rift
-    //
-    SummonersRiftCoOpVsAiBeginnerBot Queue = 840
-    // Co-op vs. AI Intermediate Bot games on Summoner's Rift
-    //
-    SummonersRiftCoOpVsAiIntermediateBot Queue = 850
-    // ARURF games on Summoner's Rift
-    //
-    SummonersRiftArurf Queue = 900
-    // Ascension games on Crystal Scar
-    //
-    CrystalScarAscension Queue = 910
-    // Legend of the Poro King games on Howling Abyss
-    //
-    HowlingAbyssLegendOfThePoroKing Queue = 920
-    // Nexus Siege games on Summoner's Rift
-    //
-    SummonersRiftNexusSiege Queue = 940
-    // Doom Bots Voting games on Summoner's Rift
-    //
-    SummonersRiftDoomBotsVoting Queue = 950
-    // Doom Bots Standard games on Summoner's Rift
-    //
-    SummonersRiftDoomBotsStandard Queue = 960
-    // Star Guardian Invasion: Normal games on Valoran City Park
-    //
-    ValoranCityParkStarGuardianInvasionNormal Queue = 980
-    // Star Guardian Invasion: Onslaught games on Valoran City Park
-    //
-    ValoranCityParkStarGuardianInvasionOnslaught Queue = 990
-    // PROJECT: Hunters games on Overcharge
-    //
-    OverchargeProjectHunters Queue = 1000
-    // Snow ARURF games on Summoner's Rift
-    //
-    SummonersRiftSnowArurf Queue = 1010
-    // One for All games on Summoner's Rift
-    //
-    SummonersRiftOneForAll Queue = 1020
-    // Odyssey Extraction: Intro games on Crash Site
-    //
-    CrashSiteOdysseyExtractionIntro Queue = 1030
-    // Odyssey Extraction: Cadet games on Crash Site
-    //
-    CrashSiteOdysseyExtractionCadet Queue = 1040
-    // Odyssey Extraction: Crewmember games on Crash Site
-    //
-    CrashSiteOdysseyExtractionCrewmember Queue = 1050
-    // Odyssey Extraction: Captain games on Crash Site
-    //
-    CrashSiteOdysseyExtractionCaptain Queue = 1060
-    // Odyssey Extraction: Onslaught games on Crash Site
-    //
-    CrashSiteOdysseyExtractionOnslaught Queue = 1070
-    // Teamfight Tactics games on Convergence
-    //
-    ConvergenceTeamfightTactics Queue = 1090
-    // Teamfight Tactics 1v0 games on Convergence
-    //
-    ConvergenceTeamfightTactics_1v0 Queue = 1091
-    // Teamfight Tactics 2v0 games on Convergence
-    //
-    ConvergenceTeamfightTactics_2v0 Queue = 1092
-    // Ranked Teamfight Tactics games on Convergence
-    //
-    ConvergenceRankedTeamfightTactics Queue = 1100
-    // Teamfight Tactics Tutorial games on Convergence
-    //
-    ConvergenceTeamfightTacticsTutorial Queue = 1110
-    // Teamfight Tactics Simluation games on Convergence
-    //
-    ConvergenceTeamfightTacticsSimluation Queue = 1111
-    // Ranked Teamfight Tactics (Hyper Roll) games on Convergence
-    //
-    ConvergenceRankedTeamfightTacticsHyperRoll Queue = 1130
-    // Ranked Teamfight Tactics (Double Up Workshop) games on Convergence
-    //
-    // Deprecated in patch 12.11 in favor of queueId 1160
-    ConvergenceRankedTeamfightTacticsDoubleUpWorkshopDeprecated_1150 Queue = 1150
-    // Ranked Teamfight Tactics (Double Up Workshop) games on Convergence
-    //
-    ConvergenceRankedTeamfightTacticsDoubleUpWorkshop Queue = 1160
-    // Nexus Blitz games on Nexus Blitz
-    //
-    // Deprecated in patch 9.2 in favor of queueId 1300
-    NexusBlitzDeprecated_1200 Queue = 1200
-    // Nexus Blitz games on Nexus Blitz
-    //
-    NexusBlitzQueue Queue = 1300
-    // Ultimate Spellbook games on Summoner's Rift
-    //
-    SummonersRiftUltimateSpellbook Queue = 1400
-    // 2v2v2v2 `CHERRY` games on Arena
-    //
-    Arena_2v2v2v2Cherry Queue = 1700
-    // Pick URF games on Summoner's Rift
-    //
-    SummonersRiftPickUrf Queue = 1900
-    // Tutorial 1 games on Summoner's Rift
-    //
-    SummonersRiftTutorial_1 Queue = 2000
-    // Tutorial 2 games on Summoner's Rift
-    //
-    SummonersRiftTutorial_2 Queue = 2010
-    // Tutorial 3 games on Summoner's Rift
-    //
-    SummonersRiftTutorial_3 Queue = 2020
+    RANKED_FLEX_TT QueueType = "RANKED_FLEX_TT"
 )

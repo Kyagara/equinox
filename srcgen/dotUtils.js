@@ -1,13 +1,10 @@
 const changeCase = require('change-case')
 const versionReg = /V.*\d/
 const clientReg = /(Lor|Riot|Val|Lol|Tft)/
-const optQueryParamsReg = /(^[a-z]+|[A-Z]+(?![a-z])|[A-Z][a-z]+)/
+const spec = require('./specs/spec.json')
 
 // flatMap: https://gist.github.com/samgiles/762ee337dff48623e729
 // [B](f: (A) ⇒ [B]): [B]  ; Although the types in the arrays aren't strict (:
-Array.prototype.flatMap = function (lambda) {
-  return Array.prototype.concat.apply([], this.map(lambda))
-}
 Array.prototype.groupBy = function (lambda) {
   return Object.entries(
     this.reduce((agg, x) => {
@@ -43,9 +40,9 @@ package ${packageName}
 // Spec version = ${version}`
 }
 
-function getEndpointGroupsByName(paths, name) {
+function getEndpointGroupsByName(name) {
   const endpointGroups = {}
-  for (let path of Object.entries(paths)) {
+  for (let path of Object.entries(spec.paths)) {
     let api = path[0].split('/')[1]
     if (api === 'fulfillment' && name === 'lol') {
       let ep = path[1]['x-endpoint']
@@ -248,7 +245,7 @@ function normalizePropName(propName) {
   if (/^\d/.test(out)) {
     out = 'x' + out
   }
-  if (out === 'Authorization') return out.toLowerCase()
+  if (out === 'Authorization') return 'authorization'
   if (out === 'type') return out + '_'
   return out
 }
@@ -260,9 +257,15 @@ function stringifyType(prop) {
 
   let enumType = prop['x-enum']
   if (enumType && 'locale' !== enumType) {
-    if (enumType === 'champion') return 'int'
-    if (enumType === 'team') return 'int'
-    return changeCase.pascalCase(enumType)
+    const type = prop['x-type']
+    if (enumType === 'champion') return !prop['format'] ? 'int64' : prop['format']
+    if (!type) {
+      changeCase.pascalCase(enumType)
+    }
+    if (type === 'string') {
+      return changeCase.pascalCase(enumType)
+    }
+    return prop['format']
   }
 
   let refType = prop['$ref']
@@ -295,29 +298,37 @@ function formatJsonProperty(name) {
 function formatAddQueryParam(param) {
   const name = normalizePropName(param.name)
   const prop = param.schema
+  let letHeaderName = name
+  if (name.endsWith('_')) {
+    letHeaderName = name.slice(0, -1)
+  }
   if (prop.type === 'string') {
     return `if ${name} != \"\" {
-    values.Set("${name}", fmt.Sprint(${name}))
+    values.Set("${letHeaderName}", fmt.Sprint(${name}))
   }`
   }
   if (prop.type === 'integer') {
     return `if ${name} != -1 {
-    values.Set("${name}", fmt.Sprint(${name}))
+    values.Set("${letHeaderName}", fmt.Sprint(${name}))
   }`
   }
   throw `${prop.type} not supported`
 }
 
 function formatAddHeaderParam(param, returnValue, isPrimitive) {
-  const name = normalizePropName(param.name)
+  let name = normalizePropName(param.name)
   const prop = param.schema
   let value = `new(${returnValue})`
   if (isPrimitive) value = '*' + value
+  let letHeaderName = name
+  if (name.endsWith('_')) {
+    letHeaderName = name.slice(0, -1)
+  }
   if (prop.type === 'string') {
     return `if ${name} == \"\" {
     return ${value}, fmt.Errorf("'${name}' header is required")
   }
-  request.Header.Set("${name}", fmt.Sprint(${name}))`
+  request.Header.Set("${letHeaderName}", fmt.Sprint(${name}))`
   }
   throw `${prop.type} not supported`
 }
@@ -330,7 +341,8 @@ function formatRouteArgument(route, pathParams = []) {
 }
 
 module.exports = {
-  optQueryParamsReg,
+  spec,
+
   getEndpointGroupsByName,
 
   changeCase,

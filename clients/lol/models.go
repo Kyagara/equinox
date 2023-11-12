@@ -21,7 +21,7 @@ type ChampionMasteryV4DTO struct {
     // Is chest granted for this champion or not in current season.
     ChestGranted bool `json:"chestGranted"`
     // Champion ID for this entry.
-    ChampionID int `json:"championId"`
+    ChampionID int64 `json:"championId"`
     // Last time this champion was played by this player - in Unix milliseconds time format.
     LastPlayTime int64 `json:"lastPlayTime"`
     // Champion level for specified player and champion combination.
@@ -40,8 +40,8 @@ type ChampionMasteryV4DTO struct {
 // ChampionInfoDTO data object.
 type ChampionRotationV3DTO struct {
     MaxNewPlayerLevel int32 `json:"maxNewPlayerLevel"`
-    FreeChampionIDsForNewPlayers []int `json:"freeChampionIdsForNewPlayers"`
-    FreeChampionIDs []int `json:"freeChampionIds"`
+    FreeChampionIDsForNewPlayers []int32 `json:"freeChampionIdsForNewPlayers"`
+    FreeChampionIDs []int32 `json:"freeChampionIds"`
 }
 
 // PlayerDTO data object.
@@ -391,12 +391,12 @@ type InfoV5DTO struct {
     // The first two parts can be used to determine the patch a game was played on.
     GameVersion string `json:"gameVersion"`
     // Refer to the Game Constants documentation.
-    MapID Map `json:"mapId"`
+    MapID int32 `json:"mapId"`
     Participants []ParticipantV5DTO `json:"participants"`
     // Platform where the match was played.
     PlatformID string `json:"platformId"`
     // Refer to the Game Constants documentation.
-    QueueID Queue `json:"queueId"`
+    QueueID int32 `json:"queueId"`
     Teams []TeamV5DTO `json:"teams"`
     // Tournament code used to generate the match. This field was added to match-v5 in patch 11.13 on June 23rd, 2021.
     TournamentCode string `json:"tournamentCode"`
@@ -410,7 +410,7 @@ type ParticipantV5DTO struct {
     ChampExperience int32 `json:"champExperience"`
     ChampLevel int32 `json:"champLevel"`
     // Prior to patch 11.4, on Feb 18th, 2021, this field returned invalid championIds. We recommend determining the champion based on the championName field for matches played prior to patch 11.4.
-    ChampionID int `json:"championId"`
+    ChampionID int32 `json:"championId"`
     ChampionName string `json:"championName"`
     // This field is currently only utilized for Kayn's transformations. (Legal values: 0 - None, 1 - Slayer, 2 - Assassin)
     ChampionTransform int32 `json:"championTransform"`
@@ -485,7 +485,7 @@ type ParticipantV5DTO struct {
     SummonerLevel int32 `json:"summonerLevel"`
     SummonerName string `json:"summonerName"`
     TeamEarlySurrendered bool `json:"teamEarlySurrendered"`
-    TeamID int `json:"teamId"`
+    TeamID int32 `json:"teamId"`
     // Both individualPosition and teamPosition are computed by the game server and are different versions of the most likely position played by a player. The individualPosition is the best guess for which position the player actually played in isolation of anything else. The teamPosition is the best guess for which position the player actually played if we add the constraint that each team must have one top player, one jungle, one middle, etc. Generally the recommendation is to use the teamPosition field over the individualPosition field.
     TeamPosition string `json:"teamPosition"`
     TimeCCingOthers int32 `json:"timeCCingOthers"`
@@ -572,13 +572,13 @@ type PerkStyleSelectionV5DTO struct {
 type TeamV5DTO struct {
     Bans []BanV5DTO `json:"bans"`
     Objectives ObjectivesV5DTO `json:"objectives"`
-    TeamID int `json:"teamId"`
+    TeamID int32 `json:"teamId"`
     Win bool `json:"win"`
 }
 
 // BanDTO data object.
 type BanV5DTO struct {
-    ChampionID int `json:"championId"`
+    ChampionID int32 `json:"championId"`
     PickTurn int32 `json:"pickTurn"`
 }
 
@@ -765,9 +765,9 @@ type MatchTimelineInfoFrameEventV5DTO struct {
     VictimID int32 `json:"victimId"`
     KillType string `json:"killType"`
     LaneType string `json:"laneType"`
-    TeamID int `json:"teamId"`
+    TeamID int32 `json:"teamId"`
     MultiKillLength int32 `json:"multiKillLength"`
-    KillerTeamID int `json:"killerTeamId"`
+    KillerTeamID int32 `json:"killerTeamId"`
     MonsterType string `json:"monsterType"`
     MonsterSubType string `json:"monsterSubType"`
     BuildingType string `json:"buildingType"`
@@ -909,7 +909,7 @@ type CurrentGameInfoV4DTO struct {
     // The game start time represented in epoch milliseconds
     GameStartTime int64 `json:"gameStartTime"`
     // The ID of the map
-    MapID Map `json:"mapId"`
+    MapID int64 `json:"mapId"`
     // The amount of time in seconds that has passed since the game started
     GameLength int64 `json:"gameLength"`
     // The ID of the platform on which the game is being played
@@ -919,7 +919,7 @@ type CurrentGameInfoV4DTO struct {
     // Banned champion information
     BannedChampions []BannedChampionV4DTO `json:"bannedChampions"`
     // The queue type (queue types are documented on the Game Constants page)
-    GameQueueConfigID Queue `json:"gameQueueConfigId"`
+    GameQueueConfigID int64 `json:"gameQueueConfigId"`
     // The observer information
     Observers ObserverV4DTO `json:"observers"`
     // The participant information
@@ -931,9 +931,9 @@ type BannedChampionV4DTO struct {
     // The turn during which the champion was banned
     PickTurn int32 `json:"pickTurn"`
     // The ID of the banned champion
-    ChampionID int `json:"championId"`
+    ChampionID int64 `json:"championId"`
     // The ID of the team that banned the champion
-    TeamID int `json:"teamId"`
+    TeamID int64 `json:"teamId"`
 }
 
 // ObserverDTO data object.
@@ -945,7 +945,7 @@ type ObserverV4DTO struct {
 // CurrentGameParticipantDTO data object.
 type CurrentGameParticipantV4DTO struct {
     // The ID of the champion played by this participant
-    ChampionID int `json:"championId"`
+    ChampionID int64 `json:"championId"`
     // Perks/Runes Reforged Information
     Perks PerksV4DTO `json:"perks"`
     // The ID of the profile icon used by this participant
@@ -953,7 +953,7 @@ type CurrentGameParticipantV4DTO struct {
     // Flag indicating whether or not this participant is a bot
     Bot bool `json:"bot"`
     // The team ID of this participant, indicating the participant's team
-    TeamID int `json:"teamId"`
+    TeamID int64 `json:"teamId"`
     // The summoner name of this participant
     SummonerName string `json:"summonerName"`
     // The encrypted summoner ID of this participant
@@ -1000,7 +1000,7 @@ type FeaturedGameInfoV4DTO struct {
     // The amount of time in seconds that has passed since the game started
     GameLength int64 `json:"gameLength"`
     // The ID of the map
-    MapID Map `json:"mapId"`
+    MapID int64 `json:"mapId"`
     // The game type
     // (Legal values:  CUSTOM_GAME,  MATCHED_GAME,  TUTORIAL_GAME)
     GameType GameType `json:"gameType"`
@@ -1011,7 +1011,7 @@ type FeaturedGameInfoV4DTO struct {
     // The observer information
     Observers ObserverV4DTO `json:"observers"`
     // The queue type (queue types are documented on the Game Constants page)
-    GameQueueConfigID Queue `json:"gameQueueConfigId"`
+    GameQueueConfigID int64 `json:"gameQueueConfigId"`
     // The game start time represented in epoch milliseconds
     GameStartTime int64 `json:"gameStartTime"`
     // The participant information
@@ -1031,9 +1031,9 @@ type ParticipantV4DTO struct {
     // The summoner name of this participant
     SummonerName string `json:"summonerName"`
     // The ID of the champion played by this participant
-    ChampionID int `json:"championId"`
+    ChampionID int64 `json:"championId"`
     // The team ID of this participant, indicating the participant's team
-    TeamID int `json:"teamId"`
+    TeamID int64 `json:"teamId"`
     // The ID of the first summoner spell used by this participant
     Spell1ID int64 `json:"spell1Id"`
 }

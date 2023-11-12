@@ -1,9 +1,9 @@
 {{
-    const spec = require('./specs/spec.json');
     const dotUtils = require('./dotUtils.js');
-    const clientName = "{{# def.clientName}}";
-    const clientNormalizedName = "{{# def.clientNormalizedName}}";
-}}// This package is used to interact with {{=clientNormalizedName}} endpoints.
+    const spec = dotUtils.spec;
+    const clientName = "{{# def.clientName }}";
+    const clientNormalizedName = "{{# def.clientNormalizedName }}";
+}}// This package is used to interact with {{= clientNormalizedName }} endpoints.
 //
 // Automatically generated package.
 
@@ -13,23 +13,25 @@ import (
 	"github.com/Kyagara/equinox/internal"
 )
 {{
-    const endpointGroups = dotUtils.getEndpointGroupsByName(spec.paths, clientName);
+    const endpointGroups = dotUtils.getEndpointGroupsByName(clientName);
 }}
 
 // Note: this struct is automatically generated.
-type {{= clientNormalizedName}}Client struct {
+type {{= clientNormalizedName }}Client struct {
 	internalClient  *internal.InternalClient
-{{~ Object.keys(endpointGroups) :k}}
-	{{=dotUtils.removeClientName(dotUtils.changeCase.pascalCase(k))}}  *{{=dotUtils.removeClientName(dotUtils.changeCase.pascalCase(k))}}
+{{~ Object.keys(endpointGroups) :endpoint }}
+{{ endpoint = dotUtils.removeClientName(dotUtils.changeCase.pascalCase(endpoint)); }}
+	{{= endpoint }}  *{{= endpoint }}
 {{~}}
 }
 
-// Creates a new {{= clientNormalizedName}}Client using the InternalClient provided.
-func New{{= clientNormalizedName}}Client(client *internal.InternalClient) *{{= clientNormalizedName}}Client {
-	return &{{= clientNormalizedName}}Client{
+// Creates a new {{= clientNormalizedName }}Client using the InternalClient provided.
+func New{{= clientNormalizedName}}Client(client *internal.InternalClient) *{{= clientNormalizedName }}Client {
+	return &{{= clientNormalizedName }}Client{
         internalClient: client,
-{{~ Object.keys(endpointGroups) :k}}
-        {{=dotUtils.removeClientName(dotUtils.changeCase.pascalCase(k))}}: &{{=dotUtils.removeClientName(dotUtils.changeCase.pascalCase(k))}}{internalClient: client},
+{{~ Object.keys(endpointGroups) :endpoint }}
+{{ endpoint = dotUtils.removeClientName(dotUtils.changeCase.pascalCase(endpoint)); }}
+        {{= endpoint }}: &{{= endpoint }}{internalClient: client},
 {{~}}
 	}
 }

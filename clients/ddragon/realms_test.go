@@ -37,7 +37,7 @@ func TestRealmByName(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
+			gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
 				Get(fmt.Sprintf(ddragon.RealmURL, ddragon.BR)).
 				Reply(test.code).
 				JSON(test.want)

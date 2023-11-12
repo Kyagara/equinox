@@ -1,11 +1,11 @@
 {{
-    const spec = require('./specs/spec.json');
     const dotUtils = require('./dotUtils.js');
-    const clientName = "{{# def.clientName}}";
+    const spec = dotUtils.spec;
+    const clientName = "{{# def.clientName }}";
 }}
 {{= dotUtils.preamble(clientName, spec.info.version) }}
 {{
-    const endpointGroups = dotUtils.getEndpointGroupsByName(spec.paths, clientName);
+    const endpointGroups = dotUtils.getEndpointGroupsByName(clientName);
     const apis = [];
     for (let path in endpointGroups) {
         apis.push(path)
@@ -25,7 +25,6 @@
             const schemaName = dotUtils.normalizeSchemaName(rawSchemaName);
             const schema = schemas[schemaKey];
             const props = schema.properties;
-            const requiredSet = new Set(schema.required);
             const structName = dotUtils.getNormalizedDTOStructName(schemaName, endpoint_pascal_case, endpoint);
 }}
 

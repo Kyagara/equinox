@@ -37,8 +37,8 @@ func TestVersionLatest(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
-				Get(api.DataDragonLOLVersionURL).
+			gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
+				Get("/api/versions.json").
 				Reply(test.code).
 				JSON(test.want)
 
@@ -77,8 +77,8 @@ func TestVersionList(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.DataDragonURLFormat, "")).
-				Get(api.DataDragonLOLVersionURL).
+			gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
+				Get("/api/versions.json").
 				Reply(test.code).
 				JSON(test.want)
 

@@ -38,7 +38,7 @@ func TestChampionByName(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.CommunityDragonURLFormat, "")).
+			gock.New(fmt.Sprintf(api.C_DRAGON_BASE_URL_FORMAT, "")).
 				Get(fmt.Sprintf(cdragon.ChampionURL, "1.0", "JarvanIV")).
 				Reply(test.code).
 				JSON(test.want)
@@ -78,7 +78,7 @@ func TestChampionByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			gock.New(fmt.Sprintf(api.CommunityDragonURLFormat, "")).
+			gock.New(fmt.Sprintf(api.C_DRAGON_BASE_URL_FORMAT, "")).
 				Get(fmt.Sprintf(cdragon.ChampionURL, "1.0", 223)).
 				Reply(test.code).
 				JSON(test.want)
