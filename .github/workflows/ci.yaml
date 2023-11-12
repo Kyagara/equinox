@@ -15,6 +15,17 @@ jobs:
         steps:
             - uses: actions/checkout@v3
 
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                node-version: 18
+
+            - name: Install node dependencies
+              run: npm ci --prefix srcgen
+
+            - name: Run lint
+              run: npm run lint --prefix srcgen
+
             - name: Set up Go
               uses: actions/setup-go@v4
               with:
@@ -25,9 +36,6 @@ jobs:
               uses: golangci/golangci-lint-action@v3
               with:
                   version: latest
-
-            - name: Run go vet
-              run: go vet ./...
 
     test:
         runs-on: ubuntu-latest
@@ -42,11 +50,8 @@ jobs:
             - name: Install node dependencies
               run: npm ci --prefix srcgen
 
-            - name: Download specs
-              run: node srcgen/update.js
-
-            - name: Generate clients
-              run: node srcgen
+            - name: Compiling clients
+              run: npm run compile --prefix srcgen
 
             - name: Set up Go
               uses: actions/setup-go@v4

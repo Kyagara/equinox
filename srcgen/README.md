@@ -18,4 +18,4 @@ Separated the download and compilation process different files.
 
 ## Usage
 
-After installing the dependencies with `npm i`, update the specs using `node update.js` then compile using `node srcgen`.
+After installing the dependencies with `npm i`, run `npm run compile`, you can run the compile steps individually using `node update.js` and `node index.js`.
