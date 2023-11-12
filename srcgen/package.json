@@ -11,6 +11,7 @@
   },
   "private": true,
   "scripts": {
+    "compile": "node update.js && node index.js",
     "lint": "prettier . --check . && eslint .",
     "format": "prettier . --write ."
   },
