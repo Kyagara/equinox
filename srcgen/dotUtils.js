@@ -42,12 +42,12 @@ package ${packageName}
 
 function getClientEndpoints(clientName) {
   const endpoints = {}
-  for (let path of Object.entries(spec.paths)) {
-    let api = path[0].split('/')[1]
+  for (const path of Object.entries(spec.paths)) {
+    const api = path[0].split('/')[1]
     if (api !== clientName && !(api === 'fulfillment' && clientName === 'lol')) {
       continue
     }
-    let endpointName = path[1]['x-endpoint']
+    const endpointName = path[1]['x-endpoint']
     endpoints[endpointName] = endpoints[endpointName] || []
     endpoints[endpointName].push(path)
   }
@@ -251,20 +251,20 @@ function stringifyType(prop) {
     prop = prop.anyOf[0]
   }
 
-  let enumType = prop['x-enum']
-  if (enumType && 'locale' !== enumType) {
+  const enumType = prop['x-enum']
+  if (enumType && enumType !== 'locale') {
     const type = prop['x-type']
-    if (enumType === 'champion') return !prop['format'] ? 'int64' : prop['format']
+    if (enumType === 'champion') return !prop.format ? 'int64' : prop.format
     if (!type) {
       changeCase.pascalCase(enumType)
     }
     if (type === 'string') {
       return changeCase.pascalCase(enumType)
     }
-    return prop['format']
+    return prop.format
   }
 
-  let refType = prop['$ref']
+  const refType = prop.$ref
   if (refType) {
     return normalizeSchemaName(refType.slice(refType.indexOf('.') + 1))
   }
@@ -273,9 +273,9 @@ function stringifyType(prop) {
     case 'boolean':
       return 'bool'
     case 'integer':
-      return 'int32' === prop.format ? 'int32' : 'int64'
+      return prop.format === 'int32' ? 'int32' : 'int64'
     case 'number':
-      return 'float' === prop.format ? 'float32' : 'float64'
+      return prop.format === 'float' ? 'float32' : 'float64'
     case 'array':
       return '[]' + stringifyType(prop.items)
     case 'string':
@@ -299,7 +299,7 @@ function formatAddQueryParam(param) {
     letHeaderName = name.slice(0, -1)
   }
   if (prop.type === 'string') {
-    return `if ${name} != \"\" {
+    return `if ${name} != "" {
     values.Set("${letHeaderName}", fmt.Sprint(${name}))
   }`
   }
@@ -308,11 +308,11 @@ function formatAddQueryParam(param) {
     values.Set("${letHeaderName}", fmt.Sprint(${name}))
   }`
   }
-  throw `${prop.type} not supported`
+  throw new Error({ message: `${prop.type} not supported` })
 }
 
 function formatAddHeaderParam(param, returnValue, isPrimitive) {
-  let name = normalizePropName(param.name)
+  const name = normalizePropName(param.name)
   const prop = param.schema
   let value = `new(${returnValue})`
   if (isPrimitive) value = '*' + value
@@ -321,12 +321,12 @@ function formatAddHeaderParam(param, returnValue, isPrimitive) {
     letHeaderName = name.slice(0, -1)
   }
   if (prop.type === 'string') {
-    return `if ${name} == \"\" {
+    return `if ${name} == "" {
     return ${value}, fmt.Errorf("'${name}' header is required")
   }
   request.Header.Set("${letHeaderName}", fmt.Sprint(${name}))`
   }
-  throw `${prop.type} not supported`
+  throw new Error({ message: `${prop.type} not supported` })
 }
 
 function formatRouteArgument(route, pathParams = []) {

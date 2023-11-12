@@ -11,8 +11,18 @@
   },
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "prettier . --check . && eslint .",
+    "format": "prettier . --write ."
   },
   "author": "",
-  "license": "GPL-2.0"
+  "license": "GPL-2.0",
+  "devDependencies": {
+    "eslint": "^8.53.0",
+    "eslint-config-semistandard": "^17.0.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "prettier": "^3.0.3"
+  }
 }

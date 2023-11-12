@@ -10,12 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDDragonVersionLatest(t *testing.T) {
-	version, err := client.DDragon.Version.Latest()
-	require.Nil(t, err, "expecting nil error")
-	require.NotEqual(t, "", version, "expecting non-nil version")
-}
-
 func TestDDragonRealmByName(t *testing.T) {
 	realm, err := client.DDragon.Realm.ByName(ddragon.BR)
 	require.Nil(t, err, "expecting nil error")

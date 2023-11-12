@@ -3,26 +3,25 @@ const doT = require('dot')
 const glob = require('glob')
 process.chdir(__dirname)
 global.require = require
+const defs = {}
 
 doT.templateSettings = {
   evaluate: /\r?\n?\{\{([\s\S]+?)\}\}/g,
   interpolate: /\r?\n?\{\{=([\s\S]+?)\}\}/g,
   encode: /\r?\n?\{\{!([\s\S]+?)\}\}/g,
   use: /\r?\n?\{\{#([\s\S]+?)\}\}/g,
-  define: /\r?\n?\{\{##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\}\}/g,
+  define: /\r?\n?\{\{##\s*([\w.$]+)\s*(:|=)([\s\S]+?)#\}\}/g,
   conditional: /\r?\n?\{\{\?(\?)?\s*([\s\S]*?)\s*\}\}/g,
-  iterate: /\r?\n?\{\{~\s*(?:\}\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\}\})/g,
+  iterate: /\r?\n?\{\{~\s*(?:\}\}|([\s\S]+?)\s*:\s*([\w$]+)\s*(?::\s*([\w$]+))?\s*\}\})/g,
   varname: 'it',
   strip: false,
   append: false,
   selfcontained: false,
 }
 
-let defs = {}
-
 glob.sync('./templates/api/*.go.dt').forEach((file) => {
   const fileName = file.split('/')[3].replace('.dt', '')
-  compile(file, `../api`, fileName)
+  compile(file, '../api', fileName)
 })
 
 const clients = ['lol', 'tft', 'lor', 'val', 'riot']
@@ -56,16 +55,16 @@ function compileTemplate(input, fileName) {
   console.log(`Compiling '${fileName}'.`)
   try {
     return doT.template(input, undefined, defs)({})
-  } catch (e) {
-    throw `Error compiling '${fileName}': ${e}`
+  } catch (err) {
+    throw new Error({ message: `Error compiling '${fileName}'`, error: err })
   }
 }
 
 function saveTemplate(buffer, outputPath) {
   console.log(`Writing '${outputPath}'.`)
-  const pathName = `../${outputPath.replace(/^\.*\/|\/?[^\/]+\.[a-z]+|\/$/g, '')}`
+  const pathName = `../${outputPath.replace(/^\.*\/|\/?[^/]+\.[a-z]+|\/$/g, '')}`
   if (!fs.existsSync(pathName)) {
-    fs.mkdirSync(pathName), { recursive: true }
+    fs.mkdirSync(pathName, { recursive: true })
   }
   fs.writeFileSync(outputPath, buffer, 'utf8')
 }
