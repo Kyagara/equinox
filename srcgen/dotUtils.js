@@ -40,26 +40,22 @@ package ${packageName}
 // Spec version = ${version}`
 }
 
-function getEndpointGroupsByName(name) {
-  const endpointGroups = {}
+function getClientEndpoints(clientName) {
+  const endpoints = {}
   for (let path of Object.entries(spec.paths)) {
     let api = path[0].split('/')[1]
-    if (api === 'fulfillment' && name === 'lol') {
-      let ep = path[1]['x-endpoint']
-      endpointGroups[ep] = endpointGroups[ep] || []
-      endpointGroups[ep].push(path)
+    if (api !== clientName && !(api === 'fulfillment' && clientName === 'lol')) {
       continue
     }
-    if (api !== name) continue
-    let ep = path[1]['x-endpoint']
-    endpointGroups[ep] = endpointGroups[ep] || []
-    endpointGroups[ep].push(path)
+    let endpointName = path[1]['x-endpoint']
+    endpoints[endpointName] = endpoints[endpointName] || []
+    endpoints[endpointName].push(path)
   }
-  return endpointGroups
+  return endpoints
 }
 
-function removeClientName(name) {
-  return name.replace(clientReg, '')
+function removeClientName(clientName) {
+  return clientName.replace(clientReg, '')
 }
 
 function getNormalizedDTOStructName(name, version, endpoint) {
@@ -343,7 +339,7 @@ function formatRouteArgument(route, pathParams = []) {
 module.exports = {
   spec,
 
-  getEndpointGroupsByName,
+  getClientEndpoints,
 
   changeCase,
   preamble,

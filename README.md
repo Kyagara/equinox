@@ -41,7 +41,7 @@
 
 ## Todo
 
-- Tests for the generated code?
+- Tests for the generated code (?)
 - New rate limiting implementation with Redis support
 - Improve Data Dragon support
 
@@ -65,7 +65,7 @@ A client without a configuration comes with the default options:
 cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
 config := &api.EquinoxConfig{
 	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
-	LogLevel: api.NopLevel, // The logging level, NopLevel disables logging.
+	LogLevel: api.NOP_LOG_LEVEL, // The logging level, NOP_LOG_LEVEL disables logging.
 	Timeout: 15, // http.Client timeout in seconds.
 	Cache: cache.NewBigCache(cacheConfig), // The default client uses BigCache with an eviction time of 4 minutes.
 	Retry: true, // Retries a request if the API returns a 429 response.

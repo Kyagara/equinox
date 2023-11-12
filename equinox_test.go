@@ -94,7 +94,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 
 func TestEquinoxClientClearCache(t *testing.T) {
 	config, err := equinox.DefaultConfig("RGAPI-TEST")
-	config.LogLevel = api.DebugLevel
+	config.LogLevel = api.NOP_LOG_LEVEL
 	config.Retry = false
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
@@ -228,7 +228,7 @@ func BenchmarkSummonerByName(b *testing.B) {
 		JSON(summoner)
 
 	config := internal.NewTestEquinoxConfig()
-	config.LogLevel = api.NopLevel
+	config.LogLevel = api.NOP_LOG_LEVEL
 	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
@@ -350,7 +350,7 @@ func BenchmarkDataDragonRealm(b *testing.B) {
 		JSON(realm)
 
 	config := internal.NewTestEquinoxConfig()
-	config.LogLevel = api.NopLevel
+	config.LogLevel = api.NOP_LOG_LEVEL
 	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)

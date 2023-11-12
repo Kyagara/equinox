@@ -56,8 +56,8 @@ jobs:
             - name: Run tests
               run: go test ./... -v -race -coverprofile cover.out -covermode atomic
 
-            - name: Ensure integration tests build
-              run: go test -v -tags=integration -run=^$ ./test/integration
+            - name: Run only DDragon/CDragon integration tests
+              run: go test -v -tags=integration ./test/integration
 
             - name: Upload coverage to Codecov
               uses: codecov/codecov-action@v3

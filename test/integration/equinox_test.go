@@ -35,7 +35,11 @@ func init() {
 		key = "RGAPI-TEST"
 	}
 	config, err := equinox.DefaultConfig(key)
-	config.LogLevel = api.DebugLevel
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	config.LogLevel = api.DEBUG_LOG_LEVEL
 	c, err := equinox.NewClientWithConfig(config)
 	if err != nil {
 		fmt.Println(err)

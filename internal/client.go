@@ -28,7 +28,7 @@ type InternalClient struct {
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
 		Key:      "RGAPI-TEST",
-		LogLevel: api.DebugLevel,
+		LogLevel: api.DEBUG_LOG_LEVEL,
 		Timeout:  15,
 		Retry:    false,
 		Cache:    &cache.Cache{TTL: 0},

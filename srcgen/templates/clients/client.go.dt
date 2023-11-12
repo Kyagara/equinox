@@ -13,7 +13,7 @@ import (
 	"github.com/Kyagara/equinox/internal"
 )
 {{
-    const endpointGroups = dotUtils.getEndpointGroupsByName(clientName);
+    const endpointGroups = dotUtils.getClientEndpoints(clientName);
 }}
 
 // Note: this struct is automatically generated.

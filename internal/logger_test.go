@@ -17,7 +17,7 @@ func TestNewLogger(t *testing.T) {
 		require.ErrorContains(t, err, "error initializing logger")
 	}
 	require.Equal(t, logger.Level(), zapcore.Level(-1))
-	c.LogLevel = api.NopLevel
+	c.LogLevel = api.NOP_LOG_LEVEL
 	logger, err = internal.NewLogger(c)
 	if err != nil {
 		require.ErrorContains(t, err, "error initializing logger")
