@@ -53,7 +53,7 @@ func (e *ContentV1) Content(route ValPlatformRoute, locale string) (*ContentV1DT
 	}
   values := request.URL.Query()
   if locale != "" {
-    values.Set("locale", fmt.Sprint(locale))
+    values.Set("locale", locale)
   }
   request.URL.RawQuery = values.Encode()
   var data ContentV1DTO

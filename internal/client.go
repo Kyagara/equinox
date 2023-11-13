@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Kyagara/equinox/api"
@@ -67,6 +68,7 @@ func (c *InternalClient) Request(base string, method string, route any, url stri
 		}
 		buffer = bytes.NewReader(bodyBytes)
 	}
+
 	request, err := http.NewRequest(method, url, buffer)
 	if err != nil {
 		return nil, err
@@ -74,8 +76,16 @@ func (c *InternalClient) Request(base string, method string, route any, url stri
 	if body != nil {
 		request.Header.Set("Content-Type", "application/json")
 	}
-	request.Header.Set("Accept", "application/json")
+
+	hosts := []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
+	for _, host := range hosts {
+		if strings.Contains(request.URL.Host, host) {
+			return request, nil
+		}
+	}
+
 	request.Header.Set("X-Riot-Token", c.key)
+	request.Header.Set("Accept", "application/json")
 	request.Header.Set("User-Agent", "equinox - https://github.com/Kyagara/equinox")
 	return request, nil
 }
@@ -109,30 +119,32 @@ func (c *InternalClient) Execute(request *http.Request, target any) error {
 // sendRequest sends an HTTP request and returns the response body as a byte array.
 func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, retrying bool) ([]byte, error) {
 	logger.Info("Sending request")
+
 	response, err := c.http.Do(request)
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
+
 	err = c.checkResponse(logger, response)
 	if err != nil && c.IsRetryEnabled && !retrying && errors.Is(err, api.ErrTooManyRequests) {
-		// If there is an error and retry is enabled, retry the request
 		logger.Info("Retrying request")
 		return c.sendRequest(logger, request, true)
 	} else if err != nil {
-		// If there is an error and retry is not enabled or the error is not due to too many requests, return the error
 		return nil, err
 	}
+
 	logger.Info("Request successful")
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
-	// If the response does not have a Content-Type header, create a JSON response with the body as the value
+
 	if response.Header.Get("Content-Type") == "" {
-		jsonResponse := map[string]any{"response": body}
+		jsonResponse := map[string]interface{}{"response": body}
 		return json.Marshal(jsonResponse)
 	}
+
 	return body, nil
 }
 

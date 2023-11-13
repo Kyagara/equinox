@@ -1,7 +1,38 @@
 const changeCase = require('change-case')
+
 const versionReg = /V.*\d/
 const clientReg = /(Lor|Riot|Val|Lol|Tft)/
 const spec = require('./specs/spec.json')
+const methodNamesMapping = {
+  CurrentGameInfoBySummoner: 'CurrentGameBySummonerID',
+  ChampionMasteryScoreByPUUID: 'MasteryScoreByPUUID',
+  AllChampionMasteriesByPUUID: 'AllMasteriesByPUUID',
+  ChampionMasteryByPUUID: 'MasteryByPUUID',
+  TopChampionMasteriesByPUUID: 'TopMasteriesByPUUID',
+  AllChampionMasteries: 'AllMasteriesBySummonerID',
+  ChampionMastery: 'MasteryBySummonerID',
+  TopChampionMasteries: 'TopMasteriesBySummonerID',
+  ChampionMasteryScore: 'ScoreBySummonerID',
+  PlayersByPUUID: 'SummonerEntriesByPUUID',
+  PlayersBySummoner: 'SummonerEntriesBySummonerID',
+  FeaturedGames: 'Featured',
+  ShardData: 'Shard',
+  TeamByID: 'TeamByTeamID',
+  ChampionInfo: 'Rotation',
+  BySummonerName: 'ByName',
+  MatchIdsByPUUID: 'ListByPUUID',
+  Matchlist: 'ListByPUUID',
+  Configs: 'ConfigByID',
+  PlayerData: 'ByPUUID',
+  PlatformData: 'Platform',
+  EntriesForSummoner: 'SummonerEntries',
+  Challenger: 'ChallengerByQueue',
+  Grandmaster: 'GrandmasterByQueue',
+  Master: 'MasterByQueue',
+  TournamentByID: 'ByID',
+  TournamentByTeam: 'ByTeamID',
+  Match: 'ByID',
+}
 
 // flatMap: https://gist.github.com/samgiles/762ee337dff48623e729
 // [B](f: (A) ⇒ [B]): [B]  ; Although the types in the arrays aren't strict (:
@@ -42,15 +73,15 @@ package ${packageName}
 
 function getClientEndpoints(clientName) {
   const endpoints = {}
-  for (const path of Object.entries(spec.paths)) {
-    const api = path[0].split('/')[1]
-    if (api !== clientName && !(api === 'fulfillment' && clientName === 'lol')) {
-      continue
-    }
-    const endpointName = path[1]['x-endpoint']
+  const clientAPIs = Object.entries(spec.paths).filter(([path]) => {
+    const api = path.split('/')[1]
+    return api === clientName || (api === 'fulfillment' && clientName === 'lol')
+  })
+  clientAPIs.forEach(([path, endpoint]) => {
+    const endpointName = endpoint['x-endpoint']
     endpoints[endpointName] = endpoints[endpointName] || []
-    endpoints[endpointName].push(path)
-  }
+    endpoints[endpointName].push([path, endpoint])
+  })
   return endpoints
 }
 
@@ -59,16 +90,9 @@ function removeClientName(clientName) {
 }
 
 function getNormalizedDTOStructName(name, version, endpoint) {
-  let temp = name
-  version = versionReg.exec(version)
-  version = version === null ? null : version
-  if (version[0].length !== 2) {
-    version[0] = version[0].slice(version[0].length - 2, version[0].length)
-  }
-  temp = temp.replace('DTO', `${version[0]}DTO`)
-  if (temp.includes(`${version[0]}${version[0]}DTO`)) {
-    temp = temp.replace(`${version[0]}${version[0]}DTO`, `${version[0]}DTO`)
-  }
+  version = versionReg.exec(version)[0].slice(-2)
+  let temp = name.replace('DTO', `${version}DTO`)
+  temp = temp.replace(`${version}${version}DTO`, `${version}DTO`)
   if (endpoint !== null && endpoint.includes('tournament') && endpoint.includes('stub')) {
     if (
       temp.startsWith('Tournament') ||
@@ -79,33 +103,24 @@ function getNormalizedDTOStructName(name, version, endpoint) {
     }
   }
   if (endpoint !== null) {
-    if (endpoint.startsWith('league-exp')) {
-      if (temp.startsWith('League') || temp.startsWith('Mini')) {
-        temp = 'Exp' + temp
-      }
+    if (
+      endpoint.startsWith('league-exp') &&
+      (temp.startsWith('League') || temp.startsWith('Mini'))
+    ) {
+      temp = 'Exp' + temp
     }
-    if (endpoint.startsWith('val-ranked')) {
-      if (temp.startsWith('Player')) {
-        temp = 'Match' + temp
-      }
+    if (endpoint.startsWith('val-ranked') && temp.startsWith('Player')) {
+      temp = 'Match' + temp
     }
-    if (endpoint.startsWith('lor-ranked')) {
-      if (temp.startsWith('Player')) {
-        temp = 'Leaderboard' + temp
-      }
+    if (endpoint.startsWith('lor-ranked') && temp.startsWith('Player')) {
+      temp = 'Leaderboard' + temp
     }
-    if (endpoint.startsWith('val-status')) {
-      if (temp.startsWith('Content')) {
-        temp = 'Status' + temp
-      }
+    if (endpoint.startsWith('val-status') && temp.startsWith('Content')) {
+      temp = 'Status' + temp
     }
   }
-  if (temp.endsWith('DTOWrapperDTO')) {
-    temp = temp.replace(version[0] + 'DTOWrapperDTO', 'Wrapper' + version[0] + 'DTO')
-  }
-  if (temp.startsWith('ChampionInfoV')) {
-    temp = temp.replace('ChampionInfoV', 'ChampionRotationV')
-  }
+  temp = temp.replace(`${version}DTOWrapperDTO`, 'Wrapper' + version + 'DTO')
+  temp = temp.replace('ChampionInfoV', 'ChampionRotationV')
   return temp
 }
 
@@ -138,97 +153,13 @@ function normalizeSchemaName(name) {
 }
 
 function normalizeMethodName(method) {
-  let temp = method
-  if (temp.startsWith('Get')) {
-    temp = temp.slice(3, temp.length)
-  }
-  if (temp.includes('League')) {
-    temp = temp.replace('League', '')
-  }
-  if (temp.includes('Challenge') && temp !== 'Challenger') {
-    temp = temp.replace('Challenge', '')
-  }
-  if (temp.endsWith('Id')) {
-    temp = temp.slice(0, temp.length - 2) + 'ID'
-  }
-  if (temp.endsWith('Puuid')) {
-    temp = temp.slice(0, temp.length - 5) + 'PUUID'
-  }
-  if (temp.endsWith('Rsopuuid')) {
-    temp = temp.slice(0, temp.length - 8) + 'RSOPUUID'
-  }
-  switch (temp) {
-    case 'CurrentGameInfoBySummoner':
-      return 'CurrentGameBySummonerID'
-    case 'ChampionMasteryScoreByPUUID':
-      return 'MasteryScoreByPUUID'
-    case 'AllChampionMasteriesByPUUID':
-      return 'AllMasteriesByPUUID'
-    case 'ChampionMasteryByPUUID':
-      return 'MasteryByPUUID'
-    case 'TopChampionMasteriesByPUUID':
-      return 'TopMasteriesByPUUID'
-    case 'AllChampionMasteries':
-      return 'AllMasteriesBySummonerID'
-    case 'ChampionMastery':
-      return 'MasteryBySummonerID'
-    case 'TopChampionMasteries':
-      return 'TopMasteriesBySummonerID'
-    case 'ChampionMasteryScore':
-      return 'ScoreBySummonerID'
-
-    case 'PlayersByPUUID':
-      return 'SummonerEntriesByPUUID'
-    case 'PlayersBySummoner':
-      return 'SummonerEntriesBySummonerID'
-    case 'FeaturedGames':
-      return 'Featured'
-
-    case 'ShardData':
-      return 'Shard'
-
-    case 'TeamByID':
-      return 'TeamByTeamID'
-
-    case 'ChampionInfo':
-      return 'Rotation'
-
-    case 'BySummonerName':
-      return 'ByName'
-
-    case 'MatchIdsByPUUID':
-      return 'ListByPUUID'
-    case 'Matchlist':
-      return 'ListByPUUID'
-
-    case 'Configs':
-      return 'ConfigByID'
-
-    case 'PlayerData':
-      return 'ByPUUID'
-
-    case 'PlatformData':
-      return 'Platform'
-
-    case 'EntriesForSummoner':
-      return 'SummonerEntries'
-
-    case 'Challenger':
-      return 'ChallengerByQueue'
-    case 'Grandmaster':
-      return 'GrandmasterByQueue'
-    case 'Master':
-      return 'MasterByQueue'
-
-    case 'TournamentByID':
-      return 'ByID'
-    case 'TournamentByTeam':
-      return 'ByTeamID'
-
-    case 'Match':
-      return 'ByID'
-  }
-  return temp
+  let temp = method.replace(/^Get/, '')
+  temp = temp.replace(/League/g, '')
+  temp = temp.replace(/Challenge(?!r)/g, '')
+  temp = temp.replace(/Id$/, 'ID')
+  temp = temp.replace(/Puuid$/, 'PUUID')
+  temp = temp.replace(/Rsopuuid$/, 'RSOPUUID')
+  return methodNamesMapping[temp] || temp
 }
 
 function capitalize(input) {
@@ -277,11 +208,11 @@ function stringifyType(prop) {
     case 'number':
       return prop.format === 'float' ? 'float32' : 'float64'
     case 'array':
-      return '[]' + stringifyType(prop.items)
+      return `[]${stringifyType(prop.items)}`
     case 'string':
       return 'string'
     case 'object':
-      return `map[${stringifyType(prop['x-key'])}]` + stringifyType(prop.additionalProperties)
+      return `map[${stringifyType(prop['x-key'])}]${stringifyType(prop.additionalProperties)}`
     default:
       return prop.type
   }
@@ -298,42 +229,46 @@ function formatAddQueryParam(param) {
   if (name.endsWith('_')) {
     letHeaderName = name.slice(0, -1)
   }
+  let condition
   if (prop.type === 'string') {
-    return `if ${name} != "" {
-    values.Set("${letHeaderName}", fmt.Sprint(${name}))
+    condition = `${name} != ""`
+  } else if (prop.type === 'integer') {
+    condition = `${name} != -1`
+  } else {
+    throw new Error(`${prop.type} not supported`)
+  }
+  if (prop.type === 'string') {
+    return `if ${condition} {
+    values.Set("${letHeaderName}", ${name})
   }`
   }
-  if (prop.type === 'integer') {
-    return `if ${name} != -1 {
+  return `if ${condition} {
     values.Set("${letHeaderName}", fmt.Sprint(${name}))
   }`
-  }
-  throw new Error({ message: `${prop.type} not supported` })
 }
 
 function formatAddHeaderParam(param, returnValue, isPrimitive) {
   const name = normalizePropName(param.name)
-  const prop = param.schema
   let value = `new(${returnValue})`
   if (isPrimitive) value = '*' + value
-  let letHeaderName = name
-  if (name.endsWith('_')) {
-    letHeaderName = name.slice(0, -1)
-  }
-  if (prop.type === 'string') {
-    return `if ${name} == "" {
+  let letHeaderName = name.endsWith('_') ? name.slice(0, -1) : name
+  switch (param.schema.type) {
+    case 'string':
+      return `if ${name} == "" {
     return ${value}, fmt.Errorf("'${name}' header is required")
   }
   request.Header.Set("${letHeaderName}", fmt.Sprint(${name}))`
+    default:
+      throw new Error(`${param.schema.type} not supported`)
   }
-  throw new Error({ message: `${prop.type} not supported` })
 }
 
 function formatRouteArgument(route, pathParams = []) {
   if (!pathParams.length) return `"${route}"`
-  route = route.replace(/\{\S+?\}/g, '%v')
-  const args = pathParams.map(({ name }) => name).join(', ')
-  return `fmt.Sprintf("${route}", ${args})`
+  const args = pathParams.map(({ name }) => name)
+  const formattedRoute = route.replace(/\{\S+?\}/g, '%v')
+  const formattedArgs = args.join(', ')
+  return `fmt.Sprintf("${formattedRoute}", ${formattedArgs})`
 }
 
 module.exports = {
