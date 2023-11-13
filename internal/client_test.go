@@ -335,7 +335,10 @@ func TestInternalClientRequest(t *testing.T) {
 	body := map[string]any{
 		"message": "cool",
 	}
-	c := &internal.InternalClient{}
+	config := internal.NewTestEquinoxConfig()
+	config.Key = "RGAPI-TEST"
+	c, err := internal.NewInternalClient(config)
+	require.Nil(t, err, "expecting nil error")
 	t.Run("Request with body", func(t *testing.T) {
 		expectedURL := fmt.Sprintf(base, route) + url
 		expectedBody, _ := json.Marshal(body)
@@ -355,8 +358,8 @@ func TestInternalClientRequest(t *testing.T) {
 		if req.Header.Get("Accept") != "application/json" {
 			t.Errorf("unexpected Accept header, got %s, want application/json", req.Header.Get("Accept"))
 		}
-		if req.Header.Get("X-Riot-Token") != "RGAPI-TEST" {
-			t.Errorf("unexpected X-Riot-Token header, got %s, want %s", req.Header.Get("X-Riot-Token"), "RGAPI-TEST")
+		if req.Header.Get("X-Riot-Token") != config.Key {
+			t.Errorf("unexpected X-Riot-Token header, got %s, want %s", req.Header.Get("X-Riot-Token"), config.Key)
 		}
 		if req.Header.Get("User-Agent") != "equinox - https://github.com/Kyagara/equinox" {
 			t.Errorf("unexpected User-Agent header, got %s, want equinox - https://github.com/Kyagara/equinox", req.Header.Get("User-Agent"))
@@ -380,8 +383,8 @@ func TestInternalClientRequest(t *testing.T) {
 		if req.Header.Get("Accept") != "application/json" {
 			t.Errorf("unexpected Accept header, got %s, want application/json", req.Header.Get("Accept"))
 		}
-		if req.Header.Get("X-Riot-Token") != "RGAPI-TEST" {
-			t.Errorf("unexpected X-Riot-Token header, got %s, want %s", req.Header.Get("X-Riot-Token"), "RGAPI-TEST")
+		if req.Header.Get("X-Riot-Token") != config.Key {
+			t.Errorf("unexpected X-Riot-Token header, got %s, want %s", req.Header.Get("X-Riot-Token"), config.Key)
 		}
 		if req.Header.Get("User-Agent") != "equinox - https://github.com/Kyagara/equinox" {
 			t.Errorf("unexpected User-Agent header, got %s, want equinox - https://github.com/Kyagara/equinox", req.Header.Get("User-Agent"))
