@@ -25,14 +25,14 @@ type RealmData struct {
 		Language    string `json:"language"`
 		Sticker     string `json:"sticker"`
 	} `json:"n"`
-	V              string      `json:"v"`
-	L              string      `json:"l"`
-	CDN            string      `json:"cdn"`
-	DD             string      `json:"dd"`
-	LG             string      `json:"lg"`
-	CSS            string      `json:"css"`
-	ProfileIconMax int         `json:"profileiconmax"`
-	Store          interface{} `json:"store"`
+	V              string `json:"v"`
+	L              string `json:"l"`
+	CDN            string `json:"cdn"`
+	DD             string `json:"dd"`
+	LG             string `json:"lg"`
+	CSS            string `json:"css"`
+	ProfileIconMax int    `json:"profileiconmax"`
+	Store          any    `json:"store"`
 }
 
 func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {

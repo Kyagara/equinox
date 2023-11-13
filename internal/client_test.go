@@ -1,7 +1,9 @@
 package internal_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"testing"
@@ -323,4 +325,66 @@ func TestCacheIsDisabled(t *testing.T) {
 	require.Nil(t, err, "expecting nil error")
 	err = client.Cache.Clear()
 	require.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", cache.ErrCacheIsDisabled, err))
+}
+
+func TestInternalClientRequest(t *testing.T) {
+	base := "https://cool.and.real.api/api/%v"
+	route := "users"
+	method := "POST"
+	url := "/post"
+	body := map[string]any{
+		"message": "cool",
+	}
+	c := &internal.InternalClient{}
+	t.Run("Request with body", func(t *testing.T) {
+		expectedURL := fmt.Sprintf(base, route) + url
+		expectedBody, _ := json.Marshal(body)
+		req, err := c.Request(base, method, route, url, body)
+		require.Nil(t, err, "expecting nil error")
+		if req.URL.String() != expectedURL {
+			t.Errorf("unexpected URL, got %s, want %s", req.URL.String(), expectedURL)
+		}
+
+		bodyBytes, _ := io.ReadAll(req.Body)
+		if string(bodyBytes) != string(expectedBody) {
+			t.Errorf("unexpected body, got %s, want %s", string(bodyBytes), string(expectedBody))
+		}
+		if req.Header.Get("Content-Type") != "application/json" {
+			t.Errorf("unexpected Content-Type header, got %s, want application/json", req.Header.Get("Content-Type"))
+		}
+		if req.Header.Get("Accept") != "application/json" {
+			t.Errorf("unexpected Accept header, got %s, want application/json", req.Header.Get("Accept"))
+		}
+		if req.Header.Get("X-Riot-Token") != "RGAPI-TEST" {
+			t.Errorf("unexpected X-Riot-Token header, got %s, want %s", req.Header.Get("X-Riot-Token"), "RGAPI-TEST")
+		}
+		if req.Header.Get("User-Agent") != "equinox - https://github.com/Kyagara/equinox" {
+			t.Errorf("unexpected User-Agent header, got %s, want equinox - https://github.com/Kyagara/equinox", req.Header.Get("User-Agent"))
+		}
+	})
+
+	t.Run("Request without body", func(t *testing.T) {
+		expectedURL := fmt.Sprintf(base, route) + url
+		req, err := c.Request(base, method, route, url, nil)
+		require.Nil(t, err, "expecting nil error")
+
+		if req.URL.String() != expectedURL {
+			t.Errorf("unexpected URL, got %s, want %s", req.URL.String(), expectedURL)
+		}
+		if req.Body != nil {
+			t.Errorf("unexpected body, got %v, want nil", req.Body)
+		}
+		if req.Header.Get("Content-Type") != "" {
+			t.Errorf("unexpected Content-Type header, got %s, want empty", req.Header.Get("Content-Type"))
+		}
+		if req.Header.Get("Accept") != "application/json" {
+			t.Errorf("unexpected Accept header, got %s, want application/json", req.Header.Get("Accept"))
+		}
+		if req.Header.Get("X-Riot-Token") != "RGAPI-TEST" {
+			t.Errorf("unexpected X-Riot-Token header, got %s, want %s", req.Header.Get("X-Riot-Token"), "RGAPI-TEST")
+		}
+		if req.Header.Get("User-Agent") != "equinox - https://github.com/Kyagara/equinox" {
+			t.Errorf("unexpected User-Agent header, got %s, want equinox - https://github.com/Kyagara/equinox", req.Header.Get("User-Agent"))
+		}
+	})
 }

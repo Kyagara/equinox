@@ -52,6 +52,8 @@ func TestNewEquinoxClient(t *testing.T) {
 }
 
 func TestNewEquinoxClientWithConfig(t *testing.T) {
+	emptyKeyConfig := internal.NewTestEquinoxConfig()
+	emptyKeyConfig.Key = ""
 	tests := []struct {
 		name    string
 		want    *equinox.Equinox
@@ -193,9 +195,8 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 	client, err := equinox.NewClient("RGAPI-TEST")
 	require.Nil(b, err)
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
+		_, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
 		require.Nil(b, err)
-		require.Equal(b, "Phanes", data.Name)
 	}
 }
 
