@@ -53,7 +53,7 @@ func (e *LeagueV1) ChallengerByQueue(route PlatformRoute, queue string) (*League
 	}
   values := request.URL.Query()
   if queue != "" {
-    values.Set("queue", fmt.Sprint(queue))
+    values.Set("queue", queue)
   }
   request.URL.RawQuery = values.Encode()
   var data LeagueListV1DTO
@@ -123,7 +123,7 @@ func (e *LeagueV1) Entries(route PlatformRoute, tier Tier, division string, queu
 	}
   values := request.URL.Query()
   if queue != "" {
-    values.Set("queue", fmt.Sprint(queue))
+    values.Set("queue", queue)
   }
   if page != -1 {
     values.Set("page", fmt.Sprint(page))
@@ -162,7 +162,7 @@ func (e *LeagueV1) GrandmasterByQueue(route PlatformRoute, queue string) (*Leagu
 	}
   values := request.URL.Query()
   if queue != "" {
-    values.Set("queue", fmt.Sprint(queue))
+    values.Set("queue", queue)
   }
   request.URL.RawQuery = values.Encode()
   var data LeagueListV1DTO
@@ -229,7 +229,7 @@ func (e *LeagueV1) MasterByQueue(route PlatformRoute, queue string) (*LeagueList
 	}
   values := request.URL.Query()
   if queue != "" {
-    values.Set("queue", fmt.Sprint(queue))
+    values.Set("queue", queue)
   }
   request.URL.RawQuery = values.Encode()
   var data LeagueListV1DTO

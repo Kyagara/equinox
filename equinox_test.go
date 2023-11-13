@@ -195,8 +195,9 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 	client, err := equinox.NewClient("RGAPI-TEST")
 	require.Nil(b, err)
 	for i := 0; i < b.N; i++ {
-		_, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
+		data, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
 		require.Nil(b, err)
+		require.Equal(b, "Phanes", data.Name)
 	}
 }
 

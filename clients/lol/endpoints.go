@@ -1129,7 +1129,7 @@ func (e *MatchV5) ListByPUUID(route api.RegionalRoute, puuid string, startTime i
     values.Set("queue", fmt.Sprint(queue))
   }
   if type_ != "" {
-    values.Set("type", fmt.Sprint(type_))
+    values.Set("type", type_)
   }
   if start != -1 {
     values.Set("start", fmt.Sprint(start))

@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const doT = require('dot')
 const glob = require('glob')
 process.chdir(__dirname)
@@ -19,22 +20,33 @@ doT.templateSettings = {
   selfcontained: false,
 }
 
-glob.sync('./templates/api/*.go.dt').forEach((file) => {
-  const fileName = file.split('/')[3].replace('.dt', '')
-  compile(file, '../api', fileName)
-})
+const apiTemplateFiles = fs
+  .readdirSync('./templates/api')
+  .filter((file) => file.endsWith('.go.dt'))
+  .map((file) => path.join('./templates/api', file))
 
 const clients = ['lol', 'tft', 'lor', 'val', 'riot']
 
+apiTemplateFiles.forEach((file) => {
+  const fileName = path.basename(file, '.dt')
+  compile(file, '../api', fileName)
+})
+
 clients.forEach((clientName) => {
   defs.clientName = clientName
-  let name = clientName.toUpperCase()
-  name = name === 'RIOT' ? 'Riot' : name
+  const name = clientName === 'riot' ? 'Riot' : clientName.toUpperCase()
   defs.clientNormalizedName = name
 
-  glob.sync('./templates/clients/*.go.dt').forEach((file) => {
-    if ((clientName === 'riot' || clientName === 'lor') && file.includes('constants.go')) return
-    const fileName = file.split('/')[3].replace('.dt', '')
+  const clientTemplateFiles = fs
+    .readdirSync('./templates/clients')
+    .filter((file) => file.endsWith('.go.dt'))
+    .filter(
+      (file) => !(clientName === 'riot' || clientName === 'lor') || !file.includes('constants.go'),
+    )
+    .map((file) => path.join('./templates/clients', file))
+
+  clientTemplateFiles.forEach((file) => {
+    const fileName = path.basename(file, '.dt')
     compile(file, `../clients/${clientName}`, fileName)
   })
 })
@@ -43,7 +55,6 @@ function compile(inputPath, outputPath, fileName) {
   const input = readFile(inputPath)
   const output = compileTemplate(input, inputPath)
   const path = `${outputPath}/${fileName}`
-
   saveTemplate(output, path)
 }
 
@@ -62,9 +73,7 @@ function compileTemplate(input, fileName) {
 
 function saveTemplate(buffer, outputPath) {
   console.log(`Writing '${outputPath}'.`)
-  const pathName = `../${outputPath.replace(/^\.*\/|\/?[^/]+\.[a-z]+|\/$/g, '')}`
-  if (!fs.existsSync(pathName)) {
-    fs.mkdirSync(pathName, { recursive: true })
-  }
+  const pathName = path.dirname(outputPath)
+  fs.mkdirSync(pathName, { recursive: true })
   fs.writeFileSync(outputPath, buffer, 'utf8')
 }
