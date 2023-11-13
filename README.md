@@ -24,9 +24,6 @@
 	</p>
 </div>
 
-> **Warning**
-> Undergoing major changes!
-
 ## Features
 
 - Riot APIs implemented:
@@ -41,9 +38,9 @@
 
 ## Todo
 
-- Tests for the generated code (?)
-- New rate limiting implementation with Redis support
-- Improve Data Dragon support
+- More tests for the client
+- Rate limit with Redis support and internal store
+- Improve DDragon/CDragon support
 
 ## Usage
 
