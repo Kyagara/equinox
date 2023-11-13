@@ -6,7 +6,7 @@ import (
 )
 
 type PlainTextResponse struct {
-	Response interface{} `json:"response"`
+	Response any `json:"response"`
 }
 
 type ErrorResponse struct {

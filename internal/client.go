@@ -46,27 +46,26 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	}
 	client := &InternalClient{
 		key:            config.Key,
-		http:           &http.Client{Timeout: time.Duration(config.Timeout * int(time.Second))},
+		http:           &http.Client{Timeout: time.Second * time.Duration(config.Timeout)},
 		logger:         logger,
 		cache:          config.Cache,
 		IsRetryEnabled: config.Retry,
+		IsCacheEnabled: config.Cache.TTL > 0,
 	}
-	client.IsCacheEnabled = config.Cache.TTL > 0
 	return client, nil
 }
 
-// Creates a request to the provided route and url.
+// Creates a request to the provided route and URL.
 func (c *InternalClient) Request(base string, method string, route any, url string, body any) (*http.Request, error) {
-	baseUrl := fmt.Sprintf(base, route)
-	url = fmt.Sprintf("%s%s", baseUrl, url)
-	var buffer io.ReadWriter
+	baseURL := fmt.Sprintf(base, route)
+	url = fmt.Sprintf("%s%s", baseURL, url)
+	var buffer io.Reader
 	if body != nil {
-		buffer = &bytes.Buffer{}
-		encoder := json.NewEncoder(buffer)
-		err := encoder.Encode(body)
+		bodyBytes, err := json.Marshal(body)
 		if err != nil {
 			return nil, err
 		}
+		buffer = bytes.NewReader(bodyBytes)
 	}
 	request, err := http.NewRequest(method, url, buffer)
 	if err != nil {
@@ -86,111 +85,85 @@ func (c *InternalClient) Execute(request *http.Request, target any) error {
 	url := request.URL.String()
 	logger := c.logger.With(zap.String("httpMethod", request.Method), zap.String("url", url))
 	if c.IsCacheEnabled {
-		item, err := c.cache.Get(url)
-		// If there was an error with retrieving the cached response, only log the error
-		if err != nil {
+		if item, err := c.cache.Get(url); err != nil {
 			logger.Error("Error retrieving cached response", zap.Error(err))
-		}
-		if item != nil {
+		} else if item != nil {
 			logger.Debug("Cache hit")
-			// Decoding the cached body into the target
 			return json.Unmarshal(item, &target)
 		}
 	}
-	// Sending HTTP request and returning the response
 	body, err := c.sendRequest(logger, request, false)
 	if err != nil {
 		return err
 	}
 	if c.IsCacheEnabled {
-		err := c.cache.Set(url, body)
-		if err == nil {
-			logger.Debug("Cache set")
-		} else {
+		if err := c.cache.Set(url, body); err != nil {
 			logger.Error("Error caching item", zap.Error(err))
+		} else {
+			logger.Debug("Cache set")
 		}
 	}
-	// Decoding the body into the target
 	return json.Unmarshal(body, &target)
 }
 
-// Sends a HTTP request.
+// sendRequest sends an HTTP request and returns the response body as a byte array.
 func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, retrying bool) ([]byte, error) {
 	logger.Info("Sending request")
-	// Sending request
 	response, err := c.http.Do(request)
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
-
-	// Checking the response
 	err = c.checkResponse(logger, response)
-
-	// The body is defined here so if we retry the request we can later return the value
-	// without having to read the body again, causing an error
-	var body []byte
-
-	// If retry is enabled and c.checkResponse() returns an error, retry the request
-	if c.IsRetryEnabled && !retrying && errors.Is(err, api.ErrTooManyRequests) {
+	if err != nil && c.IsRetryEnabled && !retrying && errors.Is(err, api.ErrTooManyRequests) {
+		// If there is an error and retry is enabled, retry the request
 		logger.Info("Retrying request")
-		// If this retry is successful, the body var will be the response.Body
-		body, err = c.sendRequest(logger, request, true)
-	}
-
-	// Returns the error from c.checkResponse() if any
-	// If retry is enabled, this error will be the error from the retried request if it failed again
-	if err != nil {
+		return c.sendRequest(logger, request, true)
+	} else if err != nil {
+		// If there is an error and retry is not enabled or the error is not due to too many requests, return the error
 		return nil, err
 	}
-
 	logger.Info("Request successful")
-	// If the retry was successful, the body won't be nil, so return the result here to avoid reading the body again, causing an error
-	if body != nil {
-		return body, nil
-	}
-
-	body, err = io.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
-
-	// In case of a post request returning just a single, non JSON response
-	// This requires the endpoint method to handle the response as a api.PlainTextResponse and do type requireion
+	// If the response does not have a Content-Type header, create a JSON response with the body as the value
 	if response.Header.Get("Content-Type") == "" {
-		body = []byte(fmt.Sprintf(`{"response":"%s"}`, string(body)))
-		return body, nil
+		jsonResponse := map[string]any{"response": body}
+		return json.Marshal(jsonResponse)
 	}
 	return body, nil
 }
 
 func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Response) error {
-	// If the API returns a 429 code
 	if response.StatusCode == http.StatusTooManyRequests {
-		limit_type := response.Header.Get(api.X_RATE_LIMIT_TYPE_HEADER)
-		if limit_type != "" {
-			logger.Warn(fmt.Sprintf("Rate limited, type: %s", limit_type))
+		limitType := response.Header.Get(api.X_RATE_LIMIT_TYPE_HEADER)
+		if limitType != "" {
+			logger.Warn("Rate limited, type:", zap.String("limit_type", limitType))
 		} else {
 			logger.Warn("Rate limited but no service was specified")
 		}
 		if c.IsRetryEnabled {
 			retryAfter := response.Header.Get(api.RETRY_AFTER_HEADER)
-			// If the header isn't found, don't retry and return error
 			if retryAfter == "" {
-				logger.Error("Request failed", zap.Error(api.ErrRetryAfterHeaderNotFound))
-				return api.ErrRetryAfterHeaderNotFound
+				err := api.ErrRetryAfterHeaderNotFound
+				logger.Error("Request failed", zap.Error(err))
+				return err
 			}
+			// Convert the value of Retry-After header to seconds
 			seconds, err := strconv.Atoi(retryAfter)
 			if err != nil {
 				logger.Error("Error converting Retry-After header", zap.Error(err))
 				return err
 			}
-			logger.Warn(fmt.Sprintf("Retrying request in %ds", seconds))
-			time.Sleep(time.Duration(seconds) * time.Second)
+			logger.Warn("Retrying request in", zap.Duration("retry_after", time.Second*time.Duration(seconds)))
+			// Sleep for the retry duration
+			time.Sleep(time.Second * time.Duration(seconds))
 			return api.ErrTooManyRequests
 		}
 	}
-	// If the status code is lower than 200 or higher than 299, return an error
+	// Check if the response status code is not within the range of 200-299 (success codes)
 	if response.StatusCode < http.StatusOK || response.StatusCode > 299 {
 		logger.Error("Request failed", zap.Error(fmt.Errorf("endpoint method returned an error code: %v", response.Status)))
 		// Handling errors documented in the Riot API docs
