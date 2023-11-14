@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 const doT = require('dot')
-const glob = require('glob')
 process.chdir(__dirname)
 global.require = require
 const defs = {}

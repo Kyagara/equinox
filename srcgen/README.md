@@ -8,7 +8,7 @@ This project is based on [Riven](https://github.com/MingweiSamuel/Riven/)'s code
 
 Changes had to be made to translate the rust output to golang (I miss Option<>), mainly with how the clients are organized (I miss impl).
 
-Removed promises, removed `glob-promise`, `request`, `request-promise-native`.
+Removed promises, removed `glob-promise`, `glob`, `request`, `request-promise-native`.
 
 Added `node-fetch-commonjs`.
 
@@ -18,4 +18,4 @@ Separated the download and compilation process different files.
 
 ## Usage
 
-After installing the dependencies with `npm i`, run `npm run compile`, you can run the compile steps individually using `node update.js` and `node index.js`.
+After installing the dependencies with `npm i`, run `npm run update` and then `npm run compile`.

@@ -37,7 +37,7 @@ type ContentItemV1DTO struct {
     Name string `json:"name"`
     // This field is excluded from the response when a locale is set
     LocalizedNames LocalizedNamesV1DTO `json:"localizedNames"`
-    Id string `json:"id"`
+    ID string `json:"id"`
     AssetName string `json:"assetName"`
     // This field is only included for maps and game modes. These values are used in the match response.
     AssetPath string `json:"assetPath"`
@@ -45,25 +45,25 @@ type ContentItemV1DTO struct {
 
 // LocalizedNamesDTO data object.
 type LocalizedNamesV1DTO struct {
-    ArAE string `json:"ar-AE"`
-    DeDE string `json:"de-DE"`
-    EnGB string `json:"en-GB"`
-    EnUS string `json:"en-US"`
-    EsES string `json:"es-ES"`
-    EsMX string `json:"es-MX"`
-    FrFR string `json:"fr-FR"`
+    ArAe string `json:"ar-AE"`
+    DeDe string `json:"de-DE"`
+    EnGb string `json:"en-GB"`
+    EnUs string `json:"en-US"`
+    EsEs string `json:"es-ES"`
+    EsMx string `json:"es-MX"`
+    FrFr string `json:"fr-FR"`
     IdID string `json:"id-ID"`
-    ItIT string `json:"it-IT"`
-    JaJP string `json:"ja-JP"`
-    KoKR string `json:"ko-KR"`
-    PlPL string `json:"pl-PL"`
-    PtBR string `json:"pt-BR"`
-    RuRU string `json:"ru-RU"`
-    ThTH string `json:"th-TH"`
-    TrTR string `json:"tr-TR"`
-    ViVN string `json:"vi-VN"`
-    ZhCN string `json:"zh-CN"`
-    ZhTW string `json:"zh-TW"`
+    ItIt string `json:"it-IT"`
+    JaJp string `json:"ja-JP"`
+    KoKr string `json:"ko-KR"`
+    PlPl string `json:"pl-PL"`
+    PtBr string `json:"pt-BR"`
+    RuRu string `json:"ru-RU"`
+    ThTh string `json:"th-TH"`
+    TrTr string `json:"tr-TR"`
+    ViVn string `json:"vi-VN"`
+    ZhCn string `json:"zh-CN"`
+    ZhTw string `json:"zh-TW"`
 }
 
 // ActDTO data object.
@@ -71,10 +71,10 @@ type ActV1DTO struct {
     Name string `json:"name"`
     // This field is excluded from the response when a locale is set
     LocalizedNames LocalizedNamesV1DTO `json:"localizedNames"`
-    Id string `json:"id"`
+    ID string `json:"id"`
     IsActive bool `json:"isActive"`
     ParentID string `json:"parentId"`
-    Type_ string `json:"type"`
+    Type string `json:"type"`
 }
 
 // MatchDTO data object.
@@ -275,7 +275,7 @@ type LeaderboardV1DTO struct {
     Players []PlayerV1DTO `json:"players"`
     ImmortalStartingPage int64 `json:"immortalStartingPage"`
     ImmortalStartingIndex int64 `json:"immortalStartingIndex"`
-    TopTierRRThreshold int64 `json:"topTierRRThreshold"`
+    TopTierRrThreshold int64 `json:"topTierRRThreshold"`
     TierDetails map[int64]TierDetailV1DTO `json:"tierDetails"`
     StartIndex int64 `json:"startIndex"`
     Query string `json:"query"`
@@ -304,7 +304,7 @@ type TierDetailV1DTO struct {
 
 // PlatformDataDTO data object.
 type PlatformDataV1DTO struct {
-    Id string `json:"id"`
+    ID string `json:"id"`
     Name string `json:"name"`
     Locales []string `json:"locales"`
     Maintenances []StatusV1DTO `json:"maintenances"`
@@ -313,16 +313,16 @@ type PlatformDataV1DTO struct {
 
 // StatusDTO data object.
 type StatusV1DTO struct {
-    Id int32 `json:"id"`
+    ID int32 `json:"id"`
     // (Legal values:  scheduled,  in_progress,  complete)
-    Maintenance_status string `json:"maintenance_status"`
+    MaintenanceStatus string `json:"maintenance_status"`
     // (Legal values:  info,  warning,  critical)
-    Incident_severity string `json:"incident_severity"`
+    IncidentSeverity string `json:"incident_severity"`
     Titles []ContentV1DTO `json:"titles"`
     Updates []UpdateV1DTO `json:"updates"`
-    Created_at string `json:"created_at"`
-    Archive_at string `json:"archive_at"`
-    Updated_at string `json:"updated_at"`
+    CreatedAt string `json:"created_at"`
+    ArchiveAt string `json:"archive_at"`
+    UpdatedAt string `json:"updated_at"`
     // (Legal values: windows, macos, android, ios, ps4, xbone, switch)
     Platforms []string `json:"platforms"`
 }
@@ -335,12 +335,12 @@ type StatusContentV1DTO struct {
 
 // UpdateDTO data object.
 type UpdateV1DTO struct {
-    Id int32 `json:"id"`
+    ID int32 `json:"id"`
     Author string `json:"author"`
     Publish bool `json:"publish"`
     // (Legal values: riotclient, riotstatus, game)
-    Publish_locations []string `json:"publish_locations"`
+    PublishLocations []string `json:"publish_locations"`
     Translations []ContentV1DTO `json:"translations"`
-    Created_at string `json:"created_at"`
-    Updated_at string `json:"updated_at"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
 }

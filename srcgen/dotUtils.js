@@ -125,23 +125,22 @@ function getNormalizedDTOStructName(name, version, endpoint) {
 }
 
 function getNormalizedFieldName(name) {
-  let temp = name.replace('-', '')
+  let temp = changeCase.pascalCase(name.replace('-', ''))
   switch (temp) {
-    case 'puuid':
+    case 'Puuid':
       return 'PUUID'
-    case 'xp':
+    case 'Xp':
       return 'XP'
+    case 'Id':
+      return 'ID'
     default:
       if (temp.endsWith('Id')) {
         temp = temp.slice(0, temp.length - 2) + 'ID'
       }
-      if (temp.endsWith('Ids')) {
-        temp = temp.slice(0, temp.length - 3) + 'IDs'
-      }
       if (temp.includes('Ids')) {
         temp = temp.replace('Ids', 'IDs')
       }
-      return capitalize(temp)
+      return temp
   }
 }
 
@@ -251,7 +250,7 @@ function formatAddHeaderParam(param, returnValue, isPrimitive) {
   const name = normalizePropName(param.name)
   let value = `new(${returnValue})`
   if (isPrimitive) value = '*' + value
-  let letHeaderName = name.endsWith('_') ? name.slice(0, -1) : name
+  const letHeaderName = name.endsWith('_') ? name.slice(0, -1) : name
   switch (param.schema.type) {
     case 'string':
       return `if ${name} == "" {

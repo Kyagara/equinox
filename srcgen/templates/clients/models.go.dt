@@ -39,12 +39,12 @@ type {{= structName }} struct {
 {{
             for (let [ propKey, prop ] of Object.entries(props)) {
                 const name = dotUtils.normalizePropName(propKey);
-                const dto = dotUtils.getNormalizedDTOStructName(dotUtils.stringifyType(prop), endpoint_pascal_case, endpoint);
+                const type = dotUtils.getNormalizedDTOStructName(dotUtils.stringifyType(prop), endpoint_pascal_case, endpoint);
 }}
 {{? prop.description }}
     // {{= prop.description.split('\n').map(x => x.trim()).join('\r\n    // ') }}
 {{?}}
-    {{= dotUtils.getNormalizedFieldName(name) }} {{= dto }} {{= dotUtils.formatJsonProperty(propKey) }}
+    {{= dotUtils.getNormalizedFieldName(name) }} {{= type }} {{= dotUtils.formatJsonProperty(propKey) }}
 {{
             }
 }}
