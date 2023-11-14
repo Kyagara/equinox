@@ -13,7 +13,7 @@ package lol
 import (
 	"fmt"
 	"net/http"
-    
+
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"go.uber.org/zap"
@@ -44,21 +44,21 @@ type ChampionMasteryV4 struct {
 //
 // [champion-mastery-v4.getAllChampionMasteriesByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getAllChampionMasteriesByPUUID
 func (e *ChampionMasteryV4) AllMasteriesByPUUID(route PlatformRoute, encryptedPUUID string) ([]ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "AllMasteriesByPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v", encryptedPUUID), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]ChampionMasteryV4DTO), err
+	logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "AllMasteriesByPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v", encryptedPUUID), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]ChampionMasteryV4DTO), err
 	}
-  var data []ChampionMasteryV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]ChampionMasteryV4DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data []ChampionMasteryV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]ChampionMasteryV4DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get a champion mastery by puuid and champion ID.
@@ -76,21 +76,21 @@ func (e *ChampionMasteryV4) AllMasteriesByPUUID(route PlatformRoute, encryptedPU
 //
 // [champion-mastery-v4.getChampionMasteryByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryByPUUID
 func (e *ChampionMasteryV4) MasteryByPUUID(route PlatformRoute, encryptedPUUID string, championId int64) (*ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "MasteryByPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v/by-champion/%v", encryptedPUUID, championId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "MasteryByPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v/by-champion/%v", encryptedPUUID, championId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data ChampionMasteryV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data ChampionMasteryV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get specified number of top champion mastery entries sorted by number of champion points descending.
@@ -108,26 +108,26 @@ func (e *ChampionMasteryV4) MasteryByPUUID(route PlatformRoute, encryptedPUUID s
 //
 // [champion-mastery-v4.getTopChampionMasteriesByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getTopChampionMasteriesByPUUID
 func (e *ChampionMasteryV4) TopMasteriesByPUUID(route PlatformRoute, encryptedPUUID string, count int32) ([]ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "TopMasteriesByPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v/top", encryptedPUUID), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]ChampionMasteryV4DTO), err
+	logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "TopMasteriesByPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v/top", encryptedPUUID), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]ChampionMasteryV4DTO), err
 	}
-  values := request.URL.Query()
-  if count != -1 {
-    values.Set("count", fmt.Sprint(count))
-  }
-  request.URL.RawQuery = values.Encode()
-  var data []ChampionMasteryV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]ChampionMasteryV4DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	values := request.URL.Query()
+	if count != -1 {
+		values.Set("count", fmt.Sprint(count))
+	}
+	request.URL.RawQuery = values.Encode()
+	var data []ChampionMasteryV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]ChampionMasteryV4DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get all champion mastery entries sorted by number of champion points descending,
@@ -144,21 +144,21 @@ func (e *ChampionMasteryV4) TopMasteriesByPUUID(route PlatformRoute, encryptedPU
 //
 // [champion-mastery-v4.getAllChampionMasteries]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getAllChampionMasteries
 func (e *ChampionMasteryV4) AllMasteriesBySummonerID(route PlatformRoute, encryptedSummonerId string) ([]ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "AllMasteriesBySummonerID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v", encryptedSummonerId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]ChampionMasteryV4DTO), err
+	logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "AllMasteriesBySummonerID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v", encryptedSummonerId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]ChampionMasteryV4DTO), err
 	}
-  var data []ChampionMasteryV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]ChampionMasteryV4DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data []ChampionMasteryV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]ChampionMasteryV4DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get a champion mastery by player ID and champion ID.
@@ -176,21 +176,21 @@ func (e *ChampionMasteryV4) AllMasteriesBySummonerID(route PlatformRoute, encryp
 //
 // [champion-mastery-v4.getChampionMastery]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMastery
 func (e *ChampionMasteryV4) MasteryBySummonerID(route PlatformRoute, encryptedSummonerId string, championId int64) (*ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "MasteryBySummonerID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v/by-champion/%v", encryptedSummonerId, championId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "MasteryBySummonerID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v/by-champion/%v", encryptedSummonerId, championId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data ChampionMasteryV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data ChampionMasteryV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get specified number of top champion mastery entries sorted by number of champion points descending.
@@ -208,26 +208,26 @@ func (e *ChampionMasteryV4) MasteryBySummonerID(route PlatformRoute, encryptedSu
 //
 // [champion-mastery-v4.getTopChampionMasteries]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getTopChampionMasteries
 func (e *ChampionMasteryV4) TopMasteriesBySummonerID(route PlatformRoute, encryptedSummonerId string, count int32) ([]ChampionMasteryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "TopMasteriesBySummonerID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v/top", encryptedSummonerId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]ChampionMasteryV4DTO), err
+	logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "TopMasteriesBySummonerID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v/top", encryptedSummonerId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]ChampionMasteryV4DTO), err
 	}
-  values := request.URL.Query()
-  if count != -1 {
-    values.Set("count", fmt.Sprint(count))
-  }
-  request.URL.RawQuery = values.Encode()
-  var data []ChampionMasteryV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]ChampionMasteryV4DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	values := request.URL.Query()
+	if count != -1 {
+		values.Set("count", fmt.Sprint(count))
+	}
+	request.URL.RawQuery = values.Encode()
+	var data []ChampionMasteryV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]ChampionMasteryV4DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
@@ -244,21 +244,21 @@ func (e *ChampionMasteryV4) TopMasteriesBySummonerID(route PlatformRoute, encryp
 //
 // [champion-mastery-v4.getChampionMasteryScoreByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScoreByPUUID
 func (e *ChampionMasteryV4) MasteryScoreByPUUID(route PlatformRoute, encryptedPUUID string) (int32, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "MasteryScoreByPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-puuid/%v", encryptedPUUID), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new(int32), err
+	logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "MasteryScoreByPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-puuid/%v", encryptedPUUID), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new(int32), err
 	}
-  var data int32
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new(int32), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data int32
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new(int32), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
@@ -275,21 +275,21 @@ func (e *ChampionMasteryV4) MasteryScoreByPUUID(route PlatformRoute, encryptedPU
 //
 // [champion-mastery-v4.getChampionMasteryScore]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScore
 func (e *ChampionMasteryV4) ScoreBySummonerID(route PlatformRoute, encryptedSummonerId string) (int32, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "ScoreBySummonerID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-summoner/%v", encryptedSummonerId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new(int32), err
+	logger := e.internalClient.Logger("LOL", "ChampionMasteryV4", "ScoreBySummonerID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-summoner/%v", encryptedSummonerId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new(int32), err
 	}
-  var data int32
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new(int32), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data int32
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new(int32), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // # Riot API Reference
@@ -316,21 +316,21 @@ type ChampionV3 struct {
 //
 // [champion-v3.getChampionInfo]: https://developer.riotgames.com/api-methods/#champion-v3/GET_getChampionInfo
 func (e *ChampionV3) Rotation(route PlatformRoute) (*ChampionRotationV3DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChampionV3", "Rotation")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/platform/v3/champion-rotations", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "ChampionV3", "Rotation")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/platform/v3/champion-rotations", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data ChampionRotationV3DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data ChampionRotationV3DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -362,21 +362,21 @@ type ClashV1 struct {
 //
 // [clash-v1.getPlayersByPUUID]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getPlayersByPUUID
 func (e *ClashV1) SummonerEntriesByPUUID(route PlatformRoute, puuid string) ([]PlayerV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "SummonerEntriesByPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/players/by-puuid/%v", puuid), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]PlayerV1DTO), err
+	logger := e.internalClient.Logger("LOL", "ClashV1", "SummonerEntriesByPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/players/by-puuid/%v", puuid), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]PlayerV1DTO), err
 	}
-  var data []PlayerV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]PlayerV1DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data []PlayerV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]PlayerV1DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get players by summoner ID.
@@ -397,21 +397,21 @@ func (e *ClashV1) SummonerEntriesByPUUID(route PlatformRoute, puuid string) ([]P
 //
 // [clash-v1.getPlayersBySummoner]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getPlayersBySummoner
 func (e *ClashV1) SummonerEntriesBySummonerID(route PlatformRoute, summonerId string) ([]PlayerV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "SummonerEntriesBySummonerID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/players/by-summoner/%v", summonerId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]PlayerV1DTO), err
+	logger := e.internalClient.Logger("LOL", "ClashV1", "SummonerEntriesBySummonerID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/players/by-summoner/%v", summonerId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]PlayerV1DTO), err
 	}
-  var data []PlayerV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]PlayerV1DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data []PlayerV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]PlayerV1DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get team by ID.
@@ -428,21 +428,21 @@ func (e *ClashV1) SummonerEntriesBySummonerID(route PlatformRoute, summonerId st
 //
 // [clash-v1.getTeamById]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTeamById
 func (e *ClashV1) TeamByTeamID(route PlatformRoute, teamId string) (*TeamV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "TeamByTeamID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/teams/%v", teamId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "ClashV1", "TeamByTeamID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/teams/%v", teamId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data TeamV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data TeamV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get all active or upcoming tournaments.
@@ -458,21 +458,21 @@ func (e *ClashV1) TeamByTeamID(route PlatformRoute, teamId string) (*TeamV1DTO, 
 //
 // [clash-v1.getTournaments]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournaments
 func (e *ClashV1) Tournaments(route PlatformRoute) ([]TournamentV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "Tournaments")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/clash/v1/tournaments", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]TournamentV1DTO), err
+	logger := e.internalClient.Logger("LOL", "ClashV1", "Tournaments")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/clash/v1/tournaments", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]TournamentV1DTO), err
 	}
-  var data []TournamentV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]TournamentV1DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data []TournamentV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]TournamentV1DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get tournament by team ID.
@@ -489,21 +489,21 @@ func (e *ClashV1) Tournaments(route PlatformRoute) ([]TournamentV1DTO, error) {
 //
 // [clash-v1.getTournamentByTeam]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentByTeam
 func (e *ClashV1) ByTeamID(route PlatformRoute, teamId string) (*TournamentV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "ByTeamID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/tournaments/by-team/%v", teamId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "ClashV1", "ByTeamID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/tournaments/by-team/%v", teamId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data TournamentV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data TournamentV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get tournament by ID.
@@ -520,21 +520,21 @@ func (e *ClashV1) ByTeamID(route PlatformRoute, teamId string) (*TournamentV1DTO
 //
 // [clash-v1.getTournamentById]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentById
 func (e *ClashV1) ByID(route PlatformRoute, tournamentId int32) (*TournamentV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ClashV1", "ByID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/tournaments/%v", tournamentId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "ClashV1", "ByID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/tournaments/%v", tournamentId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data TournamentV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data TournamentV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -565,26 +565,26 @@ type LeagueExpV4 struct {
 //
 // [league-exp-v4.getLeagueEntries]: https://developer.riotgames.com/api-methods/#league-exp-v4/GET_getLeagueEntries
 func (e *LeagueExpV4) Entries(route PlatformRoute, queue QueueType, tier Tier, division Division, page int32) ([]LeagueEntryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueExpV4", "Entries")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league-exp/v4/entries/%v/%v/%v", queue, tier, division), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]LeagueEntryV4DTO), err
+	logger := e.internalClient.Logger("LOL", "LeagueExpV4", "Entries")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league-exp/v4/entries/%v/%v/%v", queue, tier, division), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]LeagueEntryV4DTO), err
 	}
-  values := request.URL.Query()
-  if page != -1 {
-    values.Set("page", fmt.Sprint(page))
-  }
-  request.URL.RawQuery = values.Encode()
-  var data []LeagueEntryV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]LeagueEntryV4DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	values := request.URL.Query()
+	if page != -1 {
+		values.Set("page", fmt.Sprint(page))
+	}
+	request.URL.RawQuery = values.Encode()
+	var data []LeagueEntryV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]LeagueEntryV4DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // # Riot API Reference
@@ -612,21 +612,21 @@ type LeagueV4 struct {
 //
 // [league-v4.getChallengerLeague]: https://developer.riotgames.com/api-methods/#league-v4/GET_getChallengerLeague
 func (e *LeagueV4) ChallengerByQueue(route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueV4", "ChallengerByQueue")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/challengerleagues/by-queue/%v", queue), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "LeagueV4", "ChallengerByQueue")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/challengerleagues/by-queue/%v", queue), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data LeagueListV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data LeagueListV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get league entries in all queues for a given summoner ID.
@@ -643,21 +643,21 @@ func (e *LeagueV4) ChallengerByQueue(route PlatformRoute, queue QueueType) (*Lea
 //
 // [league-v4.getLeagueEntriesForSummoner]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueEntriesForSummoner
 func (e *LeagueV4) SummonerEntries(route PlatformRoute, encryptedSummonerId string) ([]LeagueEntryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueV4", "SummonerEntries")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/entries/by-summoner/%v", encryptedSummonerId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]LeagueEntryV4DTO), err
+	logger := e.internalClient.Logger("LOL", "LeagueV4", "SummonerEntries")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/entries/by-summoner/%v", encryptedSummonerId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]LeagueEntryV4DTO), err
 	}
-  var data []LeagueEntryV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]LeagueEntryV4DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data []LeagueEntryV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]LeagueEntryV4DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get all the league entries.
@@ -677,26 +677,26 @@ func (e *LeagueV4) SummonerEntries(route PlatformRoute, encryptedSummonerId stri
 //
 // [league-v4.getLeagueEntries]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueEntries
 func (e *LeagueV4) Entries(route PlatformRoute, queue QueueType, tier Tier, division Division, page int32) ([]LeagueEntryV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueV4", "Entries")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/entries/%v/%v/%v", queue, tier, division), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]LeagueEntryV4DTO), err
+	logger := e.internalClient.Logger("LOL", "LeagueV4", "Entries")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/entries/%v/%v/%v", queue, tier, division), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]LeagueEntryV4DTO), err
 	}
-  values := request.URL.Query()
-  if page != -1 {
-    values.Set("page", fmt.Sprint(page))
-  }
-  request.URL.RawQuery = values.Encode()
-  var data []LeagueEntryV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]LeagueEntryV4DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	values := request.URL.Query()
+	if page != -1 {
+		values.Set("page", fmt.Sprint(page))
+	}
+	request.URL.RawQuery = values.Encode()
+	var data []LeagueEntryV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]LeagueEntryV4DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get the grandmaster league of a specific queue.
@@ -713,21 +713,21 @@ func (e *LeagueV4) Entries(route PlatformRoute, queue QueueType, tier Tier, divi
 //
 // [league-v4.getGrandmasterLeague]: https://developer.riotgames.com/api-methods/#league-v4/GET_getGrandmasterLeague
 func (e *LeagueV4) GrandmasterByQueue(route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueV4", "GrandmasterByQueue")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/grandmasterleagues/by-queue/%v", queue), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "LeagueV4", "GrandmasterByQueue")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/grandmasterleagues/by-queue/%v", queue), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data LeagueListV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data LeagueListV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get league with given ID, including inactive entries.
@@ -744,21 +744,21 @@ func (e *LeagueV4) GrandmasterByQueue(route PlatformRoute, queue QueueType) (*Le
 //
 // [league-v4.getLeagueById]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueById
 func (e *LeagueV4) ByID(route PlatformRoute, leagueId string) (*LeagueListV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueV4", "ByID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/leagues/%v", leagueId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "LeagueV4", "ByID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/leagues/%v", leagueId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data LeagueListV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data LeagueListV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get the master league for given queue.
@@ -775,21 +775,21 @@ func (e *LeagueV4) ByID(route PlatformRoute, leagueId string) (*LeagueListV4DTO,
 //
 // [league-v4.getMasterLeague]: https://developer.riotgames.com/api-methods/#league-v4/GET_getMasterLeague
 func (e *LeagueV4) MasterByQueue(route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "LeagueV4", "MasterByQueue")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/masterleagues/by-queue/%v", queue), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "LeagueV4", "MasterByQueue")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/masterleagues/by-queue/%v", queue), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data LeagueListV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data LeagueListV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -816,21 +816,21 @@ type ChallengesV1 struct {
 //
 // [lol-challenges-v1.getAllChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getAllChallengeConfigs
 func (e *ChallengesV1) AllConfigs(route PlatformRoute) ([]ChallengeConfigInfoV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChallengesV1", "AllConfigs")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/challenges/v1/challenges/config", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]ChallengeConfigInfoV1DTO), err
+	logger := e.internalClient.Logger("LOL", "ChallengesV1", "AllConfigs")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/challenges/v1/challenges/config", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]ChallengeConfigInfoV1DTO), err
 	}
-  var data []ChallengeConfigInfoV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]ChallengeConfigInfoV1DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data []ChallengeConfigInfoV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]ChallengeConfigInfoV1DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Map of level to percentile of players who have achieved it - keys: ChallengeId -> Season -> Level -> percentile of players who achieved it
@@ -846,21 +846,21 @@ func (e *ChallengesV1) AllConfigs(route PlatformRoute) ([]ChallengeConfigInfoV1D
 //
 // [lol-challenges-v1.getAllChallengePercentiles]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getAllChallengePercentiles
 func (e *ChallengesV1) AllPercentiles(route PlatformRoute) (map[int64]map[Tier]float64, error) {
-  logger := e.internalClient.Logger("LOL", "ChallengesV1", "AllPercentiles")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/challenges/v1/challenges/percentiles", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new(map[int64]map[Tier]float64), err
+	logger := e.internalClient.Logger("LOL", "ChallengesV1", "AllPercentiles")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/challenges/v1/challenges/percentiles", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new(map[int64]map[Tier]float64), err
 	}
-  var data map[int64]map[Tier]float64
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new(map[int64]map[Tier]float64), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data map[int64]map[Tier]float64
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new(map[int64]map[Tier]float64), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get challenge configuration (REST)
@@ -877,21 +877,21 @@ func (e *ChallengesV1) AllPercentiles(route PlatformRoute) (map[int64]map[Tier]f
 //
 // [lol-challenges-v1.getChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeConfigs
 func (e *ChallengesV1) ConfigByID(route PlatformRoute, challengeId int64) (*ChallengeConfigInfoV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChallengesV1", "ConfigByID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/config", challengeId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "ChallengesV1", "ConfigByID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/config", challengeId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data ChallengeConfigInfoV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data ChallengeConfigInfoV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Return top players for each level. Level must be MASTER, GRANDMASTER or CHALLENGER.
@@ -910,26 +910,26 @@ func (e *ChallengesV1) ConfigByID(route PlatformRoute, challengeId int64) (*Chal
 //
 // [lol-challenges-v1.getChallengeLeaderboards]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeLeaderboards
 func (e *ChallengesV1) Leaderboards(route PlatformRoute, challengeId int64, level Tier, limit int32) ([]ApexPlayerInfoV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChallengesV1", "Leaderboards")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/leaderboards/by-level/%v", challengeId, level), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]ApexPlayerInfoV1DTO), err
+	logger := e.internalClient.Logger("LOL", "ChallengesV1", "Leaderboards")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/leaderboards/by-level/%v", challengeId, level), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]ApexPlayerInfoV1DTO), err
 	}
-  values := request.URL.Query()
-  if limit != -1 {
-    values.Set("limit", fmt.Sprint(limit))
-  }
-  request.URL.RawQuery = values.Encode()
-  var data []ApexPlayerInfoV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]ApexPlayerInfoV1DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	values := request.URL.Query()
+	if limit != -1 {
+		values.Set("limit", fmt.Sprint(limit))
+	}
+	request.URL.RawQuery = values.Encode()
+	var data []ApexPlayerInfoV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]ApexPlayerInfoV1DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Map of level to percentile of players who have achieved it
@@ -946,21 +946,21 @@ func (e *ChallengesV1) Leaderboards(route PlatformRoute, challengeId int64, leve
 //
 // [lol-challenges-v1.getChallengePercentiles]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengePercentiles
 func (e *ChallengesV1) Percentiles(route PlatformRoute, challengeId int64) (map[Tier]float64, error) {
-  logger := e.internalClient.Logger("LOL", "ChallengesV1", "Percentiles")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/percentiles", challengeId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new(map[Tier]float64), err
+	logger := e.internalClient.Logger("LOL", "ChallengesV1", "Percentiles")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/percentiles", challengeId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new(map[Tier]float64), err
 	}
-  var data map[Tier]float64
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new(map[Tier]float64), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data map[Tier]float64
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new(map[Tier]float64), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Returns player information with list of all progressed challenges (REST)
@@ -977,21 +977,21 @@ func (e *ChallengesV1) Percentiles(route PlatformRoute, challengeId int64) (map[
 //
 // [lol-challenges-v1.getPlayerData]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getPlayerData
 func (e *ChallengesV1) ByPUUID(route PlatformRoute, puuid string) (*PlayerInfoV1DTO, error) {
-  logger := e.internalClient.Logger("LOL", "ChallengesV1", "ByPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/player-data/%v", puuid), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "ChallengesV1", "ByPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/player-data/%v", puuid), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data PlayerInfoV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data PlayerInfoV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -1022,21 +1022,21 @@ type StatusV3 struct {
 //
 // [lol-status-v3.getShardData]: https://developer.riotgames.com/api-methods/#lol-status-v3/GET_getShardData
 func (e *StatusV3) Shard(route PlatformRoute) (*ShardStatusV3DTO, error) {
-  logger := e.internalClient.Logger("LOL", "StatusV3", "Shard")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/status/v3/shard-data", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "StatusV3", "Shard")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/status/v3/shard-data", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data ShardStatusV3DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data ShardStatusV3DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -1063,21 +1063,21 @@ type StatusV4 struct {
 //
 // [lol-status-v4.getPlatformData]: https://developer.riotgames.com/api-methods/#lol-status-v4/GET_getPlatformData
 func (e *StatusV4) Platform(route PlatformRoute) (*PlatformDataV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "StatusV4", "Platform")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/status/v4/platform-data", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "StatusV4", "Platform")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/status/v4/platform-data", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data PlatformDataV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data PlatformDataV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -1111,41 +1111,41 @@ type MatchV5 struct {
 //
 // [match-v5.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#match-v5/GET_getMatchIdsByPUUID
 func (e *MatchV5) ListByPUUID(route api.RegionalRoute, puuid string, startTime int64, endTime int64, queue int32, type_ string, start int32, count int32) ([]string, error) {
-  logger := e.internalClient.Logger("LOL", "MatchV5", "ListByPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/match/v5/matches/by-puuid/%v/ids", puuid), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]string), err
+	logger := e.internalClient.Logger("LOL", "MatchV5", "ListByPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/match/v5/matches/by-puuid/%v/ids", puuid), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]string), err
 	}
-  values := request.URL.Query()
-  if startTime != -1 {
-    values.Set("startTime", fmt.Sprint(startTime))
-  }
-  if endTime != -1 {
-    values.Set("endTime", fmt.Sprint(endTime))
-  }
-  if queue != -1 {
-    values.Set("queue", fmt.Sprint(queue))
-  }
-  if type_ != "" {
-    values.Set("type", type_)
-  }
-  if start != -1 {
-    values.Set("start", fmt.Sprint(start))
-  }
-  if count != -1 {
-    values.Set("count", fmt.Sprint(count))
-  }
-  request.URL.RawQuery = values.Encode()
-  var data []string
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]string), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	values := request.URL.Query()
+	if startTime != -1 {
+		values.Set("startTime", fmt.Sprint(startTime))
+	}
+	if endTime != -1 {
+		values.Set("endTime", fmt.Sprint(endTime))
+	}
+	if queue != -1 {
+		values.Set("queue", fmt.Sprint(queue))
+	}
+	if type_ != "" {
+		values.Set("type", type_)
+	}
+	if start != -1 {
+		values.Set("start", fmt.Sprint(start))
+	}
+	if count != -1 {
+		values.Set("count", fmt.Sprint(count))
+	}
+	request.URL.RawQuery = values.Encode()
+	var data []string
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]string), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Get a match by match id
@@ -1162,21 +1162,21 @@ func (e *MatchV5) ListByPUUID(route api.RegionalRoute, puuid string, startTime i
 //
 // [match-v5.getMatch]: https://developer.riotgames.com/api-methods/#match-v5/GET_getMatch
 func (e *MatchV5) ByID(route api.RegionalRoute, matchId string) (*MatchV5DTO, error) {
-  logger := e.internalClient.Logger("LOL", "MatchV5", "ByID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/match/v5/matches/%v", matchId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "MatchV5", "ByID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/match/v5/matches/%v", matchId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data MatchV5DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data MatchV5DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get a match timeline by match id
@@ -1193,21 +1193,21 @@ func (e *MatchV5) ByID(route api.RegionalRoute, matchId string) (*MatchV5DTO, er
 //
 // [match-v5.getTimeline]: https://developer.riotgames.com/api-methods/#match-v5/GET_getTimeline
 func (e *MatchV5) Timeline(route api.RegionalRoute, matchId string) (*MatchTimelineV5DTO, error) {
-  logger := e.internalClient.Logger("LOL", "MatchV5", "Timeline")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/match/v5/matches/%v/timeline", matchId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "MatchV5", "Timeline")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/match/v5/matches/%v/timeline", matchId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data MatchTimelineV5DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data MatchTimelineV5DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -1235,21 +1235,21 @@ type SpectatorV4 struct {
 //
 // [spectator-v4.getCurrentGameInfoBySummoner]: https://developer.riotgames.com/api-methods/#spectator-v4/GET_getCurrentGameInfoBySummoner
 func (e *SpectatorV4) CurrentGameBySummonerID(route PlatformRoute, encryptedSummonerId string) (*CurrentGameInfoV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SpectatorV4", "CurrentGameBySummonerID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/spectator/v4/active-games/by-summoner/%v", encryptedSummonerId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "SpectatorV4", "CurrentGameBySummonerID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/spectator/v4/active-games/by-summoner/%v", encryptedSummonerId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data CurrentGameInfoV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data CurrentGameInfoV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get list of featured games.
@@ -1265,21 +1265,21 @@ func (e *SpectatorV4) CurrentGameBySummonerID(route PlatformRoute, encryptedSumm
 //
 // [spectator-v4.getFeaturedGames]: https://developer.riotgames.com/api-methods/#spectator-v4/GET_getFeaturedGames
 func (e *SpectatorV4) Featured(route PlatformRoute) (*FeaturedGamesV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SpectatorV4", "Featured")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/spectator/v4/featured-games", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "SpectatorV4", "Featured")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/spectator/v4/featured-games", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data FeaturedGamesV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data FeaturedGamesV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -1307,21 +1307,21 @@ type SummonerV4 struct {
 //
 // [summoner-v4.getByRSOPUUID]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByRSOPUUID
 func (e *SummonerV4) ByRSOPUUID(route PlatformRoute, rsoPUUID string) (*SummonerV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SummonerV4", "ByRSOPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/fulfillment/v1/summoners/by-puuid/%v", rsoPUUID), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "SummonerV4", "ByRSOPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/fulfillment/v1/summoners/by-puuid/%v", rsoPUUID), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data SummonerV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data SummonerV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get a summoner by account ID.
@@ -1338,21 +1338,21 @@ func (e *SummonerV4) ByRSOPUUID(route PlatformRoute, rsoPUUID string) (*Summoner
 //
 // [summoner-v4.getByAccountId]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByAccountId
 func (e *SummonerV4) ByAccountID(route PlatformRoute, encryptedAccountId string) (*SummonerV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SummonerV4", "ByAccountID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/summoner/v4/summoners/by-account/%v", encryptedAccountId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "SummonerV4", "ByAccountID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/summoner/v4/summoners/by-account/%v", encryptedAccountId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data SummonerV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data SummonerV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get a summoner by summoner name.
@@ -1369,21 +1369,21 @@ func (e *SummonerV4) ByAccountID(route PlatformRoute, encryptedAccountId string)
 //
 // [summoner-v4.getBySummonerName]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getBySummonerName
 func (e *SummonerV4) ByName(route PlatformRoute, summonerName string) (*SummonerV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SummonerV4", "ByName")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/summoner/v4/summoners/by-name/%v", summonerName), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "SummonerV4", "ByName")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/summoner/v4/summoners/by-name/%v", summonerName), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data SummonerV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data SummonerV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get a summoner by PUUID.
@@ -1400,21 +1400,21 @@ func (e *SummonerV4) ByName(route PlatformRoute, summonerName string) (*Summoner
 //
 // [summoner-v4.getByPUUID]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByPUUID
 func (e *SummonerV4) ByPUUID(route PlatformRoute, encryptedPUUID string) (*SummonerV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SummonerV4", "ByPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/summoner/v4/summoners/by-puuid/%v", encryptedPUUID), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "SummonerV4", "ByPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/summoner/v4/summoners/by-puuid/%v", encryptedPUUID), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data SummonerV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data SummonerV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get a summoner by access token.
@@ -1431,25 +1431,25 @@ func (e *SummonerV4) ByPUUID(route PlatformRoute, encryptedPUUID string) (*Summo
 //
 // [summoner-v4.getByAccessToken]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByAccessToken
 func (e *SummonerV4) ByAccessToken(route PlatformRoute, authorization string) (*SummonerV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SummonerV4", "ByAccessToken")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/summoner/v4/summoners/me", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "SummonerV4", "ByAccessToken")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/summoner/v4/summoners/me", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  if authorization == "" {
-    return new(SummonerV4DTO), fmt.Errorf("'authorization' header is required")
-  }
-  request.Header.Set("authorization", fmt.Sprint(authorization))
-  var data SummonerV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	if authorization == "" {
+		return new(SummonerV4DTO), fmt.Errorf("'authorization' header is required")
+	}
+	request.Header.Set("authorization", fmt.Sprint(authorization))
+	var data SummonerV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get a summoner by summoner ID.
@@ -1466,21 +1466,21 @@ func (e *SummonerV4) ByAccessToken(route PlatformRoute, authorization string) (*
 //
 // [summoner-v4.getBySummonerId]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getBySummonerId
 func (e *SummonerV4) BySummonerID(route PlatformRoute, encryptedSummonerId string) (*SummonerV4DTO, error) {
-  logger := e.internalClient.Logger("LOL", "SummonerV4", "BySummonerID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/summoner/v4/summoners/%v", encryptedSummonerId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "SummonerV4", "BySummonerID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/summoner/v4/summoners/%v", encryptedSummonerId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data SummonerV4DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data SummonerV4DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -1509,29 +1509,29 @@ type TournamentStubV5 struct {
 //
 // [tournament-stub-v5.createTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_createTournamentCode
 func (e *TournamentStubV5) CreateTournamentCode(route api.RegionalRoute, body *StubTournamentCodeParametersV5DTO, count int32, tournamentId int64) ([]string, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentStubV5", "CreateTournamentCode")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament-stub/v5/codes", body)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]string), err
+	logger := e.internalClient.Logger("LOL", "TournamentStubV5", "CreateTournamentCode")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament-stub/v5/codes", body)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]string), err
 	}
-  values := request.URL.Query()
-  if count != -1 {
-    values.Set("count", fmt.Sprint(count))
-  }
-  if tournamentId != -1 {
-    values.Set("tournamentId", fmt.Sprint(tournamentId))
-  }
-  request.URL.RawQuery = values.Encode()
-  var data []string
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]string), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	values := request.URL.Query()
+	if count != -1 {
+		values.Set("count", fmt.Sprint(count))
+	}
+	if tournamentId != -1 {
+		values.Set("tournamentId", fmt.Sprint(tournamentId))
+	}
+	request.URL.RawQuery = values.Encode()
+	var data []string
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]string), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Returns the tournament code DTO associated with a tournament code string - Stub Method
@@ -1548,21 +1548,21 @@ func (e *TournamentStubV5) CreateTournamentCode(route api.RegionalRoute, body *S
 //
 // [tournament-stub-v5.getTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/GET_getTournamentCode
 func (e *TournamentStubV5) TournamentCode(route api.RegionalRoute, tournamentCode string) (*StubTournamentCodeV5DTO, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentStubV5", "TournamentCode")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament-stub/v5/codes/%v", tournamentCode), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "TournamentStubV5", "TournamentCode")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament-stub/v5/codes/%v", tournamentCode), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data StubTournamentCodeV5DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data StubTournamentCodeV5DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Gets a list of lobby events by tournament code - Stub method
@@ -1579,21 +1579,21 @@ func (e *TournamentStubV5) TournamentCode(route api.RegionalRoute, tournamentCod
 //
 // [tournament-stub-v5.getLobbyEventsByCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/GET_getLobbyEventsByCode
 func (e *TournamentStubV5) LobbyEventsByCode(route api.RegionalRoute, tournamentCode string) (*StubLobbyEventWrapperV5DTO, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentStubV5", "LobbyEventsByCode")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament-stub/v5/lobby-events/by-code/%v", tournamentCode), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "TournamentStubV5", "LobbyEventsByCode")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament-stub/v5/lobby-events/by-code/%v", tournamentCode), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data StubLobbyEventWrapperV5DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data StubLobbyEventWrapperV5DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Creates a tournament provider and returns its ID - Stub method
@@ -1613,21 +1613,21 @@ func (e *TournamentStubV5) LobbyEventsByCode(route api.RegionalRoute, tournament
 //
 // [tournament-stub-v5.registerProviderData]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_registerProviderData
 func (e *TournamentStubV5) RegisterProviderData(route api.RegionalRoute, body *StubProviderRegistrationParametersV5DTO) (int32, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentStubV5", "RegisterProviderData")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament-stub/v5/providers", body)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new(int32), err
+	logger := e.internalClient.Logger("LOL", "TournamentStubV5", "RegisterProviderData")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament-stub/v5/providers", body)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new(int32), err
 	}
-  var data int32
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new(int32), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data int32
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new(int32), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Creates a tournament and returns its ID - Stub method
@@ -1643,21 +1643,21 @@ func (e *TournamentStubV5) RegisterProviderData(route api.RegionalRoute, body *S
 //
 // [tournament-stub-v5.registerTournament]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_registerTournament
 func (e *TournamentStubV5) RegisterTournament(route api.RegionalRoute, body *StubTournamentRegistrationParametersV5DTO) (int32, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentStubV5", "RegisterTournament")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament-stub/v5/tournaments", body)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new(int32), err
+	logger := e.internalClient.Logger("LOL", "TournamentStubV5", "RegisterTournament")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament-stub/v5/tournaments", body)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new(int32), err
 	}
-  var data int32
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new(int32), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data int32
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new(int32), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // # Riot API Reference
@@ -1686,29 +1686,29 @@ type TournamentV5 struct {
 //
 // [tournament-v5.createTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-v5/POST_createTournamentCode
 func (e *TournamentV5) CreateTournamentCode(route api.RegionalRoute, body *TournamentCodeParametersV5DTO, tournamentId int64, count int32) ([]string, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentV5", "CreateTournamentCode")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament/v5/codes", body)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]string), err
+	logger := e.internalClient.Logger("LOL", "TournamentV5", "CreateTournamentCode")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament/v5/codes", body)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]string), err
 	}
-  values := request.URL.Query()
-  if tournamentId != -1 {
-    values.Set("tournamentId", fmt.Sprint(tournamentId))
-  }
-  if count != -1 {
-    values.Set("count", fmt.Sprint(count))
-  }
-  request.URL.RawQuery = values.Encode()
-  var data []string
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]string), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	values := request.URL.Query()
+	if tournamentId != -1 {
+		values.Set("tournamentId", fmt.Sprint(tournamentId))
+	}
+	if count != -1 {
+		values.Set("count", fmt.Sprint(count))
+	}
+	request.URL.RawQuery = values.Encode()
+	var data []string
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]string), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Returns the tournament code DTO associated with a tournament code string.
@@ -1725,21 +1725,21 @@ func (e *TournamentV5) CreateTournamentCode(route api.RegionalRoute, body *Tourn
 //
 // [tournament-v5.getTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-v5/GET_getTournamentCode
 func (e *TournamentV5) TournamentCode(route api.RegionalRoute, tournamentCode string) (*TournamentCodeV5DTO, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentV5", "TournamentCode")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/codes/%v", tournamentCode), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "TournamentV5", "TournamentCode")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/codes/%v", tournamentCode), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data TournamentCodeV5DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data TournamentCodeV5DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Update the pick type, map, spectator type, or allowed puuids for a code.
@@ -1756,21 +1756,21 @@ func (e *TournamentV5) TournamentCode(route api.RegionalRoute, tournamentCode st
 //
 // [tournament-v5.updateCode]: https://developer.riotgames.com/api-methods/#tournament-v5/PUT_updateCode
 func (e *TournamentV5) UpdateCode(route api.RegionalRoute, body *TournamentCodeUpdateParametersV5DTO, tournamentCode string) error {
-  logger := e.internalClient.Logger("LOL", "TournamentV5", "UpdateCode")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPut, route, fmt.Sprintf("/lol/tournament/v5/codes/%v", tournamentCode), body)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil
+	logger := e.internalClient.Logger("LOL", "TournamentV5", "UpdateCode")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPut, route, fmt.Sprintf("/lol/tournament/v5/codes/%v", tournamentCode), body)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil
 	}
-  
-  err = e.internalClient.Execute(request, nil)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil
-  }
-  logger.Debug("Method executed successfully")
-  return nil
+
+	err = e.internalClient.Execute(request, nil)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil
+	}
+	logger.Debug("Method executed successfully")
+	return nil
 }
 
 // Get games details
@@ -1795,21 +1795,21 @@ func (e *TournamentV5) UpdateCode(route api.RegionalRoute, body *TournamentCodeU
 //
 // [tournament-v5.getGames]: https://developer.riotgames.com/api-methods/#tournament-v5/GET_getGames
 func (e *TournamentV5) Games(route api.RegionalRoute, tournamentCode string) ([]TournamentGamesV5DTO, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentV5", "Games")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/games/by-code/%v", tournamentCode), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new([]TournamentGamesV5DTO), err
+	logger := e.internalClient.Logger("LOL", "TournamentV5", "Games")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/games/by-code/%v", tournamentCode), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new([]TournamentGamesV5DTO), err
 	}
-  var data []TournamentGamesV5DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new([]TournamentGamesV5DTO), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data []TournamentGamesV5DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new([]TournamentGamesV5DTO), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Gets a list of lobby events by tournament code.
@@ -1826,21 +1826,21 @@ func (e *TournamentV5) Games(route api.RegionalRoute, tournamentCode string) ([]
 //
 // [tournament-v5.getLobbyEventsByCode]: https://developer.riotgames.com/api-methods/#tournament-v5/GET_getLobbyEventsByCode
 func (e *TournamentV5) LobbyEventsByCode(route api.RegionalRoute, tournamentCode string) (*LobbyEventWrapperV5DTO, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentV5", "LobbyEventsByCode")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/lobby-events/by-code/%v", tournamentCode), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("LOL", "TournamentV5", "LobbyEventsByCode")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/lobby-events/by-code/%v", tournamentCode), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data LobbyEventWrapperV5DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data LobbyEventWrapperV5DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Creates a tournament provider and returns its ID.
@@ -1860,21 +1860,21 @@ func (e *TournamentV5) LobbyEventsByCode(route api.RegionalRoute, tournamentCode
 //
 // [tournament-v5.registerProviderData]: https://developer.riotgames.com/api-methods/#tournament-v5/POST_registerProviderData
 func (e *TournamentV5) RegisterProviderData(route api.RegionalRoute, body *ProviderRegistrationParametersV5DTO) (int32, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentV5", "RegisterProviderData")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament/v5/providers", body)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new(int32), err
+	logger := e.internalClient.Logger("LOL", "TournamentV5", "RegisterProviderData")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament/v5/providers", body)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new(int32), err
 	}
-  var data int32
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new(int32), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data int32
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new(int32), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }
 
 // Creates a tournament and returns its ID.
@@ -1890,19 +1890,19 @@ func (e *TournamentV5) RegisterProviderData(route api.RegionalRoute, body *Provi
 //
 // [tournament-v5.registerTournament]: https://developer.riotgames.com/api-methods/#tournament-v5/POST_registerTournament
 func (e *TournamentV5) RegisterTournament(route api.RegionalRoute, body *TournamentRegistrationParametersV5DTO) (int32, error) {
-  logger := e.internalClient.Logger("LOL", "TournamentV5", "RegisterTournament")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament/v5/tournaments", body)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return *new(int32), err
+	logger := e.internalClient.Logger("LOL", "TournamentV5", "RegisterTournament")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament/v5/tournaments", body)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return *new(int32), err
 	}
-  var data int32
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return *new(int32), err
-  }
-  logger.Debug("Method executed successfully")
-  return data, nil
+	var data int32
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return *new(int32), err
+	}
+	logger.Debug("Method executed successfully")
+	return data, nil
 }

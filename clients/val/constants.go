@@ -14,18 +14,18 @@ package val
 type ValPlatformRoute string
 
 const (
-    // Asia-Pacific.
-    AP ValPlatformRoute = "ap"
-    // Brazil.
-    BR ValPlatformRoute = "br"
-    // Europe.
-    EU ValPlatformRoute = "eu"
-    // Korea.
-    KR ValPlatformRoute = "kr"
-    // Latin America.
-    LATAM ValPlatformRoute = "latam"
-    // North America.
-    NA ValPlatformRoute = "na"
-    // Special esports platform.
-    ESPORTS ValPlatformRoute = "esports"
+	// Asia-Pacific.
+	AP ValPlatformRoute = "ap"
+	// Brazil.
+	BR ValPlatformRoute = "br"
+	// Europe.
+	EU ValPlatformRoute = "eu"
+	// Korea.
+	KR ValPlatformRoute = "kr"
+	// Latin America.
+	LATAM ValPlatformRoute = "latam"
+	// North America.
+	NA ValPlatformRoute = "na"
+	// Special esports platform.
+	ESPORTS ValPlatformRoute = "esports"
 )

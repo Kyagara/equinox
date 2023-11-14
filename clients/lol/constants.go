@@ -19,7 +19,7 @@ const (
 	SILVER      Tier = "SILVER"
 	GOLD        Tier = "GOLD"
 	PLATINUM    Tier = "PLATINUM"
-    EMERALD     Tier = "EMERALD"
+	EMERALD     Tier = "EMERALD"
 	DIAMOND     Tier = "DIAMOND"
 	MASTER      Tier = "MASTER"
 	GRANDMASTER Tier = "GRANDMASTER"
@@ -34,86 +34,86 @@ const (
 	II  Division = "II"
 	III Division = "III"
 	IV  Division = "IV"
-    // Deprecated
-    V   Division = "V"
+	// Deprecated
+	V Division = "V"
 )
 
 // Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
 type PlatformRoute string
 
 const (
-    // Brazil.
-    BR1 PlatformRoute = "br1"
-    // Europe, Northeast.
-    EUN1 PlatformRoute = "eun1"
-    // Europe, West.
-    EUW1 PlatformRoute = "euw1"
-    // Japan.
-    JP1 PlatformRoute = "jp1"
-    // Korea.
-    KR PlatformRoute = "kr"
-    // Latin America, North.
-    LA1 PlatformRoute = "la1"
-    // Latin America, South.
-    LA2 PlatformRoute = "la2"
-    // North America.
-    NA1 PlatformRoute = "na1"
-    // Oceana.
-    OC1 PlatformRoute = "oc1"
-    // Philippines
-    PH2 PlatformRoute = "ph2"
-    // Russia
-    RU PlatformRoute = "ru"
-    // Singapore
-    SG2 PlatformRoute = "sg2"
-    // Thailand
-    TH2 PlatformRoute = "th2"
-    // Turkey
-    TR1 PlatformRoute = "tr1"
-    // Taiwan
-    TW2 PlatformRoute = "tw2"
-    // Vietnam
-    VN2 PlatformRoute = "vn2"
-    // Public Beta Environment, special beta testing platform. Located in North America.
-    PBE1 PlatformRoute = "pbe1"
+	// Brazil.
+	BR1 PlatformRoute = "br1"
+	// Europe, Northeast.
+	EUN1 PlatformRoute = "eun1"
+	// Europe, West.
+	EUW1 PlatformRoute = "euw1"
+	// Japan.
+	JP1 PlatformRoute = "jp1"
+	// Korea.
+	KR PlatformRoute = "kr"
+	// Latin America, North.
+	LA1 PlatformRoute = "la1"
+	// Latin America, South.
+	LA2 PlatformRoute = "la2"
+	// North America.
+	NA1 PlatformRoute = "na1"
+	// Oceana.
+	OC1 PlatformRoute = "oc1"
+	// Philippines
+	PH2 PlatformRoute = "ph2"
+	// Russia
+	RU PlatformRoute = "ru"
+	// Singapore
+	SG2 PlatformRoute = "sg2"
+	// Thailand
+	TH2 PlatformRoute = "th2"
+	// Turkey
+	TR1 PlatformRoute = "tr1"
+	// Taiwan
+	TW2 PlatformRoute = "tw2"
+	// Vietnam
+	VN2 PlatformRoute = "vn2"
+	// Public Beta Environment, special beta testing platform. Located in North America.
+	PBE1 PlatformRoute = "pbe1"
 )
 
 // Tournament regions for League of Legends (LoL).
 type TournamentRegion string
 
 const (
-    // Brazil.
-    BR TournamentRegion = "br1"
-    // Europe, Northeast.
-    EUNE TournamentRegion = "eun1"
-    // Europe, West.
-    EUW TournamentRegion = "euw1"
-    // Japan.
-    JP TournamentRegion = "jp1"
-    // Latin America, North.
-    LAN TournamentRegion = "la1"
-    // Latin America, South.
-    LAS TournamentRegion = "la2"
-    // North America.
-    NA TournamentRegion = "na1"
-    // Oceana.
-    OCE TournamentRegion = "oc1"
-    // Turkey
-    TR TournamentRegion = "tr1"
-    // Public Beta Environment, special beta testing platform. Located in North America.
-    PBE TournamentRegion = "pbe1"
+	// Brazil.
+	BR TournamentRegion = "br1"
+	// Europe, Northeast.
+	EUNE TournamentRegion = "eun1"
+	// Europe, West.
+	EUW TournamentRegion = "euw1"
+	// Japan.
+	JP TournamentRegion = "jp1"
+	// Latin America, North.
+	LAN TournamentRegion = "la1"
+	// Latin America, South.
+	LAS TournamentRegion = "la2"
+	// North America.
+	NA TournamentRegion = "na1"
+	// Oceana.
+	OCE TournamentRegion = "oc1"
+	// Turkey
+	TR TournamentRegion = "tr1"
+	// Public Beta Environment, special beta testing platform. Located in North America.
+	PBE TournamentRegion = "pbe1"
 )
 
 // League of Legends game type: matched game, custom game, or tutorial game.
 type GameType string
 
 const (
-    // Custom games
-    CUSTOM_GAME GameType = "CUSTOM_GAME"
-    // all other games
-    MATCHED_GAME GameType = "MATCHED_GAME"
-    // Tutorial games
-    TUTORIAL_GAME GameType = "TUTORIAL_GAME"
+	// Custom games
+	CUSTOM_GAME GameType = "CUSTOM_GAME"
+	// all other games
+	MATCHED_GAME GameType = "MATCHED_GAME"
+	// Tutorial games
+	TUTORIAL_GAME GameType = "TUTORIAL_GAME"
 )
 
 // League of Legends game mode, such as Classic,
@@ -121,70 +121,70 @@ const (
 type GameMode string
 
 const (
-    // ARAM games
-    ARAM GameMode = "ARAM"
-    // All Random Summoner's Rift games
-    ARSR GameMode = "ARSR"
-    // Ascension games
-    ASCENSION GameMode = "ASCENSION"
-    // Blood Hunt Assassin games
-    ASSASSINATE GameMode = "ASSASSINATE"
-    // 2v2v2v2
-    CHERRY GameMode = "CHERRY"
-    // Classic Summoner's Rift and Twisted Treeline games
-    CLASSIC GameMode = "CLASSIC"
-    // Dark Star: Singularity games
-    DARKSTAR GameMode = "DARKSTAR"
-    // Doom Bot games
-    DOOMBOTSTEEMO GameMode = "DOOMBOTSTEEMO"
-    // Snowdown Showdown games
-    FIRSTBLOOD GameMode = "FIRSTBLOOD"
-    // Nexus Blitz games
-    GAMEMODEX GameMode = "GAMEMODEX"
-    // Legend of the Poro King games
-    KINGPORO GameMode = "KINGPORO"
-    // Nexus Blitz games
-    NEXUSBLITZ GameMode = "NEXUSBLITZ"
-    // Dominion/Crystal Scar games
-    ODIN GameMode = "ODIN"
-    // Odyssey: Extraction games
-    ODYSSEY GameMode = "ODYSSEY"
-    // One for All games
-    ONEFORALL GameMode = "ONEFORALL"
-    // Practice tool training games.
-    PRACTICETOOL GameMode = "PRACTICETOOL"
-    // PROJECT: Hunters games
-    PROJECT GameMode = "PROJECT"
-    // Nexus Siege games
-    SIEGE GameMode = "SIEGE"
-    // Star Guardian Invasion games
-    STARGUARDIAN GameMode = "STARGUARDIAN"
-    // Tutorial games
-    TUTORIAL GameMode = "TUTORIAL"
-    // Tutorial: Welcome to League.
-    TUTORIAL_MODULE_1 GameMode = "TUTORIAL_MODULE_1"
-    // Tutorial: Power Up.
-    TUTORIAL_MODULE_2 GameMode = "TUTORIAL_MODULE_2"
-    // Tutorial: Shop for Gear.
-    TUTORIAL_MODULE_3 GameMode = "TUTORIAL_MODULE_3"
-    // Ultimate Spellbook games
-    ULTBOOK GameMode = "ULTBOOK"
-    // URF games
-    URF GameMode = "URF"
+	// ARAM games
+	ARAM GameMode = "ARAM"
+	// All Random Summoner's Rift games
+	ARSR GameMode = "ARSR"
+	// Ascension games
+	ASCENSION GameMode = "ASCENSION"
+	// Blood Hunt Assassin games
+	ASSASSINATE GameMode = "ASSASSINATE"
+	// 2v2v2v2
+	CHERRY GameMode = "CHERRY"
+	// Classic Summoner's Rift and Twisted Treeline games
+	CLASSIC GameMode = "CLASSIC"
+	// Dark Star: Singularity games
+	DARKSTAR GameMode = "DARKSTAR"
+	// Doom Bot games
+	DOOMBOTSTEEMO GameMode = "DOOMBOTSTEEMO"
+	// Snowdown Showdown games
+	FIRSTBLOOD GameMode = "FIRSTBLOOD"
+	// Nexus Blitz games
+	GAMEMODEX GameMode = "GAMEMODEX"
+	// Legend of the Poro King games
+	KINGPORO GameMode = "KINGPORO"
+	// Nexus Blitz games
+	NEXUSBLITZ GameMode = "NEXUSBLITZ"
+	// Dominion/Crystal Scar games
+	ODIN GameMode = "ODIN"
+	// Odyssey: Extraction games
+	ODYSSEY GameMode = "ODYSSEY"
+	// One for All games
+	ONEFORALL GameMode = "ONEFORALL"
+	// Practice tool training games.
+	PRACTICETOOL GameMode = "PRACTICETOOL"
+	// PROJECT: Hunters games
+	PROJECT GameMode = "PROJECT"
+	// Nexus Siege games
+	SIEGE GameMode = "SIEGE"
+	// Star Guardian Invasion games
+	STARGUARDIAN GameMode = "STARGUARDIAN"
+	// Tutorial games
+	TUTORIAL GameMode = "TUTORIAL"
+	// Tutorial: Welcome to League.
+	TUTORIAL_MODULE_1 GameMode = "TUTORIAL_MODULE_1"
+	// Tutorial: Power Up.
+	TUTORIAL_MODULE_2 GameMode = "TUTORIAL_MODULE_2"
+	// Tutorial: Shop for Gear.
+	TUTORIAL_MODULE_3 GameMode = "TUTORIAL_MODULE_3"
+	// Ultimate Spellbook games
+	ULTBOOK GameMode = "ULTBOOK"
+	// URF games
+	URF GameMode = "URF"
 )
 
 // LoL ranked queue types.
 type QueueType string
 
 const (
-    // 5v5 Ranked Solo games
-    //
-    RANKED_SOLO_5X5 QueueType = "RANKED_SOLO_5x5"
-    // 5v5 Ranked Flex games
-    //
-    RANKED_FLEX_SR QueueType = "RANKED_FLEX_SR"
-    // 3v3 Ranked Flex games
-    //
-    // Deprecated in patch 9.23
-    RANKED_FLEX_TT QueueType = "RANKED_FLEX_TT"
+	// 5v5 Ranked Solo games
+	//
+	RANKED_SOLO_5X5 QueueType = "RANKED_SOLO_5x5"
+	// 5v5 Ranked Flex games
+	//
+	RANKED_FLEX_SR QueueType = "RANKED_FLEX_SR"
+	// 3v3 Ranked Flex games
+	//
+	// Deprecated in patch 9.23
+	RANKED_FLEX_TT QueueType = "RANKED_FLEX_TT"
 )

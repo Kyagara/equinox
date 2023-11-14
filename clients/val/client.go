@@ -19,20 +19,20 @@ import (
 
 // Note: this struct is automatically generated.
 type VALClient struct {
-	internalClient  *internal.InternalClient
-	ContentV1  *ContentV1
-	MatchV1  *MatchV1
-	RankedV1  *RankedV1
-	StatusV1  *StatusV1
+	internalClient *internal.InternalClient
+	ContentV1      *ContentV1
+	MatchV1        *MatchV1
+	RankedV1       *RankedV1
+	StatusV1       *StatusV1
 }
 
 // Creates a new VALClient using the InternalClient provided.
 func NewVALClient(client *internal.InternalClient) *VALClient {
 	return &VALClient{
-        internalClient: client,
-        ContentV1: &ContentV1{internalClient: client},
-        MatchV1: &MatchV1{internalClient: client},
-        RankedV1: &RankedV1{internalClient: client},
-        StatusV1: &StatusV1{internalClient: client},
+		internalClient: client,
+		ContentV1:      &ContentV1{internalClient: client},
+		MatchV1:        &MatchV1{internalClient: client},
+		RankedV1:       &RankedV1{internalClient: client},
+		StatusV1:       &StatusV1{internalClient: client},
 	}
 }

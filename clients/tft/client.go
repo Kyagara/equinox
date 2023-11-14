@@ -19,20 +19,20 @@ import (
 
 // Note: this struct is automatically generated.
 type TFTClient struct {
-	internalClient  *internal.InternalClient
-	LeagueV1  *LeagueV1
-	MatchV1  *MatchV1
-	StatusV1  *StatusV1
-	SummonerV1  *SummonerV1
+	internalClient *internal.InternalClient
+	LeagueV1       *LeagueV1
+	MatchV1        *MatchV1
+	StatusV1       *StatusV1
+	SummonerV1     *SummonerV1
 }
 
 // Creates a new TFTClient using the InternalClient provided.
 func NewTFTClient(client *internal.InternalClient) *TFTClient {
 	return &TFTClient{
-        internalClient: client,
-        LeagueV1: &LeagueV1{internalClient: client},
-        MatchV1: &MatchV1{internalClient: client},
-        StatusV1: &StatusV1{internalClient: client},
-        SummonerV1: &SummonerV1{internalClient: client},
+		internalClient: client,
+		LeagueV1:       &LeagueV1{internalClient: client},
+		MatchV1:        &MatchV1{internalClient: client},
+		StatusV1:       &StatusV1{internalClient: client},
+		SummonerV1:     &SummonerV1{internalClient: client},
 	}
 }
