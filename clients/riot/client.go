@@ -19,14 +19,14 @@ import (
 
 // Note: this struct is automatically generated.
 type RiotClient struct {
-	internalClient  *internal.InternalClient
-	AccountV1  *AccountV1
+	internalClient *internal.InternalClient
+	AccountV1      *AccountV1
 }
 
 // Creates a new RiotClient using the InternalClient provided.
 func NewRiotClient(client *internal.InternalClient) *RiotClient {
 	return &RiotClient{
-        internalClient: client,
-        AccountV1: &AccountV1{internalClient: client},
+		internalClient: client,
+		AccountV1:      &AccountV1{internalClient: client},
 	}
 }

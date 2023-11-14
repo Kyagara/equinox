@@ -12,232 +12,232 @@ package tft
 
 // LeagueListDTO data object.
 type LeagueListV1DTO struct {
-    LeagueID string `json:"leagueId"`
-    Entries []LeagueItemV1DTO `json:"entries"`
-    Tier Tier `json:"tier"`
-    Name string `json:"name"`
-    Queue QueueType `json:"queue"`
+	LeagueID string            `json:"leagueId"`
+	Entries  []LeagueItemV1DTO `json:"entries"`
+	Tier     Tier              `json:"tier"`
+	Name     string            `json:"name"`
+	Queue    QueueType         `json:"queue"`
 }
 
 // LeagueItemDTO data object.
 type LeagueItemV1DTO struct {
-    FreshBlood bool `json:"freshBlood"`
-    // First placement.
-    Wins int32 `json:"wins"`
-    SummonerName string `json:"summonerName"`
-    MiniSeries MiniSeriesV1DTO `json:"miniSeries"`
-    Inactive bool `json:"inactive"`
-    Veteran bool `json:"veteran"`
-    HotStreak bool `json:"hotStreak"`
-    Rank Division `json:"rank"`
-    LeaguePoints int32 `json:"leaguePoints"`
-    // Second through eighth placement.
-    Losses int32 `json:"losses"`
-    // Player's encrypted summonerId.
-    SummonerID string `json:"summonerId"`
+	FreshBlood bool `json:"freshBlood"`
+	// First placement.
+	Wins         int32           `json:"wins"`
+	SummonerName string          `json:"summonerName"`
+	MiniSeries   MiniSeriesV1DTO `json:"miniSeries"`
+	Inactive     bool            `json:"inactive"`
+	Veteran      bool            `json:"veteran"`
+	HotStreak    bool            `json:"hotStreak"`
+	Rank         Division        `json:"rank"`
+	LeaguePoints int32           `json:"leaguePoints"`
+	// Second through eighth placement.
+	Losses int32 `json:"losses"`
+	// Player's encrypted summonerId.
+	SummonerID string `json:"summonerId"`
 }
 
 // MiniSeriesDTO data object.
 type MiniSeriesV1DTO struct {
-    Losses int32 `json:"losses"`
-    Progress string `json:"progress"`
-    Target int32 `json:"target"`
-    Wins int32 `json:"wins"`
+	Losses   int32  `json:"losses"`
+	Progress string `json:"progress"`
+	Target   int32  `json:"target"`
+	Wins     int32  `json:"wins"`
 }
 
 // LeagueEntryDTO data object.
 type LeagueEntryV1DTO struct {
-    // Player Universal Unique Identifier. Exact length of 78 characters. (Encrypted)
-    PUUID string `json:"puuid"`
-    // Not included for the RANKED_TFT_TURBO queueType.
-    LeagueID string `json:"leagueId"`
-    // Player's encrypted summonerId.
-    SummonerID string `json:"summonerId"`
-    SummonerName string `json:"summonerName"`
-    QueueType QueueType `json:"queueType"`
-    // Only included for the RANKED_TFT_TURBO queueType.
-    // (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
-    RatedTier string `json:"ratedTier"`
-    // Only included for the RANKED_TFT_TURBO queueType.
-    RatedRating int32 `json:"ratedRating"`
-    // Not included for the RANKED_TFT_TURBO queueType.
-    Tier Tier `json:"tier"`
-    // The player's division within a tier. Not included for the RANKED_TFT_TURBO queueType.
-    Rank Division `json:"rank"`
-    // Not included for the RANKED_TFT_TURBO queueType.
-    LeaguePoints int32 `json:"leaguePoints"`
-    // First placement.
-    Wins int32 `json:"wins"`
-    // Second through eighth placement.
-    Losses int32 `json:"losses"`
-    // Not included for the RANKED_TFT_TURBO queueType.
-    HotStreak bool `json:"hotStreak"`
-    // Not included for the RANKED_TFT_TURBO queueType.
-    Veteran bool `json:"veteran"`
-    // Not included for the RANKED_TFT_TURBO queueType.
-    FreshBlood bool `json:"freshBlood"`
-    // Not included for the RANKED_TFT_TURBO queueType.
-    Inactive bool `json:"inactive"`
-    // Not included for the RANKED_TFT_TURBO queueType.
-    MiniSeries MiniSeriesV1DTO `json:"miniSeries"`
+	// Player Universal Unique Identifier. Exact length of 78 characters. (Encrypted)
+	PUUID string `json:"puuid"`
+	// Not included for the RANKED_TFT_TURBO queueType.
+	LeagueID string `json:"leagueId"`
+	// Player's encrypted summonerId.
+	SummonerID   string    `json:"summonerId"`
+	SummonerName string    `json:"summonerName"`
+	QueueType    QueueType `json:"queueType"`
+	// Only included for the RANKED_TFT_TURBO queueType.
+	// (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
+	RatedTier string `json:"ratedTier"`
+	// Only included for the RANKED_TFT_TURBO queueType.
+	RatedRating int32 `json:"ratedRating"`
+	// Not included for the RANKED_TFT_TURBO queueType.
+	Tier Tier `json:"tier"`
+	// The player's division within a tier. Not included for the RANKED_TFT_TURBO queueType.
+	Rank Division `json:"rank"`
+	// Not included for the RANKED_TFT_TURBO queueType.
+	LeaguePoints int32 `json:"leaguePoints"`
+	// First placement.
+	Wins int32 `json:"wins"`
+	// Second through eighth placement.
+	Losses int32 `json:"losses"`
+	// Not included for the RANKED_TFT_TURBO queueType.
+	HotStreak bool `json:"hotStreak"`
+	// Not included for the RANKED_TFT_TURBO queueType.
+	Veteran bool `json:"veteran"`
+	// Not included for the RANKED_TFT_TURBO queueType.
+	FreshBlood bool `json:"freshBlood"`
+	// Not included for the RANKED_TFT_TURBO queueType.
+	Inactive bool `json:"inactive"`
+	// Not included for the RANKED_TFT_TURBO queueType.
+	MiniSeries MiniSeriesV1DTO `json:"miniSeries"`
 }
 
 // TopRatedLadderEntryDTO data object.
 type TopRatedLadderEntryV1DTO struct {
-    SummonerID string `json:"summonerId"`
-    SummonerName string `json:"summonerName"`
-    // (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
-    RatedTier string `json:"ratedTier"`
-    RatedRating int32 `json:"ratedRating"`
-    // First placement.
-    Wins int32 `json:"wins"`
-    PreviousUpdateLadderPosition int32 `json:"previousUpdateLadderPosition"`
+	SummonerID   string `json:"summonerId"`
+	SummonerName string `json:"summonerName"`
+	// (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
+	RatedTier   string `json:"ratedTier"`
+	RatedRating int32  `json:"ratedRating"`
+	// First placement.
+	Wins                         int32 `json:"wins"`
+	PreviousUpdateLadderPosition int32 `json:"previousUpdateLadderPosition"`
 }
 
 // MatchDTO data object.
 type MatchV1DTO struct {
-    // Match metadata.
-    Metadata MetadataV1DTO `json:"metadata"`
-    // Match info.
-    Info InfoV1DTO `json:"info"`
+	// Match metadata.
+	Metadata MetadataV1DTO `json:"metadata"`
+	// Match info.
+	Info InfoV1DTO `json:"info"`
 }
 
 // MetadataDTO data object.
 type MetadataV1DTO struct {
-    // Match data version.
-    DataVersion string `json:"data_version"`
-    // Match id.
-    MatchID string `json:"match_id"`
-    // A list of participant PUUIDs.
-    Participants []string `json:"participants"`
+	// Match data version.
+	DataVersion string `json:"data_version"`
+	// Match id.
+	MatchID string `json:"match_id"`
+	// A list of participant PUUIDs.
+	Participants []string `json:"participants"`
 }
 
 // InfoDTO data object.
 type InfoV1DTO struct {
-    TftGameType string `json:"tft_game_type"`
-    TftSetCoreName string `json:"tft_set_core_name"`
-    // Unix timestamp.
-    GameDatetime int64 `json:"game_datetime"`
-    // Game length in seconds.
-    GameLength float32 `json:"game_length"`
-    // Game variation key. Game variations documented in TFT static data.
-    GameVariation string `json:"game_variation"`
-    // Game client version.
-    GameVersion string `json:"game_version"`
-    Participants []ParticipantV1DTO `json:"participants"`
-    // Please refer to the League of Legends documentation.
-    QueueID int32 `json:"queue_id"`
-    // Teamfight Tactics set number.
-    TftSetNumber int32 `json:"tft_set_number"`
+	TftGameType    string `json:"tft_game_type"`
+	TftSetCoreName string `json:"tft_set_core_name"`
+	// Unix timestamp.
+	GameDatetime int64 `json:"game_datetime"`
+	// Game length in seconds.
+	GameLength float32 `json:"game_length"`
+	// Game variation key. Game variations documented in TFT static data.
+	GameVariation string `json:"game_variation"`
+	// Game client version.
+	GameVersion  string             `json:"game_version"`
+	Participants []ParticipantV1DTO `json:"participants"`
+	// Please refer to the League of Legends documentation.
+	QueueID int32 `json:"queue_id"`
+	// Teamfight Tactics set number.
+	TftSetNumber int32 `json:"tft_set_number"`
 }
 
 // ParticipantDTO data object.
 type ParticipantV1DTO struct {
-    Augments []string `json:"augments"`
-    PartnerGroupID int32 `json:"partner_group_id"`
-    // Participant's companion.
-    Companion CompanionV1DTO `json:"companion"`
-    // Gold left after participant was eliminated.
-    GoldLeft int32 `json:"gold_left"`
-    // The round the participant was eliminated in. Note: If the player was eliminated in stage 2-1 their last_round would be 5.
-    LastRound int32 `json:"last_round"`
-    // Participant Little Legend level. Note: This is not the number of active units.
-    Level int32 `json:"level"`
-    // Participant placement upon elimination.
-    Placement int32 `json:"placement"`
-    // Number of players the participant eliminated.
-    PlayersEliminated int32 `json:"players_eliminated"`
-    PUUID string `json:"puuid"`
-    // The number of seconds before the participant was eliminated.
-    TimeEliminated float32 `json:"time_eliminated"`
-    // Damage the participant dealt to other players.
-    TotalDamageToPlayers int32 `json:"total_damage_to_players"`
-    // A complete list of traits for the participant's active units.
-    Traits []TraitV1DTO `json:"traits"`
-    // A list of active units for the participant.
-    Units []UnitV1DTO `json:"units"`
+	Augments       []string `json:"augments"`
+	PartnerGroupID int32    `json:"partner_group_id"`
+	// Participant's companion.
+	Companion CompanionV1DTO `json:"companion"`
+	// Gold left after participant was eliminated.
+	GoldLeft int32 `json:"gold_left"`
+	// The round the participant was eliminated in. Note: If the player was eliminated in stage 2-1 their last_round would be 5.
+	LastRound int32 `json:"last_round"`
+	// Participant Little Legend level. Note: This is not the number of active units.
+	Level int32 `json:"level"`
+	// Participant placement upon elimination.
+	Placement int32 `json:"placement"`
+	// Number of players the participant eliminated.
+	PlayersEliminated int32  `json:"players_eliminated"`
+	PUUID             string `json:"puuid"`
+	// The number of seconds before the participant was eliminated.
+	TimeEliminated float32 `json:"time_eliminated"`
+	// Damage the participant dealt to other players.
+	TotalDamageToPlayers int32 `json:"total_damage_to_players"`
+	// A complete list of traits for the participant's active units.
+	Traits []TraitV1DTO `json:"traits"`
+	// A list of active units for the participant.
+	Units []UnitV1DTO `json:"units"`
 }
 
 // TraitDTO data object.
 type TraitV1DTO struct {
-    // Trait name.
-    Name string `json:"name"`
-    // Number of units with this trait.
-    NumUnits int32 `json:"num_units"`
-    // Current style for this trait. (0 = No style, 1 = Bronze, 2 = Silver, 3 = Gold, 4 = Chromatic)
-    Style int32 `json:"style"`
-    // Current active tier for the trait.
-    TierCurrent int32 `json:"tier_current"`
-    // Total tiers for the trait.
-    TierTotal int32 `json:"tier_total"`
+	// Trait name.
+	Name string `json:"name"`
+	// Number of units with this trait.
+	NumUnits int32 `json:"num_units"`
+	// Current style for this trait. (0 = No style, 1 = Bronze, 2 = Silver, 3 = Gold, 4 = Chromatic)
+	Style int32 `json:"style"`
+	// Current active tier for the trait.
+	TierCurrent int32 `json:"tier_current"`
+	// Total tiers for the trait.
+	TierTotal int32 `json:"tier_total"`
 }
 
 // UnitDTO data object.
 type UnitV1DTO struct {
-    ItemNames []string `json:"itemNames"`
-    // A list of the unit's items. Please refer to the Teamfight Tactics documentation for item ids.
-    Items []int32 `json:"items"`
-    // This field was introduced in patch 9.22 with data_version 2.
-    CharacterID string `json:"character_id"`
-    // If a unit is chosen as part of the Fates set mechanic, the chosen trait will be indicated by this field. Otherwise this field is excluded from the response.
-    Chosen string `json:"chosen"`
-    // Unit name. This field is often left blank.
-    Name string `json:"name"`
-    // Unit rarity. This doesn't equate to the unit cost.
-    Rarity int32 `json:"rarity"`
-    // Unit tier.
-    Tier int32 `json:"tier"`
+	ItemNames []string `json:"itemNames"`
+	// A list of the unit's items. Please refer to the Teamfight Tactics documentation for item ids.
+	Items []int32 `json:"items"`
+	// This field was introduced in patch 9.22 with data_version 2.
+	CharacterID string `json:"character_id"`
+	// If a unit is chosen as part of the Fates set mechanic, the chosen trait will be indicated by this field. Otherwise this field is excluded from the response.
+	Chosen string `json:"chosen"`
+	// Unit name. This field is often left blank.
+	Name string `json:"name"`
+	// Unit rarity. This doesn't equate to the unit cost.
+	Rarity int32 `json:"rarity"`
+	// Unit tier.
+	Tier int32 `json:"tier"`
 }
 
 // CompanionDTO data object.
 type CompanionV1DTO struct {
-    ItemID int32 `json:"item_ID"`
-    SkinID int32 `json:"skin_ID"`
-    ContentID string `json:"content_ID"`
-    Species string `json:"species"`
+	ItemID    int32  `json:"item_ID"`
+	SkinID    int32  `json:"skin_ID"`
+	ContentID string `json:"content_ID"`
+	Species   string `json:"species"`
 }
 
 // PlatformDataDTO data object.
 type PlatformDataV1DTO struct {
-    ID string `json:"id"`
-    Name string `json:"name"`
-    Locales []string `json:"locales"`
-    Maintenances []StatusV1DTO `json:"maintenances"`
-    Incidents []StatusV1DTO `json:"incidents"`
+	ID           string        `json:"id"`
+	Name         string        `json:"name"`
+	Locales      []string      `json:"locales"`
+	Maintenances []StatusV1DTO `json:"maintenances"`
+	Incidents    []StatusV1DTO `json:"incidents"`
 }
 
 // StatusDTO data object.
 type StatusV1DTO struct {
-    ID int32 `json:"id"`
-    // (Legal values:  scheduled,  in_progress,  complete)
-    MaintenanceStatus string `json:"maintenance_status"`
-    // (Legal values:  info,  warning,  critical)
-    IncidentSeverity string `json:"incident_severity"`
-    Titles []ContentV1DTO `json:"titles"`
-    Updates []UpdateV1DTO `json:"updates"`
-    CreatedAt string `json:"created_at"`
-    ArchiveAt string `json:"archive_at"`
-    UpdatedAt string `json:"updated_at"`
-    // (Legal values: windows, macos, android, ios, ps4, xbone, switch)
-    Platforms []string `json:"platforms"`
+	ID int32 `json:"id"`
+	// (Legal values:  scheduled,  in_progress,  complete)
+	MaintenanceStatus string `json:"maintenance_status"`
+	// (Legal values:  info,  warning,  critical)
+	IncidentSeverity string         `json:"incident_severity"`
+	Titles           []ContentV1DTO `json:"titles"`
+	Updates          []UpdateV1DTO  `json:"updates"`
+	CreatedAt        string         `json:"created_at"`
+	ArchiveAt        string         `json:"archive_at"`
+	UpdatedAt        string         `json:"updated_at"`
+	// (Legal values: windows, macos, android, ios, ps4, xbone, switch)
+	Platforms []string `json:"platforms"`
 }
 
 // ContentDTO data object.
 type ContentV1DTO struct {
-    Locale string `json:"locale"`
-    Content string `json:"content"`
+	Locale  string `json:"locale"`
+	Content string `json:"content"`
 }
 
 // UpdateDTO data object.
 type UpdateV1DTO struct {
-    ID int32 `json:"id"`
-    Author string `json:"author"`
-    Publish bool `json:"publish"`
-    // (Legal values: riotclient, riotstatus, game)
-    PublishLocations []string `json:"publish_locations"`
-    Translations []ContentV1DTO `json:"translations"`
-    CreatedAt string `json:"created_at"`
-    UpdatedAt string `json:"updated_at"`
+	ID      int32  `json:"id"`
+	Author  string `json:"author"`
+	Publish bool   `json:"publish"`
+	// (Legal values: riotclient, riotstatus, game)
+	PublishLocations []string       `json:"publish_locations"`
+	Translations     []ContentV1DTO `json:"translations"`
+	CreatedAt        string         `json:"created_at"`
+	UpdatedAt        string         `json:"updated_at"`
 }
 
 // SummonerDTO data object.
@@ -246,18 +246,18 @@ type UpdateV1DTO struct {
 //
 // Note: This struct is automatically generated
 type SummonerV1DTO struct {
-    // Encrypted account ID. Max length 56 characters.
-    AccountID string `json:"accountId"`
-    // ID of the summoner icon associated with the summoner.
-    ProfileIconID int32 `json:"profileIconId"`
-    // Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: summoner name change, summoner level change, or profile icon change.
-    RevisionDate int64 `json:"revisionDate"`
-    // Summoner name.
-    Name string `json:"name"`
-    // Encrypted summoner ID. Max length 63 characters.
-    ID string `json:"id"`
-    // Encrypted PUUID. Exact length of 78 characters.
-    PUUID string `json:"puuid"`
-    // Summoner level associated with the summoner.
-    SummonerLevel int64 `json:"summonerLevel"`
+	// Encrypted account ID. Max length 56 characters.
+	AccountID string `json:"accountId"`
+	// ID of the summoner icon associated with the summoner.
+	ProfileIconID int32 `json:"profileIconId"`
+	// Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: summoner name change, summoner level change, or profile icon change.
+	RevisionDate int64 `json:"revisionDate"`
+	// Summoner name.
+	Name string `json:"name"`
+	// Encrypted summoner ID. Max length 63 characters.
+	ID string `json:"id"`
+	// Encrypted PUUID. Exact length of 78 characters.
+	PUUID string `json:"puuid"`
+	// Summoner level associated with the summoner.
+	SummonerLevel int64 `json:"summonerLevel"`
 }

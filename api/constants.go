@@ -65,7 +65,7 @@ const (
 // Rate limit headers
 const (
 	X_RATE_LIMIT_TYPE_HEADER = "X-Rate-Limit-Type"
-	RETRY_AFTER_HEADER     = "Retry-After"
+	RETRY_AFTER_HEADER       = "Retry-After"
 )
 
 type LogLevel int8
@@ -87,17 +87,17 @@ const (
 type RegionalRoute string
 
 const (
-    // North and South America.
-    AMERICAS RegionalRoute = "americas"
-    // Asia, used for LoL matches (`match-v5`) and TFT matches (`tft-match-v1`).
-    ASIA RegionalRoute = "asia"
-    // Europe.
-    EUROPE RegionalRoute = "europe"
-    // South East Asia, used for LoR, LoL matches (`match-v5`), and TFT matches (`tft-match-v1`).
-    SEA RegionalRoute = "sea"
-    // Asia-Pacific, deprecated, for some old matches in `lor-match-v1`.
-    // Deprecated
-    APAC RegionalRoute = "apac"
-    // Special esports platform for `account-v1`. Do not confuse with the `esports` Valorant platform route.
-    ESPORTS RegionalRoute = "esports"
+	// North and South America.
+	AMERICAS RegionalRoute = "americas"
+	// Asia, used for LoL matches (`match-v5`) and TFT matches (`tft-match-v1`).
+	ASIA RegionalRoute = "asia"
+	// Europe.
+	EUROPE RegionalRoute = "europe"
+	// South East Asia, used for LoR, LoL matches (`match-v5`), and TFT matches (`tft-match-v1`).
+	SEA RegionalRoute = "sea"
+	// Asia-Pacific, deprecated, for some old matches in `lor-match-v1`.
+	// Deprecated
+	APAC RegionalRoute = "apac"
+	// Special esports platform for `account-v1`. Do not confuse with the `esports` Valorant platform route.
+	ESPORTS RegionalRoute = "esports"
 )

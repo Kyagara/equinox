@@ -11,7 +11,7 @@
   "private": true,
   "scripts": {
     "update": "node update.js",
-    "compile": "node index.js",
+    "compile": "node index.js && gofmt -s -w ../clients && gofmt -s -w ../api",
     "lint": "prettier . --check . && eslint ."
   },
   "author": "",

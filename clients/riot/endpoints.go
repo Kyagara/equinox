@@ -13,7 +13,7 @@ package riot
 import (
 	"fmt"
 	"net/http"
-    
+
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"go.uber.org/zap"
@@ -44,21 +44,21 @@ type AccountV1 struct {
 //
 // [account-v1.getByPuuid]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByPuuid
 func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DTO, error) {
-  logger := e.internalClient.Logger("Riot", "AccountV1", "ByPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-puuid/%v", puuid), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("Riot", "AccountV1", "ByPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-puuid/%v", puuid), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data AccountV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data AccountV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get account by riot id
@@ -76,21 +76,21 @@ func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DT
 //
 // [account-v1.getByRiotId]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByRiotId
 func (e *AccountV1) ByRiotID(route api.RegionalRoute, gameName string, tagLine string) (*AccountV1DTO, error) {
-  logger := e.internalClient.Logger("Riot", "AccountV1", "ByRiotID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-riot-id/%v/%v", gameName, tagLine), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("Riot", "AccountV1", "ByRiotID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-riot-id/%v/%v", gameName, tagLine), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data AccountV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data AccountV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get account by access token
@@ -107,25 +107,25 @@ func (e *AccountV1) ByRiotID(route api.RegionalRoute, gameName string, tagLine s
 //
 // [account-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByAccessToken
 func (e *AccountV1) ByAccessToken(route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
-  logger := e.internalClient.Logger("Riot", "AccountV1", "ByAccessToken")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/riot/account/v1/accounts/me", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("Riot", "AccountV1", "ByAccessToken")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/riot/account/v1/accounts/me", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  if authorization == "" {
-    return new(AccountV1DTO), fmt.Errorf("'authorization' header is required")
-  }
-  request.Header.Set("authorization", fmt.Sprint(authorization))
-  var data AccountV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	if authorization == "" {
+		return new(AccountV1DTO), fmt.Errorf("'authorization' header is required")
+	}
+	request.Header.Set("authorization", fmt.Sprint(authorization))
+	var data AccountV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get active shard for a player
@@ -143,19 +143,19 @@ func (e *AccountV1) ByAccessToken(route api.RegionalRoute, authorization string)
 //
 // [account-v1.getActiveShard]: https://developer.riotgames.com/api-methods/#account-v1/GET_getActiveShard
 func (e *AccountV1) ActiveShard(route api.RegionalRoute, game string, puuid string) (*ActiveShardV1DTO, error) {
-  logger := e.internalClient.Logger("Riot", "AccountV1", "ActiveShard")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("Riot", "AccountV1", "ActiveShard")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data ActiveShardV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data ActiveShardV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }

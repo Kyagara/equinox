@@ -19,38 +19,38 @@ import (
 
 // Note: this struct is automatically generated.
 type LOLClient struct {
-	internalClient  *internal.InternalClient
-	ChampionMasteryV4  *ChampionMasteryV4
-	ChampionV3  *ChampionV3
-	ClashV1  *ClashV1
-	LeagueExpV4  *LeagueExpV4
-	LeagueV4  *LeagueV4
-	ChallengesV1  *ChallengesV1
-	StatusV3  *StatusV3
-	StatusV4  *StatusV4
-	MatchV5  *MatchV5
-	SpectatorV4  *SpectatorV4
-	SummonerV4  *SummonerV4
+	internalClient    *internal.InternalClient
+	ChampionMasteryV4 *ChampionMasteryV4
+	ChampionV3        *ChampionV3
+	ClashV1           *ClashV1
+	LeagueExpV4       *LeagueExpV4
+	LeagueV4          *LeagueV4
+	ChallengesV1      *ChallengesV1
+	StatusV3          *StatusV3
+	StatusV4          *StatusV4
+	MatchV5           *MatchV5
+	SpectatorV4       *SpectatorV4
+	SummonerV4        *SummonerV4
 	TournamentStubV5  *TournamentStubV5
-	TournamentV5  *TournamentV5
+	TournamentV5      *TournamentV5
 }
 
 // Creates a new LOLClient using the InternalClient provided.
 func NewLOLClient(client *internal.InternalClient) *LOLClient {
 	return &LOLClient{
-        internalClient: client,
-        ChampionMasteryV4: &ChampionMasteryV4{internalClient: client},
-        ChampionV3: &ChampionV3{internalClient: client},
-        ClashV1: &ClashV1{internalClient: client},
-        LeagueExpV4: &LeagueExpV4{internalClient: client},
-        LeagueV4: &LeagueV4{internalClient: client},
-        ChallengesV1: &ChallengesV1{internalClient: client},
-        StatusV3: &StatusV3{internalClient: client},
-        StatusV4: &StatusV4{internalClient: client},
-        MatchV5: &MatchV5{internalClient: client},
-        SpectatorV4: &SpectatorV4{internalClient: client},
-        SummonerV4: &SummonerV4{internalClient: client},
-        TournamentStubV5: &TournamentStubV5{internalClient: client},
-        TournamentV5: &TournamentV5{internalClient: client},
+		internalClient:    client,
+		ChampionMasteryV4: &ChampionMasteryV4{internalClient: client},
+		ChampionV3:        &ChampionV3{internalClient: client},
+		ClashV1:           &ClashV1{internalClient: client},
+		LeagueExpV4:       &LeagueExpV4{internalClient: client},
+		LeagueV4:          &LeagueV4{internalClient: client},
+		ChallengesV1:      &ChallengesV1{internalClient: client},
+		StatusV3:          &StatusV3{internalClient: client},
+		StatusV4:          &StatusV4{internalClient: client},
+		MatchV5:           &MatchV5{internalClient: client},
+		SpectatorV4:       &SpectatorV4{internalClient: client},
+		SummonerV4:        &SummonerV4{internalClient: client},
+		TournamentStubV5:  &TournamentStubV5{internalClient: client},
+		TournamentV5:      &TournamentV5{internalClient: client},
 	}
 }

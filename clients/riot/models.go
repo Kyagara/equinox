@@ -12,16 +12,16 @@ package riot
 
 // AccountDTO data object.
 type AccountV1DTO struct {
-    PUUID string `json:"puuid"`
-    // This field may be excluded from the response if the account doesn't have a gameName.
-    GameName string `json:"gameName"`
-    // This field may be excluded from the response if the account doesn't have a tagLine.
-    TagLine string `json:"tagLine"`
+	PUUID string `json:"puuid"`
+	// This field may be excluded from the response if the account doesn't have a gameName.
+	GameName string `json:"gameName"`
+	// This field may be excluded from the response if the account doesn't have a tagLine.
+	TagLine string `json:"tagLine"`
 }
 
 // ActiveShardDTO data object.
 type ActiveShardV1DTO struct {
-    PUUID string `json:"puuid"`
-    Game string `json:"game"`
-    ActiveShard string `json:"activeShard"`
+	PUUID       string `json:"puuid"`
+	Game        string `json:"game"`
+	ActiveShard string `json:"activeShard"`
 }

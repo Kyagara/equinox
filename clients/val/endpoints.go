@@ -13,7 +13,7 @@ package val
 import (
 	"fmt"
 	"net/http"
-    
+
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"go.uber.org/zap"
@@ -44,26 +44,26 @@ type ContentV1 struct {
 //
 // [val-content-v1.getContent]: https://developer.riotgames.com/api-methods/#val-content-v1/GET_getContent
 func (e *ContentV1) Content(route ValPlatformRoute, locale string) (*ContentV1DTO, error) {
-  logger := e.internalClient.Logger("VAL", "ContentV1", "Content")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/content/v1/contents", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("VAL", "ContentV1", "Content")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/content/v1/contents", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  values := request.URL.Query()
-  if locale != "" {
-    values.Set("locale", locale)
-  }
-  request.URL.RawQuery = values.Encode()
-  var data ContentV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	values := request.URL.Query()
+	if locale != "" {
+		values.Set("locale", locale)
+	}
+	request.URL.RawQuery = values.Encode()
+	var data ContentV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -91,21 +91,21 @@ type MatchV1 struct {
 //
 // [val-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatch
 func (e *MatchV1) ByID(route ValPlatformRoute, matchId string) (*MatchV1DTO, error) {
-  logger := e.internalClient.Logger("VAL", "MatchV1", "ByID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matches/%v", matchId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("VAL", "MatchV1", "ByID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matches/%v", matchId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data MatchV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data MatchV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get matchlist for games played by puuid
@@ -122,21 +122,21 @@ func (e *MatchV1) ByID(route ValPlatformRoute, matchId string) (*MatchV1DTO, err
 //
 // [val-match-v1.getMatchlist]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatchlist
 func (e *MatchV1) ListByPUUID(route ValPlatformRoute, puuid string) (*MatchlistV1DTO, error) {
-  logger := e.internalClient.Logger("VAL", "MatchV1", "ListByPUUID")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matchlists/by-puuid/%v", puuid), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("VAL", "MatchV1", "ListByPUUID")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matchlists/by-puuid/%v", puuid), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data MatchlistV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data MatchlistV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // Get recent matches
@@ -157,21 +157,21 @@ func (e *MatchV1) ListByPUUID(route ValPlatformRoute, puuid string) (*MatchlistV
 //
 // [val-match-v1.getRecent]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getRecent
 func (e *MatchV1) Recent(route ValPlatformRoute, queue string) (*RecentMatchesV1DTO, error) {
-  logger := e.internalClient.Logger("VAL", "MatchV1", "Recent")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/recent-matches/by-queue/%v", queue), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("VAL", "MatchV1", "Recent")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/recent-matches/by-queue/%v", queue), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data RecentMatchesV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data RecentMatchesV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -201,29 +201,29 @@ type RankedV1 struct {
 //
 // [val-ranked-v1.getLeaderboard]: https://developer.riotgames.com/api-methods/#val-ranked-v1/GET_getLeaderboard
 func (e *RankedV1) Leaderboard(route ValPlatformRoute, actId string, size int32, startIndex int32) (*LeaderboardV1DTO, error) {
-  logger := e.internalClient.Logger("VAL", "RankedV1", "Leaderboard")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/ranked/v1/leaderboards/by-act/%v", actId), nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("VAL", "RankedV1", "Leaderboard")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/ranked/v1/leaderboards/by-act/%v", actId), nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  values := request.URL.Query()
-  if size != -1 {
-    values.Set("size", fmt.Sprint(size))
-  }
-  if startIndex != -1 {
-    values.Set("startIndex", fmt.Sprint(startIndex))
-  }
-  request.URL.RawQuery = values.Encode()
-  var data LeaderboardV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	values := request.URL.Query()
+	if size != -1 {
+		values.Set("size", fmt.Sprint(size))
+	}
+	if startIndex != -1 {
+		values.Set("startIndex", fmt.Sprint(startIndex))
+	}
+	request.URL.RawQuery = values.Encode()
+	var data LeaderboardV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
 
 // # Riot API Reference
@@ -250,19 +250,19 @@ type StatusV1 struct {
 //
 // [val-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#val-status-v1/GET_getPlatformData
 func (e *StatusV1) Platform(route ValPlatformRoute) (*PlatformDataV1DTO, error) {
-  logger := e.internalClient.Logger("VAL", "StatusV1", "Platform")
-  logger.Debug("Method started execution")
-  request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/status/v1/platform-data", nil)
-  if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
-    return nil, err
+	logger := e.internalClient.Logger("VAL", "StatusV1", "Platform")
+	logger.Debug("Method started execution")
+	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/status/v1/platform-data", nil)
+	if err != nil {
+		logger.Error("Error creating request", zap.Error(err))
+		return nil, err
 	}
-  var data PlatformDataV1DTO
-  err = e.internalClient.Execute(request, &data)
-  if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
-    return nil, err
-  }
-  logger.Debug("Method executed successfully")
-  return &data, nil
+	var data PlatformDataV1DTO
+	err = e.internalClient.Execute(request, &data)
+	if err != nil {
+		logger.Error("Error executing request", zap.Error(err))
+		return nil, err
+	}
+	logger.Debug("Method executed successfully")
+	return &data, nil
 }
