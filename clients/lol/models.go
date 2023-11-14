@@ -56,7 +56,7 @@ type PlayerV1DTO struct {
 
 // TeamDTO data object.
 type TeamV1DTO struct {
-    Id string `json:"id"`
+    ID string `json:"id"`
     TournamentID int32 `json:"tournamentId"`
     Name string `json:"name"`
     IconID int32 `json:"iconId"`
@@ -70,7 +70,7 @@ type TeamV1DTO struct {
 
 // TournamentDTO data object.
 type TournamentV1DTO struct {
-    Id int32 `json:"id"`
+    ID int32 `json:"id"`
     ThemeID int32 `json:"themeId"`
     NameKey string `json:"nameKey"`
     NameKeySecondary string `json:"nameKeySecondary"`
@@ -80,7 +80,7 @@ type TournamentV1DTO struct {
 
 // TournamentPhaseDTO data object.
 type TournamentPhaseV1DTO struct {
-    Id int32 `json:"id"`
+    ID int32 `json:"id"`
     RegistrationTime int64 `json:"registrationTime"`
     StartTime int64 `json:"startTime"`
     Cancelled bool `json:"cancelled"`
@@ -175,7 +175,7 @@ type LeagueEntryV4DTO struct {
 
 // ChallengeConfigInfoDTO data object.
 type ChallengeConfigInfoV1DTO struct {
-    Id int64 `json:"id"`
+    ID int64 `json:"id"`
     LocalizedNames map[string]map[string]string `json:"localizedNames"`
     // DISABLED - not visible and not calculated, HIDDEN - not visible, but calculated, ENABLED - visible and calculated, ARCHIVED - visible, but not calculated
     State string `json:"state"`
@@ -274,7 +274,7 @@ type ShardStatusV3DTO struct {
     Name string `json:"name"`
     Services []ServiceV3DTO `json:"services"`
     Slug string `json:"slug"`
-    Region_tag string `json:"region_tag"`
+    RegionTag string `json:"region_tag"`
 }
 
 // ServiceDTO data object.
@@ -287,34 +287,34 @@ type ServiceV3DTO struct {
 
 // IncidentDTO data object.
 type IncidentV3DTO struct {
-    Id int64 `json:"id"`
+    ID int64 `json:"id"`
     Active bool `json:"active"`
-    Created_at string `json:"created_at"`
+    CreatedAt string `json:"created_at"`
     Updates []MessageV3DTO `json:"updates"`
 }
 
 // MessageDTO data object.
 type MessageV3DTO struct {
-    Id string `json:"id"`
+    ID string `json:"id"`
     Author string `json:"author"`
     Heading string `json:"heading"`
     Content string `json:"content"`
     Severity string `json:"severity"`
-    Created_at string `json:"created_at"`
-    Updated_at string `json:"updated_at"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
     Translations []TranslationV3DTO `json:"translations"`
 }
 
 // TranslationDTO data object.
 type TranslationV3DTO struct {
-    Updated_at string `json:"updated_at"`
+    UpdatedAt string `json:"updated_at"`
     Locale string `json:"locale"`
     Content string `json:"content"`
 }
 
 // PlatformDataDTO data object.
 type PlatformDataV4DTO struct {
-    Id string `json:"id"`
+    ID string `json:"id"`
     Name string `json:"name"`
     Locales []string `json:"locales"`
     Maintenances []StatusV4DTO `json:"maintenances"`
@@ -323,16 +323,16 @@ type PlatformDataV4DTO struct {
 
 // StatusDTO data object.
 type StatusV4DTO struct {
-    Id int32 `json:"id"`
+    ID int32 `json:"id"`
     // (Legal values:  scheduled,  in_progress,  complete)
-    Maintenance_status string `json:"maintenance_status"`
+    MaintenanceStatus string `json:"maintenance_status"`
     // (Legal values:  info,  warning,  critical)
-    Incident_severity string `json:"incident_severity"`
+    IncidentSeverity string `json:"incident_severity"`
     Titles []ContentV4DTO `json:"titles"`
     Updates []UpdateV4DTO `json:"updates"`
-    Created_at string `json:"created_at"`
-    Archive_at string `json:"archive_at"`
-    Updated_at string `json:"updated_at"`
+    CreatedAt string `json:"created_at"`
+    ArchiveAt string `json:"archive_at"`
+    UpdatedAt string `json:"updated_at"`
     // (Legal values: windows, macos, android, ios, ps4, xbone, switch)
     Platforms []string `json:"platforms"`
 }
@@ -345,14 +345,14 @@ type ContentV4DTO struct {
 
 // UpdateDTO data object.
 type UpdateV4DTO struct {
-    Id int32 `json:"id"`
+    ID int32 `json:"id"`
     Author string `json:"author"`
     Publish bool `json:"publish"`
     // (Legal values: riotclient, riotstatus, game)
-    Publish_locations []string `json:"publish_locations"`
+    PublishLocations []string `json:"publish_locations"`
     Translations []ContentV4DTO `json:"translations"`
-    Created_at string `json:"created_at"`
-    Updated_at string `json:"updated_at"`
+    CreatedAt string `json:"created_at"`
+    UpdatedAt string `json:"updated_at"`
 }
 
 // MatchDTO data object.
@@ -497,7 +497,7 @@ type ParticipantV5DTO struct {
     TotalHeal int32 `json:"totalHeal"`
     TotalHealsOnTeammates int32 `json:"totalHealsOnTeammates"`
     TotalMinionsKilled int32 `json:"totalMinionsKilled"`
-    TotalTimeCCDealt int32 `json:"totalTimeCCDealt"`
+    TotalTimeCcDealt int32 `json:"totalTimeCCDealt"`
     TotalTimeSpentDead int32 `json:"totalTimeSpentDead"`
     TotalUnitsHealed int32 `json:"totalUnitsHealed"`
     TripleKills int32 `json:"tripleKills"`
@@ -747,7 +747,7 @@ type MatchTimelineInfoFrameEventV5DTO struct {
     Timestamp int32 `json:"timestamp"`
     // Timeline event type.
     // (Known legal values: ASCENDED_EVENT, BUILDING_KILL, CAPTURE_POINT, CHAMPION_KILL, CHAMPION_SPECIAL_KILL, CHAMPION_TRANSFORM, DRAGON_SOUL_GIVEN, ELITE_MONSTER_KILL, GAME_END, ITEM_DESTROYED, ITEM_PURCHASED, ITEM_SOLD, ITEM_UNDO, LEVEL_UP, PAUSE_END, PAUSE_START, SKILL_LEVEL_UP, TURRET_PLATE_DESTROYED, WARD_KILL, WARD_PLACED)
-    Type_ string `json:"type"`
+    Type string `json:"type"`
     ItemID int32 `json:"itemId"`
     ParticipantID int32 `json:"participantId"`
     LevelUpType string `json:"levelUpType"`
@@ -883,7 +883,7 @@ type MatchTimelineInfoFrameEventVictimDamageDealtV5DTO struct {
     SpellName string `json:"spellName"`
     SpellSlot int32 `json:"spellSlot"`
     TrueDamage int32 `json:"trueDamage"`
-    Type_ string `json:"type"`
+    Type string `json:"type"`
 }
 
 // MatchTimelineInfoParticipantDTO data object.
@@ -1053,7 +1053,7 @@ type SummonerV4DTO struct {
     // Summoner name.
     Name string `json:"name"`
     // Encrypted summoner ID. Max length 63 characters.
-    Id string `json:"id"`
+    ID string `json:"id"`
     // Encrypted PUUID. Exact length of 78 characters.
     PUUID string `json:"puuid"`
     // Summoner level associated with the summoner.
@@ -1102,7 +1102,7 @@ type StubTournamentCodeV5DTO struct {
     // The tournament's ID.
     TournamentID int32 `json:"tournamentId"`
     // The tournament code's ID.
-    Id int32 `json:"id"`
+    ID int32 `json:"id"`
     // The tournament code's region.
     // (Legal values:  BR,  EUNE,  EUW,  JP,  LAN,  LAS,  NA,  OCE,  PBE,  RU,  TR,  KR)
     Region string `json:"region"`
@@ -1186,7 +1186,7 @@ type TournamentCodeV5DTO struct {
     // The tournament's ID.
     TournamentID int32 `json:"tournamentId"`
     // The tournament code's ID.
-    Id int32 `json:"id"`
+    ID int32 `json:"id"`
     // The tournament code's region.
     // (Legal values:  BR,  EUNE,  EUW,  JP,  LAN,  LAS,  NA,  OCE,  PBE,  RU,  TR,  KR)
     Region string `json:"region"`

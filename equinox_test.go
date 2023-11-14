@@ -177,7 +177,7 @@ BenchmarkCachedSummonerByName-16  100819 11005 ns/op 5907 B/op 34 allocs/op
 func BenchmarkCachedSummonerByName(b *testing.B) {
 	b.ReportAllocs()
 	summoner := &lol.SummonerV4DTO{
-		Id:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
+		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
 		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
 		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
 		Name:          "Phanes",
@@ -214,7 +214,7 @@ BenchmarkSummonerByName-16 61237 19108 ns/op 6062 B/op 74 allocs/op
 func BenchmarkSummonerByName(b *testing.B) {
 	b.ReportAllocs()
 	summoner := &lol.SummonerV4DTO{
-		Id:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
+		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
 		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
 		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
 		Name:          "Phanes",
