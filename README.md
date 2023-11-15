@@ -32,15 +32,16 @@
   - Teamfight Tactics
   - Valorant
   - Legends of Runeterra
-- Data Dragon (Incomplete)
-- Community Dragon (Incomplete)
+- Data Dragon and Community Dragon (Incomplete)
 - Caching
+- Retry on 429
 
 ## Todo
 
 - More tests for the client
-- Rate limit with Redis support and internal store
+- Rate limit
 - Improve DDragon/CDragon support
+- Maybe more logging
 
 ## Usage
 
@@ -124,7 +125,7 @@ func main() {
 
 This is my first time developing and publishing an API client, I am constantly changing the project as I test and learn new things, please, check the commits for any breaking changes.
 
-These two projects helped me learn a lot:
+These projects helped me learn a lot:
 
 - [go-github](https://github.com/google/go-github)
 - [golio](https://github.com/KnutZuidema/golio)
@@ -132,4 +133,4 @@ These two projects helped me learn a lot:
 
 ## Disclaimer
 
-Equinox isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+equinox isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
