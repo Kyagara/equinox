@@ -1,6 +1,10 @@
-// This package is used to interact with VAL endpoints.
+// This package is used to interact with the following VAL endpoints:
+//   - ContentV1
+//   - MatchV1
+//   - RankedV1
+//   - StatusV1
 //
-// Automatically generated package.
+// Note: this package is automatically generated.
 package val
 
 ///////////////////////////////////////////////
