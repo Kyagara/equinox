@@ -1,6 +1,10 @@
-// This package is used to interact with TFT endpoints.
+// This package is used to interact with the following TFT endpoints:
+//   - LeagueV1
+//   - MatchV1
+//   - StatusV1
+//   - SummonerV1
 //
-// Automatically generated package.
+// Note: this package is automatically generated.
 package tft
 
 ///////////////////////////////////////////////

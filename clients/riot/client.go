@@ -1,6 +1,7 @@
-// This package is used to interact with Riot endpoints.
+// This package is used to interact with the following Riot endpoints:
+//   - AccountV1
 //
-// Automatically generated package.
+// Note: this package is automatically generated.
 package riot
 
 ///////////////////////////////////////////////

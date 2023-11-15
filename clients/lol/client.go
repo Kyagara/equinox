@@ -1,6 +1,19 @@
-// This package is used to interact with LOL endpoints.
+// This package is used to interact with the following LOL endpoints:
+//   - ChampionMasteryV4
+//   - ChampionV3
+//   - ClashV1
+//   - LeagueExpV4
+//   - LeagueV4
+//   - ChallengesV1
+//   - StatusV3
+//   - StatusV4
+//   - MatchV5
+//   - SpectatorV4
+//   - SummonerV4
+//   - TournamentStubV5
+//   - TournamentV5
 //
-// Automatically generated package.
+// Note: this package is automatically generated.
 package lol
 
 ///////////////////////////////////////////////

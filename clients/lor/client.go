@@ -1,6 +1,11 @@
-// This package is used to interact with LOR endpoints.
+// This package is used to interact with the following LOR endpoints:
+//   - DeckV1
+//   - InventoryV1
+//   - MatchV1
+//   - RankedV1
+//   - StatusV1
 //
-// Automatically generated package.
+// Note: this package is automatically generated.
 package lor
 
 ///////////////////////////////////////////////
