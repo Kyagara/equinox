@@ -12,119 +12,119 @@ package lor
 
 // DeckDTO data object.
 type DeckV1DTO struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Code string `json:"code"`
+	ID   string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+	Code string `json:"code,omitempty"`
 }
 
 // NewDeckDTO data object.
 type NewDeckV1DTO struct {
-	Name string `json:"name"`
-	Code string `json:"code"`
+	Name string `json:"name,omitempty"`
+	Code string `json:"code,omitempty"`
 }
 
 // CardDTO data object.
 type CardV1DTO struct {
-	Code  string `json:"code"`
-	Count string `json:"count"`
+	Code  string `json:"code,omitempty"`
+	Count string `json:"count,omitempty"`
 }
 
 // MatchDTO data object.
 type MatchV1DTO struct {
 	// Match metadata.
-	Metadata MetadataV1DTO `json:"metadata"`
+	Metadata MetadataV1DTO `json:"metadata,omitempty"`
 	// Match info.
-	Info InfoV1DTO `json:"info"`
+	Info InfoV1DTO `json:"info,omitempty"`
 }
 
 // MetadataDTO data object.
 type MetadataV1DTO struct {
 	// Match data version.
-	DataVersion string `json:"data_version"`
+	DataVersion string `json:"data_version,omitempty"`
 	// Match id.
-	MatchID string `json:"match_id"`
+	MatchID string `json:"match_id,omitempty"`
 	// A list of participant PUUIDs.
-	Participants []string `json:"participants"`
+	Participants []string `json:"participants,omitempty"`
 }
 
 // InfoDTO data object.
 type InfoV1DTO struct {
 	// (Legal values:  Constructed,  Expeditions,  Tutorial)
-	GameMode string `json:"game_mode"`
+	GameMode string `json:"game_mode,omitempty"`
 	// (Legal values:  Ranked,  Normal,  AI,  Tutorial,  VanillaTrial,  Singleton,  StandardGauntlet)
-	GameType         string        `json:"game_type"`
-	GameStartTimeUtc string        `json:"game_start_time_utc"`
-	GameVersion      string        `json:"game_version"`
-	Players          []PlayerV1DTO `json:"players"`
+	GameType         string        `json:"game_type,omitempty"`
+	GameStartTimeUtc string        `json:"game_start_time_utc,omitempty"`
+	GameVersion      string        `json:"game_version,omitempty"`
+	Players          []PlayerV1DTO `json:"players,omitempty"`
 	// Total turns taken by both players.
-	TotalTurnCount int32 `json:"total_turn_count"`
+	TotalTurnCount int32 `json:"total_turn_count,omitempty"`
 }
 
 // PlayerDTO data object.
 type PlayerV1DTO struct {
-	PUUID  string `json:"puuid"`
-	DeckID string `json:"deck_id"`
+	PUUID  string `json:"puuid,omitempty"`
+	DeckID string `json:"deck_id,omitempty"`
 	// Code for the deck played. Refer to LOR documentation for details on deck codes.
-	DeckCode    string   `json:"deck_code"`
-	Factions    []string `json:"factions"`
-	GameOutcome string   `json:"game_outcome"`
+	DeckCode    string   `json:"deck_code,omitempty"`
+	Factions    []string `json:"factions,omitempty"`
+	GameOutcome string   `json:"game_outcome,omitempty"`
 	// The order in which the players took turns.
-	OrderOfPlay int32 `json:"order_of_play"`
+	OrderOfPlay int32 `json:"order_of_play,omitempty"`
 }
 
 // LeaderboardDTO data object.
 type LeaderboardV1DTO struct {
 	// A list of players in Master tier.
-	Players []PlayerV1DTO `json:"players"`
+	Players []PlayerV1DTO `json:"players,omitempty"`
 }
 
 // PlayerDTO data object.
 type LeaderboardPlayerV1DTO struct {
-	Name string `json:"name"`
-	Rank int32  `json:"rank"`
+	Name string `json:"name,omitempty"`
+	Rank int32  `json:"rank,omitempty"`
 	// League points.
-	Lp int32 `json:"lp"`
+	Lp int32 `json:"lp,omitempty"`
 }
 
 // PlatformDataDTO data object.
 type PlatformDataV1DTO struct {
-	ID           string        `json:"id"`
-	Name         string        `json:"name"`
-	Locales      []string      `json:"locales"`
-	Maintenances []StatusV1DTO `json:"maintenances"`
-	Incidents    []StatusV1DTO `json:"incidents"`
+	ID           string        `json:"id,omitempty"`
+	Name         string        `json:"name,omitempty"`
+	Locales      []string      `json:"locales,omitempty"`
+	Maintenances []StatusV1DTO `json:"maintenances,omitempty"`
+	Incidents    []StatusV1DTO `json:"incidents,omitempty"`
 }
 
 // StatusDTO data object.
 type StatusV1DTO struct {
-	ID int32 `json:"id"`
+	ID int32 `json:"id,omitempty"`
 	// (Legal values:  scheduled,  in_progress,  complete)
-	MaintenanceStatus string `json:"maintenance_status"`
+	MaintenanceStatus string `json:"maintenance_status,omitempty"`
 	// (Legal values:  info,  warning,  critical)
-	IncidentSeverity string         `json:"incident_severity"`
-	Titles           []ContentV1DTO `json:"titles"`
-	Updates          []UpdateV1DTO  `json:"updates"`
-	CreatedAt        string         `json:"created_at"`
-	ArchiveAt        string         `json:"archive_at"`
-	UpdatedAt        string         `json:"updated_at"`
+	IncidentSeverity string         `json:"incident_severity,omitempty"`
+	Titles           []ContentV1DTO `json:"titles,omitempty"`
+	Updates          []UpdateV1DTO  `json:"updates,omitempty"`
+	CreatedAt        string         `json:"created_at,omitempty"`
+	ArchiveAt        string         `json:"archive_at,omitempty"`
+	UpdatedAt        string         `json:"updated_at,omitempty"`
 	// (Legal values: windows, macos, android, ios, ps4, xbone, switch)
-	Platforms []string `json:"platforms"`
+	Platforms []string `json:"platforms,omitempty"`
 }
 
 // ContentDTO data object.
 type ContentV1DTO struct {
-	Locale  string `json:"locale"`
-	Content string `json:"content"`
+	Locale  string `json:"locale,omitempty"`
+	Content string `json:"content,omitempty"`
 }
 
 // UpdateDTO data object.
 type UpdateV1DTO struct {
-	ID      int32  `json:"id"`
-	Author  string `json:"author"`
-	Publish bool   `json:"publish"`
+	ID      int32  `json:"id,omitempty"`
+	Author  string `json:"author,omitempty"`
+	Publish bool   `json:"publish,omitempty"`
 	// (Legal values: riotclient, riotstatus, game)
-	PublishLocations []string       `json:"publish_locations"`
-	Translations     []ContentV1DTO `json:"translations"`
-	CreatedAt        string         `json:"created_at"`
-	UpdatedAt        string         `json:"updated_at"`
+	PublishLocations []string       `json:"publish_locations,omitempty"`
+	Translations     []ContentV1DTO `json:"translations,omitempty"`
+	CreatedAt        string         `json:"created_at,omitempty"`
+	UpdatedAt        string         `json:"updated_at,omitempty"`
 }

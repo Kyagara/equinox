@@ -16,18 +16,18 @@ func TestChampionAllChampions(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 	client := ddragon.NewDDragonClient(internalClient)
-	json := &ddragon.DDragonMetadata{
+	json := &ddragon.ChampionsData{
 		Type:    "",
 		Format:  "",
 		Version: "",
-		Data:    map[string]ddragon.ChampionData{},
+		Data:    map[string]ddragon.Champion{},
 	}
-	data := map[string]ddragon.ChampionData{}
+	data := map[string]ddragon.Champion{}
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *ddragon.DDragonMetadata
+		want    *ddragon.ChampionsData
 		wantErr error
 	}{
 		{
@@ -65,21 +65,21 @@ func TestChampionByName(t *testing.T) {
 
 	client := ddragon.NewDDragonClient(internalClient)
 
-	json := &ddragon.DDragonMetadata{
+	json := &ddragon.FullChampionData{
 		Type:    "",
 		Format:  "",
 		Version: "",
-		Data:    map[string]ddragon.FullChampionData{},
+		Data:    map[string]ddragon.FullChampion{},
 	}
 
-	json.Data.(map[string]ddragon.FullChampionData)["JarvanIV"] = ddragon.FullChampionData{}
+	json.Data["JarvanIV"] = ddragon.FullChampion{}
 
-	data := &ddragon.FullChampionData{}
+	data := &ddragon.FullChampion{}
 
 	tests := []struct {
 		name    string
 		code    int
-		want    *ddragon.DDragonMetadata
+		want    *ddragon.FullChampionData
 		wantErr error
 	}{
 		{
@@ -110,60 +110,4 @@ func TestChampionByName(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestChampionAllChampionsBadlyFormattedJson(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
-	require.Nil(t, err, "expecting nil error")
-
-	client := ddragon.NewDDragonClient(internalClient)
-
-	json := &ddragon.DDragonMetadata{
-		Type:    "",
-		Format:  "",
-		Version: "",
-		Data:    "{bad:json}",
-	}
-
-	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
-		Get(fmt.Sprintf(ddragon.ChampionsURL, "1.0", ddragon.PtBR)).
-		Reply(200).
-		JSON(json)
-
-	gotData, gotErr := client.Champion.AllChampions("1.0", ddragon.PtBR)
-
-	require.Nil(t, gotData, "expecting nil data")
-
-	error_string := "cannot unmarshal string into Go value of type map[string]ddragon.ChampionData"
-
-	require.ErrorContains(t, gotErr, error_string)
-}
-
-func TestChampionByNameBadlyFormattedJson(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-
-	require.Nil(t, err, "expecting nil error")
-
-	client := ddragon.NewDDragonClient(internalClient)
-
-	json := &ddragon.DDragonMetadata{
-		Type:    "",
-		Format:  "",
-		Version: "",
-		Data:    "{bad:json}",
-	}
-
-	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
-		Get(fmt.Sprintf(ddragon.ChampionURL, "1.0", ddragon.PtBR, "JarvanIV")).
-		Reply(200).
-		JSON(json)
-
-	gotData, gotErr := client.Champion.ByName("1.0", ddragon.PtBR, "JarvanIV")
-
-	require.Nil(t, gotData, "expecting nil data")
-
-	error_string := "cannot unmarshal string into Go value of type map[string]ddragon.FullChampionData"
-
-	require.ErrorContains(t, gotErr, error_string)
 }

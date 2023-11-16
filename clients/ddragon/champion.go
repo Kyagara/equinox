@@ -1,7 +1,6 @@
 package ddragon
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -14,7 +13,14 @@ type ChampionEndpoint struct {
 	internalClient *internal.InternalClient
 }
 
-type ChampionData struct {
+type ChampionsData struct {
+	Type    string              `json:"type"`
+	Format  string              `json:"format"`
+	Version string              `json:"version"`
+	Data    map[string]Champion `json:"data"`
+}
+
+type Champion struct {
 	Version string `json:"version"`
 	ID      string `json:"id"`
 	Key     string `json:"key"`
@@ -34,6 +40,13 @@ type ChampionData struct {
 }
 
 type FullChampionData struct {
+	Type    string                  `json:"type"`
+	Format  string                  `json:"format"`
+	Version string                  `json:"version"`
+	Data    map[string]FullChampion `json:"data"`
+}
+
+type FullChampion struct {
 	ID    string `json:"id"`
 	Key   string `json:"key"`
 	Name  string `json:"name"`
@@ -47,8 +60,8 @@ type FullChampionData struct {
 	} `json:"skins"`
 	Lore      string   `json:"lore"`
 	Blurb     string   `json:"blurb"`
-	Allytips  []string `json:"allytips"`
-	Enemytips []string `json:"enemytips"`
+	AllyTips  []string `json:"allytips"`
+	EnemyTips []string `json:"enemytips"`
 	Tags      []string `json:"tags"`
 	Partype   string   `json:"partype"`
 	Info      struct {
@@ -75,11 +88,11 @@ type FullChampionData struct {
 		DataValues   struct {
 		} `json:"datavalues"`
 		// Not modeled
-		Effect []any `json:"effect"`
+		Effect []any `json:"effect,omitempty"`
 		// Not modeled
-		EffectBurn []any `json:"effectBurn"`
+		EffectBurn []any `json:"effectBurn,omitempty"`
 		// Not modeled
-		Vars      []any  `json:"vars"`
+		Vars      []any  `json:"vars,omitempty"`
 		CostType  string `json:"costType"`
 		MaxAmmo   string `json:"maxammo"`
 		Range     []int  `json:"range"`
@@ -92,7 +105,7 @@ type FullChampionData struct {
 		Description string `json:"description"`
 		Image       Image  `json:"image"`
 	} `json:"passive"`
-	Recommended []any `json:"recommended"`
+	Recommended []any `json:"recommended,omitempty"`
 }
 
 type ChampionStats struct {
@@ -129,7 +142,7 @@ type Image struct {
 }
 
 // Get all champions basic information, includes stats, tags, title and blurb.
-func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[string]ChampionData, error) {
+func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[string]Champion, error) {
 	logger := e.internalClient.Logger("DDragon_Champion_AllChampions")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionsURL, version, language), nil)
@@ -137,28 +150,17 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
-	var data DDragonMetadata
+	var data ChampionsData
 	err = e.internalClient.Execute(logger, request, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
 	}
-	champions, err := json.Marshal(data.Data)
-	if err != nil {
-		logger.Error("Failed to encode champions data", zap.Error(err))
-		return nil, err
-	}
-	var championsData map[string]ChampionData
-	err = json.Unmarshal(champions, &championsData)
-	if err != nil {
-		logger.Error("Failed to parse champions data", zap.Error(err))
-		return nil, err
-	}
-	return championsData, nil
+	return data.Data, nil
 }
 
 // Retrieves more information about a champion, includes skins, spells and tips.
-func (e *ChampionEndpoint) ByName(version string, language Language, champion string) (*FullChampionData, error) {
+func (e *ChampionEndpoint) ByName(version string, language Language, champion string) (*FullChampion, error) {
 	logger := e.internalClient.Logger("DDragon_Champion_ByName")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, language, champion), nil)
@@ -166,23 +168,12 @@ func (e *ChampionEndpoint) ByName(version string, language Language, champion st
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
-	var data DDragonMetadata
+	var data FullChampionData
 	err = e.internalClient.Execute(logger, request, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
 	}
-	champions, err := json.Marshal(data.Data)
-	if err != nil {
-		logger.Error("Failed to encode champion data", zap.Error(err))
-		return nil, err
-	}
-	var championsData map[string]FullChampionData
-	err = json.Unmarshal(champions, &championsData)
-	if err != nil {
-		logger.Error("Failed to parse champion data", zap.Error(err))
-		return nil, err
-	}
-	c := championsData[champion]
+	c := data.Data[champion]
 	return &c, nil
 }

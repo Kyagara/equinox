@@ -1,12 +1,5 @@
 package ddragon
 
-type DDragonMetadata struct {
-	Type    string `json:"type"`
-	Format  string `json:"format"`
-	Version string `json:"version"`
-	Data    any    `json:"data"`
-}
-
 type Language string
 
 const (

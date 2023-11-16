@@ -1,7 +1,9 @@
 package equinox_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -174,8 +176,10 @@ BenchmarkCachedSummonerByName-16 118033  9800 ns/op 4999 B/op 33 allocs/op
 BenchmarkCachedSummonerByName-16 116996  9861 ns/op 5025 B/op 33 allocs/op
 BenchmarkCachedSummonerByName-16 111648  9993 ns/op 5163 B/op 33 allocs/op
 */
+// This version and the non cached version are used to estimate how much cache can improve performance.
 func BenchmarkCachedSummonerByName(b *testing.B) {
 	b.ReportAllocs()
+
 	summoner := &lol.SummonerV4DTO{
 		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
 		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
@@ -194,6 +198,7 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 
 	client, err := equinox.NewClient("RGAPI-TEST")
 	require.Nil(b, err)
+
 	for i := 0; i < b.N; i++ {
 		data, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
 		require.Nil(b, err)
@@ -211,8 +216,10 @@ BenchmarkSummonerByName-16 58365 20639 ns/op 5111 B/op 71 allocs/op
 BenchmarkSummonerByName-16 55460 20802 ns/op 5112 B/op 71 allocs/op
 BenchmarkSummonerByName-16 55996 21634 ns/op 5625 B/op 72 allocs/op
 */
+// Used as an example of how much the cache can improve performance.
 func BenchmarkSummonerByName(b *testing.B) {
 	b.ReportAllocs()
+
 	summoner := &lol.SummonerV4DTO{
 		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
 		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
@@ -235,6 +242,7 @@ func BenchmarkSummonerByName(b *testing.B) {
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
+
 	for i := 0; i < b.N; i++ {
 		data, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
 		require.Nil(b, err)
@@ -242,114 +250,18 @@ func BenchmarkSummonerByName(b *testing.B) {
 	}
 }
 
-/*
-goos: windows
-goarch: amd64
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkCachedDataDragonRealm-16 94222 12113 ns/op 5513 B/op 39 allocs/op
-BenchmarkCachedDataDragonRealm-16 99193 11967 ns/op 5334 B/op 39 allocs/op
-BenchmarkCachedDataDragonRealm-16 96424 12064 ns/op 5431 B/op 39 allocs/op
-BenchmarkCachedDataDragonRealm-16 99111 12129 ns/op 5337 B/op 39 allocs/op
-BenchmarkCachedDataDragonRealm-16 83335 12517 ns/op 5981 B/op 39 allocs/op
-*/
-func BenchmarkCachedDataDragonRealm(b *testing.B) {
+func BenchmarkMatchByID(b *testing.B) {
 	b.ReportAllocs()
-	realm := &ddragon.RealmData{
-		N: struct {
-			Item        string "json:\"item\""
-			Rune        string "json:\"rune\""
-			Mastery     string "json:\"mastery\""
-			Summoner    string "json:\"summoner\""
-			Champion    string "json:\"champion\""
-			ProfileIcon string "json:\"profileicon\""
-			Map         string "json:\"map\""
-			Language    string "json:\"language\""
-			Sticker     string "json:\"sticker\""
-		}{
-			Item:        "12.13.1",
-			Rune:        "7.23.1",
-			Mastery:     "7.23.1",
-			Summoner:    "12.13.1",
-			Champion:    "12.13.1",
-			ProfileIcon: "12.13.1",
-			Map:         "12.13.1",
-			Language:    "12.13.1",
-			Sticker:     "12.13.1",
-		},
-		V:              "12.13.1",
-		L:              "en_US",
-		CDN:            "https://ddragon.leagueoflegends.com/cdn",
-		DD:             "12.13.1",
-		LG:             "12.13.1",
-		CSS:            "12.13.1",
-		ProfileIconMax: 28,
-		Store:          nil,
-	}
 
-	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
-		Get(fmt.Sprintf(ddragon.RealmURL, "na")).
-		Persist().
-		Reply(200).
-		JSON(realm)
-
-	client, err := equinox.NewClient("RGAPI-TEST")
+	var res lol.MatchV5DTO
+	err := ReadFile("./data/match.json", &res)
 	require.Nil(b, err)
-	for i := 0; i < b.N; i++ {
-		data, err := client.DDragon.Realm.ByName(ddragon.NA)
-		require.Nil(b, err)
-		require.Equal(b, "en_US", data.L)
-	}
-}
 
-/*
-goos: windows
-goarch: amd64
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkDataDragonRealm-16 55206 21476 ns/op 4104 B/op 73 allocs/op
-BenchmarkDataDragonRealm-16 54673 22166 ns/op 4230 B/op 74 allocs/op
-BenchmarkDataDragonRealm-16 52680 22500 ns/op 4487 B/op 75 allocs/op
-BenchmarkDataDragonRealm-16 52269 22853 ns/op 4487 B/op 75 allocs/op
-BenchmarkDataDragonRealm-16 52078 23503 ns/op 5002 B/op 76 allocs/op
-*/
-func BenchmarkDataDragonRealm(b *testing.B) {
-	b.ReportAllocs()
-	realm := &ddragon.RealmData{
-		N: struct {
-			Item        string "json:\"item\""
-			Rune        string "json:\"rune\""
-			Mastery     string "json:\"mastery\""
-			Summoner    string "json:\"summoner\""
-			Champion    string "json:\"champion\""
-			ProfileIcon string "json:\"profileicon\""
-			Map         string "json:\"map\""
-			Language    string "json:\"language\""
-			Sticker     string "json:\"sticker\""
-		}{
-			Item:        "12.13.1",
-			Rune:        "7.23.1",
-			Mastery:     "7.23.1",
-			Summoner:    "12.13.1",
-			Champion:    "12.13.1",
-			ProfileIcon: "12.13.1",
-			Map:         "12.13.1",
-			Language:    "12.13.1",
-			Sticker:     "12.13.1",
-		},
-		V:              "12.13.1",
-		L:              "en_US",
-		CDN:            "https://ddragon.leagueoflegends.com/cdn",
-		DD:             "12.13.1",
-		LG:             "12.13.1",
-		CSS:            "12.13.1",
-		ProfileIconMax: 28,
-		Store:          nil,
-	}
-
-	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
-		Get(fmt.Sprintf(ddragon.RealmURL, "na")).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
+		Get(fmt.Sprintf("/lol/match/v5/matches/%v", "BR1_2744215970")).
 		Persist().
 		Reply(200).
-		JSON(realm)
+		JSON(res)
 
 	config := internal.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
@@ -357,9 +269,76 @@ func BenchmarkDataDragonRealm(b *testing.B) {
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
+
 	for i := 0; i < b.N; i++ {
-		data, err := client.DDragon.Realm.ByName(ddragon.NA)
+		data, err := client.LOL.MatchV5.ByID(api.AMERICAS, "BR1_2744215970")
 		require.Nil(b, err)
-		require.Equal(b, "en_US", data.L)
+		require.Equal(b, res.Info.GameCreation, data.Info.GameCreation)
 	}
+}
+
+func BenchmarkMatchTimeline(b *testing.B) {
+	b.ReportAllocs()
+
+	var res lol.MatchTimelineV5DTO
+	err := ReadFile("./data/match.timeline.json", &res)
+	require.Nil(b, err)
+
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
+		Get(fmt.Sprintf("/lol/match/v5/matches/%v/timeline", "BR1_2744215970")).
+		Persist().
+		Reply(200).
+		JSON(res)
+
+	config := internal.NewTestEquinoxConfig()
+	config.LogLevel = api.WARN_LOG_LEVEL
+	config.Retry = true
+
+	client, err := equinox.NewClientWithConfig(config)
+	require.Nil(b, err)
+
+	for i := 0; i < b.N; i++ {
+		data, err := client.LOL.MatchV5.Timeline(api.AMERICAS, "BR1_2744215970")
+		require.Nil(b, err)
+		require.Equal(b, res.Info.GameID, data.Info.GameID)
+	}
+}
+
+func BenchmarkDDragonAllChampions(b *testing.B) {
+	b.ReportAllocs()
+
+	var data ddragon.ChampionsData
+	err := ReadFile("./data/champions.json", &data)
+	require.Nil(b, err)
+
+	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
+		Get(fmt.Sprintf(ddragon.ChampionsURL, "13.22.1", ddragon.EnUS)).
+		Persist().
+		Reply(200).
+		JSON(data)
+
+	config := internal.NewTestEquinoxConfig()
+	config.LogLevel = api.WARN_LOG_LEVEL
+	config.Retry = true
+
+	client, err := equinox.NewClientWithConfig(config)
+	require.Nil(b, err)
+
+	for i := 0; i < b.N; i++ {
+		data, err := client.DDragon.Champion.AllChampions("13.22.1", ddragon.EnUS)
+		require.Nil(b, err)
+		require.Equal(b, "Ahri", data["Ahri"].Name)
+	}
+}
+
+func ReadFile(filename string, target interface{}) error {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(data, target)
+	if err != nil {
+		return err
+	}
+	return nil
 }
