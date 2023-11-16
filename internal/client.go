@@ -17,12 +17,14 @@ import (
 )
 
 type InternalClient struct {
-	key            string
-	http           *http.Client
-	logger         *zap.Logger
-	cache          *cache.Cache
-	IsCacheEnabled bool
-	IsRetryEnabled bool
+	key    string
+	http   *http.Client
+	logger *zap.Logger
+	// Used by endpoint methods to retrieve their respective logger
+	endpointLoggers map[string]*zap.Logger
+	cache           *cache.Cache
+	IsCacheEnabled  bool
+	IsRetryEnabled  bool
 }
 
 // Creates an EquinoxConfig for tests.
@@ -38,20 +40,24 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 
 // Returns a new InternalClient using the configuration provided.
 func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
+	if config == nil {
+		return nil, fmt.Errorf("equinox configuration not provided")
+	}
 	logger, err := NewLogger(config)
 	if err != nil {
-		return nil, fmt.Errorf("error initializing logger, %w", err)
+		return nil, err
 	}
 	if config.Cache == nil {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
 	client := &InternalClient{
-		key:            config.Key,
-		http:           &http.Client{Timeout: time.Second * time.Duration(config.Timeout)},
-		logger:         logger,
-		cache:          config.Cache,
-		IsRetryEnabled: config.Retry,
-		IsCacheEnabled: config.Cache.TTL > 0,
+		key:             config.Key,
+		http:            &http.Client{Timeout: time.Second * time.Duration(config.Timeout)},
+		logger:          logger,
+		endpointLoggers: make(map[string]*zap.Logger),
+		cache:           config.Cache,
+		IsCacheEnabled:  config.Cache.TTL > 0,
+		IsRetryEnabled:  config.Retry,
 	}
 	return client, nil
 }
@@ -68,7 +74,6 @@ func (c *InternalClient) Request(base string, method string, route any, url stri
 		}
 		buffer = bytes.NewReader(bodyBytes)
 	}
-
 	request, err := http.NewRequest(method, url, buffer)
 	if err != nil {
 		return nil, err
@@ -76,14 +81,12 @@ func (c *InternalClient) Request(base string, method string, route any, url stri
 	if body != nil {
 		request.Header.Set("Content-Type", "application/json")
 	}
-
 	hosts := []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
 	for _, host := range hosts {
 		if strings.Contains(request.URL.Host, host) {
 			return request, nil
 		}
 	}
-
 	request.Header.Set("X-Riot-Token", c.key)
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("User-Agent", "equinox - https://github.com/Kyagara/equinox")
@@ -91,9 +94,8 @@ func (c *InternalClient) Request(base string, method string, route any, url stri
 }
 
 // Performs a GET request to the Riot API.
-func (c *InternalClient) Execute(request *http.Request, target any) error {
+func (c *InternalClient) Execute(logger *zap.Logger, request *http.Request, target any) error {
 	url := request.URL.String()
-	logger := c.logger.With(zap.String("httpMethod", request.Method), zap.String("url", url))
 	if c.IsCacheEnabled {
 		if item, err := c.cache.Get(url); err != nil {
 			logger.Error("Error retrieving cached response", zap.Error(err))
@@ -119,32 +121,26 @@ func (c *InternalClient) Execute(request *http.Request, target any) error {
 // sendRequest sends an HTTP request and returns the response body as a byte array.
 func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, retrying bool) ([]byte, error) {
 	logger.Info("Sending request")
-
 	response, err := c.http.Do(request)
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
-
 	err = c.checkResponse(logger, response)
 	if err != nil && c.IsRetryEnabled && !retrying && errors.Is(err, api.ErrTooManyRequests) {
-		logger.Info("Retrying request")
 		return c.sendRequest(logger, request, true)
 	} else if err != nil {
 		return nil, err
 	}
-
 	logger.Info("Request successful")
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
-
 	if response.Header.Get("Content-Type") == "" {
 		jsonResponse := map[string]interface{}{"response": body}
 		return json.Marshal(jsonResponse)
 	}
-
 	return body, nil
 }
 
@@ -194,8 +190,8 @@ func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Respon
 	return nil
 }
 
-func (c *InternalClient) GetDDragonLOLVersions(client string, endpoint string, method string) ([]string, error) {
-	logger := c.Logger(client, endpoint, method)
+func (c *InternalClient) GetDDragonLOLVersions(id string) ([]string, error) {
+	logger := c.Logger(id)
 	logger.Debug("Method started execution")
 	request, err := c.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "/api/versions.json", nil)
 	if err != nil {
@@ -203,7 +199,7 @@ func (c *InternalClient) GetDDragonLOLVersions(client string, endpoint string, m
 		return nil, err
 	}
 	var data []string
-	err = c.Execute(request, &data)
+	err = c.Execute(logger, request, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

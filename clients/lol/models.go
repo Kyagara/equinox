@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = ed83574d1b85ef4c52f267ee5558e3c1c3ffb412
+// Spec version = b554b42a14de337810d5a510d533453eaf6de207
 
 // ChampionMasteryDTO data object.
 //
@@ -538,6 +538,19 @@ type ParticipantV5DTO struct {
 	PlayerSubteamID                int32                      `json:"playerSubteamId"`
 	SubteamPlacement               int32                      `json:"subteamPlacement"`
 	Placement                      int32                      `json:"placement"`
+	Missions                       ParticipantMissionsV5DTO   `json:"missions"`
+	PlayerScore0                   int32                      `json:"playerScore0"`
+	PlayerScore1                   int32                      `json:"playerScore1"`
+	PlayerScore10                  int32                      `json:"playerScore10"`
+	PlayerScore11                  int32                      `json:"playerScore11"`
+	PlayerScore2                   int32                      `json:"playerScore2"`
+	PlayerScore3                   int32                      `json:"playerScore3"`
+	PlayerScore4                   int32                      `json:"playerScore4"`
+	PlayerScore5                   int32                      `json:"playerScore5"`
+	PlayerScore6                   int32                      `json:"playerScore6"`
+	PlayerScore7                   int32                      `json:"playerScore7"`
+	PlayerScore8                   int32                      `json:"playerScore8"`
+	PlayerScore9                   int32                      `json:"playerScore9"`
 }
 
 // PerksDTO data object.
@@ -739,6 +752,22 @@ type ParticipantChallengesV5DTO struct {
 	WardsGuarded                              float64 `json:"wardsGuarded"`
 	WardTakedowns                             float64 `json:"wardTakedowns"`
 	WardTakedownsBefore20M                    float64 `json:"wardTakedownsBefore20M"`
+}
+
+// ParticipantMissionsDTO data object.
+type ParticipantMissionsV5DTO struct {
+	PlayerScore0  int32 `json:"playerScore0"`
+	PlayerScore1  int32 `json:"playerScore1"`
+	PlayerScore10 int32 `json:"playerScore10"`
+	PlayerScore11 int32 `json:"playerScore11"`
+	PlayerScore2  int32 `json:"playerScore2"`
+	PlayerScore3  int32 `json:"playerScore3"`
+	PlayerScore4  int32 `json:"playerScore4"`
+	PlayerScore5  int32 `json:"playerScore5"`
+	PlayerScore6  int32 `json:"playerScore6"`
+	PlayerScore7  int32 `json:"playerScore7"`
+	PlayerScore8  int32 `json:"playerScore8"`
+	PlayerScore9  int32 `json:"playerScore9"`
 }
 
 // MatchTimelineInfoFrameEventDTO data object.

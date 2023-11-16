@@ -4,6 +4,7 @@
 package integration
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -11,7 +12,9 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
+	"github.com/allegro/bigcache/v3"
 	"github.com/stretchr/testify/require"
 )
 
@@ -34,12 +37,19 @@ func init() {
 		onlyDataDragon = true
 		key = "RGAPI-TEST"
 	}
-	config, err := equinox.DefaultConfig(key)
+	ctx := context.Background()
+	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	config.LogLevel = api.DEBUG_LOG_LEVEL
+	config := &api.EquinoxConfig{
+		Key:      key,
+		LogLevel: api.DEBUG_LOG_LEVEL,
+		Timeout:  15,
+		Retry:    true,
+		Cache:    cache,
+	}
 	c, err := equinox.NewClientWithConfig(config)
 	if err != nil {
 		fmt.Println(err)

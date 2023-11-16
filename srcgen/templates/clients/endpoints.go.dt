@@ -136,7 +136,7 @@ type {{= normalizedStructName }} struct {
 //
 // [{{= operationId }}]: {{= operation.externalDocs.url }}
 func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}) {{= !hasReturn ? "error" : `(${isPrimitiveType ? "" : "*"}${returnValue}, error)` }} {
-  logger := e.internalClient.Logger("{{= clientNormalizedName }}", "{{= normalizedStructName }}", "{{= method }}")
+  logger := e.internalClient.Logger("{{= clientNormalizedName + "_" + normalizedStructName + "_" + method }}")
   logger.Debug("Method started execution")
   request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.Method{{= dotUtils.capitalize(verb) }}, route, {{= routeArgument }}, {{? bodyType }}body{{?? true }}nil{{?}})
   if err != nil {
@@ -172,7 +172,7 @@ func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}
   }
 }}
   {{? hasReturn }}var data {{= returnValue }}{{?}}
-  err = e.internalClient.Execute(request, {{? hasReturn }}&data{{?? true }}nil{{?}})
+  err = e.internalClient.Execute(logger, request, {{? hasReturn }}&data{{?? true }}nil{{?}})
   if err != nil {
     logger.Error("Error executing request", zap.Error(err))
     return {{= isPrimitiveType ? `*new(${returnValue})` : "nil"}}{{? hasReturn }}, err{{?}}
