@@ -30,6 +30,14 @@ jobs:
         steps:
             - uses: actions/checkout@v3
 
+            - name: Set up Go
+              uses: actions/setup-go@v4
+              with:
+                  go-version: '>=1.20'
+
+            - name: Install structslop
+              run: go install github.com/orijtech/structslop/cmd/structslop@latest
+
             - name: Setup Node
               uses: actions/setup-node@v3
               with:
@@ -40,11 +48,6 @@ jobs:
 
             - name: Code generation
               run: cd srcgen && npm run update && npm run compile
-
-            - name: Set up Go
-              uses: actions/setup-go@v4
-              with:
-                  go-version: '>=1.20'
 
             - name: Run tests
               run: go test ./... -v -race -coverprofile cover.out -covermode atomic
