@@ -18,6 +18,8 @@ Separated the download and compilation process different files.
 
 ## Usage
 
+`npm run compile` uses structslop, make sure to install it with `go install github.com/orijtech/structslop/cmd/structslop@latest`.
+
 After installing the dependencies with `npm i`, run `npm run update` and then `npm run compile`.
 
 If you are running multiple go and node commands, you can use `npm run compile --prefix srcgen` at the project root, so you don't need to keep changing directories or have multiple terminals open.

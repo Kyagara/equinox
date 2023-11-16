@@ -1,4 +1,4 @@
-// This package is used to interact with the following LOR endpoints:
+// This package is used to interact with all Legends of Runeterra endpoints.
 //   - DeckV1
 //   - InventoryV1
 //   - MatchV1

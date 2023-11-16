@@ -1,4 +1,4 @@
-// This package is used to interact with the following TFT endpoints:
+// This package is used to interact with all Teamfight Tactics endpoints.
 //   - LeagueV1
 //   - MatchV1
 //   - StatusV1

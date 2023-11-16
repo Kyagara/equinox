@@ -1,4 +1,4 @@
-// This package is used to interact with the following LOL endpoints:
+// This package is used to interact with all League of Legends endpoints.
 //   - ChampionMasteryV4
 //   - ChampionV3
 //   - ClashV1
