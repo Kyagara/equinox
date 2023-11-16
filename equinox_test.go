@@ -250,6 +250,17 @@ func BenchmarkSummonerByName(b *testing.B) {
 	}
 }
 
+/*
+goos: windows
+goarch: amd64
+pkg: github.com/Kyagara/equinox
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkMatchByID-16 1399 856941 ns/op 235085 B/op 1093 allocs/op
+BenchmarkMatchByID-16 1332 870089 ns/op 235232 B/op 1094 allocs/op
+BenchmarkMatchByID-16 1352 911695 ns/op 235468 B/op 1095 allocs/op
+BenchmarkMatchByID-16 1351 880334 ns/op 235495 B/op 1095 allocs/op
+BenchmarkMatchByID-16 1374 892069 ns/op 235439 B/op 1095 allocs/op
+*/
 func BenchmarkMatchByID(b *testing.B) {
 	b.ReportAllocs()
 
@@ -277,6 +288,17 @@ func BenchmarkMatchByID(b *testing.B) {
 	}
 }
 
+/*
+goos: windows
+goarch: amd64
+pkg: github.com/Kyagara/equinox
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkMatchTimeline-16 138 9019941 ns/op 2779315 B/op 11979 allocs/op
+BenchmarkMatchTimeline-16 132 8438055 ns/op 2780317 B/op 11983 allocs/op
+BenchmarkMatchTimeline-16 140 8080165 ns/op 2778002 B/op 11979 allocs/op
+BenchmarkMatchTimeline-16 147 8166768 ns/op 2775993 B/op 11974 allocs/op
+BenchmarkMatchTimeline-16 150 7756563 ns/op 2775373 B/op 11973 allocs/op
+*/
 func BenchmarkMatchTimeline(b *testing.B) {
 	b.ReportAllocs()
 
@@ -304,6 +326,17 @@ func BenchmarkMatchTimeline(b *testing.B) {
 	}
 }
 
+/*
+goos: windows
+goarch: amd64
+pkg: github.com/Kyagara/equinox
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkDDragonAllChampions-16 312 3879322 ns/op 868727 B/op 6213 allocs/op
+BenchmarkDDragonAllChampions-16 302 3891187 ns/op 868926 B/op 6214 allocs/op
+BenchmarkDDragonAllChampions-16 310 3833106 ns/op 868675 B/op 6215 allocs/op
+BenchmarkDDragonAllChampions-16 301 3832329 ns/op 868830 B/op 6215 allocs/op
+BenchmarkDDragonAllChampions-16 310 3703218 ns/op 868455 B/op 6214 allocs/op
+*/
 func BenchmarkDDragonAllChampions(b *testing.B) {
 	b.ReportAllocs()
 
