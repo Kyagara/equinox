@@ -176,7 +176,7 @@ BenchmarkCachedSummonerByName-16 118033  9800 ns/op 4999 B/op 33 allocs/op
 BenchmarkCachedSummonerByName-16 116996  9861 ns/op 5025 B/op 33 allocs/op
 BenchmarkCachedSummonerByName-16 111648  9993 ns/op 5163 B/op 33 allocs/op
 */
-// This version and the non cached version are used to estimate how much cache can improve performance.
+// This version and the non cached version are used to estimate how the cache impacts performance.
 func BenchmarkCachedSummonerByName(b *testing.B) {
 	b.ReportAllocs()
 
@@ -216,7 +216,6 @@ BenchmarkSummonerByName-16 58365 20639 ns/op 5111 B/op 71 allocs/op
 BenchmarkSummonerByName-16 55460 20802 ns/op 5112 B/op 71 allocs/op
 BenchmarkSummonerByName-16 55996 21634 ns/op 5625 B/op 72 allocs/op
 */
-// Used as an example of how much the cache can improve performance.
 func BenchmarkSummonerByName(b *testing.B) {
 	b.ReportAllocs()
 

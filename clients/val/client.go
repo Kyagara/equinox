@@ -1,4 +1,4 @@
-// This package is used to interact with the following VAL endpoints:
+// This package is used to interact with all VALORANT endpoints.
 //   - ContentV1
 //   - MatchV1
 //   - RankedV1

@@ -270,14 +270,32 @@ function formatRouteArgument(route, pathParams = []) {
   return `fmt.Sprintf("${formattedRoute}", ${formattedArgs})`
 }
 
+function getFullAPIName(name) {
+  switch (name) {
+    case "LOL":
+      return "League of Legends"
+    case "VAL":
+      return "VALORANT"
+    case "LOR":
+      return "Legends of Runeterra"
+    case "Riot":
+      return "Riot Games"
+    case "TFT":
+      return "Teamfight Tactics"
+    default:
+      return name
+  }
+}
+
 module.exports = {
   spec,
 
   getClientEndpoints,
-
+  
   changeCase,
   preamble,
   capitalize,
+  getFullAPIName,
   removeClientName,
 
   getNormalizedFieldName,

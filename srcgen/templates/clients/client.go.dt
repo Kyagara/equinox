@@ -4,7 +4,7 @@
     const clientName = "{{# def.clientName }}";
     const clientNormalizedName = "{{# def.clientNormalizedName }}";
     const endpointGroups = dotUtils.getClientEndpoints(clientName);
-}}// This package is used to interact with the following {{= clientNormalizedName }} endpoints:
+}}// This package is used to interact with all {{= dotUtils.getFullAPIName(clientNormalizedName) }} endpoints.
 {{~ Object.keys(endpointGroups) :endpoint }}
 //   - {{= dotUtils.removeClientName(dotUtils.changeCase.pascalCase(endpoint)) }}
 {{~}}

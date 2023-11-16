@@ -90,15 +90,15 @@ type MatchV1DTO struct {
 type MatchInfoV1DTO struct {
 	MatchID            string `json:"matchId,omitempty"`
 	MapID              string `json:"mapId,omitempty"`
-	GameLengthMillis   int32  `json:"gameLengthMillis,omitempty"`
-	GameStartMillis    int64  `json:"gameStartMillis,omitempty"`
 	ProvisioningFlowID string `json:"provisioningFlowId,omitempty"`
-	IsCompleted        bool   `json:"isCompleted,omitempty"`
 	CustomGameName     string `json:"customGameName,omitempty"`
 	QueueID            string `json:"queueId,omitempty"`
 	GameMode           string `json:"gameMode,omitempty"`
-	IsRanked           bool   `json:"isRanked,omitempty"`
 	SeasonID           string `json:"seasonId,omitempty"`
+	GameStartMillis    int64  `json:"gameStartMillis,omitempty"`
+	GameLengthMillis   int32  `json:"gameLengthMillis,omitempty"`
+	IsCompleted        bool   `json:"isCompleted,omitempty"`
+	IsRanked           bool   `json:"isRanked,omitempty"`
 }
 
 // PlayerDTO data object.
