@@ -47,7 +47,7 @@ jobs:
               run: npm ci --prefix srcgen
 
             - name: Code generation
-              run: cd srcgen && npm run update && npm run compile
+              run: cd srcgen && npm run update && node index.js
 
             - name: Run tests
               run: go test ./... -v -race -coverprofile cover.out -covermode atomic
