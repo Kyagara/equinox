@@ -130,7 +130,7 @@ type Image struct {
 
 // Get all champions basic information, includes stats, tags, title and blurb.
 func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[string]ChampionData, error) {
-	logger := e.internalClient.Logger("DDragon", "Champion", "AllChampions")
+	logger := e.internalClient.Logger("DDragon_Champion_AllChampions")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionsURL, version, language), nil)
 	if err != nil {
@@ -138,7 +138,7 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 		return nil, err
 	}
 	var data DDragonMetadata
-	err = e.internalClient.Execute(request, &data)
+	err = e.internalClient.Execute(logger, request, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -159,7 +159,7 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 
 // Retrieves more information about a champion, includes skins, spells and tips.
 func (e *ChampionEndpoint) ByName(version string, language Language, champion string) (*FullChampionData, error) {
-	logger := e.internalClient.Logger("DDragon", "Champion", "ByName")
+	logger := e.internalClient.Logger("DDragon_Champion_ByName")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, language, champion), nil)
 	if err != nil {
@@ -167,7 +167,7 @@ func (e *ChampionEndpoint) ByName(version string, language Language, champion st
 		return nil, err
 	}
 	var data DDragonMetadata
-	err = e.internalClient.Execute(request, &data)
+	err = e.internalClient.Execute(logger, request, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

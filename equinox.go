@@ -2,7 +2,6 @@ package equinox
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/Kyagara/equinox/api"
@@ -16,10 +15,12 @@ import (
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/allegro/bigcache/v3"
+	"go.uber.org/zap"
 )
 
 type Equinox struct {
 	Cache   *cache.Cache
+	Logger  *zap.Logger
 	DDragon *ddragon.DDragonClient
 	CDragon *cdragon.CDragonClient
 	Riot    *riot.RiotClient
@@ -31,7 +32,7 @@ type Equinox struct {
 
 // Returns the default Equinox config with a provided key.
 //
-//   - `LogLevel`   : api.NOP_LOG_LEVEL
+//   - `LogLevel`   : api.WARN_LOG_LEVEL
 //   - `Timeout`    : 15 Seconds
 //   - `Retry`      : true
 //   - `Cache`      : BigCache with TTL of 4 minutes
@@ -43,7 +44,7 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 	}
 	config := &api.EquinoxConfig{
 		Key:      key,
-		LogLevel: api.NOP_LOG_LEVEL,
+		LogLevel: api.WARN_LOG_LEVEL,
 		Timeout:  15,
 		Retry:    true,
 		Cache:    cache,
@@ -53,7 +54,7 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 
 // Creates a new Equinox client with a default configuration
 //
-//   - `LogLevel`   : api.NOP_LOG_LEVEL
+//   - `LogLevel`   : api.WARN_LOG_LEVEL
 //   - `Timeout`    : 15 Seconds
 //   - `Retry`      : true
 //   - `Cache`      : BigCache with TTL of 4 minutes
@@ -62,33 +63,13 @@ func NewClient(key string) (*Equinox, error) {
 	if err != nil {
 		return nil, err
 	}
-	client, err := internal.NewInternalClient(config)
-	if err != nil {
-		return nil, err
-	}
-	if key == "" {
-		client.GetInternalLogger().Warn("API key was not provided, requests using other clients will result in errors.")
-	}
-	equinox := &Equinox{
-		Cache:   config.Cache,
-		DDragon: ddragon.NewDDragonClient(client),
-		CDragon: cdragon.NewCDragonClient(client),
-		Riot:    riot.NewRiotClient(client),
-		LOL:     lol.NewLOLClient(client),
-		TFT:     tft.NewTFTClient(client),
-		VAL:     val.NewVALClient(client),
-		LOR:     lor.NewLORClient(client),
-	}
-	return equinox, nil
+	return NewClientWithConfig(config)
 }
 
 // Creates a new Equinox client using a custom configuration.
 //
 // If you don't specify a Timeout this will disable the timeout for the http.Client.
 func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
-	if config == nil {
-		return nil, fmt.Errorf("equinox configuration not provided")
-	}
 	client, err := internal.NewInternalClient(config)
 	if err != nil {
 		return nil, err
@@ -101,6 +82,7 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	}
 	equinox := &Equinox{
 		Cache:   config.Cache,
+		Logger:  client.GetInternalLogger(),
 		DDragon: ddragon.NewDDragonClient(client),
 		CDragon: cdragon.NewCDragonClient(client),
 		Riot:    riot.NewRiotClient(client),

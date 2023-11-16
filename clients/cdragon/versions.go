@@ -9,7 +9,7 @@ type VersionEndpoint struct {
 }
 
 func (e *VersionEndpoint) Latest() (string, error) {
-	version, err := e.internalClient.GetDDragonLOLVersions("CDragon", "Version", "Latest")
+	version, err := e.internalClient.GetDDragonLOLVersions("CDragon_Version_Latest")
 	if err != nil {
 		return "", err
 	}
@@ -17,5 +17,5 @@ func (e *VersionEndpoint) Latest() (string, error) {
 }
 
 func (e *VersionEndpoint) List() ([]string, error) {
-	return e.internalClient.GetDDragonLOLVersions("CDragon", "Version", "List")
+	return e.internalClient.GetDDragonLOLVersions("CDragon_Version_List")
 }

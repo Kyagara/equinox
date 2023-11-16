@@ -8,7 +8,7 @@ package riot
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = ed83574d1b85ef4c52f267ee5558e3c1c3ffb412
+// Spec version = b554b42a14de337810d5a510d533453eaf6de207
 
 import (
 	"fmt"
@@ -44,7 +44,7 @@ type AccountV1 struct {
 //
 // [account-v1.getByPuuid]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByPuuid
 func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DTO, error) {
-	logger := e.internalClient.Logger("Riot", "AccountV1", "ByPUUID")
+	logger := e.internalClient.Logger("Riot_AccountV1_ByPUUID")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-puuid/%v", puuid), nil)
 	if err != nil {
@@ -52,7 +52,7 @@ func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DT
 		return nil, err
 	}
 	var data AccountV1DTO
-	err = e.internalClient.Execute(request, &data)
+	err = e.internalClient.Execute(logger, request, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -65,8 +65,8 @@ func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DT
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `tagLine` (required, in path) - When querying for a player by their riot id, the gameName and tagLine query params are required. However not all accounts have a gameName and tagLine associated so these fields may not be included in the response.
-//   - `gameName` (required, in path) - When querying for a player by their riot id, the gameName and tagLine query params are required. However not all accounts have a gameName and tagLine associated so these fields may not be included in the response.
+//   - `tagLine` (required, in path) - When querying for a player by their riot id, the gameName and tagLine query params are required.
+//   - `gameName` (required, in path) - When querying for a player by their riot id, the gameName and tagLine query params are required.
 //
 // # Riot API Reference
 //
@@ -76,7 +76,7 @@ func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DT
 //
 // [account-v1.getByRiotId]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByRiotId
 func (e *AccountV1) ByRiotID(route api.RegionalRoute, gameName string, tagLine string) (*AccountV1DTO, error) {
-	logger := e.internalClient.Logger("Riot", "AccountV1", "ByRiotID")
+	logger := e.internalClient.Logger("Riot_AccountV1_ByRiotID")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-riot-id/%v/%v", gameName, tagLine), nil)
 	if err != nil {
@@ -84,7 +84,7 @@ func (e *AccountV1) ByRiotID(route api.RegionalRoute, gameName string, tagLine s
 		return nil, err
 	}
 	var data AccountV1DTO
-	err = e.internalClient.Execute(request, &data)
+	err = e.internalClient.Execute(logger, request, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -107,7 +107,7 @@ func (e *AccountV1) ByRiotID(route api.RegionalRoute, gameName string, tagLine s
 //
 // [account-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByAccessToken
 func (e *AccountV1) ByAccessToken(route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
-	logger := e.internalClient.Logger("Riot", "AccountV1", "ByAccessToken")
+	logger := e.internalClient.Logger("Riot_AccountV1_ByAccessToken")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/riot/account/v1/accounts/me", nil)
 	if err != nil {
@@ -119,7 +119,7 @@ func (e *AccountV1) ByAccessToken(route api.RegionalRoute, authorization string)
 	}
 	request.Header.Set("authorization", fmt.Sprint(authorization))
 	var data AccountV1DTO
-	err = e.internalClient.Execute(request, &data)
+	err = e.internalClient.Execute(logger, request, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -143,7 +143,7 @@ func (e *AccountV1) ByAccessToken(route api.RegionalRoute, authorization string)
 //
 // [account-v1.getActiveShard]: https://developer.riotgames.com/api-methods/#account-v1/GET_getActiveShard
 func (e *AccountV1) ActiveShard(route api.RegionalRoute, game string, puuid string) (*ActiveShardV1DTO, error) {
-	logger := e.internalClient.Logger("Riot", "AccountV1", "ActiveShard")
+	logger := e.internalClient.Logger("Riot_AccountV1_ActiveShard")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), nil)
 	if err != nil {
@@ -151,7 +151,7 @@ func (e *AccountV1) ActiveShard(route api.RegionalRoute, game string, puuid stri
 		return nil, err
 	}
 	var data ActiveShardV1DTO
-	err = e.internalClient.Execute(request, &data)
+	err = e.internalClient.Execute(logger, request, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

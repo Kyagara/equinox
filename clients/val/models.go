@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = ed83574d1b85ef4c52f267ee5558e3c1c3ffb412
+// Spec version = b554b42a14de337810d5a510d533453eaf6de207
 
 // ContentDTO data object.
 type ContentV1DTO struct {

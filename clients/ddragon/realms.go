@@ -36,7 +36,7 @@ type RealmData struct {
 }
 
 func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {
-	logger := e.internalClient.Logger("DDragon", "realm", "ByName")
+	logger := e.internalClient.Logger("DDragon_Realm_ByName")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(RealmURL, realm), nil)
 	if err != nil {
@@ -44,7 +44,7 @@ func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {
 		return nil, err
 	}
 	var data RealmData
-	err = e.internalClient.Execute(request, &data)
+	err = e.internalClient.Execute(logger, request, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

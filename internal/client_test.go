@@ -19,6 +19,9 @@ import (
 )
 
 func TestInternalClient(t *testing.T) {
+	_, err := internal.NewInternalClient(nil)
+	require.NotNil(t, err, "expecting non-nil error")
+
 	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 	if err != nil {
@@ -52,7 +55,8 @@ func TestInternalClientDDragonGet(t *testing.T) {
 	target := &ddragon.ChampionData{}
 	request, err := internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "", nil)
 	require.Nil(t, err, "expecting nil error")
-	err = internalClient.Execute(request, target)
+	l := internalClient.Logger("client_endpoint_method")
+	err = internalClient.Execute(l, request, target)
 	require.Nil(t, err, "expecting nil error")
 }
 
@@ -65,7 +69,7 @@ func TestGetDDragonLOLVersions(t *testing.T) {
 		Reply(200).
 		JSON("[\"1.0\"]")
 
-	versions, err := internalClient.GetDDragonLOLVersions("test", "endpoint", "method")
+	versions, err := internalClient.GetDDragonLOLVersions("client_endpoint_method")
 	require.Nil(t, err, "expecting nil error")
 	require.Equal(t, "1.0", versions[0], "expecting nil error")
 }
@@ -91,7 +95,8 @@ func TestInternalClientRetries(t *testing.T) {
 	// This will take 1 second
 	request, err := internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", nil)
 	require.Nil(t, err, "expecting nil error")
-	err = internalClient.Execute(request, &res)
+	l := internalClient.Logger("client_endpoint_method")
+	err = internalClient.Execute(l, request, &res)
 	require.Nil(t, err, "expecting nil error")
 	require.NotNil(t, res, "expecting non-nil response")
 }
@@ -114,7 +119,8 @@ func TestInternalClientFailingRetry(t *testing.T) {
 	// This will take 2 seconds
 	request, err := internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", nil)
 	require.Nil(t, err, "expecting nil error")
-	gotErr := internalClient.Execute(request, &object)
+	l := internalClient.Logger("client_endpoint_method")
+	gotErr := internalClient.Execute(l, request, &object)
 	require.Equal(t, api.ErrTooManyRequests, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrTooManyRequests, gotErr))
 }
 
@@ -131,7 +137,8 @@ func TestInternalClientRetryHeaderNotFound(t *testing.T) {
 	var object api.PlainTextResponse
 	request, err := internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", nil)
 	require.Nil(t, err, "expecting nil error")
-	gotErr := internalClient.Execute(request, &object)
+	l := internalClient.Logger("client_endpoint_method")
+	gotErr := internalClient.Execute(l, request, &object)
 	require.Equal(t, api.ErrRetryAfterHeaderNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrRetryAfterHeaderNotFound, gotErr))
 }
 
@@ -147,7 +154,8 @@ func TestInternalClientPlainTextResponse(t *testing.T) {
 	var object api.PlainTextResponse
 	request, err := internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, "tests", "/", nil)
 	require.Nil(t, err, "expecting nil error")
-	err = internalClient.Execute(request, &object)
+	l := internalClient.Logger("client_endpoint_method")
+	err = internalClient.Execute(l, request, &object)
 	require.Nil(t, err, "expecting nil error")
 	require.NotNil(t, object, "expecting non-nil response")
 }
@@ -164,7 +172,8 @@ func TestInternalClientHandleErrorResponse(t *testing.T) {
 	var object api.PlainTextResponse
 	request, err := internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", nil)
 	require.Nil(t, err, "expecting nil error")
-	gotErr := internalClient.Execute(request, &object)
+	l := internalClient.Logger("client_endpoint_method")
+	gotErr := internalClient.Execute(l, request, &object)
 	wantErr := api.ErrorResponse{
 		Status: api.Status{
 			Message:    "Unknown error",
@@ -278,18 +287,19 @@ func TestInternalClientErrorResponses(t *testing.T) {
 		},
 	}
 
+	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	require.Nil(t, err, "expecting nil error")
+	l := internalClient.Logger("client_endpoint_method")
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, "tests")).
 				Get("/").
 				Reply(test.code)
 
-			internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-			require.Nil(t, err, "expecting nil error")
 			request, err := internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, test.region, "/", nil)
 			require.Nil(t, err, "expecting nil error")
 			var gotData api.PlainTextResponse
-			gotErr := internalClient.Execute(request, gotData)
+			gotErr := internalClient.Execute(l, request, gotData)
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 		})
 	}
@@ -299,7 +309,7 @@ func TestInternalClientRateLimit(t *testing.T) {
 	config := internal.NewTestEquinoxConfig()
 	internalClient, err := internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
-
+	l := internalClient.Logger("client_endpoint_method")
 	headers := map[string]string{}
 	// The method will be rate limited
 	headers[api.X_RATE_LIMIT_TYPE_HEADER] = "method"
@@ -314,9 +324,9 @@ func TestInternalClientRateLimit(t *testing.T) {
 
 	request, err := internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPut, "tests", "/", nil)
 	require.Nil(t, err, "expecting nil error")
-	err = internalClient.Execute(request, nil)
+	err = internalClient.Execute(l, request, nil)
 	require.Equal(t, api.ErrTooManyRequests, err, fmt.Sprintf("want err %v, got %v", api.ErrTooManyRequests, err))
-	err = internalClient.Execute(request, nil)
+	err = internalClient.Execute(l, request, nil)
 	require.Nil(t, err, "expecting nil error")
 }
 
