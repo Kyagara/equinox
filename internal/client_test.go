@@ -50,9 +50,9 @@ func TestInternalClientDDragonGet(t *testing.T) {
 	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "/")).
 		Get("").
 		Reply(200).
-		JSON(&ddragon.ChampionData{})
+		JSON(&ddragon.Champion{})
 
-	target := &ddragon.ChampionData{}
+	target := &ddragon.Champion{}
 	request, err := internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "", nil)
 	require.Nil(t, err, "expecting nil error")
 	l := internalClient.Logger("client_endpoint_method")

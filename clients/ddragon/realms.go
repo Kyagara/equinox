@@ -32,7 +32,7 @@ type RealmData struct {
 	LG             string `json:"lg"`
 	CSS            string `json:"css"`
 	ProfileIconMax int    `json:"profileiconmax"`
-	Store          any    `json:"store"`
+	Store          any    `json:"store,omitempty"`
 }
 
 func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {

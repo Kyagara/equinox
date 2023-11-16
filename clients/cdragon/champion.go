@@ -36,7 +36,7 @@ type ChampionData struct {
 	ChooseVoPath            string   `json:"chooseVoPath"`
 	BanVoPath               string   `json:"banVoPath"`
 	Roles                   []string `json:"roles"`
-	RecommendedItemDefaults []any    `json:"recommendedItemDefaults"`
+	RecommendedItemDefaults []any    `json:"recommendedItemDefaults,omitempty"`
 	Skins                   []struct {
 		ID                        int    `json:"id"`
 		IsBase                    bool   `json:"isBase"`
@@ -52,7 +52,7 @@ type ChampionData struct {
 		CollectionSplashVideoPath string `json:"collectionSplashVideoPath"`
 		FeaturesText              string `json:"featuresText"`
 		ChromaPath                string `json:"chromaPath"`
-		Emblems                   any    `json:"emblems"`
+		Emblems                   any    `json:"emblems,omitempty"`
 		RegionRarityID            int    `json:"regionRarityId"`
 		RarityGemPath             string `json:"rarityGemPath"`
 		SkinLines                 []struct {

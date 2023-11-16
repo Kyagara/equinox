@@ -218,7 +218,7 @@ function stringifyType(prop) {
 }
 
 function formatJsonProperty(name) {
-  return `\`json:"${name}"\``
+  return `\`json:"${name},omitempty"\``
 }
 
 function formatAddQueryParam(param) {
