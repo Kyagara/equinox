@@ -14,9 +14,7 @@ package riot
 
 // Spec version = b554b42a14de337810d5a510d533453eaf6de207
 
-import (
-	"github.com/Kyagara/equinox/internal"
-)
+import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
 type RiotClient struct {

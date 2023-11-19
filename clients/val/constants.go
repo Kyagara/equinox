@@ -11,21 +11,21 @@ package val
 // Spec version = b554b42a14de337810d5a510d533453eaf6de207
 
 // Platform routes for Valorant.
-type ValPlatformRoute string
+type PlatformRoute string
 
 const (
 	// Asia-Pacific.
-	AP ValPlatformRoute = "ap"
+	AP PlatformRoute = "ap"
 	// Brazil.
-	BR ValPlatformRoute = "br"
+	BR PlatformRoute = "br"
 	// Europe.
-	EU ValPlatformRoute = "eu"
+	EU PlatformRoute = "eu"
 	// Korea.
-	KR ValPlatformRoute = "kr"
+	KR PlatformRoute = "kr"
 	// Latin America.
-	LATAM ValPlatformRoute = "latam"
+	LATAM PlatformRoute = "latam"
 	// North America.
-	NA ValPlatformRoute = "na"
+	NA PlatformRoute = "na"
 	// Special esports platform.
-	ESPORTS ValPlatformRoute = "esports"
+	ESPORTS PlatformRoute = "esports"
 )
