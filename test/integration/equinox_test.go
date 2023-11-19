@@ -32,7 +32,7 @@ func checkIfOnlyDataDragon(t *testing.T) {
 
 func init() {
 	key := os.Getenv("RIOT_GAMES_API_KEY")
-	if key == "" || key == "RGAPI..." {
+	if key == "" || key == "RGAPI..." || key == "RGAPI-TEST" {
 		fmt.Println("RIOT_GAMES_API_KEY not found. Only Data Dragon tests will run.")
 		onlyDataDragon = true
 		key = "RGAPI-TEST"

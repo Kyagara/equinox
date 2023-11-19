@@ -15,12 +15,10 @@ import (
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/allegro/bigcache/v3"
-	"go.uber.org/zap"
 )
 
 type Equinox struct {
 	Cache   *cache.Cache
-	Logger  *zap.Logger
 	DDragon *ddragon.DDragonClient
 	CDragon *cdragon.CDragonClient
 	Riot    *riot.RiotClient
@@ -82,7 +80,6 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	}
 	equinox := &Equinox{
 		Cache:   config.Cache,
-		Logger:  client.GetInternalLogger(),
 		DDragon: ddragon.NewDDragonClient(client),
 		CDragon: cdragon.NewCDragonClient(client),
 		Riot:    riot.NewRiotClient(client),
