@@ -363,7 +363,7 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 	}
 }
 
-func ReadFile(filename string, target interface{}) error {
+func ReadFile(filename string, target any) error {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return err

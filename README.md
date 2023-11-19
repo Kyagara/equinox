@@ -63,7 +63,7 @@ A client without a configuration comes with the default options:
 cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
 config := &api.EquinoxConfig{
 	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
-	LogLevel: api.NOP_LOG_LEVEL, // The logging level, NOP_LOG_LEVEL disables logging.
+	LogLevel: api.WARN_LOG_LEVEL, // The logging level, NOP_LOG_LEVEL disables logging.
 	Timeout: 15, // http.Client timeout in seconds.
 	Cache: cache.NewBigCache(cacheConfig), // The default client uses BigCache with an eviction time of 4 minutes.
 	Retry: true, // Retries a request if the API returns a 429 response.
@@ -77,16 +77,16 @@ config := &api.EquinoxConfig{
 Now you can access different games endpoints by their abbreviations. For example:
 
 ```go
-// This method uses a lol.Region and a summoner name. Can be accessed with a Development key.
-summoner, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
+// This method uses a lol.PlatformRoute. Can be accessed with a Development key.
+summoner, err := client.LOL.SummonerV4.ByID(lol.BR1, "summoner_id")
 
-// This method uses a lol.Route and a match ID. Can be accessed with a Development key.
-summoner, err := client.LOL.MatchV5.ByID(api.AMERICAS, "BR1_2530718601")
+// This method uses a api.RegionalRoute. Can be accessed with a Development key.
+match, err := client.LOL.MatchV5.ByID(api.AMERICAS, "match_id")
 
-// The client.Cluster will be used as the region. Can be accessed with a Development key.
+// This method uses a api.RegionalRoute. Can be accessed with a Development key.
 account, err := client.Riot.AccountV1.ByPUUID(api.AMERICAS, "puuid")
 
-// This method uses a val.Shard an a val.Queue. May not be available in your policy.
+// This method uses a val.PlatformRoute. May not be available in your policy.
 matches, err := client.VAL.MatchV1.Recent(val.BR, "competitive")
 ```
 

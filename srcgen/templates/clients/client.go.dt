@@ -13,9 +13,7 @@
 
 {{= dotUtils.preamble(clientName, spec.info.version) }}
 
-import (
-	"github.com/Kyagara/equinox/internal"
-)
+import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
 type {{= clientNormalizedName }}Client struct {

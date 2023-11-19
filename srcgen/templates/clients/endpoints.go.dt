@@ -63,8 +63,10 @@ type {{= normalizedStructName }} struct {
             const descArr = operation.description.replace("##", "#").split('\n');
 
             /* Build argument comment & string. */
-            const normalizedRoute = dotUtils.changeCase.pascalCase(operation['x-route-enum']);
-            const argBuilder = ['route ' + (normalizedRoute === "Regional" ? "api.Regional" : normalizedRoute) + 'Route'];
+            let normalizedRoute = dotUtils.changeCase.pascalCase(operation['x-route-enum']);
+            normalizedRoute = normalizedRoute.replace("Regional", "api.Regional");
+            normalizedRoute = normalizedRoute.replace("ValPlatform", "Platform");
+            const argBuilder = ['route ' + normalizedRoute + 'Route'];
 
             /* Add body params before path/query. */
             if (bodyType) {

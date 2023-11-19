@@ -43,7 +43,7 @@ type ContentV1 struct {
 // Note: this method is automatically generated.
 //
 // [val-content-v1.getContent]: https://developer.riotgames.com/api-methods/#val-content-v1/GET_getContent
-func (e *ContentV1) Content(route ValPlatformRoute, locale string) (*ContentV1DTO, error) {
+func (e *ContentV1) Content(route PlatformRoute, locale string) (*ContentV1DTO, error) {
 	logger := e.internalClient.Logger("VAL_ContentV1_Content")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/content/v1/contents", nil)
@@ -90,7 +90,7 @@ type MatchV1 struct {
 // Note: this method is automatically generated.
 //
 // [val-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatch
-func (e *MatchV1) ByID(route ValPlatformRoute, matchId string) (*MatchV1DTO, error) {
+func (e *MatchV1) ByID(route PlatformRoute, matchId string) (*MatchV1DTO, error) {
 	logger := e.internalClient.Logger("VAL_MatchV1_ByID")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matches/%v", matchId), nil)
@@ -121,7 +121,7 @@ func (e *MatchV1) ByID(route ValPlatformRoute, matchId string) (*MatchV1DTO, err
 // Note: this method is automatically generated.
 //
 // [val-match-v1.getMatchlist]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatchlist
-func (e *MatchV1) ListByPUUID(route ValPlatformRoute, puuid string) (*MatchlistV1DTO, error) {
+func (e *MatchV1) ListByPUUID(route PlatformRoute, puuid string) (*MatchlistV1DTO, error) {
 	logger := e.internalClient.Logger("VAL_MatchV1_ListByPUUID")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matchlists/by-puuid/%v", puuid), nil)
@@ -156,7 +156,7 @@ func (e *MatchV1) ListByPUUID(route ValPlatformRoute, puuid string) (*MatchlistV
 // Note: this method is automatically generated.
 //
 // [val-match-v1.getRecent]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getRecent
-func (e *MatchV1) Recent(route ValPlatformRoute, queue string) (*RecentMatchesV1DTO, error) {
+func (e *MatchV1) Recent(route PlatformRoute, queue string) (*RecentMatchesV1DTO, error) {
 	logger := e.internalClient.Logger("VAL_MatchV1_Recent")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/recent-matches/by-queue/%v", queue), nil)
@@ -200,7 +200,7 @@ type RankedV1 struct {
 // Note: this method is automatically generated.
 //
 // [val-ranked-v1.getLeaderboard]: https://developer.riotgames.com/api-methods/#val-ranked-v1/GET_getLeaderboard
-func (e *RankedV1) Leaderboard(route ValPlatformRoute, actId string, size int32, startIndex int32) (*LeaderboardV1DTO, error) {
+func (e *RankedV1) Leaderboard(route PlatformRoute, actId string, size int32, startIndex int32) (*LeaderboardV1DTO, error) {
 	logger := e.internalClient.Logger("VAL_RankedV1_Leaderboard")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/ranked/v1/leaderboards/by-act/%v", actId), nil)
@@ -249,7 +249,7 @@ type StatusV1 struct {
 // Note: this method is automatically generated.
 //
 // [val-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#val-status-v1/GET_getPlatformData
-func (e *StatusV1) Platform(route ValPlatformRoute) (*PlatformDataV1DTO, error) {
+func (e *StatusV1) Platform(route PlatformRoute) (*PlatformDataV1DTO, error) {
 	logger := e.internalClient.Logger("VAL_StatusV1_Platform")
 	logger.Debug("Method started execution")
 	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/status/v1/platform-data", nil)
