@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/Kyagara/equinox/api"
@@ -29,8 +29,8 @@ type InternalClient struct {
 
 var (
 	headers = http.Header{
-		"X-Riot-Token": {""},
 		"Accept":       {"application/json"},
+		"Content-Type": {"application/json"},
 		"User-Agent":   {"equinox - https://github.com/Kyagara/equinox"},
 	}
 	cdns = []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
@@ -68,7 +68,6 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		IsCacheEnabled:  config.Cache.TTL > 0,
 		IsRetryEnabled:  config.Retry,
 	}
-	headers.Set("X-Riot-Token", config.Key)
 	return client, nil
 }
 
@@ -89,13 +88,10 @@ func (c *InternalClient) Request(base string, method string, route any, path str
 		return nil, err
 	}
 	request.Header = headers
-	if body != nil {
-		request.Header.Set("Content-Type", "application/json")
-	}
-	for _, cdn := range cdns {
-		if strings.Contains(request.URL.Host, cdn) {
-			request.Header.Del("X-Riot-Token")
-		}
+	if !slices.Contains(cdns, request.URL.Host) {
+		request.Header.Set("X-Riot-Token", c.key)
+	} else {
+		request.Header.Del("X-Riot-Token")
 	}
 	return request, nil
 }
