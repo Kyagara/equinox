@@ -27,6 +27,15 @@ type InternalClient struct {
 	IsRetryEnabled  bool
 }
 
+var (
+	headers = http.Header{
+		"X-Riot-Token": {""},
+		"Accept":       {"application/json"},
+		"User-Agent":   {"equinox - https://github.com/Kyagara/equinox"},
+	}
+	cdns = []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
+)
+
 // Creates an EquinoxConfig for tests.
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
@@ -59,13 +68,14 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		IsCacheEnabled:  config.Cache.TTL > 0,
 		IsRetryEnabled:  config.Retry,
 	}
+	headers.Set("X-Riot-Token", config.Key)
 	return client, nil
 }
 
 // Creates a request to the provided route and URL.
-func (c *InternalClient) Request(base string, method string, route any, url string, body any) (*http.Request, error) {
+func (c *InternalClient) Request(base string, method string, route any, path string, body any) (*http.Request, error) {
 	baseURL := fmt.Sprintf(base, route)
-	url = fmt.Sprintf("%s%s", baseURL, url)
+	url := fmt.Sprintf("%s%s", baseURL, path)
 	var buffer io.Reader
 	if body != nil {
 		bodyBytes, err := json.Marshal(body)
@@ -78,18 +88,15 @@ func (c *InternalClient) Request(base string, method string, route any, url stri
 	if err != nil {
 		return nil, err
 	}
+	request.Header = headers
 	if body != nil {
 		request.Header.Set("Content-Type", "application/json")
 	}
-	hosts := []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
-	for _, host := range hosts {
-		if strings.Contains(request.URL.Host, host) {
-			return request, nil
+	for _, cdn := range cdns {
+		if strings.Contains(request.URL.Host, cdn) {
+			request.Header.Del("X-Riot-Token")
 		}
 	}
-	request.Header.Set("X-Riot-Token", c.key)
-	request.Header.Set("Accept", "application/json")
-	request.Header.Set("User-Agent", "equinox - https://github.com/Kyagara/equinox")
 	return request, nil
 }
 

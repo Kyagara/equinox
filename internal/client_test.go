@@ -338,27 +338,32 @@ func TestCacheIsDisabled(t *testing.T) {
 }
 
 func TestInternalClientRequest(t *testing.T) {
-	base := "https://cool.and.real.api/api/%v"
-	route := "users"
-	method := "POST"
-	url := "/post"
+	gock.New("https://cool.and.real.api").
+		Post("/post").
+		Reply(200)
+
 	body := map[string]any{
 		"message": "cool",
 	}
 	config := internal.NewTestEquinoxConfig()
-	config.Key = "RGAPI-TEST"
-	c, err := internal.NewInternalClient(config)
+	client, err := internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
+
+	url := "https://cool.and.real.api/post"
+
 	t.Run("Request with body", func(t *testing.T) {
-		expectedURL := fmt.Sprintf(base, route) + url
-		expectedBody, _ := json.Marshal(body)
-		req, err := c.Request(base, method, route, url, body)
+		expectedBody, err := json.Marshal(body)
 		require.Nil(t, err, "expecting nil error")
-		if req.URL.String() != expectedURL {
-			t.Errorf("unexpected URL, got %s, want %s", req.URL.String(), expectedURL)
+		req, err := client.Request("https://cool.and.real.api%v", "POST", "", "/post", body)
+		require.Nil(t, err, "expecting nil error")
+
+		if req.URL.String() != url {
+			t.Errorf("unexpected URL, got %s, want %s", req.URL.String(), url)
 		}
 
-		bodyBytes, _ := io.ReadAll(req.Body)
+		bodyBytes, err := io.ReadAll(req.Body)
+		require.Nil(t, err, "expecting nil error")
+
 		if string(bodyBytes) != string(expectedBody) {
 			t.Errorf("unexpected body, got %s, want %s", string(bodyBytes), string(expectedBody))
 		}
@@ -377,18 +382,17 @@ func TestInternalClientRequest(t *testing.T) {
 	})
 
 	t.Run("Request without body", func(t *testing.T) {
-		expectedURL := fmt.Sprintf(base, route) + url
-		req, err := c.Request(base, method, route, url, nil)
+		req, err := client.Request("https://cool.and.real.api%v", "POST", "", "/post", nil)
 		require.Nil(t, err, "expecting nil error")
 
-		if req.URL.String() != expectedURL {
-			t.Errorf("unexpected URL, got %s, want %s", req.URL.String(), expectedURL)
+		if req.URL.String() != url {
+			t.Errorf("unexpected URL, got %s, want %s", req.URL.String(), url)
 		}
 		if req.Body != nil {
 			t.Errorf("unexpected body, got %v, want nil", req.Body)
 		}
-		if req.Header.Get("Content-Type") != "" {
-			t.Errorf("unexpected Content-Type header, got %s, want empty", req.Header.Get("Content-Type"))
+		if req.Header.Get("Content-Type") != "application/json" {
+			t.Errorf("unexpected Content-Type header, got %s, want application/json", req.Header.Get("Content-Type"))
 		}
 		if req.Header.Get("Accept") != "application/json" {
 			t.Errorf("unexpected Accept header, got %s, want application/json", req.Header.Get("Accept"))

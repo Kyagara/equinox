@@ -12,6 +12,7 @@ import (
 	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/riot"
+	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
@@ -322,6 +323,45 @@ func BenchmarkMatchTimeline(b *testing.B) {
 		data, err := client.LOL.MatchV5.Timeline(api.AMERICAS, "BR1_2744215970")
 		require.Nil(b, err)
 		require.Equal(b, res.Info.GameID, data.Info.GameID)
+	}
+}
+
+/*
+goos: windows
+goarch: amd64
+pkg: github.com/Kyagara/equinox
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkVALContentAllLocales-16 10 100190160 ns/op 45592683 B/op 166085 allocs/op
+BenchmarkVALContentAllLocales-16 12  97401892 ns/op 44478412 B/op 163570 allocs/op
+BenchmarkVALContentAllLocales-16 10 100424060 ns/op 45591764 B/op 166083 allocs/op
+BenchmarkVALContentAllLocales-16 10 100606000 ns/op 45591508 B/op 166082 allocs/op
+BenchmarkVALContentAllLocales-16 12  96558058 ns/op 44478152 B/op 163568 allocs/op
+*/
+// Probably the biggest api call you can make with the Riot API.
+func BenchmarkVALContentAllLocales(b *testing.B) {
+	b.ReportAllocs()
+
+	var res val.ContentV1DTO
+	err := ReadFile("./data/val.content.all_locales.json", &res)
+	require.Nil(b, err)
+
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, val.BR)).
+		Get("/val/content/v1/contents").
+		Persist().
+		Reply(200).
+		JSON(res)
+
+	config := internal.NewTestEquinoxConfig()
+	config.LogLevel = api.WARN_LOG_LEVEL
+	config.Retry = true
+
+	client, err := equinox.NewClientWithConfig(config)
+	require.Nil(b, err)
+
+	for i := 0; i < b.N; i++ {
+		data, err := client.VAL.ContentV1.Content(val.BR, "")
+		require.Nil(b, err)
+		require.Equal(b, res.Version, data.Version)
 	}
 }
 
