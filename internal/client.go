@@ -23,8 +23,8 @@ type InternalClient struct {
 	// Used by endpoint methods to retrieve their respective logger
 	endpointLoggers map[string]*zap.Logger
 	cache           *cache.Cache
-	IsCacheEnabled  bool
-	IsRetryEnabled  bool
+	retry           int
+	isCacheEnabled  bool
 }
 
 var (
@@ -39,11 +39,11 @@ var (
 // Creates an EquinoxConfig for tests.
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
-		Key:      "RGAPI-TEST",
-		LogLevel: api.DEBUG_LOG_LEVEL,
-		Timeout:  15,
-		Retry:    false,
-		Cache:    &cache.Cache{TTL: 0},
+		Key:        "RGAPI-TEST",
+		LogLevel:   api.DEBUG_LOG_LEVEL,
+		HTTPClient: &http.Client{Timeout: time.Second * time.Duration(15)},
+		Retry:      0,
+		Cache:      &cache.Cache{TTL: 0},
 	}
 }
 
@@ -59,14 +59,17 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	if config.Cache == nil {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
+	if config.HTTPClient == nil {
+		config.HTTPClient = &http.Client{Timeout: time.Second * time.Duration(15)}
+	}
 	client := &InternalClient{
 		key:             config.Key,
-		http:            &http.Client{Timeout: time.Second * time.Duration(config.Timeout)},
+		http:            config.HTTPClient,
 		logger:          logger,
 		endpointLoggers: make(map[string]*zap.Logger),
 		cache:           config.Cache,
-		IsCacheEnabled:  config.Cache.TTL > 0,
-		IsRetryEnabled:  config.Retry,
+		retry:           config.Retry,
+		isCacheEnabled:  config.Cache.TTL > 0,
 	}
 	return client, nil
 }
@@ -96,10 +99,10 @@ func (c *InternalClient) Request(base string, method string, route any, path str
 	return request, nil
 }
 
-// Performs a GET request to the Riot API.
+// Performs a request to the Riot API.
 func (c *InternalClient) Execute(logger *zap.Logger, request *http.Request, target any) error {
 	url := request.URL.String()
-	if c.IsCacheEnabled {
+	if c.isCacheEnabled && request.Method == http.MethodGet {
 		if item, err := c.cache.Get(url); err != nil {
 			logger.Error("Error retrieving cached response", zap.Error(err))
 		} else if item != nil {
@@ -107,11 +110,11 @@ func (c *InternalClient) Execute(logger *zap.Logger, request *http.Request, targ
 			return json.Unmarshal(item, &target)
 		}
 	}
-	body, err := c.sendRequest(logger, request, false)
+	body, err := c.sendRequest(logger, request, 0)
 	if err != nil {
 		return err
 	}
-	if c.IsCacheEnabled {
+	if c.isCacheEnabled && request.Method == http.MethodGet {
 		if err := c.cache.Set(url, body); err != nil {
 			logger.Error("Error caching item", zap.Error(err))
 		} else {
@@ -122,7 +125,7 @@ func (c *InternalClient) Execute(logger *zap.Logger, request *http.Request, targ
 }
 
 // sendRequest sends an HTTP request and returns the response body as a byte array.
-func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, retrying bool) ([]byte, error) {
+func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, retriedCount int) ([]byte, error) {
 	logger.Info("Sending request")
 	response, err := c.http.Do(request)
 	if err != nil {
@@ -130,8 +133,8 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, 
 	}
 	defer response.Body.Close()
 	err = c.checkResponse(logger, response)
-	if err != nil && c.IsRetryEnabled && !retrying && errors.Is(err, api.ErrTooManyRequests) {
-		return c.sendRequest(logger, request, true)
+	if err != nil && retriedCount < c.retry && errors.Is(err, api.ErrTooManyRequests) {
+		return c.sendRequest(logger, request, retriedCount+1)
 	} else if err != nil {
 		return nil, err
 	}
@@ -155,7 +158,7 @@ func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Respon
 		} else {
 			logger.Warn("Rate limited but no service was specified")
 		}
-		if c.IsRetryEnabled {
+		if c.retry > 0 {
 			retryAfter := response.Header.Get(api.RETRY_AFTER_HEADER)
 			if retryAfter == "" {
 				err := api.ErrRetryAfterHeaderNotFound
