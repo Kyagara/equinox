@@ -43,6 +43,8 @@ func TestLogger(t *testing.T) {
 	require.NotEmpty(t, internalClient, "expecting non-nil InternalClient")
 	logger := internalClient.Logger("client_endpoint_method")
 	require.NotEmpty(t, logger, "expecting non-nil Logger")
+	logger = internalClient.Logger("client_endpoint_method")
+	require.NotEmpty(t, logger, "expecting non-nil Logger")
 	logger = internalClient.GetInternalLogger()
 	require.NotEmpty(t, logger, "expecting non-nil Logger")
 	logger.Debug("Debug log")
