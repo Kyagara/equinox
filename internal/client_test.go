@@ -18,7 +18,7 @@ import (
 
 func TestInternalClient(t *testing.T) {
 	_, err := internal.NewInternalClient(nil)
-	require.NotNil(t, err, "expecting non-nil error")
+	require.NotEmpty(t, err, "expecting non-nil error")
 
 	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
@@ -26,14 +26,14 @@ func TestInternalClient(t *testing.T) {
 		require.ErrorContains(t, err, "error initializing logger")
 	}
 
-	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
+	require.NotEmpty(t, internalClient, "expecting non-nil InternalClient")
 
 	config := equinox.NewTestEquinoxConfig()
 	config.Cache.TTL = 1
 
 	internalClient, err = internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
-	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
+	require.NotEmpty(t, internalClient, "expecting non-nil InternalClient")
 }
 
 func TestGetDDragonLOLVersions(t *testing.T) {
@@ -92,7 +92,7 @@ func TestInternalClientPlainTextResponse(t *testing.T) {
 	l := internalClient.Logger("client_endpoint_method")
 	err = internalClient.Execute(l, request, &object)
 	require.Nil(t, err, "expecting nil error")
-	require.NotNil(t, object, "expecting non-nil response")
+	require.NotEmpty(t, object, "expecting non-nil response")
 }
 
 func TestInternalClientNewRequest(t *testing.T) {

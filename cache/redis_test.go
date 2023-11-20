@@ -14,7 +14,7 @@ import (
 
 func TestNewRedis(t *testing.T) {
 	s := miniredis.RunT(t)
-	require.NotNil(t, s, "expecting non-nil miniredis instance")
+	require.NotEmpty(t, s, "expecting non-nil miniredis instance")
 	ctx := context.Background()
 	config := &redis.Options{
 		Network: "tcp",
@@ -26,12 +26,12 @@ func TestNewRedis(t *testing.T) {
 	require.Equal(t, redisErr, err, fmt.Sprintf("want err %v, got %v", redisErr, err))
 	cache, err := cache.NewRedis(ctx, config, 4*time.Minute)
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
-	require.NotNil(t, cache, "expecting non-nil Redis")
+	require.NotEmpty(t, cache, "expecting non-nil Redis")
 }
 
 func TestRedisMethods(t *testing.T) {
 	s := miniredis.RunT(t)
-	require.NotNil(t, s, "expecting non-nil miniredis instance")
+	require.NotEmpty(t, s, "expecting non-nil miniredis instance")
 	ctx := context.Background()
 	config := &redis.Options{
 		Network: "tcp",
@@ -40,7 +40,7 @@ func TestRedisMethods(t *testing.T) {
 
 	cache, err := cache.NewRedis(ctx, config, 4*time.Minute)
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
-	require.NotNil(t, cache, "expecting non-nil Redis")
+	require.NotEmpty(t, cache, "expecting non-nil Redis")
 
 	bytes := []byte("data")
 	err = cache.Set("test", bytes)

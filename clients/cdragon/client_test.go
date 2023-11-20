@@ -11,5 +11,5 @@ import (
 func TestDataDragonClient(t *testing.T) {
 	c := &internal.InternalClient{}
 	client := cdragon.NewCDragonClient(c)
-	require.NotNil(t, client, "expecting non-nil CDragonClient")
+	require.NotEmpty(t, client, "expecting non-nil CDragonClient")
 }
