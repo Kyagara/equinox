@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/cdragon"
 	"github.com/Kyagara/equinox/internal"
@@ -13,7 +14,7 @@ import (
 )
 
 func TestVersionLatest(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 	client := cdragon.NewCDragonClient(internalClient)
 
@@ -53,7 +54,7 @@ func TestVersionLatest(t *testing.T) {
 }
 
 func TestVersionList(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 	client := cdragon.NewCDragonClient(internalClient)
 

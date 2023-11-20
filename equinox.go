@@ -32,7 +32,7 @@ type Equinox struct {
 // Returns the default Equinox config with a provided key.
 //
 //   - `LogLevel`   : api.WARN_LOG_LEVEL
-//   - `HTTPClient` : http.DefaultClient with timeout of 15 seconds
+//   - `HTTPClient` : http.Client with timeout of 15 seconds
 //   - `Retry`      : Maximum amount of retries allowed, defaults to 1
 //   - `Cache`      : BigCache with TTL of 4 minutes
 func DefaultConfig(key string) (*api.EquinoxConfig, error) {
@@ -51,6 +51,22 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 		Cache: cache,
 	}
 	return config, nil
+}
+
+// Creates an EquinoxConfig for tests.
+//
+//   - `LogLevel`   : api.DEBUG_LOG_LEVEL
+//   - `HTTPClient` : http.Client{}
+//   - `Retry`      : 0
+//   - `Cache`      : &cache.Cache{TTL: 0}
+func NewTestEquinoxConfig() *api.EquinoxConfig {
+	return &api.EquinoxConfig{
+		Key:        "RGAPI-TEST",
+		LogLevel:   api.DEBUG_LOG_LEVEL,
+		HTTPClient: &http.Client{},
+		Retry:      0,
+		Cache:      &cache.Cache{TTL: 0},
+	}
 }
 
 // Creates a new Equinox client with the default configuration

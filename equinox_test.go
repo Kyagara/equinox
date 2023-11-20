@@ -7,9 +7,7 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/riot"
-	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
@@ -51,7 +49,7 @@ func TestNewEquinoxClient(t *testing.T) {
 }
 
 func TestNewEquinoxClientWithConfig(t *testing.T) {
-	emptyKeyConfig := internal.NewTestEquinoxConfig()
+	emptyKeyConfig := equinox.NewTestEquinoxConfig()
 	emptyKeyConfig.Key = ""
 	tests := []struct {
 		name    string
@@ -62,7 +60,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 		{
 			name:   "success",
 			want:   &equinox.Equinox{},
-			config: internal.NewTestEquinoxConfig(),
+			config: equinox.NewTestEquinoxConfig(),
 		},
 		{
 			name:    "nil config",
@@ -72,7 +70,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 		{
 			name:    "no cache",
 			want:    &equinox.Equinox{},
-			config:  internal.NewTestEquinoxConfig(),
+			config:  equinox.NewTestEquinoxConfig(),
 			wantErr: nil,
 		},
 	}
@@ -149,16 +147,4 @@ func TestEquinoxClientClearCache(t *testing.T) {
 
 	require.Nil(t, gotData)
 	require.Equal(t, api.ErrNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrNotFound, gotErr))
-}
-
-func TestPutClient(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
-	require.Nil(t, err, "expecting nil error")
-	client := lol.NewLOLClient(internalClient)
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
-		Put("/lol/tournament/v5/codes/tournamentCode").
-		Reply(200)
-
-	err = client.TournamentV5.UpdateCode(api.AMERICAS, nil, "tournamentCode")
-	require.Nil(t, err, "expecting nil error")
 }

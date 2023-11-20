@@ -1,9 +1,11 @@
 package internal_test
 
 import (
+	"net/http"
 	"testing"
 	"time"
 
+	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/internal"
@@ -17,6 +19,7 @@ func TestNewLogger(t *testing.T) {
 
 	config := &api.EquinoxConfig{
 		LogLevel: api.NOP_LOG_LEVEL, Cache: &cache.Cache{TTL: 60 * time.Second},
+		HTTPClient: &http.Client{Timeout: 15 * time.Second},
 	}
 
 	logger, err := internal.NewLogger(config)
@@ -35,7 +38,7 @@ func TestNewLogger(t *testing.T) {
 }
 
 func TestLogger(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
 	logger := internalClient.Logger("client_endpoint_method")

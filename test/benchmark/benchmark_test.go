@@ -11,7 +11,6 @@ import (
 	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/val"
-	"github.com/Kyagara/equinox/internal"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
@@ -20,14 +19,14 @@ import (
 goos: windows
 goarch: amd64
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkCachedSummonerByName-16 119008 10058 ns/op 4976 B/op 33 allocs/op
-BenchmarkCachedSummonerByName-16 118884  9912 ns/op 4979 B/op 33 allocs/op
-BenchmarkCachedSummonerByName-16 118033  9800 ns/op 4999 B/op 33 allocs/op
-BenchmarkCachedSummonerByName-16 116996  9861 ns/op 5025 B/op 33 allocs/op
-BenchmarkCachedSummonerByName-16 111648  9993 ns/op 5163 B/op 33 allocs/op
+BenchmarkCachedSummonerByPUUID-16 112496 10588 ns/op 4756 B/op 30 allocs/op
+BenchmarkCachedSummonerByPUUID-16 110971 10521 ns/op 4797 B/op 30 allocs/op
+BenchmarkCachedSummonerByPUUID-16 110745 10605 ns/op 4804 B/op 30 allocs/op
+BenchmarkCachedSummonerByPUUID-16 111151 10493 ns/op 4792 B/op 30 allocs/op
+BenchmarkCachedSummonerByPUUID-16 110830 10729 ns/op 4801 B/op 30 allocs/op
 */
 // This version and the non cached version are used to estimate how the cache impacts performance.
-func BenchmarkCachedSummonerByName(b *testing.B) {
+func BenchmarkCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
 
 	summoner := &lol.SummonerV4DTO{
@@ -41,7 +40,7 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 	}
 
 	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
-		Get("/lol/summoner/v4/summoners/by-name/Phanes").
+		Get("/lol/summoner/v4/summoners/by-puuid/puuid").
 		Persist().
 		Reply(200).
 		JSON(summoner)
@@ -50,7 +49,7 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
+		data, err := client.LOL.SummonerV4.ByPUUID(lol.BR1, "puuid")
 		require.Nil(b, err)
 		require.Equal(b, "Phanes", data.Name)
 	}
@@ -60,13 +59,13 @@ func BenchmarkCachedSummonerByName(b *testing.B) {
 goos: windows
 goarch: amd64
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkSummonerByName-16 61848 19319 ns/op 4727 B/op 69 allocs/op
-BenchmarkSummonerByName-16 61212 20062 ns/op 4858 B/op 70 allocs/op
-BenchmarkSummonerByName-16 58365 20639 ns/op 5111 B/op 71 allocs/op
-BenchmarkSummonerByName-16 55460 20802 ns/op 5112 B/op 71 allocs/op
-BenchmarkSummonerByName-16 55996 21634 ns/op 5625 B/op 72 allocs/op
+BenchmarkSummonerByPUUID-16 61464 19795 ns/op 4364 B/op 66 allocs/op
+BenchmarkSummonerByPUUID-16 58736 20239 ns/op 4486 B/op 67 allocs/op
+BenchmarkSummonerByPUUID-16 58982 20523 ns/op 4743 B/op 68 allocs/op
+BenchmarkSummonerByPUUID-16 57273 20515 ns/op 4743 B/op 68 allocs/op
+BenchmarkSummonerByPUUID-16 57916 21174 ns/op 5256 B/op 69 allocs/op
 */
-func BenchmarkSummonerByName(b *testing.B) {
+func BenchmarkSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
 
 	summoner := &lol.SummonerV4DTO{
@@ -80,12 +79,12 @@ func BenchmarkSummonerByName(b *testing.B) {
 	}
 
 	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
-		Get("/lol/summoner/v4/summoners/by-name/Phanes").
+		Get("/lol/summoner/v4/summoners/by-puuid/puuid").
 		Persist().
 		Reply(200).
 		JSON(summoner)
 
-	config := internal.NewTestEquinoxConfig()
+	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = 1
 
@@ -93,7 +92,7 @@ func BenchmarkSummonerByName(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.SummonerV4.ByName(lol.BR1, "Phanes")
+		data, err := client.LOL.SummonerV4.ByPUUID(lol.BR1, "puuid")
 		require.Nil(b, err)
 		require.Equal(b, "Phanes", data.Name)
 	}
@@ -123,7 +122,7 @@ func BenchmarkMatchByID(b *testing.B) {
 		Reply(200).
 		JSON(res)
 
-	config := internal.NewTestEquinoxConfig()
+	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = 1
 
@@ -161,7 +160,7 @@ func BenchmarkMatchTimeline(b *testing.B) {
 		Reply(200).
 		JSON(res)
 
-	config := internal.NewTestEquinoxConfig()
+	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = 1
 
@@ -200,7 +199,7 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 		Reply(200).
 		JSON(res)
 
-	config := internal.NewTestEquinoxConfig()
+	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = 1
 
@@ -238,7 +237,7 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 		Reply(200).
 		JSON(data)
 
-	config := internal.NewTestEquinoxConfig()
+	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = 1
 
