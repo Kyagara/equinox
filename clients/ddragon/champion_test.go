@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/internal"
@@ -13,7 +14,7 @@ import (
 )
 
 func TestChampionAllChampions(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 	client := ddragon.NewDDragonClient(internalClient)
 	json := &ddragon.ChampionsData{
@@ -59,7 +60,7 @@ func TestChampionAllChampions(t *testing.T) {
 }
 
 func TestChampionByName(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(internal.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
 
 	require.Nil(t, err, "expecting nil error")
 

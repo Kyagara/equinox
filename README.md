@@ -34,7 +34,7 @@
   - Legends of Runeterra
 - Data Dragon and Community Dragon (Incomplete)
 - Caching
-- Retry on 429
+- Retry on 429 n times
 
 ## Todo
 
@@ -64,9 +64,9 @@ cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
 config := &api.EquinoxConfig{
 	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
 	LogLevel: api.WARN_LOG_LEVEL, // The logging level, NOP_LOG_LEVEL disables logging.
-	Timeout: 15, // http.Client timeout in seconds.
+	HTTPClient: &http.Client{Timeout: 15 * time.Second}, // http.Client used internally.
 	Cache: cache.NewBigCache(cacheConfig), // The default client uses BigCache with an eviction time of 4 minutes.
-	Retry: true, // Retries a request if the API returns a 429 response.
+	Retry: 1, // Retries a request n times if the API returns a 429 response.
 }
 ```
 
@@ -78,7 +78,7 @@ Now you can access different games endpoints by their abbreviations. For example
 
 ```go
 // This method uses a lol.PlatformRoute. Can be accessed with a Development key.
-summoner, err := client.LOL.SummonerV4.ByID(lol.BR1, "summoner_id")
+summoner, err := client.LOL.SummonerV4.ByPUUID(lol.BR1, "summoner_puuid")
 
 // This method uses a api.RegionalRoute. Can be accessed with a Development key.
 match, err := client.LOL.MatchV5.ByID(api.AMERICAS, "match_id")

@@ -16,7 +16,7 @@ type EquinoxConfig struct {
 	LogLevel LogLevel
 	// http.Client used internally.
 	HTTPClient *http.Client
-	// Allows retrying a request if it returns a 429 status code.
+	// Allows retrying a request n times if it returns a 429 status code.
 	Retry int
 	// The cache used to store all GET requests done by the client.
 	Cache *cache.Cache

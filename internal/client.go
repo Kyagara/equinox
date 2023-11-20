@@ -36,17 +36,6 @@ var (
 	cdns = []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
 )
 
-// Creates an EquinoxConfig for tests.
-func NewTestEquinoxConfig() *api.EquinoxConfig {
-	return &api.EquinoxConfig{
-		Key:        "RGAPI-TEST",
-		LogLevel:   api.DEBUG_LOG_LEVEL,
-		HTTPClient: &http.Client{Timeout: time.Second * time.Duration(15)},
-		Retry:      0,
-		Cache:      &cache.Cache{TTL: 0},
-	}
-}
-
 // Returns a new InternalClient using the configuration provided.
 func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	if config == nil {
@@ -60,7 +49,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
 	if config.HTTPClient == nil {
-		config.HTTPClient = &http.Client{Timeout: time.Second * time.Duration(15)}
+		config.HTTPClient = &http.Client{Timeout: 15 * time.Second}
 	}
 	client := &InternalClient{
 		key:             config.Key,
@@ -75,6 +64,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 }
 
 // Creates a request to the provided route and URL.
+// TODO: Check rate limit here, return error if is rate limited, maybe also return error if it WILL BE rate limited
 func (c *InternalClient) Request(base string, method string, route any, path string, body any) (*http.Request, error) {
 	baseURL := fmt.Sprintf(base, route)
 	url := fmt.Sprintf("%s%s", baseURL, path)
@@ -150,6 +140,7 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, 
 	return body, nil
 }
 
+// TODO: Update rate limit here
 func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Response) error {
 	if response.StatusCode == http.StatusTooManyRequests {
 		limitType := response.Header.Get(api.X_RATE_LIMIT_TYPE_HEADER)
@@ -180,7 +171,6 @@ func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Respon
 	// Check if the response status code is not within the range of 200-299 (success codes)
 	if response.StatusCode < http.StatusOK || response.StatusCode > 299 {
 		logger.Error("Request failed", zap.Error(fmt.Errorf("endpoint method returned an error code: %v", response.Status)))
-		// Handling errors documented in the Riot API docs
 		// This StatusCodeToError solution is from https://github.com/KnutZuidema/golio
 		err, ok := api.StatusCodeToError[response.StatusCode]
 		if !ok {
