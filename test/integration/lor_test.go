@@ -14,5 +14,6 @@ func TestLORPlatformStatus(t *testing.T) {
 	checkIfOnlyDataDragon(t)
 	status, err := client.LOR.StatusV1.Platform(api.AMERICAS)
 	require.Nil(t, err, "expecting nil error")
-	require.NotNil(t, status, "expecting non-nil status")
+	require.NotEmpty(t, status, "expecting non-nil status")
+	require.Equal(t, "America", status.Name, "expecting platform name to be equal to Americas")
 }

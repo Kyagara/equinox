@@ -35,15 +35,15 @@ func TestNewEquinoxClient(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			client, err := equinox.NewClient(test.key)
 			require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
-			require.NotNil(t, client, "expecting non-nil Client")
-			require.NotNil(t, client.Cache, "expecting non-nil Client")
-			require.NotNil(t, client.LOL, "expecting nil Client")
-			require.NotNil(t, client.LOR, "expecting nil Client")
-			require.NotNil(t, client.TFT, "expecting nil Client")
-			require.NotNil(t, client.VAL, "expecting nil Client")
-			require.NotNil(t, client.Riot, "expecting nil Client")
-			require.NotNil(t, client.CDragon, "expecting non-nil Client")
-			require.NotNil(t, client.DDragon, "expecting non-nil Client")
+			require.NotEmpty(t, client, "expecting non-nil Client")
+			require.NotEmpty(t, client.Cache, "expecting non-nil Client")
+			require.NotEmpty(t, client.LOL, "expecting nil Client")
+			require.NotEmpty(t, client.LOR, "expecting nil Client")
+			require.NotEmpty(t, client.TFT, "expecting nil Client")
+			require.NotEmpty(t, client.VAL, "expecting nil Client")
+			require.NotEmpty(t, client.Riot, "expecting nil Client")
+			require.NotEmpty(t, client.CDragon, "expecting non-nil Client")
+			require.NotEmpty(t, client.DDragon, "expecting non-nil Client")
 		})
 	}
 }
@@ -81,7 +81,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 			require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
 
 			if test.wantErr == nil {
-				require.NotNil(t, client, "expecting non-nil client")
+				require.NotEmpty(t, client, "expecting non-nil client")
 			}
 
 			if test.name == "no cache" {

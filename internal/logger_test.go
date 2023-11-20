@@ -15,7 +15,7 @@ import (
 
 func TestNewLogger(t *testing.T) {
 	_, err := internal.NewLogger(nil)
-	require.NotNil(t, err, "expecting non-nil error")
+	require.NotEmpty(t, err, "expecting non-nil error")
 
 	config := &api.EquinoxConfig{
 		LogLevel: api.NOP_LOG_LEVEL, Cache: &cache.Cache{TTL: 60 * time.Second},
@@ -24,7 +24,7 @@ func TestNewLogger(t *testing.T) {
 
 	logger, err := internal.NewLogger(config)
 	require.Nil(t, err, "expecting nil error")
-	require.NotNil(t, logger, "expecting non-nil logger")
+	require.NotEmpty(t, logger, "expecting non-nil logger")
 
 	config.LogLevel = api.DEBUG_LOG_LEVEL
 	logger, err = internal.NewLogger(config)
@@ -40,11 +40,11 @@ func TestNewLogger(t *testing.T) {
 func TestLogger(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
-	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
+	require.NotEmpty(t, internalClient, "expecting non-nil InternalClient")
 	logger := internalClient.Logger("client_endpoint_method")
-	require.NotNil(t, logger, "expecting non-nil Logger")
+	require.NotEmpty(t, logger, "expecting non-nil Logger")
 	logger = internalClient.GetInternalLogger()
-	require.NotNil(t, logger, "expecting non-nil Logger")
+	require.NotEmpty(t, logger, "expecting non-nil Logger")
 	logger.Debug("Debug log")
 	logger.Info("Info log")
 	logger.Warn("Warn log")
