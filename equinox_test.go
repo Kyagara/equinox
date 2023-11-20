@@ -96,7 +96,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 func TestEquinoxClientClearCache(t *testing.T) {
 	config, err := equinox.DefaultConfig("RGAPI-TEST")
 	config.LogLevel = api.NOP_LOG_LEVEL
-	config.Retry = false
+	config.Retry = 0
 	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
 
 	client, err := equinox.NewClientWithConfig(config)

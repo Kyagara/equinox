@@ -6,6 +6,7 @@ package integration
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"testing"
 	"time"
@@ -46,9 +47,11 @@ func init() {
 	config := &api.EquinoxConfig{
 		Key:      key,
 		LogLevel: api.DEBUG_LOG_LEVEL,
-		Timeout:  15,
-		Retry:    true,
-		Cache:    cache,
+		HTTPClient: &http.Client{
+			Timeout: 15 * time.Second,
+		},
+		Retry: 1,
+		Cache: cache,
 	}
 	c, err := equinox.NewClientWithConfig(config)
 	if err != nil {

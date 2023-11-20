@@ -29,18 +29,13 @@ func TestInternalClient(t *testing.T) {
 	}
 
 	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
-	require.False(t, internalClient.IsCacheEnabled)
-	require.False(t, internalClient.IsRetryEnabled)
 
 	config := internal.NewTestEquinoxConfig()
 	config.Cache.TTL = 1
-	config.Retry = true
 
 	internalClient, err = internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
 	require.NotNil(t, internalClient, "expecting non-nil InternalClient")
-	require.True(t, internalClient.IsCacheEnabled)
-	require.True(t, internalClient.IsRetryEnabled)
 }
 
 func TestInternalClientDDragonGet(t *testing.T) {
@@ -76,7 +71,7 @@ func TestGetDDragonLOLVersions(t *testing.T) {
 
 func TestInternalClientRetries(t *testing.T) {
 	config := internal.NewTestEquinoxConfig()
-	config.Retry = true
+	config.Retry = 1
 	internalClient, err := internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
 
@@ -103,7 +98,7 @@ func TestInternalClientRetries(t *testing.T) {
 
 func TestInternalClientFailingRetry(t *testing.T) {
 	config := internal.NewTestEquinoxConfig()
-	config.Retry = true
+	config.Retry = 1
 	internalClient, err := internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
 
@@ -126,7 +121,7 @@ func TestInternalClientFailingRetry(t *testing.T) {
 
 func TestInternalClientRetryHeaderNotFound(t *testing.T) {
 	config := internal.NewTestEquinoxConfig()
-	config.Retry = true
+	config.Retry = 1
 	internalClient, err := internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
 
