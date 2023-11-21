@@ -23,5 +23,5 @@ func TestLOLMatchByID(t *testing.T) {
 	match, err := client.LOL.MatchV5.ByID(api.AMERICAS, "BR1_2744215970")
 	require.Nil(t, err, "expecting nil error")
 	require.NotEmpty(t, match, "expecting non-nil match")
-	require.Equal(t, "BR1_2744215970", match.Info.GameID, "expecting match ID to be BR1_2744215970")
+	require.Equal(t, "BR1_2744215970", match.Metadata.MatchID, "expecting match ID to be BR1_2744215970")
 }
