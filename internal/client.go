@@ -28,7 +28,12 @@ type InternalClient struct {
 }
 
 var (
-	headers = http.Header{
+	staticHeaders = http.Header{
+		"Accept":     {"application/json"},
+		"User-Agent": {"equinox - https://github.com/Kyagara/equinox"},
+	}
+	apiHeaders = http.Header{
+		"X-Riot-Token": {""},
 		"Accept":       {"application/json"},
 		"Content-Type": {"application/json"},
 		"User-Agent":   {"equinox - https://github.com/Kyagara/equinox"},
@@ -60,6 +65,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		retry:           config.Retry,
 		isCacheEnabled:  config.Cache.TTL > 0,
 	}
+	apiHeaders.Set("X-Riot-Token", config.Key)
 	return client, nil
 }
 
@@ -80,11 +86,10 @@ func (c *InternalClient) Request(base string, method string, route any, path str
 	if err != nil {
 		return nil, err
 	}
-	request.Header = headers
-	if !slices.Contains(cdns, request.URL.Host) {
-		request.Header.Set("X-Riot-Token", c.key)
+	if slices.Contains(cdns, request.URL.Host) {
+		request.Header = staticHeaders
 	} else {
-		request.Header.Del("X-Riot-Token")
+		request.Header = apiHeaders
 	}
 	return request, nil
 }
