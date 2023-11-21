@@ -34,12 +34,12 @@
   - Legends of Runeterra
 - Data Dragon and Community Dragon (Incomplete)
 - Caching
-- Retry on 429 n times
+- Retry on 429 `n` times
 
 ## Todo
 
-- More tests for the client
 - Rate limit
+- More tests for the client
 - Improve DDragon/CDragon support
 - Maybe more logging
 
@@ -59,14 +59,20 @@ client, err := equinox.NewClient("RIOT_API_KEY")
 
 A client without a configuration comes with the default options:
 
+- **Key**: The provided key.
+- **LogLevel**: `WARN_LOG_LEVEL`. `NOP_LOG_LEVEL` disables logging.
+- **HTTPClient**: `http.Client` with a timeout of 15 seconds.
+- **Cache**: `BigCache` with an eviction time of 4 minutes.
+- **Retry**: Retries a request 1 time if the API returns a 429 response.
+
 ```go
 cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
 config := &api.EquinoxConfig{
-	Key: "RIOT_API_KEY", // The API Key provided as a parameter.
-	LogLevel: api.WARN_LOG_LEVEL, // The logging level, NOP_LOG_LEVEL disables logging.
-	HTTPClient: &http.Client{Timeout: 15 * time.Second}, // http.Client used internally.
-	Cache: cache.NewBigCache(cacheConfig), // The default client uses BigCache with an eviction time of 4 minutes.
-	Retry: 1, // Retries a request n times if the API returns a 429 response.
+	Key: "RIOT_API_KEY",
+	LogLevel: api.WARN_LOG_LEVEL,
+	HTTPClient: &http.Client{Timeout: 15 * time.Second},
+	Cache: cache.NewBigCache(cacheConfig),
+	Retry: 1,
 }
 ```
 
@@ -74,7 +80,7 @@ config := &api.EquinoxConfig{
 
 > A different storage can be provided to the client using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil in config.Cache disables caching.
 
-Now you can access different games endpoints by their abbreviations. For example:
+Using different endpoints:
 
 ```go
 // This method uses a lol.PlatformRoute. Can be accessed with a Development key.
