@@ -59,9 +59,6 @@ type {{= normalizedStructName }} struct {
                 bodyType = dotUtils.getNormalizedDTOStructName(dotUtils.stringifyType(jsonInfo.schema), endpointName.toUpperCase(), endpointName);
             }
 
-            /* Description processing. */
-            const descArr = operation.description.replace("##", "#").split('\n');
-
             /* Build argument comment & string. */
             let normalizedRoute = dotUtils.changeCase.pascalCase(operation['x-route-enum']);
             normalizedRoute = normalizedRoute.replace("Regional", "api.Regional");
@@ -95,7 +92,25 @@ type {{= normalizedStructName }} struct {
                 routeArgument = dotUtils.formatRouteArgument(route);
             }
 
-            for (var descLine of descArr) {
+            const returnValue = dotUtils.getNormalizedDTOStructName(returnType, endpointName.toUpperCase(), endpointName);
+            let isPrimitiveType = false;
+            if (returnType === "int32" || returnType === "int64") {
+              isPrimitiveType = true;
+            }
+            if (returnType === "float32" || returnType === "float64") {
+              isPrimitiveType = true;
+            }
+            if (returnType === "string" || returnType === "[]string") {
+              isPrimitiveType = true;
+            }
+            if (returnType.startsWith("map[") || returnType.startsWith("[]")) {
+              isPrimitiveType = true;
+            }
+
+            /* Description processing. */
+            const descArr = operation.description.replace("##", "#").replace(/\n\n/g, "\n").split('\n');
+
+            for (const descLine of descArr) {
 }}
 //{{= descLine ? ' ' + descLine : '' }}
 //
@@ -106,27 +121,12 @@ type {{= normalizedStructName }} struct {
 //   - `route` - Route to query.
 {{
             if (allParams) {
-                for (let param of allParams) {
-                  if (param.name === 'Authorization') param.name = "authorization";
+              for (let param of allParams) {
+                if (param.name === 'Authorization') param.name = "authorization";
 }}
 //   - `{{= param.name }}` ({{= param.required ? 'required' : 'optional' }}, in {{= param.in }}){{= param.description ? ' - ' + param.description : '' }}
 {{
-            }
-  }
-
-  const returnValue = dotUtils.getNormalizedDTOStructName(returnType, endpointName.toUpperCase(), endpointName);
-  let isPrimitiveType = false;
-  if (returnType === "int32" || returnType === "int64") {
-    isPrimitiveType = true;
-  }
-  if (returnType === "float32" || returnType === "float64") {
-    isPrimitiveType = true;
-  }
-  if (returnType === "string" || returnType === "[]string") {
-    isPrimitiveType = true;
-  }
-  if (returnType.startsWith("map[") || returnType.startsWith("[]")) {
-    isPrimitiveType = true;
+              }
   }
 }}
 //
@@ -185,7 +185,7 @@ func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}
 }
 
 {{
-      }
+            }
   }
 }}
 {{

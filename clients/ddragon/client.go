@@ -1,4 +1,4 @@
-// This package is used to interact with DDragon endpoints.
+// This package is used to interact with Data Dragon endpoints.
 package ddragon
 
 import (

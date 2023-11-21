@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = b554b42a14de337810d5a510d533453eaf6de207
+// Spec version = 9e564de22543560b3ce444e320b260b7e759455a
 
 import (
 	"fmt"
@@ -342,41 +342,6 @@ func (e *ChampionV3) Rotation(route PlatformRoute) (*ChampionRotationV3DTO, erro
 // [clash-v1]: https://developer.riotgames.com/apis#clash-v1
 type ClashV1 struct {
 	internalClient *internal.InternalClient
-}
-
-// Get players by puuid
-//
-// # Implementation Notes
-//
-// This endpoint returns a list of active Clash players for a given PUUID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `puuid` (required, in path)
-//
-// # Riot API Reference
-//
-// [clash-v1.getPlayersByPUUID]
-//
-// Note: this method is automatically generated.
-//
-// [clash-v1.getPlayersByPUUID]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getPlayersByPUUID
-func (e *ClashV1) SummonerEntriesByPUUID(route PlatformRoute, puuid string) ([]PlayerV1DTO, error) {
-	logger := e.internalClient.Logger("LOL_ClashV1_SummonerEntriesByPUUID")
-	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/players/by-puuid/%v", puuid), nil)
-	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
-		return *new([]PlayerV1DTO), err
-	}
-	var data []PlayerV1DTO
-	err = e.internalClient.Execute(logger, request, &data)
-	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
-		return *new([]PlayerV1DTO), err
-	}
-	logger.Debug("Method executed successfully")
-	return data, nil
 }
 
 // Get players by summoner ID.
@@ -1779,11 +1744,7 @@ func (e *TournamentV5) UpdateCode(route api.RegionalRoute, body *TournamentCodeU
 //
 // Additional endpoint to get tournament games. From this endpoint, you are able to get participants PUUID (the callback doesn't contain this info).
 //
-//
-//
 // You can also use it to check if the game was recorded and validate callbacks. If the endpoint returns the game, it means a callback was attempted.
-//
-//
 //
 // This will only work for tournament codes created after November 10, 2023.
 //

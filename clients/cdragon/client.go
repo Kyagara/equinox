@@ -1,4 +1,4 @@
-// This package is used to interact with CDragon endpoints.
+// This package is used to interact with Community Dragon endpoints.
 package cdragon
 
 import (
