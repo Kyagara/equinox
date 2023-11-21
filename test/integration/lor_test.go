@@ -15,5 +15,5 @@ func TestLORPlatformStatus(t *testing.T) {
 	status, err := client.LOR.StatusV1.Platform(api.AMERICAS)
 	require.Nil(t, err, "expecting nil error")
 	require.NotEmpty(t, status, "expecting non-nil status")
-	require.Equal(t, "America", status.Name, "expecting platform name to be equal to Americas")
+	require.Equal(t, "Americas", status.Name, "expecting platform name to be equal to Americas")
 }
