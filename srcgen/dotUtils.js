@@ -256,7 +256,7 @@ function formatAddHeaderParam(param, returnValue, isPrimitive) {
       return `if ${name} == "" {
     return ${value}, fmt.Errorf("'${name}' header is required")
   }
-  request.Header.Set("${letHeaderName}", fmt.Sprint(${name}))`
+  equinoxReq.Request.Header.Set("${letHeaderName}", fmt.Sprint(${name}))`
     default:
       throw new Error(`${param.schema.type} not supported`)
   }
@@ -272,16 +272,16 @@ function formatRouteArgument(route, pathParams = []) {
 
 function getFullAPIName(name) {
   switch (name) {
-    case "LOL":
-      return "League of Legends"
-    case "VAL":
-      return "VALORANT"
-    case "LOR":
-      return "Legends of Runeterra"
-    case "Riot":
-      return "Riot Games"
-    case "TFT":
-      return "Teamfight Tactics"
+    case 'LOL':
+      return 'League of Legends'
+    case 'VAL':
+      return 'VALORANT'
+    case 'LOR':
+      return 'Legends of Runeterra'
+    case 'Riot':
+      return 'Riot Games'
+    case 'TFT':
+      return 'Teamfight Tactics'
     default:
       return name
   }
@@ -291,7 +291,7 @@ module.exports = {
   spec,
 
   getClientEndpoints,
-  
+
   changeCase,
   preamble,
   capitalize,

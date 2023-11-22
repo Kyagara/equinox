@@ -145,13 +145,13 @@ type Image struct {
 func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[string]Champion, error) {
 	logger := e.internalClient.Logger("DDragon_Champion_AllChampions")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionsURL, version, language), nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionsURL, version, language), "", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data ChampionsData
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -163,13 +163,13 @@ func (e *ChampionEndpoint) AllChampions(version string, language Language) (map[
 func (e *ChampionEndpoint) ByName(version string, language Language, champion string) (*FullChampion, error) {
 	logger := e.internalClient.Logger("DDragon_Champion_ByName")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, language, champion), nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, language, champion), "", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data FullChampionData
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

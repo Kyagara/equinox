@@ -46,7 +46,7 @@ type DeckV1 struct {
 func (e *DeckV1) Decks(route api.RegionalRoute, authorization string) ([]DeckV1DTO, error) {
 	logger := e.internalClient.Logger("LOR_DeckV1_Decks")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/deck/v1/decks/me", nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/deck/v1/decks/me", "lor-deck-v1.getDecks", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return *new([]DeckV1DTO), err
@@ -54,9 +54,9 @@ func (e *DeckV1) Decks(route api.RegionalRoute, authorization string) ([]DeckV1D
 	if authorization == "" {
 		return *new([]DeckV1DTO), fmt.Errorf("'authorization' header is required")
 	}
-	request.Header.Set("authorization", fmt.Sprint(authorization))
+	equinoxReq.Request.Header.Set("authorization", fmt.Sprint(authorization))
 	var data []DeckV1DTO
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return *new([]DeckV1DTO), err
@@ -81,7 +81,7 @@ func (e *DeckV1) Decks(route api.RegionalRoute, authorization string) ([]DeckV1D
 func (e *DeckV1) CreateDeck(route api.RegionalRoute, body *NewDeckV1DTO, authorization string) (string, error) {
 	logger := e.internalClient.Logger("LOR_DeckV1_CreateDeck")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lor/deck/v1/decks/me", body)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lor/deck/v1/decks/me", "lor-deck-v1.createDeck", body)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return *new(string), err
@@ -89,9 +89,9 @@ func (e *DeckV1) CreateDeck(route api.RegionalRoute, body *NewDeckV1DTO, authori
 	if authorization == "" {
 		return *new(string), fmt.Errorf("'authorization' header is required")
 	}
-	request.Header.Set("authorization", fmt.Sprint(authorization))
+	equinoxReq.Request.Header.Set("authorization", fmt.Sprint(authorization))
 	var data string
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return *new(string), err
@@ -127,7 +127,7 @@ type InventoryV1 struct {
 func (e *InventoryV1) Cards(route api.RegionalRoute, authorization string) ([]CardV1DTO, error) {
 	logger := e.internalClient.Logger("LOR_InventoryV1_Cards")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/inventory/v1/cards/me", nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/inventory/v1/cards/me", "lor-inventory-v1.getCards", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return *new([]CardV1DTO), err
@@ -135,9 +135,9 @@ func (e *InventoryV1) Cards(route api.RegionalRoute, authorization string) ([]Ca
 	if authorization == "" {
 		return *new([]CardV1DTO), fmt.Errorf("'authorization' header is required")
 	}
-	request.Header.Set("authorization", fmt.Sprint(authorization))
+	equinoxReq.Request.Header.Set("authorization", fmt.Sprint(authorization))
 	var data []CardV1DTO
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return *new([]CardV1DTO), err
@@ -173,13 +173,13 @@ type MatchV1 struct {
 func (e *MatchV1) ListByPUUID(route api.RegionalRoute, puuid string) ([]string, error) {
 	logger := e.internalClient.Logger("LOR_MatchV1_ListByPUUID")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/by-puuid/%v/ids", puuid), nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/by-puuid/%v/ids", puuid), "lor-match-v1.getMatchIdsByPUUID", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return *new([]string), err
 	}
 	var data []string
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return *new([]string), err
@@ -204,13 +204,13 @@ func (e *MatchV1) ListByPUUID(route api.RegionalRoute, puuid string) ([]string, 
 func (e *MatchV1) ByID(route api.RegionalRoute, matchId string) (*MatchV1DTO, error) {
 	logger := e.internalClient.Logger("LOR_MatchV1_ByID")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/%v", matchId), nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/%v", matchId), "lor-match-v1.getMatch", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data MatchV1DTO
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -245,13 +245,13 @@ type RankedV1 struct {
 func (e *RankedV1) Leaderboards(route api.RegionalRoute) (*LeaderboardV1DTO, error) {
 	logger := e.internalClient.Logger("LOR_RankedV1_Leaderboards")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/ranked/v1/leaderboards", nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/ranked/v1/leaderboards", "lor-ranked-v1.getLeaderboards", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data LeaderboardV1DTO
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -286,13 +286,13 @@ type StatusV1 struct {
 func (e *StatusV1) Platform(route api.RegionalRoute) (*PlatformDataV1DTO, error) {
 	logger := e.internalClient.Logger("LOR_StatusV1_Platform")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/status/v1/platform-data", nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/status/v1/platform-data", "lor-status-v1.getPlatformData", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data PlatformDataV1DTO
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
