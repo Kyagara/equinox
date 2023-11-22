@@ -84,9 +84,6 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	if err != nil {
 		return nil, err
 	}
-	if config.Key == "" {
-		client.GetInternalLogger().Warn("API key was not provided, requests using other clients will result in errors.")
-	}
 	if config.Cache == nil {
 		config.Cache = &cache.Cache{TTL: 0}
 	}

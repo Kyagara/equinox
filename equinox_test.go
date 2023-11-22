@@ -7,6 +7,7 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/riot"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
@@ -147,4 +148,40 @@ func TestEquinoxClientClearCache(t *testing.T) {
 
 	require.Nil(t, gotData)
 	require.Equal(t, api.ErrNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrNotFound, gotErr))
+}
+
+func TestRateLimitWithMock(t *testing.T) {
+	headers := map[string]string{
+		"X-App-Rate-Limit":          "50:5",
+		"X-App-Rate-Limit-Count":    "1:5",
+		"X-Method-Rate-Limit":       "50:5",
+		"X-Method-Rate-Limit-Count": "1:5",
+	}
+
+	c := 1
+	for i := 0; i < 50; i++ {
+		gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
+			Get("/lol/summoner/v4/summoners/by-puuid/puuid").
+			Reply(200).SetHeaders(headers).
+			JSON(&lol.SummonerV4DTO{})
+		c++
+		headers["X-App-Rate-Limit-Count"] = fmt.Sprintf("%d:5", c)
+		headers["X-Method-Rate-Limit-Count"] = fmt.Sprintf("%d:5", c)
+	}
+
+	config := equinox.NewTestEquinoxConfig()
+	config.LogLevel = api.WARN_LOG_LEVEL
+	config.Retry = 1
+
+	client, err := equinox.NewClientWithConfig(config)
+	require.Nil(t, err)
+
+	for i := 0; i < 50; i++ {
+		_, err := client.LOL.SummonerV4.ByPUUID(lol.BR1, "puuid")
+		if i < 49 {
+			require.Nil(t, err)
+		} else {
+			require.Equal(t, fmt.Errorf("app rate limit exceeded"), err)
+		}
+	}
 }
