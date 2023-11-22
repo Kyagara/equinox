@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 9e564de22543560b3ce444e320b260b7e759455a
+// Spec version = a5a3a5f5d5f2a617a56302a0afac77c745e4fd56
 
 // ChampionMasteryDTO data object.
 //
@@ -470,6 +470,7 @@ type ParticipantV5DTO struct {
 	PUUID                          string     `json:"puuid,omitempty"`
 	QuadraKills                    int32      `json:"quadraKills,omitempty"`
 	RiotIdName                     string     `json:"riotIdName,omitempty"`
+	RiotIdGameName                 string     `json:"riotIdGameName,omitempty"`
 	RiotIdTagline                  string     `json:"riotIdTagline,omitempty"`
 	Role                           string     `json:"role,omitempty"`
 	SightWardsBoughtInGame         int32      `json:"sightWardsBoughtInGame,omitempty"`

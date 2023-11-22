@@ -9,22 +9,24 @@ import (
 	"net/http"
 	"slices"
 	"strconv"
+	"strings"
+	"sync"
 	"time"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
+	"github.com/Kyagara/equinox/ratelimit"
 	"go.uber.org/zap"
 )
 
 type InternalClient struct {
-	key    string
-	http   *http.Client
-	logger *zap.Logger
-	// Used by endpoint methods to retrieve their respective logger
-	endpointLoggers map[string]*zap.Logger
-	cache           *cache.Cache
-	retry           int
-	isCacheEnabled  bool
+	key            string
+	http           *http.Client
+	loggers        *Loggers
+	cache          *cache.Cache
+	ratelimit      *ratelimit.RateLimit
+	retry          int
+	isCacheEnabled bool
 }
 
 var (
@@ -50,6 +52,9 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	if err != nil {
 		return nil, err
 	}
+	if config.Key == "" {
+		logger.Warn("API key was not provided, requests using other clients will result in errors.")
+	}
 	if config.Cache == nil {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
@@ -57,20 +62,23 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		config.HTTPClient = &http.Client{Timeout: 15 * time.Second}
 	}
 	client := &InternalClient{
-		key:             config.Key,
-		http:            config.HTTPClient,
-		logger:          logger,
-		endpointLoggers: make(map[string]*zap.Logger),
-		cache:           config.Cache,
-		retry:           config.Retry,
-		isCacheEnabled:  config.Cache.TTL > 0,
+		key:  config.Key,
+		http: config.HTTPClient,
+		loggers: &Loggers{
+			main:    logger,
+			methods: make(map[string]*zap.Logger),
+			mu:      sync.Mutex{},
+		},
+		cache:          config.Cache,
+		ratelimit:      &ratelimit.RateLimit{Buckets: make(map[any]*ratelimit.Buckets)},
+		retry:          config.Retry,
+		isCacheEnabled: config.Cache.TTL > 0,
 	}
 	apiHeaders.Set("X-Riot-Token", config.Key)
 	return client, nil
 }
 
 // Creates a request to the provided route and URL.
-// TODO: Check rate limit here, return error if is rate limited, maybe also return error if it WILL BE rate limited
 func (c *InternalClient) Request(base string, method string, route any, path string, body any) (*http.Request, error) {
 	baseURL := fmt.Sprintf(base, route)
 	url := fmt.Sprintf("%s%s", baseURL, path)
@@ -90,6 +98,10 @@ func (c *InternalClient) Request(base string, method string, route any, path str
 		request.Header = staticHeaders
 	} else {
 		request.Header = apiHeaders
+		err = c.ratelimit.Check(route, path, &request.Header)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return request, nil
 }
@@ -147,6 +159,13 @@ func (c *InternalClient) sendRequest(logger *zap.Logger, request *http.Request, 
 
 // TODO: Update rate limit here
 func (c *InternalClient) checkResponse(logger *zap.Logger, response *http.Response) error {
+	if !slices.Contains(cdns, response.Request.Host) {
+		route := strings.Split(response.Request.Host, ".")[0]
+		err := c.ratelimit.Check(route, response.Request.URL.Path, &response.Header)
+		if err != nil {
+			return err
+		}
+	}
 	if response.StatusCode == http.StatusTooManyRequests {
 		limitType := response.Header.Get(api.X_RATE_LIMIT_TYPE_HEADER)
 		if limitType != "" {
