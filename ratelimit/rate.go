@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Kyagara/equinox/api"
 	"golang.org/x/time/rate"
 )
 
@@ -35,30 +36,53 @@ func NewBuckets() *Buckets {
 	}
 }
 
-func (r *RateLimit) Check(route any, method string, headers *http.Header) error {
+func (r *RateLimit) Take(equinoxReq *api.EquinoxRequest, headers *http.Header) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	if r.Buckets[route] == nil {
-		r.Buckets[route] = NewBuckets()
+	bucket := r.Buckets[equinoxReq.Route]
+	if bucket == nil {
+		bucket = NewBuckets()
+		r.Buckets[equinoxReq.Route] = bucket
 	}
-	if r.Buckets[route].Methods == nil {
-		r.Buckets[route].Methods = make(map[string][]*rate.Limiter)
+	if bucket.Methods == nil {
+		bucket.Methods = make(map[string][]*rate.Limiter)
 	}
-	if len(r.Buckets[route].App) == 0 {
-		r.Buckets[route].App = parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER))
+	methodBucket := bucket.Methods[equinoxReq.MethodID]
+	if methodBucket == nil {
+		bucket.Methods[equinoxReq.MethodID] = make([]*rate.Limiter, 0)
 	}
-	if r.Buckets[route].Methods[method] == nil {
-		r.Buckets[route].Methods[method] = parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
-	}
-	for _, rate := range r.Buckets[route].App {
+	// For now, just return an error if the rate limit is reached.
+	for _, rate := range bucket.App {
 		if !rate.Allow() {
-			return fmt.Errorf("app rate limit exceeded")
+			return fmt.Errorf("app rate limit reached on '%v' route for method '%s'", equinoxReq.Route, equinoxReq.MethodID)
 		}
 	}
-	for _, rate := range r.Buckets[route].Methods[method] {
+	for _, rate := range methodBucket {
 		if !rate.Allow() {
-			return fmt.Errorf("method rate limit exceeded")
+			return fmt.Errorf("method rate limit reached on '%v' route for method '%s'", equinoxReq.Route, equinoxReq.MethodID)
 		}
+	}
+	return nil
+}
+
+func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, headers *http.Header) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	bucket := r.Buckets[equinoxReq.Route]
+	if bucket == nil {
+		bucket = NewBuckets()
+		r.Buckets[equinoxReq.Route] = bucket
+	}
+	if bucket.Methods == nil {
+		bucket.Methods = make(map[string][]*rate.Limiter)
+	}
+	if len(bucket.App) == 0 {
+		bucket.App = parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER))
+	}
+	methodBucket := bucket.Methods[equinoxReq.MethodID]
+	if methodBucket == nil {
+		methodBucket = parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
+		bucket.Methods[equinoxReq.MethodID] = methodBucket
 	}
 	return nil
 }
@@ -69,13 +93,13 @@ func parseHeaders(limitHeader string, countHeader string) []*rate.Limiter {
 	}
 	limits := strings.Split(limitHeader, ",")
 	counts := strings.Split(countHeader, ",")
-	size := len(limits)
-	rates := make([]*rate.Limiter, size)
-	for i := 0; i < size; i++ {
+	rates := make([]*rate.Limiter, len(limits))
+	now := time.Now()
+	for i := range limits {
 		limit, seconds := getNumbersFromPair(limits[i])
 		count, _ := getNumbersFromPair(counts[i])
 		rates[i] = rate.NewLimiter(rate.Every(time.Second*time.Duration(seconds)), limit)
-		rates[i].AllowN(time.Now(), count)
+		rates[i].AllowN(now, count)
 	}
 	return rates
 }

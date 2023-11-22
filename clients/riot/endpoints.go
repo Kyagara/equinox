@@ -46,13 +46,13 @@ type AccountV1 struct {
 func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DTO, error) {
 	logger := e.internalClient.Logger("Riot_AccountV1_ByPUUID")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-puuid/%v", puuid), nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-puuid/%v", puuid), "account-v1.getByPuuid", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data AccountV1DTO
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -78,13 +78,13 @@ func (e *AccountV1) ByPUUID(route api.RegionalRoute, puuid string) (*AccountV1DT
 func (e *AccountV1) ByRiotID(route api.RegionalRoute, gameName string, tagLine string) (*AccountV1DTO, error) {
 	logger := e.internalClient.Logger("Riot_AccountV1_ByRiotID")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-riot-id/%v/%v", gameName, tagLine), nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-riot-id/%v/%v", gameName, tagLine), "account-v1.getByRiotId", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data AccountV1DTO
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -109,7 +109,7 @@ func (e *AccountV1) ByRiotID(route api.RegionalRoute, gameName string, tagLine s
 func (e *AccountV1) ByAccessToken(route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
 	logger := e.internalClient.Logger("Riot_AccountV1_ByAccessToken")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/riot/account/v1/accounts/me", nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/riot/account/v1/accounts/me", "account-v1.getByAccessToken", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
@@ -117,9 +117,9 @@ func (e *AccountV1) ByAccessToken(route api.RegionalRoute, authorization string)
 	if authorization == "" {
 		return new(AccountV1DTO), fmt.Errorf("'authorization' header is required")
 	}
-	request.Header.Set("authorization", fmt.Sprint(authorization))
+	equinoxReq.Request.Header.Set("authorization", fmt.Sprint(authorization))
 	var data AccountV1DTO
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -145,13 +145,13 @@ func (e *AccountV1) ByAccessToken(route api.RegionalRoute, authorization string)
 func (e *AccountV1) ActiveShard(route api.RegionalRoute, game string, puuid string) (*ActiveShardV1DTO, error) {
 	logger := e.internalClient.Logger("Riot_AccountV1_ActiveShard")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), "account-v1.getActiveShard", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data ActiveShardV1DTO
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

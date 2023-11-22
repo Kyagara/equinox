@@ -158,15 +158,13 @@ func TestRateLimitWithMock(t *testing.T) {
 		"X-Method-Rate-Limit-Count": "1:5",
 	}
 
-	c := 1
-	for i := 0; i < 50; i++ {
+	for i := 1; i <= 50; i++ {
 		gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
 			Get("/lol/summoner/v4/summoners/by-puuid/puuid").
 			Reply(200).SetHeaders(headers).
 			JSON(&lol.SummonerV4DTO{})
-		c++
-		headers["X-App-Rate-Limit-Count"] = fmt.Sprintf("%d:5", c)
-		headers["X-Method-Rate-Limit-Count"] = fmt.Sprintf("%d:5", c)
+		headers["X-App-Rate-Limit-Count"] = fmt.Sprintf("%d:5", i)
+		headers["X-Method-Rate-Limit-Count"] = fmt.Sprintf("%d:5", i)
 	}
 
 	config := equinox.NewTestEquinoxConfig()
@@ -178,10 +176,10 @@ func TestRateLimitWithMock(t *testing.T) {
 
 	for i := 0; i < 50; i++ {
 		_, err := client.LOL.SummonerV4.ByPUUID(lol.BR1, "puuid")
-		if i < 49 {
+		if i < 50 {
 			require.Nil(t, err)
 		} else {
-			require.Equal(t, fmt.Errorf("app rate limit exceeded"), err)
+			require.Equal(t, fmt.Errorf("app rate limit reached on 'br1' route for method 'summoner-v4.getByPUUID'"), err)
 		}
 	}
 }

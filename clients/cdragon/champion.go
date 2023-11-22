@@ -122,13 +122,13 @@ type ChampionData struct {
 func (e *ChampionEndpoint) ByName(version string, champion string) (*ChampionData, error) {
 	logger := e.internalClient.Logger("CDragon_Champion_ByName")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.C_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, champion), nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.C_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, champion), "", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data ChampionData
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -140,13 +140,13 @@ func (e *ChampionEndpoint) ByName(version string, champion string) (*ChampionDat
 func (e *ChampionEndpoint) ByID(version string, id int) (*ChampionData, error) {
 	logger := e.internalClient.Logger("CDragon_Champion_ByID")
 	logger.Debug("Method started execution")
-	request, err := e.internalClient.Request(api.C_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, id), nil)
+	equinoxReq, err := e.internalClient.Request(logger, api.C_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, id), "", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data ChampionData
-	err = e.internalClient.Execute(logger, request, &data)
+	err = e.internalClient.Execute(equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

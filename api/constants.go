@@ -10,6 +10,23 @@ package api
 
 // Spec version = a5a3a5f5d5f2a617a56302a0afac77c745e4fd56
 
+import (
+	"net/http"
+
+	"go.uber.org/zap"
+)
+
+type EquinoxRequest struct {
+	Logger   *zap.Logger
+	MethodID string
+	Route    any
+	BaseURL  string
+	Method   string
+	Path     string
+	Body     any
+	Request  *http.Request
+}
+
 // Base API URLs formats.
 const (
 	RIOT_API_BASE_URL_FORMAT = "https://%s.api.riotgames.com"
