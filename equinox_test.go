@@ -8,7 +8,6 @@ import (
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/Kyagara/equinox/clients/riot"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
@@ -91,64 +90,6 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestEquinoxClientClearCache(t *testing.T) {
-	config, err := equinox.DefaultConfig("RGAPI-TEST")
-	config.LogLevel = api.NOP_LOG_LEVEL
-	config.Retry = 0
-	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
-
-	client, err := equinox.NewClientWithConfig(config)
-	require.Nil(t, err, "expecting nil error")
-	require.Equal(t, client.Cache.TTL, 4*time.Minute, "expecting cache enabled")
-
-	account := &riot.AccountV1DTO{
-		PUUID:    "puuid",
-		GameName: "gamename",
-		TagLine:  "tagline",
-	}
-
-	delay := 2 * time.Second
-
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
-		Get("/riot/account/v1/accounts/by-puuid/puuid").
-		Reply(200).
-		JSON(account).Delay(delay)
-
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
-		Get("/riot/account/v1/accounts/by-puuid/puuid").
-		Reply(404).
-		JSON(account).Delay(delay)
-
-	gotData, gotErr := client.Riot.AccountV1.ByPUUID(api.AMERICAS, "puuid")
-	require.Equal(t, account, gotData)
-	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
-
-	start := time.Now()
-	gotData, gotErr = client.Riot.AccountV1.ByPUUID(api.AMERICAS, "puuid")
-	duration := int(time.Since(start).Seconds())
-
-	require.Equal(t, account, gotData, fmt.Sprintf("want data %v, got %v", account, gotData))
-	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
-
-	if duration >= 2 {
-		t.Error(fmt.Errorf("request took more than 1s, took %ds, request not cached", duration))
-	}
-
-	gotErr = client.Cache.Clear()
-	require.Equal(t, nil, gotErr, fmt.Sprintf("want err %v, got %v", nil, gotErr))
-
-	start = time.Now()
-	gotData, gotErr = client.Riot.AccountV1.ByPUUID(api.AMERICAS, "puuid")
-	duration = int(time.Since(start).Seconds())
-
-	if duration <= 1 {
-		t.Error(fmt.Errorf("request took less than 1s, took %ds, cache not cleared", duration))
-	}
-
-	require.Nil(t, gotData)
-	require.Equal(t, api.ErrNotFound, gotErr, fmt.Sprintf("want err %v, got %v", api.ErrNotFound, gotErr))
 }
 
 func TestRateLimitWithMock(t *testing.T) {

@@ -28,7 +28,7 @@ func (s *RedisStore) Get(key string) ([]byte, error) {
 	return item.Bytes()
 }
 
-func (s *RedisStore) Set(key string, value []byte, ttl time.Duration) error {
+func (s *RedisStore) Set(key string, value []byte) error {
 	return s.client.Set(s.ctx, key, value, s.ttl).Err()
 }
 

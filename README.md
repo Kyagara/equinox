@@ -33,12 +33,15 @@
   - Valorant
   - Legends of Runeterra
 - Data Dragon and Community Dragon (Incomplete)
+- Rate limit (WIP)
 - Caching
 - Retry on 429 `n` times
 
 ## Todo
 
-- Rate limit
+- Maybe context.Context for methods
+- Verify and update rate limit buckets if necessary
+- Rework retry, only retry on 429 if received Retry-After and maybe only if a 'allow block to wait for bucket refill' option is set
 - More tests for the client
 - Improve DDragon/CDragon support
 - Maybe more logging

@@ -2,7 +2,6 @@ package cache
 
 import (
 	"errors"
-	"time"
 
 	"github.com/allegro/bigcache/v3"
 )
@@ -26,7 +25,7 @@ func (s *BigCacheStore) Get(key string) ([]byte, error) {
 	return item, err
 }
 
-func (s *BigCacheStore) Set(key string, value []byte, _ time.Duration) error {
+func (s *BigCacheStore) Set(key string, value []byte) error {
 	return s.client.Set(key, value)
 }
 
