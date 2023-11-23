@@ -162,7 +162,8 @@ func TestRateLimitWithMock(t *testing.T) {
 	for i := 1; i <= 50; i++ {
 		gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
 			Get("/lol/summoner/v4/summoners/by-puuid/puuid").
-			Reply(200).SetHeaders(headers).
+			Reply(200).
+			SetHeaders(headers).
 			JSON(&lol.SummonerV4DTO{})
 		headers[ratelimit.APP_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:5", i)
 		headers[ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:5", i)

@@ -71,7 +71,7 @@ func (r *RateLimit) Take(equinoxReq *api.EquinoxRequest) error {
 // Update creates new buckets in a route with the limits provided in the response headers.
 // TODO: Maybe add a way to dinamically update the buckets with new rates?
 // Currently this only runs one time, when it is known that the buckets are empty.
-func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http.Header) error {
+func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http.Header) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	bucket := r.Buckets[equinoxReq.Route]
@@ -90,7 +90,6 @@ func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http
 		methodBucket = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
 		bucket.Methods[equinoxReq.MethodID] = methodBucket
 	}
-	return nil
 }
 
 func parseHeaders(limitHeader string, countHeader string) []*rate.Limiter {
