@@ -107,9 +107,12 @@ func (c *InternalClient) Request(logger *zap.Logger, baseURL string, httpMethod 
 	if slices.Contains(cdns, request.URL.Host) {
 		request.Header = staticHeaders
 	} else {
+		if c.key == "" {
+			return nil, fmt.Errorf("api key not provided")
+		}
 		request.Header = apiHeaders
 		// The request is going to the Riot API, so check the rate limit.
-		err = c.ratelimit.Take(equinoxReq, &equinoxReq.Request.Header)
+		err = c.ratelimit.Take(equinoxReq)
 		if err != nil {
 			return nil, err
 		}
@@ -176,14 +179,14 @@ func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response 
 		}
 	}
 	if response.StatusCode == http.StatusTooManyRequests {
-		limitType := response.Header.Get(api.X_RATE_LIMIT_TYPE_HEADER)
+		limitType := response.Header.Get(ratelimit.RATE_LIMIT_TYPE_HEADER)
 		if limitType != "" {
 			equinoxReq.Logger.Warn("Rate limited, type:", zap.String("limit_type", limitType))
 		} else {
 			equinoxReq.Logger.Warn("Rate limited but no service was specified")
 		}
 		if c.retry > 0 {
-			retryAfter := response.Header.Get(api.RETRY_AFTER_HEADER)
+			retryAfter := response.Header.Get(ratelimit.RETRY_AFTER_HEADER)
 			if retryAfter == "" {
 				err := api.ErrRetryAfterHeaderNotFound
 				equinoxReq.Logger.Error("Request failed", zap.Error(err))

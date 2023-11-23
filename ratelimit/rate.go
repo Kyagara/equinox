@@ -13,6 +13,8 @@ import (
 )
 
 const (
+	RATE_LIMIT_TYPE_HEADER         = "X-Rate-Limit-Type"
+	RETRY_AFTER_HEADER             = "Retry-After"
 	APP_RATE_LIMIT_HEADER          = "X-App-Rate-Limit"
 	APP_RATE_LIMIT_COUNT_HEADER    = "X-App-Rate-Limit-Count"
 	METHOD_RATE_LIMIT_HEADER       = "X-Method-Rate-Limit"
@@ -36,7 +38,8 @@ func NewBuckets() *Buckets {
 	}
 }
 
-func (r *RateLimit) Take(equinoxReq *api.EquinoxRequest, headers *http.Header) error {
+// Take increases the count for the App and Method rate limit buckets by one in a route.
+func (r *RateLimit) Take(equinoxReq *api.EquinoxRequest) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	bucket := r.Buckets[equinoxReq.Route]
@@ -65,7 +68,10 @@ func (r *RateLimit) Take(equinoxReq *api.EquinoxRequest, headers *http.Header) e
 	return nil
 }
 
-func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, headers *http.Header) error {
+// Update creates new buckets in a route with the limits provided in the response headers.
+// TODO: Maybe add a way to dinamically update the buckets with new rates?
+// Currently this only runs one time, when it is known that the buckets are empty.
+func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http.Header) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	bucket := r.Buckets[equinoxReq.Route]
@@ -77,11 +83,11 @@ func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, headers *http.Header)
 		bucket.Methods = make(map[string][]*rate.Limiter)
 	}
 	if len(bucket.App) == 0 {
-		bucket.App = parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER))
+		bucket.App = parseHeaders(responseHeaders.Get(APP_RATE_LIMIT_HEADER), responseHeaders.Get(APP_RATE_LIMIT_COUNT_HEADER))
 	}
 	methodBucket := bucket.Methods[equinoxReq.MethodID]
 	if methodBucket == nil {
-		methodBucket = parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
+		methodBucket = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
 		bucket.Methods[equinoxReq.MethodID] = methodBucket
 	}
 	return nil

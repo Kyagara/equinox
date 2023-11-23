@@ -10,7 +10,7 @@ package tft
 
 // Spec version = a5a3a5f5d5f2a617a56302a0afac77c745e4fd56
 
-// TFT ranked tiers, such as gold, diamond, challenger, etc.
+// LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
 
 const (
@@ -19,13 +19,14 @@ const (
 	SILVER      Tier = "SILVER"
 	GOLD        Tier = "GOLD"
 	PLATINUM    Tier = "PLATINUM"
+	EMERALD     Tier = "EMERALD"
 	DIAMOND     Tier = "DIAMOND"
 	MASTER      Tier = "MASTER"
 	GRANDMASTER Tier = "GRANDMASTER"
 	CHALLENGER  Tier = "CHALLENGER"
 )
 
-// TFT rank divisions, I, II, III, IV, and (deprecated) V.
+// LoL and TFT rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
 const (

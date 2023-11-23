@@ -10,7 +10,7 @@ package lol
 
 // Spec version = a5a3a5f5d5f2a617a56302a0afac77c745e4fd56
 
-// LoL ranked tiers, such as gold, diamond, challenger, etc.
+// LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
 
 const (
@@ -26,7 +26,7 @@ const (
 	CHALLENGER  Tier = "CHALLENGER"
 )
 
-// LoL rank divisions, I, II, III, IV, and (deprecated) V.
+// LoL and TFT rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
 const (

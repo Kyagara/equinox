@@ -34,12 +34,6 @@ const (
 	C_DRAGON_BASE_URL_FORMAT = "https://cdn.communitydragon.org%s"
 )
 
-// Rate limit headers
-const (
-	X_RATE_LIMIT_TYPE_HEADER = "X-Rate-Limit-Type"
-	RETRY_AFTER_HEADER       = "Retry-After"
-)
-
 type LogLevel int8
 
 const (

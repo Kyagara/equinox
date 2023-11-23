@@ -24,50 +24,57 @@ func TestRateLimitCheck(t *testing.T) {
 		MethodID: "method",
 	}
 
+	t.Run("buckets not created", func(t *testing.T) {
+		r := &ratelimit.RateLimit{
+			Buckets: make(map[any]*ratelimit.Buckets),
+		}
+		require.Nil(t, r.Buckets[equinoxReq.Route])
+		err := r.Take(equinoxReq)
+		require.Nil(t, err)
+		require.NotNil(t, r.Buckets[equinoxReq.Route].Methods)
+		require.NotNil(t, r.Buckets[equinoxReq.Route].Methods[equinoxReq.MethodID])
+	})
+
 	t.Run("app rate limited", func(t *testing.T) {
 		r := &ratelimit.RateLimit{Buckets: make(map[any]*ratelimit.Buckets)}
 		headers := http.Header{
-			"X-App-Rate-Limit":          []string{"20:10"},
-			"X-App-Rate-Limit-Count":    []string{"19:10"},
-			"X-Method-Rate-Limit":       []string{"100:20"},
-			"X-Method-Rate-Limit-Count": []string{"1:20"},
+			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:10"},
+			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"19:10"},
 		}
 		err := r.Update(equinoxReq, &headers)
 		require.Nil(t, err)
-		err = r.Take(equinoxReq, &headers)
+		err = r.Take(equinoxReq)
 		require.Nil(t, err)
-		err = r.Take(equinoxReq, &headers)
+		err = r.Take(equinoxReq)
 		require.Equal(t, fmt.Errorf("app rate limit reached on 'route' route for method 'method'"), err)
 	})
 
 	t.Run("method rate limited", func(t *testing.T) {
 		r := &ratelimit.RateLimit{Buckets: make(map[any]*ratelimit.Buckets)}
 		headers := http.Header{
-			"X-App-Rate-Limit":          []string{"20:10,200:100"},
-			"X-App-Rate-Limit-Count":    []string{"1:10,1:100"},
-			"X-Method-Rate-Limit":       []string{"100:20,200:100"},
-			"X-Method-Rate-Limit-Count": []string{"1:20,199:100"},
+			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"100:20,200:100"},
+			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:20,199:100"},
 		}
 		err := r.Update(equinoxReq, &headers)
 		require.Nil(t, err)
-		err = r.Take(equinoxReq, &headers)
+		err = r.Take(equinoxReq)
 		require.Nil(t, err)
-		err = r.Take(equinoxReq, &headers)
+		err = r.Take(equinoxReq)
 		require.Equal(t, fmt.Errorf("method rate limit reached on 'route' route for method 'method'"), err)
 	})
 
 	t.Run("waiting bucket to reset", func(t *testing.T) {
 		r := &ratelimit.RateLimit{Buckets: make(map[any]*ratelimit.Buckets)}
 		headers := http.Header{
-			"X-App-Rate-Limit":       []string{"20:1"},
-			"X-App-Rate-Limit-Count": []string{"20:1"},
+			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:1"},
+			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"20:1"},
 		}
 		err := r.Update(equinoxReq, &headers)
 		require.Nil(t, err)
-		err = r.Take(equinoxReq, &headers)
+		err = r.Take(equinoxReq)
 		require.Equal(t, fmt.Errorf("app rate limit reached on 'route' route for method 'method'"), err)
 		time.Sleep(2 * time.Second)
-		err = r.Take(equinoxReq, &headers)
+		err = r.Take(equinoxReq)
 		require.Nil(t, err)
 	})
 }
