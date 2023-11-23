@@ -33,8 +33,8 @@ const (
 }}
 )
 {{?}}
-{{? clientName === "lol"}}
-// LoL ranked tiers, such as gold, diamond, challenger, etc.
+{{? clientName === "lol" || clientName === "tft"}}
+// LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
 
 const (
@@ -50,7 +50,7 @@ const (
 	CHALLENGER  Tier = "CHALLENGER"
 )
 
-// LoL rank divisions, I, II, III, IV, and (deprecated) V.
+// LoL and TFT rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
 const (
@@ -61,7 +61,8 @@ const (
     // Deprecated
     V   Division = "V"
 )
-
+{{?}}
+{{? clientName === "tft" || clientName === "lol"}}
 // Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
 type PlatformRoute string
 
@@ -81,7 +82,8 @@ const (
     }
 }}
 )
-
+{{?}}
+{{? clientName === "lol"}}
 // Tournament regions for League of Legends (LoL).
 type TournamentRegion string
 
@@ -162,53 +164,6 @@ const (
 )
 {{?}}
 {{? clientName === "tft"}}
-// TFT ranked tiers, such as gold, diamond, challenger, etc.
-type Tier string
-
-const (
-	IRON        Tier = "IRON"
-	BRONZE      Tier = "BRONZE"
-	SILVER      Tier = "SILVER"
-	GOLD        Tier = "GOLD"
-	PLATINUM    Tier = "PLATINUM"
-	DIAMOND     Tier = "DIAMOND"
-	MASTER      Tier = "MASTER"
-	GRANDMASTER Tier = "GRANDMASTER"
-	CHALLENGER  Tier = "CHALLENGER"
-)
-
-// TFT rank divisions, I, II, III, IV, and (deprecated) V.
-type Division string
-
-const (
-	I   Division = "I"
-	II  Division = "II"
-	III Division = "III"
-	IV  Division = "IV"
-    // Deprecated
-    V   Division = "V"
-)
-
-// Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
-type PlatformRoute string
-
-const (
-{{
-    for (const [ name, { description, deprecated } ] of Object.entries(routesTable['platform'])) {
-        const desc = description.split('\n');
-}}
-{{~ desc :line }}
-    // {{= line }}
-{{~}}
-{{? deprecated }}
-    // Deprecated
-{{?}}
-    {{= dotUtils.changeCase.constantCase(name) }} PlatformRoute = "{{= name }}"
-{{
-    }
-}}
-)
-
 // TFT ranked queue types.
 type QueueType string
 

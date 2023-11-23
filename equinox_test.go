@@ -9,6 +9,7 @@ import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/riot"
+	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
@@ -152,10 +153,10 @@ func TestEquinoxClientClearCache(t *testing.T) {
 
 func TestRateLimitWithMock(t *testing.T) {
 	headers := map[string]string{
-		"X-App-Rate-Limit":          "50:5",
-		"X-App-Rate-Limit-Count":    "1:5",
-		"X-Method-Rate-Limit":       "50:5",
-		"X-Method-Rate-Limit-Count": "1:5",
+		ratelimit.APP_RATE_LIMIT_HEADER:          "50:5",
+		ratelimit.APP_RATE_LIMIT_COUNT_HEADER:    "1:5",
+		ratelimit.METHOD_RATE_LIMIT_HEADER:       "50:5",
+		ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: "1:5",
 	}
 
 	for i := 1; i <= 50; i++ {
@@ -163,8 +164,8 @@ func TestRateLimitWithMock(t *testing.T) {
 			Get("/lol/summoner/v4/summoners/by-puuid/puuid").
 			Reply(200).SetHeaders(headers).
 			JSON(&lol.SummonerV4DTO{})
-		headers["X-App-Rate-Limit-Count"] = fmt.Sprintf("%d:5", i)
-		headers["X-Method-Rate-Limit-Count"] = fmt.Sprintf("%d:5", i)
+		headers[ratelimit.APP_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:5", i)
+		headers[ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:5", i)
 	}
 
 	config := equinox.NewTestEquinoxConfig()
