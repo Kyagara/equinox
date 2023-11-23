@@ -11,6 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// EquinoxRequest represents a request to the Riot API and CDNs, its a struct that contains all information about a request.
 type EquinoxRequest struct {
 	Logger   *zap.Logger
 	MethodID string

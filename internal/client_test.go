@@ -234,29 +234,11 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			l := internalClient.Logger("client_endpoint_method")
 			equinoxReq, err := internalClient.Request(l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", "", nil)
 			require.Nil(t, err, "expecting nil error")
-			var gotData api.PlainTextResponse
+			var gotData interface{}
 			gotErr := internalClient.Execute(equinoxReq, gotData)
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 		})
 	}
-}
-
-// Testing if InternalClient.Post() can properly decode a plain text response.
-func TestInternalClientPlainTextResponse(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
-	require.Nil(t, err, "expecting nil error")
-
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, "tests")).
-		Post("/").
-		Reply(200).BodyString("response")
-
-	var object api.PlainTextResponse
-	logger := internalClient.Logger("client_endpoint_method")
-	equinoxReq, err := internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, "tests", "/", "", nil)
-	require.Nil(t, err, "expecting nil error")
-	err = internalClient.Execute(equinoxReq, &object)
-	require.Nil(t, err, "expecting nil error")
-	require.NotEmpty(t, object, "expecting non-nil response")
 }
 
 func TestInternalClientRetries(t *testing.T) {
