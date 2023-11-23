@@ -2,6 +2,7 @@ package internal_test
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -181,7 +182,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 		},
 		{
 			name:    "rate limited but no retry-after header found",
-			wantErr: api.ErrRetryAfterHeaderNotFound,
+			wantErr: errors.New("rate limited but no Retry-After header was found, stopping"),
 			code:    429,
 		},
 		{

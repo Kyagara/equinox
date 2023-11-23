@@ -41,9 +41,8 @@ func TestRateLimitCheck(t *testing.T) {
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:10"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"19:10"},
 		}
-		err := r.Update(equinoxReq, &headers)
-		require.Nil(t, err)
-		err = r.Take(equinoxReq)
+		r.Update(equinoxReq, &headers)
+		err := r.Take(equinoxReq)
 		require.Nil(t, err)
 		err = r.Take(equinoxReq)
 		require.Equal(t, fmt.Errorf("app rate limit reached on 'route' route for method 'method'"), err)
@@ -55,9 +54,8 @@ func TestRateLimitCheck(t *testing.T) {
 			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"100:20,200:100"},
 			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:20,199:100"},
 		}
-		err := r.Update(equinoxReq, &headers)
-		require.Nil(t, err)
-		err = r.Take(equinoxReq)
+		r.Update(equinoxReq, &headers)
+		err := r.Take(equinoxReq)
 		require.Nil(t, err)
 		err = r.Take(equinoxReq)
 		require.Equal(t, fmt.Errorf("method rate limit reached on 'route' route for method 'method'"), err)
@@ -69,9 +67,8 @@ func TestRateLimitCheck(t *testing.T) {
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:1"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"20:1"},
 		}
-		err := r.Update(equinoxReq, &headers)
-		require.Nil(t, err)
-		err = r.Take(equinoxReq)
+		r.Update(equinoxReq, &headers)
+		err := r.Take(equinoxReq)
 		require.Equal(t, fmt.Errorf("app rate limit reached on 'route' route for method 'method'"), err)
 		time.Sleep(2 * time.Second)
 		err = r.Take(equinoxReq)

@@ -111,11 +111,6 @@ func (c *InternalClient) Request(logger *zap.Logger, baseURL string, httpMethod 
 			return nil, fmt.Errorf("api key not provided")
 		}
 		request.Header = apiHeaders
-		// The request is going to the Riot API, so check the rate limit.
-		err = c.ratelimit.Take(equinoxReq)
-		if err != nil {
-			return nil, err
-		}
 	}
 	return equinoxReq, nil
 }
@@ -129,6 +124,13 @@ func (c *InternalClient) Execute(equinoxReq *api.EquinoxRequest, target any) err
 		} else if item != nil {
 			equinoxReq.Logger.Debug("Cache hit")
 			return json.Unmarshal(item, &target)
+		}
+	}
+	if !slices.Contains(cdns, equinoxReq.Request.URL.Host) {
+		// The request is going to the Riot API, so check the rate limit.
+		err := c.ratelimit.Take(equinoxReq)
+		if err != nil {
+			return err
 		}
 	}
 	body, err := c.sendRequest(equinoxReq, 0)
@@ -169,32 +171,24 @@ func (c *InternalClient) sendRequest(equinoxReq *api.EquinoxRequest, retriedCoun
 
 func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) error {
 	if !slices.Contains(cdns, response.Request.Host) {
-		err := c.ratelimit.Update(equinoxReq, &response.Header)
-		if err != nil {
-			return err
-		}
+		c.ratelimit.Update(equinoxReq, &response.Header)
 	}
 	if response.StatusCode == http.StatusTooManyRequests {
 		limitType := response.Header.Get(ratelimit.RATE_LIMIT_TYPE_HEADER)
 		if limitType != "" {
-			equinoxReq.Logger.Warn("Rate limited, type:", zap.String("limit_type", limitType))
+			equinoxReq.Logger.Warn("Rate limited", zap.String("rate_limit", limitType))
 		} else {
 			equinoxReq.Logger.Warn("Rate limited but no service was specified")
 		}
 		if c.retry > 0 {
 			retryAfter := response.Header.Get(ratelimit.RETRY_AFTER_HEADER)
 			if retryAfter == "" {
-				err := api.ErrRetryAfterHeaderNotFound
+				err := errors.New("rate limited but no Retry-After header was found, stopping")
 				equinoxReq.Logger.Error("Request failed", zap.Error(err))
 				return err
 			}
-			// Convert the value of Retry-After header to seconds
-			seconds, err := strconv.Atoi(retryAfter)
-			if err != nil {
-				equinoxReq.Logger.Error("Error converting Retry-After header", zap.Error(err))
-				return err
-			}
-			equinoxReq.Logger.Warn("Retrying request in", zap.Duration("retry_after", time.Second*time.Duration(seconds)))
+			seconds, _ := strconv.Atoi(retryAfter)
+			equinoxReq.Logger.Warn("Retrying request after sleep", zap.Int("sleep", seconds))
 			// Sleep for the retry duration
 			time.Sleep(time.Second * time.Duration(seconds))
 			return api.ErrTooManyRequests

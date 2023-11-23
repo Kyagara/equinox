@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"net/http"
 )
 
@@ -19,8 +18,7 @@ func (e ErrorResponse) Error() string {
 }
 
 var (
-	ErrRetryAfterHeaderNotFound = errors.New("rate limited but no Retry-After header was found, stopping")
-	ErrBadRequest               = ErrorResponse{
+	ErrBadRequest = ErrorResponse{
 		Status: Status{
 			Message:    "Bad Request",
 			StatusCode: http.StatusBadRequest,
