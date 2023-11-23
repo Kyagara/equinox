@@ -164,10 +164,6 @@ func (c *InternalClient) sendRequest(equinoxReq *api.EquinoxRequest, retriedCoun
 	if err != nil {
 		return nil, err
 	}
-	if response.Header.Get("Content-Type") == "" {
-		jsonResponse := map[string]interface{}{"response": body}
-		return json.Marshal(jsonResponse)
-	}
 	return body, nil
 }
 
