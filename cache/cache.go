@@ -26,7 +26,7 @@ type Cache struct {
 
 type Store interface {
 	Get(key string) ([]byte, error)
-	Set(key string, value []byte, ttl time.Duration) error
+	Set(key string, value []byte) error
 	Delete(key string) error
 	Clear() error
 }
@@ -86,7 +86,7 @@ func (c *Cache) Set(key string, item []byte) error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled
 	}
-	return c.store.Set(key, item, c.TTL)
+	return c.store.Set(key, item)
 }
 
 // Deletes an item from the cache.
