@@ -114,7 +114,7 @@ func TestRateLimitWithMock(t *testing.T) {
 
 	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
-	config.Retry = 1
+	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(t, err)
@@ -133,7 +133,7 @@ func TestRateLimitWithMock(t *testing.T) {
 	ctx, c := context.WithTimeout(ctx, 2*time.Second)
 	defer c()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-	require.Equal(t, fmt.Errorf("waiting would exceed context deadline"), err)
+	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 
 	// This last request (5) should block until rate limit is reset
 	now := time.Now()

@@ -33,7 +33,7 @@ type Equinox struct {
 //
 //   - `LogLevel`   : api.WARN_LOG_LEVEL
 //   - `HTTPClient` : http.Client with timeout of 15 seconds
-//   - `Retry`      : Maximum amount of retries allowed, defaults to 1
+//   - `Retry`      : Retry on 429
 //   - `Cache`      : BigCache with TTL of 4 minutes
 func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 	ctx := context.Background()
@@ -47,7 +47,7 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 		HTTPClient: &http.Client{
 			Timeout: 15 * time.Second,
 		},
-		Retry: 1,
+		Retry: true,
 		Cache: cache,
 	}
 	return config, nil
@@ -57,14 +57,14 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 //
 //   - `LogLevel`   : api.DEBUG_LOG_LEVEL
 //   - `HTTPClient` : http.Client{}
-//   - `Retry`      : 0
+//   - `Retry`      : false
 //   - `Cache`      : &cache.Cache{TTL: 0}
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
 		Key:        "RGAPI-TEST",
 		LogLevel:   api.DEBUG_LOG_LEVEL,
 		HTTPClient: &http.Client{},
-		Retry:      0,
+		Retry:      false,
 		Cache:      &cache.Cache{TTL: 0},
 	}
 }

@@ -223,9 +223,9 @@ func TestInternalClientErrorResponses(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			config := equinox.NewTestEquinoxConfig()
 			if test.name == "rate limited" {
-				config.Retry = 0
+				config.Retry = false
 			} else if test.name == "rate limited but no retry-after header found" {
-				config.Retry = 1
+				config.Retry = true
 			}
 
 			gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, "tests")).
