@@ -39,7 +39,8 @@
 
 ## Todo
 
-- Maybe context.Context for methods
+- Properly use context
+- Implement block on bucket.Wait()
 - Verify and update rate limit buckets if necessary
 - Rework retry, only retry on 429 if received Retry-After and maybe only if a 'allow block to wait for bucket refill' option is set
 - More tests for the client

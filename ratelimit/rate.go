@@ -64,16 +64,17 @@ func NewBucket(interval time.Duration, limit int, tokens int) *Bucket {
 	}
 }
 
-// Responsible for updating the bucket, resetting the tokens necessary.
+// Responsible for updating the bucket, resets the tokens if necessary.
 func (b *Bucket) check() {
 	now := time.Now()
 	if now.Sub(b.updated) >= b.interval {
-		b.tokens = 0
+		b.tokens = b.limit
 		b.next = now.Add(b.interval)
 	}
 	b.updated = now
 }
 
+// TODO: Wait should block if the rate limit is reached until the bucket resets.
 func (b *Bucket) Wait(ctx context.Context) error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
@@ -81,19 +82,19 @@ func (b *Bucket) Wait(ctx context.Context) error {
 	if b.limit == 0 {
 		return nil
 	}
-	if b.tokens+1 >= b.limit {
+	if b.tokens-1 <= 0 {
 		return fmt.Errorf("exceeded the bucket's limit %d", b.limit)
 	}
 	deadline, ok := ctx.Deadline()
 	if ok && deadline.Before(b.next) {
-		return fmt.Errorf("would exceed context deadline")
+		return fmt.Errorf("waiting would exceed context deadline")
 	}
-	b.tokens++
+	b.tokens--
 	return nil
 }
 
-// Check increases the count for the App and Method rate limit buckets in a route by one.
-func (r *RateLimit) Check(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
+// Take decreases tokens for the App and Method rate limit buckets in a route by one.
+func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	bucket := r.Buckets[equinoxReq.Route]
@@ -108,7 +109,6 @@ func (r *RateLimit) Check(ctx context.Context, equinoxReq *api.EquinoxRequest) e
 	if methodBucket == nil {
 		bucket.Methods[equinoxReq.MethodID] = make([]*Bucket, 0)
 	}
-	// For now, just return an error if the rate limit is reached.
 	for _, rate := range bucket.App {
 		err := rate.Wait(ctx)
 		if err != nil {
@@ -158,7 +158,7 @@ func parseHeaders(limitHeader string, countHeader string) []*Bucket {
 	for i := range limits {
 		limit, seconds := getNumbersFromPair(limits[i])
 		count, _ := getNumbersFromPair(counts[i])
-		rates[i] = NewBucket(time.Duration(seconds), limit, count)
+		rates[i] = NewBucket(time.Duration(seconds), limit, limit-count)
 	}
 	return rates
 }

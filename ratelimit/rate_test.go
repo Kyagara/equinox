@@ -31,7 +31,7 @@ func TestRateLimitCheck(t *testing.T) {
 		}
 		require.Nil(t, r.Buckets[equinoxReq.Route])
 		ctx := context.Background()
-		err := r.Check(ctx, equinoxReq)
+		err := r.Take(ctx, equinoxReq)
 		require.Nil(t, err)
 		require.NotNil(t, r.Buckets[equinoxReq.Route].Methods)
 		require.NotNil(t, r.Buckets[equinoxReq.Route].Methods[equinoxReq.MethodID])
@@ -45,7 +45,7 @@ func TestRateLimitCheck(t *testing.T) {
 		}
 		ctx := context.Background()
 		r.Update(equinoxReq, &headers)
-		err := r.Check(ctx, equinoxReq)
+		err := r.Take(ctx, equinoxReq)
 		require.Equal(t, fmt.Errorf("app rate limit reached on 'route' route for method 'method'. exceeded the bucket's limit 20"), err)
 	})
 
@@ -57,7 +57,7 @@ func TestRateLimitCheck(t *testing.T) {
 		}
 		ctx := context.Background()
 		r.Update(equinoxReq, &headers)
-		err := r.Check(ctx, equinoxReq)
+		err := r.Take(ctx, equinoxReq)
 		require.Equal(t, fmt.Errorf("method rate limit reached on 'route' route for method 'method'. exceeded the bucket's limit 200"), err)
 	})
 
@@ -69,10 +69,10 @@ func TestRateLimitCheck(t *testing.T) {
 		}
 		ctx := context.Background()
 		r.Update(equinoxReq, &headers)
-		err := r.Check(ctx, equinoxReq)
+		err := r.Take(ctx, equinoxReq)
 		require.Equal(t, fmt.Errorf("app rate limit reached on 'route' route for method 'method'. exceeded the bucket's limit 20"), err)
 		time.Sleep(2 * time.Second)
-		err = r.Check(ctx, equinoxReq)
+		err = r.Take(ctx, equinoxReq)
 		require.Nil(t, err)
 	})
 }

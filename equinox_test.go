@@ -131,7 +131,7 @@ func TestRateLimitWithMock(t *testing.T) {
 	ctx, c := context.WithTimeout(ctx, 2*time.Second)
 	defer c()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-	require.Equal(t, fmt.Errorf("app rate limit reached on 'br1' route for method 'summoner-v4.getByPUUID'. would exceed context deadline"), err)
+	require.Equal(t, fmt.Errorf("app rate limit reached on 'br1' route for method 'summoner-v4.getByPUUID'. waiting would exceed context deadline"), err)
 
 	// TODO: This last request (5) should block until rate limit is reset
 	ctx = context.Background()
