@@ -119,22 +119,26 @@ func TestRateLimitWithMock(t *testing.T) {
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(t, err)
 
-	for i := 1; i <= 3; i++ {
+	for i := 1; i <= 4; i++ {
 		ctx := context.Background()
 		_, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 		require.Nil(t, err)
 	}
 
-	// This should be cancelled because it would exceed the ctx deadline
+	// One request left, it should be blocked as it would exceed the rate limit
+
+	// A deadline is set, however, the bucket refill would take longer than the ctx deadline, waiting would exceed the deadline
 	// It also shouldn't add to the bucket count
 	ctx := context.Background()
 	ctx, c := context.WithTimeout(ctx, 2*time.Second)
 	defer c()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-	require.Equal(t, fmt.Errorf("app rate limit reached on 'br1' route for method 'summoner-v4.getByPUUID'. waiting would exceed context deadline"), err)
+	require.Equal(t, fmt.Errorf("waiting would exceed context deadline"), err)
 
-	// TODO: This last request (5) should block until rate limit is reset
+	// This last request (5) should block until rate limit is reset
+	now := time.Now()
 	ctx = context.Background()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.Nil(t, err)
+	require.GreaterOrEqual(t, time.Since(now), 5*time.Second)
 }
