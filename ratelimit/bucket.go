@@ -4,6 +4,8 @@ import (
 	"context"
 	"sync"
 	"time"
+
+	"go.uber.org/zap/zapcore"
 )
 
 type Bucket struct {
@@ -18,6 +20,13 @@ type Bucket struct {
 	// Next reset
 	next  time.Time
 	mutex sync.Mutex
+}
+
+func (b *Bucket) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
+	encoder.AddDuration("interval", b.interval)
+	encoder.AddInt("tokens", b.tokens)
+	encoder.AddInt("limit", b.limit)
+	return nil
 }
 
 func NewBucket(interval time.Duration, limit int, tokens int) *Bucket {
@@ -52,9 +61,9 @@ func (b *Bucket) IsRateLimited(ctx context.Context) error {
 	if b.tokens-1 <= 0 {
 		deadline, ok := ctx.Deadline()
 		if ok && deadline.Before(b.next) {
-			return errDeadlineExceeded
+			return ErrContextDeadlineExceeded
 		}
-		return errRateLimitExceeded
+		return ErrRateLimited
 	}
 	b.tokens--
 	return nil
@@ -70,7 +79,7 @@ func (b *Bucket) wait(ctx context.Context) error {
 	case <-timer.C:
 		b.check()
 		if b.tokens-1 <= 0 {
-			return errRateLimitExceeded
+			return ErrRateLimited
 		}
 		b.tokens--
 		return nil

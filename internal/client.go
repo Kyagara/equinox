@@ -25,7 +25,7 @@ type InternalClient struct {
 	loggers        *Loggers
 	cache          *cache.Cache
 	ratelimit      *ratelimit.RateLimit
-	retry          int
+	retry          bool
 	isCacheEnabled bool
 }
 
@@ -158,7 +158,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	defer response.Body.Close()
 
 	err = c.checkResponse(ctx, equinoxReq, response)
-	if err != nil && c.retry > 1 && errors.Is(err, api.ErrTooManyRequests) {
+	if err != nil && c.retry && errors.Is(err, api.ErrTooManyRequests) {
 		return c.Execute(ctx, equinoxReq, target)
 	} else if err != nil {
 		return err
@@ -193,7 +193,7 @@ func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.Equi
 			equinoxReq.Logger.Warn("Rate limited but no service was specified")
 		}
 
-		if c.retry > 0 {
+		if c.retry {
 			retryAfter := response.Header.Get(ratelimit.RETRY_AFTER_HEADER)
 			if retryAfter == "" {
 				err := errors.New("rate limited but no Retry-After header was found, stopping")

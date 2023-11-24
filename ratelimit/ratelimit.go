@@ -3,7 +3,6 @@ package ratelimit
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,11 +10,13 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox/api"
+	"go.uber.org/zap"
 )
 
 const (
-	RATE_LIMIT_TYPE_HEADER         = "X-Rate-Limit-Type"
-	RETRY_AFTER_HEADER             = "Retry-After"
+	RATE_LIMIT_TYPE_HEADER = "X-Rate-Limit-Type"
+	RETRY_AFTER_HEADER     = "Retry-After"
+
 	APP_RATE_LIMIT_HEADER          = "X-App-Rate-Limit"
 	APP_RATE_LIMIT_COUNT_HEADER    = "X-App-Rate-Limit-Count"
 	METHOD_RATE_LIMIT_HEADER       = "X-Method-Rate-Limit"
@@ -23,8 +24,8 @@ const (
 )
 
 var (
-	errDeadlineExceeded  = errors.New("waiting would exceed context deadline")
-	errRateLimitExceeded = errors.New("rate limit exceeded")
+	ErrContextDeadlineExceeded = errors.New("waiting would exceed context deadline")
+	ErrRateLimited             = errors.New("rate limited")
 )
 
 type RateLimit struct {
@@ -56,34 +57,28 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 	if bucket.Methods == nil {
 		bucket.Methods = make(map[string][]*Bucket)
 	}
+	err := r.wait(ctx, equinoxReq, bucket.App, "app")
+	if err != nil {
+		return err
+	}
 	methodBucket := bucket.Methods[equinoxReq.MethodID]
 	if methodBucket == nil {
 		bucket.Methods[equinoxReq.MethodID] = make([]*Bucket, 0)
 	}
-	for _, rate := range bucket.App {
-		err := rate.IsRateLimited(ctx)
-		if err != nil {
-			if errors.Is(err, errRateLimitExceeded) {
-				equinoxReq.Logger.Warn(fmt.Sprintf("App rate limit reached on '%v' route for method '%s'. %v", equinoxReq.Route, equinoxReq.MethodID, err))
-				err = rate.wait(ctx)
-				if err != nil {
-					select {
-					case <-ctx.Done():
-						return ctx.Err()
-					default:
-						return err
-					}
-				}
-			}
-			return err
-		}
+	err = r.wait(ctx, equinoxReq, methodBucket, "method")
+	if err != nil {
+		return err
 	}
-	for _, rate := range methodBucket {
-		err := rate.IsRateLimited(ctx)
+	return nil
+}
+
+func (r *RateLimit) wait(ctx context.Context, equinoxReq *api.EquinoxRequest, bucket []*Bucket, bucket_type string) error {
+	for _, bucket := range bucket {
+		err := bucket.IsRateLimited(ctx)
 		if err != nil {
-			if errors.Is(err, errRateLimitExceeded) {
-				equinoxReq.Logger.Warn(fmt.Sprintf("Method rate limit reached on '%v' route for method '%s'. %v", equinoxReq.Route, equinoxReq.MethodID, err))
-				err = rate.wait(ctx)
+			if errors.Is(err, ErrRateLimited) {
+				equinoxReq.Logger.Warn("Rate limited", zap.String("bucket", bucket_type), zap.Any("route", equinoxReq.Route), zap.Object("bucket", bucket))
+				err = bucket.wait(ctx)
 				if err != nil {
 					select {
 					case <-ctx.Done():

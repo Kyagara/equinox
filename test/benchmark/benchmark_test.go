@@ -12,6 +12,7 @@ import (
 	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/val"
+	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
@@ -88,7 +89,7 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 
 	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
-	config.Retry = 1
+	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
@@ -99,6 +100,48 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 		require.Nil(b, err)
 		require.Equal(b, "Phanes", data.Name)
 	}
+}
+
+// More of a test less of an benchmark. Used to see how the library reacts to some parallel work.
+//
+// There seems to be an error with multiple limits, sometimes the first limit is reached two times before reaching the second.
+func BenchmarkRateLimit(b *testing.B) {
+	b.ReportAllocs()
+
+	summoner := &lol.SummonerV4DTO{
+		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
+		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
+		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
+		Name:          "Phanes",
+		ProfileIconID: 1386,
+		RevisionDate:  1657211888000,
+		SummonerLevel: 68,
+	}
+
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
+		Get("/lol/summoner/v4/summoners/by-puuid/puuid").
+		Persist().
+		Reply(200).SetHeaders(map[string]string{
+		ratelimit.APP_RATE_LIMIT_HEADER:       "1000:2,1500:4",
+		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: "1:2,1:4",
+	}).
+		JSON(summoner)
+
+	config := equinox.NewTestEquinoxConfig()
+	config.LogLevel = api.WARN_LOG_LEVEL
+	config.Retry = true
+
+	client, err := equinox.NewClientWithConfig(config)
+	require.Nil(b, err)
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			ctx := context.Background()
+			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+			require.Nil(b, err)
+			require.Equal(b, "Phanes", data.Name)
+		}
+	})
 }
 
 /*
@@ -127,7 +170,7 @@ func BenchmarkMatchByID(b *testing.B) {
 
 	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
-	config.Retry = 1
+	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
@@ -166,7 +209,7 @@ func BenchmarkMatchTimeline(b *testing.B) {
 
 	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
-	config.Retry = 1
+	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
@@ -206,7 +249,7 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 
 	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
-	config.Retry = 1
+	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
@@ -245,7 +288,7 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 
 	config := equinox.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
-	config.Retry = 1
+	config.Retry = true
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)

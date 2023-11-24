@@ -48,7 +48,7 @@ func init() {
 		HTTPClient: &http.Client{
 			Timeout: 15 * time.Second,
 		},
-		Retry: 1,
+		Retry: true,
 		Cache: cache,
 	}
 	c, err := equinox.NewClientWithConfig(config)

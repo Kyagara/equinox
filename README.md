@@ -35,7 +35,7 @@
 - Data Dragon and Community Dragon (Incomplete)
 - Rate limit (WIP)
 - Caching
-- Retry on 429 `n` times
+- Retry on 429
 
 ## Todo
 
