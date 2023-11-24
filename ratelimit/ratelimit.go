@@ -2,6 +2,7 @@ package ratelimit
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -21,9 +22,14 @@ const (
 	METHOD_RATE_LIMIT_COUNT_HEADER = "X-Method-Rate-Limit-Count"
 )
 
+var (
+	errDeadlineExceeded  = errors.New("waiting would exceed context deadline")
+	errRateLimitExceeded = errors.New("rate limit exceeded")
+)
+
 type RateLimit struct {
 	Buckets map[any]*Limits
-	mu      sync.Mutex
+	mutex   sync.Mutex
 }
 
 func NewLimits() *Limits {
@@ -38,65 +44,10 @@ type Limits struct {
 	Methods map[string][]*Bucket
 }
 
-type Bucket struct {
-	// Time interval in seconds
-	interval time.Duration
-	// Maximum number of tokens
-	limit int
-	// Current number of tokens
-	tokens int
-	// Updates every time its checked
-	updated time.Time
-	// Next reset
-	next time.Time
-	mu   sync.Mutex
-}
-
-func NewBucket(interval time.Duration, limit int, tokens int) *Bucket {
-	now := time.Now()
-	return &Bucket{
-		interval: interval * time.Second,
-		limit:    limit,
-		tokens:   tokens,
-		updated:  now,
-		next:     now.Add(interval * time.Second),
-		mu:       sync.Mutex{},
-	}
-}
-
-// Responsible for updating the bucket, resets the tokens if necessary.
-func (b *Bucket) check() {
-	now := time.Now()
-	if now.Sub(b.updated) >= b.interval {
-		b.tokens = b.limit
-		b.next = now.Add(b.interval)
-	}
-	b.updated = now
-}
-
-// TODO: Wait should block if the rate limit is reached until the bucket resets.
-func (b *Bucket) Wait(ctx context.Context) error {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-	b.check()
-	if b.limit == 0 {
-		return nil
-	}
-	if b.tokens-1 <= 0 {
-		return fmt.Errorf("exceeded the bucket's limit %d", b.limit)
-	}
-	deadline, ok := ctx.Deadline()
-	if ok && deadline.Before(b.next) {
-		return fmt.Errorf("waiting would exceed context deadline")
-	}
-	b.tokens--
-	return nil
-}
-
 // Take decreases tokens for the App and Method rate limit buckets in a route by one.
 func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
 	bucket := r.Buckets[equinoxReq.Route]
 	if bucket == nil {
 		bucket = NewLimits()
@@ -110,15 +61,39 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 		bucket.Methods[equinoxReq.MethodID] = make([]*Bucket, 0)
 	}
 	for _, rate := range bucket.App {
-		err := rate.Wait(ctx)
+		err := rate.IsRateLimited(ctx)
 		if err != nil {
-			return fmt.Errorf("app rate limit reached on '%v' route for method '%s'. %v", equinoxReq.Route, equinoxReq.MethodID, err)
+			if errors.Is(err, errRateLimitExceeded) {
+				equinoxReq.Logger.Warn(fmt.Sprintf("App rate limit reached on '%v' route for method '%s'. %v", equinoxReq.Route, equinoxReq.MethodID, err))
+				err = rate.wait(ctx)
+				if err != nil {
+					select {
+					case <-ctx.Done():
+						return ctx.Err()
+					default:
+						return err
+					}
+				}
+			}
+			return err
 		}
 	}
 	for _, rate := range methodBucket {
-		err := rate.Wait(ctx)
+		err := rate.IsRateLimited(ctx)
 		if err != nil {
-			return fmt.Errorf("method rate limit reached on '%v' route for method '%s'. %v", equinoxReq.Route, equinoxReq.MethodID, err)
+			if errors.Is(err, errRateLimitExceeded) {
+				equinoxReq.Logger.Warn(fmt.Sprintf("Method rate limit reached on '%v' route for method '%s'. %v", equinoxReq.Route, equinoxReq.MethodID, err))
+				err = rate.wait(ctx)
+				if err != nil {
+					select {
+					case <-ctx.Done():
+						return ctx.Err()
+					default:
+						return err
+					}
+				}
+			}
+			return err
 		}
 	}
 	return nil
@@ -128,8 +103,8 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 // TODO: Maybe add a way to dinamically update the buckets with new rates?
 // Currently this only runs one time, when it is known that the buckets are empty.
 func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http.Header) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
 	bucket := r.Buckets[equinoxReq.Route]
 	if bucket == nil {
 		bucket = NewLimits()
