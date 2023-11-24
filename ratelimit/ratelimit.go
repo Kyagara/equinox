@@ -57,7 +57,7 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 	if bucket.Methods == nil {
 		bucket.Methods = make(map[string][]*Bucket)
 	}
-	err := r.wait(ctx, equinoxReq, bucket.App, "app")
+	err := r.checkBucket(ctx, equinoxReq, bucket.App, "app")
 	if err != nil {
 		return err
 	}
@@ -65,14 +65,14 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 	if methodBucket == nil {
 		bucket.Methods[equinoxReq.MethodID] = make([]*Bucket, 0)
 	}
-	err = r.wait(ctx, equinoxReq, methodBucket, "method")
+	err = r.checkBucket(ctx, equinoxReq, methodBucket, "method")
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (r *RateLimit) wait(ctx context.Context, equinoxReq *api.EquinoxRequest, bucket []*Bucket, bucket_type string) error {
+func (r *RateLimit) checkBucket(ctx context.Context, equinoxReq *api.EquinoxRequest, bucket []*Bucket, bucket_type string) error {
 	for _, bucket := range bucket {
 		err := bucket.IsRateLimited(ctx)
 		if err != nil {
