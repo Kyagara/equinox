@@ -1,6 +1,7 @@
 package benchmark_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -49,7 +50,8 @@ func BenchmarkCachedSummonerByPUUID(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.SummonerV4.ByPUUID(lol.BR1, "puuid")
+		ctx := context.Background()
+		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 		require.Nil(b, err)
 		require.Equal(b, "Phanes", data.Name)
 	}
@@ -92,7 +94,8 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.SummonerV4.ByPUUID(lol.BR1, "puuid")
+		ctx := context.Background()
+		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 		require.Nil(b, err)
 		require.Equal(b, "Phanes", data.Name)
 	}
@@ -130,7 +133,8 @@ func BenchmarkMatchByID(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.MatchV5.ByID(api.AMERICAS, "BR1_2744215970")
+		ctx := context.Background()
+		data, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "BR1_2744215970")
 		require.Nil(b, err)
 		require.Equal(b, res.Info.GameCreation, data.Info.GameCreation)
 	}
@@ -168,7 +172,8 @@ func BenchmarkMatchTimeline(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.LOL.MatchV5.Timeline(api.AMERICAS, "BR1_2744215970")
+		ctx := context.Background()
+		data, err := client.LOL.MatchV5.Timeline(ctx, api.AMERICAS, "BR1_2744215970")
 		require.Nil(b, err)
 		require.Equal(b, res.Info.GameID, data.Info.GameID)
 	}
@@ -207,7 +212,8 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.VAL.ContentV1.Content(val.BR, "")
+		ctx := context.Background()
+		data, err := client.VAL.ContentV1.Content(ctx, val.BR, "")
 		require.Nil(b, err)
 		require.Equal(b, res.Version, data.Version)
 	}
@@ -245,7 +251,8 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 	require.Nil(b, err)
 
 	for i := 0; i < b.N; i++ {
-		data, err := client.DDragon.Champion.AllChampions("13.22.1", ddragon.EnUS)
+		ctx := context.Background()
+		data, err := client.DDragon.Champion.AllChampions(ctx, "13.22.1", ddragon.EnUS)
 		require.Nil(b, err)
 		require.Equal(b, "Ahri", data["Ahri"].Name)
 	}

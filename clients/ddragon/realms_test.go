@@ -1,6 +1,7 @@
 package ddragon_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"testing"
@@ -43,7 +44,8 @@ func TestRealmByName(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Realm.ByName(ddragon.BR)
+			ctx := context.Background()
+			gotData, gotErr := client.Realm.ByName(ctx, ddragon.BR)
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 			if test.wantErr == nil {
 				require.Equal(t, test.want, gotData)
