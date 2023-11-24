@@ -144,7 +144,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	}
 
 	if !slices.Contains(cdns, equinoxReq.Request.URL.Host) {
-		err := c.ratelimit.Check(ctx, equinoxReq)
+		err := c.ratelimit.Take(ctx, equinoxReq)
 		if err != nil {
 			return err
 		}
