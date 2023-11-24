@@ -1,6 +1,7 @@
 package equinox_test
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -94,20 +95,21 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 
 func TestRateLimitWithMock(t *testing.T) {
 	headers := map[string]string{
-		ratelimit.APP_RATE_LIMIT_HEADER:          "50:5",
-		ratelimit.APP_RATE_LIMIT_COUNT_HEADER:    "1:5",
-		ratelimit.METHOD_RATE_LIMIT_HEADER:       "50:5",
-		ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: "1:5",
+		ratelimit.APP_RATE_LIMIT_HEADER:    "5:5",
+		ratelimit.METHOD_RATE_LIMIT_HEADER: "5:5",
 	}
 
-	for i := 1; i <= 50; i++ {
+	// Mock 5 responses
+	// The would be 5 request should be blocked from being created since it would exceed the rate limit
+	for i := 1; i <= 5; i++ {
+		headers[ratelimit.APP_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:5", i)
+		headers[ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:5", i)
+
 		gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
 			Get("/lol/summoner/v4/summoners/by-puuid/puuid").
 			Reply(200).
 			SetHeaders(headers).
 			JSON(&lol.SummonerV4DTO{})
-		headers[ratelimit.APP_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:5", i)
-		headers[ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:5", i)
 	}
 
 	config := equinox.NewTestEquinoxConfig()
@@ -117,12 +119,22 @@ func TestRateLimitWithMock(t *testing.T) {
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(t, err)
 
-	for i := 0; i < 50; i++ {
-		_, err := client.LOL.SummonerV4.ByPUUID(lol.BR1, "puuid")
-		if i < 50 {
-			require.Nil(t, err)
-		} else {
-			require.Equal(t, fmt.Errorf("app rate limit reached on 'br1' route for method 'summoner-v4.getByPUUID'"), err)
-		}
+	for i := 1; i <= 3; i++ {
+		ctx := context.Background()
+		_, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+		require.Nil(t, err)
 	}
+
+	// This should be cancelled because it would exceed the ctx deadline
+	// It also shouldn't add to the bucket count
+	ctx := context.Background()
+	ctx, c := context.WithTimeout(ctx, 2*time.Second)
+	defer c()
+	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+	require.Equal(t, fmt.Errorf("app rate limit reached on 'br1' route for method 'summoner-v4.getByPUUID'. would exceed context deadline"), err)
+
+	// TODO: This last request (5) should block until rate limit is reset
+	ctx = context.Background()
+	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+	require.Nil(t, err)
 }

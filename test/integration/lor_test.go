@@ -4,6 +4,7 @@
 package integration
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
@@ -12,7 +13,8 @@ import (
 
 func TestLORPlatformStatus(t *testing.T) {
 	checkIfOnlyDataDragon(t)
-	status, err := client.LOR.StatusV1.Platform(api.AMERICAS)
+	ctx := context.Background()
+	status, err := client.LOR.StatusV1.Platform(ctx, api.AMERICAS)
 	require.Nil(t, err, "expecting nil error")
 	require.NotEmpty(t, status, "expecting non-nil status")
 	require.Equal(t, "Americas", status.Name, "expecting platform name to be equal to Americas")

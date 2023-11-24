@@ -1,6 +1,7 @@
 package cdragon_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"testing"
@@ -44,7 +45,8 @@ func TestChampionByName(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Champion.ByName("1.0", "JarvanIV")
+			ctx := context.Background()
+			gotData, gotErr := client.Champion.ByName(ctx, "1.0", "JarvanIV")
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 			if test.wantErr == nil {
 				require.Equal(t, data, gotData)
@@ -84,7 +86,8 @@ func TestChampionByID(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Champion.ByID("1.0", 223)
+			ctx := context.Background()
+			gotData, gotErr := client.Champion.ByID(ctx, "1.0", 223)
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 			if test.wantErr == nil {
 				require.Equal(t, data, gotData)

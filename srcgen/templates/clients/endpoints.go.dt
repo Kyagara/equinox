@@ -9,6 +9,7 @@
 import (
 	"fmt"
 	"net/http"
+  "context"
     
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -63,7 +64,8 @@ type {{= normalizedStructName }} struct {
             let normalizedRoute = dotUtils.changeCase.pascalCase(operation['x-route-enum']);
             normalizedRoute = normalizedRoute.replace("Regional", "api.Regional");
             normalizedRoute = normalizedRoute.replace("ValPlatform", "Platform");
-            const argBuilder = ['route ' + normalizedRoute + 'Route'];
+            const argBuilder = ['ctx context.Context'];
+            argBuilder.push('route ' + normalizedRoute + 'Route');
 
             /* Add body params before path/query. */
             if (bodyType) {
@@ -140,7 +142,7 @@ type {{= normalizedStructName }} struct {
 func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}) {{= !hasReturn ? "error" : `(${isPrimitiveType ? "" : "*"}${returnValue}, error)` }} {
   logger := e.internalClient.Logger("{{= clientNormalizedName + "_" + normalizedStructName + "_" + method }}")
   logger.Debug("Method started execution")
-  equinoxReq, err := e.internalClient.Request(logger, api.RIOT_API_BASE_URL_FORMAT, http.Method{{= dotUtils.capitalize(verb) }}, route, {{= routeArgument }}, "{{= operationId }}", {{? bodyType }}body{{?? true }}nil{{?}})
+  equinoxReq, err := e.internalClient.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.Method{{= dotUtils.capitalize(verb) }}, route, {{= routeArgument }}, "{{= operationId }}", {{? bodyType }}body{{?? true }}nil{{?}})
   if err != nil {
     logger.Error("Error creating request", zap.Error(err))
     return {{? hasReturn }}{{= isPrimitiveType ? `*new(${returnValue})` : "nil" }}, err{{?? true }}{{= isPrimitiveType ? `*new(${returnValue})` : "nil" }}{{?}}
@@ -174,7 +176,7 @@ func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}
   }
 }}
   {{? hasReturn }}var data {{= returnValue }}{{?}}
-  err = e.internalClient.Execute(equinoxReq, {{? hasReturn }}&data{{?? true }}nil{{?}})
+  err = e.internalClient.Execute(ctx, equinoxReq, {{? hasReturn }}&data{{?? true }}nil{{?}})
   if err != nil {
     logger.Error("Error executing request", zap.Error(err))
     return {{= isPrimitiveType ? `*new(${returnValue})` : "nil"}}{{? hasReturn }}, err{{?}}

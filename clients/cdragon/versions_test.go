@@ -1,6 +1,7 @@
 package cdragon_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"testing"
@@ -43,7 +44,8 @@ func TestVersionLatest(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Version.Latest()
+			ctx := context.Background()
+			gotData, gotErr := client.Version.Latest(ctx)
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 			if test.wantErr == nil {
 				ver := "1.0"
@@ -83,7 +85,8 @@ func TestVersionList(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Version.List()
+			ctx := context.Background()
+			gotData, gotErr := client.Version.List(ctx)
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 			if test.wantErr == nil {
 				require.Equal(t, []string{"1.0", "0.9"}, gotData)

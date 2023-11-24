@@ -1,6 +1,7 @@
 package cdragon
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -119,16 +120,16 @@ type ChampionData struct {
 }
 
 // Retrieves more information about a champion, includes skins, spells and tips.
-func (e *ChampionEndpoint) ByName(version string, champion string) (*ChampionData, error) {
+func (e *ChampionEndpoint) ByName(ctx context.Context, version string, champion string) (*ChampionData, error) {
 	logger := e.internalClient.Logger("CDragon_Champion_ByName")
 	logger.Debug("Method started execution")
-	equinoxReq, err := e.internalClient.Request(logger, api.C_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, champion), "", nil)
+	equinoxReq, err := e.internalClient.Request(ctx, logger, api.C_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, champion), "", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data ChampionData
-	err = e.internalClient.Execute(equinoxReq, &data)
+	err = e.internalClient.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -137,16 +138,16 @@ func (e *ChampionEndpoint) ByName(version string, champion string) (*ChampionDat
 }
 
 // Retrieves more information about a champion, includes skins, spells and tips.
-func (e *ChampionEndpoint) ByID(version string, id int) (*ChampionData, error) {
+func (e *ChampionEndpoint) ByID(ctx context.Context, version string, id int) (*ChampionData, error) {
 	logger := e.internalClient.Logger("CDragon_Champion_ByID")
 	logger.Debug("Method started execution")
-	equinoxReq, err := e.internalClient.Request(logger, api.C_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, id), "", nil)
+	equinoxReq, err := e.internalClient.Request(ctx, logger, api.C_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, id), "", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data ChampionData
-	err = e.internalClient.Execute(equinoxReq, &data)
+	err = e.internalClient.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

@@ -1,6 +1,7 @@
 package ratelimit
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -9,7 +10,6 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox/api"
-	"golang.org/x/time/rate"
 )
 
 const (
@@ -22,47 +22,103 @@ const (
 )
 
 type RateLimit struct {
-	Buckets map[any]*Buckets
+	Buckets map[any]*Limits
 	mu      sync.Mutex
 }
 
-type Buckets struct {
-	App     []*rate.Limiter
-	Methods map[string][]*rate.Limiter
-}
-
-func NewBuckets() *Buckets {
-	return &Buckets{
-		App:     []*rate.Limiter{},
-		Methods: make(map[string][]*rate.Limiter),
+func NewLimits() *Limits {
+	return &Limits{
+		App:     []*Bucket{},
+		Methods: make(map[string][]*Bucket),
 	}
 }
 
-// Take increases the count for the App and Method rate limit buckets by one in a route.
-func (r *RateLimit) Take(equinoxReq *api.EquinoxRequest) error {
+type Limits struct {
+	App     []*Bucket
+	Methods map[string][]*Bucket
+}
+
+type Bucket struct {
+	// Time interval in seconds
+	interval time.Duration
+	// Maximum number of tokens
+	limit int
+	// Current number of tokens
+	tokens int
+	// Updates every time its checked
+	updated time.Time
+	// Next reset
+	next time.Time
+	mu   sync.Mutex
+}
+
+func NewBucket(interval time.Duration, limit int, tokens int) *Bucket {
+	now := time.Now()
+	return &Bucket{
+		interval: interval * time.Second,
+		limit:    limit,
+		tokens:   tokens,
+		updated:  now,
+		next:     now.Add(interval * time.Second),
+		mu:       sync.Mutex{},
+	}
+}
+
+// Responsible for updating the bucket, resetting the tokens necessary.
+func (b *Bucket) check() {
+	now := time.Now()
+	if now.Sub(b.updated) >= b.interval {
+		b.tokens = 0
+		b.next = now.Add(b.interval)
+	}
+	b.updated = now
+}
+
+func (b *Bucket) Wait(ctx context.Context) error {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.check()
+	if b.limit == 0 {
+		return nil
+	}
+	if b.tokens+1 >= b.limit {
+		return fmt.Errorf("exceeded the bucket's limit %d", b.limit)
+	}
+	deadline, ok := ctx.Deadline()
+	if ok && deadline.Before(b.next) {
+		return fmt.Errorf("would exceed context deadline")
+	}
+	b.tokens++
+	return nil
+}
+
+// Check increases the count for the App and Method rate limit buckets in a route by one.
+func (r *RateLimit) Check(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	bucket := r.Buckets[equinoxReq.Route]
 	if bucket == nil {
-		bucket = NewBuckets()
+		bucket = NewLimits()
 		r.Buckets[equinoxReq.Route] = bucket
 	}
 	if bucket.Methods == nil {
-		bucket.Methods = make(map[string][]*rate.Limiter)
+		bucket.Methods = make(map[string][]*Bucket)
 	}
 	methodBucket := bucket.Methods[equinoxReq.MethodID]
 	if methodBucket == nil {
-		bucket.Methods[equinoxReq.MethodID] = make([]*rate.Limiter, 0)
+		bucket.Methods[equinoxReq.MethodID] = make([]*Bucket, 0)
 	}
 	// For now, just return an error if the rate limit is reached.
 	for _, rate := range bucket.App {
-		if !rate.Allow() {
-			return fmt.Errorf("app rate limit reached on '%v' route for method '%s'", equinoxReq.Route, equinoxReq.MethodID)
+		err := rate.Wait(ctx)
+		if err != nil {
+			return fmt.Errorf("app rate limit reached on '%v' route for method '%s'. %v", equinoxReq.Route, equinoxReq.MethodID, err)
 		}
 	}
 	for _, rate := range methodBucket {
-		if !rate.Allow() {
-			return fmt.Errorf("method rate limit reached on '%v' route for method '%s'", equinoxReq.Route, equinoxReq.MethodID)
+		err := rate.Wait(ctx)
+		if err != nil {
+			return fmt.Errorf("method rate limit reached on '%v' route for method '%s'. %v", equinoxReq.Route, equinoxReq.MethodID, err)
 		}
 	}
 	return nil
@@ -76,11 +132,11 @@ func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http
 	defer r.mu.Unlock()
 	bucket := r.Buckets[equinoxReq.Route]
 	if bucket == nil {
-		bucket = NewBuckets()
+		bucket = NewLimits()
 		r.Buckets[equinoxReq.Route] = bucket
 	}
 	if bucket.Methods == nil {
-		bucket.Methods = make(map[string][]*rate.Limiter)
+		bucket.Methods = make(map[string][]*Bucket)
 	}
 	if len(bucket.App) == 0 {
 		bucket.App = parseHeaders(responseHeaders.Get(APP_RATE_LIMIT_HEADER), responseHeaders.Get(APP_RATE_LIMIT_COUNT_HEADER))
@@ -92,19 +148,17 @@ func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http
 	}
 }
 
-func parseHeaders(limitHeader string, countHeader string) []*rate.Limiter {
+func parseHeaders(limitHeader string, countHeader string) []*Bucket {
 	if limitHeader == "" || countHeader == "" {
-		return []*rate.Limiter{}
+		return []*Bucket{}
 	}
 	limits := strings.Split(limitHeader, ",")
 	counts := strings.Split(countHeader, ",")
-	rates := make([]*rate.Limiter, len(limits))
-	now := time.Now()
+	rates := make([]*Bucket, len(limits))
 	for i := range limits {
 		limit, seconds := getNumbersFromPair(limits[i])
 		count, _ := getNumbersFromPair(counts[i])
-		rates[i] = rate.NewLimiter(rate.Every(time.Second*time.Duration(seconds)), limit)
-		rates[i].AllowN(now, count)
+		rates[i] = NewBucket(time.Duration(seconds), limit, count)
 	}
 	return rates
 }

@@ -1,6 +1,7 @@
 package ddragon
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -35,16 +36,16 @@ type RealmData struct {
 	Store          any    `json:"store,omitempty"`
 }
 
-func (e *RealmEndpoint) ByName(realm Realm) (*RealmData, error) {
+func (e *RealmEndpoint) ByName(ctx context.Context, realm Realm) (*RealmData, error) {
 	logger := e.internalClient.Logger("DDragon_Realm_ByName")
 	logger.Debug("Method started execution")
-	equinoxReq, err := e.internalClient.Request(logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(RealmURL, realm), "", nil)
+	equinoxReq, err := e.internalClient.Request(ctx, logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(RealmURL, realm), "", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data RealmData
-	err = e.internalClient.Execute(equinoxReq, &data)
+	err = e.internalClient.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

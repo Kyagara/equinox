@@ -2,6 +2,7 @@ package internal
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -29,6 +30,8 @@ type InternalClient struct {
 }
 
 var (
+	errContextIsNil = errors.New("context must be non-nil")
+
 	staticHeaders = http.Header{
 		"Accept":     {"application/json"},
 		"User-Agent": {"equinox - https://github.com/Kyagara/equinox"},
@@ -69,7 +72,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 			mu:      sync.Mutex{},
 		},
 		cache:          config.Cache,
-		ratelimit:      &ratelimit.RateLimit{Buckets: make(map[any]*ratelimit.Buckets)},
+		ratelimit:      &ratelimit.RateLimit{Buckets: make(map[any]*ratelimit.Limits)},
 		retry:          config.Retry,
 		isCacheEnabled: config.Cache.TTL > 0,
 	}
@@ -78,7 +81,11 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 }
 
 // Creates a request to the provided route and URL.
-func (c *InternalClient) Request(logger *zap.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (*api.EquinoxRequest, error) {
+func (c *InternalClient) Request(ctx context.Context, logger *zap.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (*api.EquinoxRequest, error) {
+	if ctx == nil {
+		return nil, errContextIsNil
+	}
+
 	equinoxReq := &api.EquinoxRequest{
 		Logger:   logger,
 		MethodID: methodID,
@@ -89,8 +96,10 @@ func (c *InternalClient) Request(logger *zap.Logger, baseURL string, httpMethod 
 		Body:     body,
 		Request:  nil,
 	}
+
 	host := fmt.Sprintf(baseURL, route)
 	url := fmt.Sprintf("%s%s", host, path)
+
 	var buffer io.Reader
 	if equinoxReq.Body != nil {
 		bodyBytes, err := json.Marshal(equinoxReq.Body)
@@ -99,11 +108,13 @@ func (c *InternalClient) Request(logger *zap.Logger, baseURL string, httpMethod 
 		}
 		buffer = bytes.NewReader(bodyBytes)
 	}
-	request, err := http.NewRequest(httpMethod, url, buffer)
+
+	request, err := http.NewRequestWithContext(ctx, httpMethod, url, buffer)
 	if err != nil {
 		return nil, err
 	}
 	equinoxReq.Request = request
+
 	if slices.Contains(cdns, request.URL.Host) {
 		request.Header = staticHeaders
 	} else {
@@ -116,8 +127,13 @@ func (c *InternalClient) Request(logger *zap.Logger, baseURL string, httpMethod 
 }
 
 // Performs a request to the Riot API.
-func (c *InternalClient) Execute(equinoxReq *api.EquinoxRequest, target any) error {
+func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, target any) error {
+	if ctx == nil {
+		return errContextIsNil
+	}
+
 	url := equinoxReq.Request.URL.String()
+
 	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
 		if item, err := c.cache.Get(url); err != nil {
 			equinoxReq.Logger.Error("Error retrieving cached response", zap.Error(err))
@@ -126,17 +142,34 @@ func (c *InternalClient) Execute(equinoxReq *api.EquinoxRequest, target any) err
 			return json.Unmarshal(item, &target)
 		}
 	}
+
 	if !slices.Contains(cdns, equinoxReq.Request.URL.Host) {
-		// The request is going to the Riot API, so check the rate limit.
-		err := c.ratelimit.Take(equinoxReq)
+		err := c.ratelimit.Check(ctx, equinoxReq)
 		if err != nil {
 			return err
 		}
 	}
-	body, err := c.sendRequest(equinoxReq, 0)
+
+	equinoxReq.Logger.Info("Sending request")
+	response, err := c.http.Do(equinoxReq.Request)
 	if err != nil {
 		return err
 	}
+	defer response.Body.Close()
+
+	err = c.checkResponse(ctx, equinoxReq, response)
+	if err != nil && c.retry > 1 && errors.Is(err, api.ErrTooManyRequests) {
+		return c.Execute(ctx, equinoxReq, target)
+	} else if err != nil {
+		return err
+	}
+
+	equinoxReq.Logger.Info("Request successful")
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
 	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
 		if err := c.cache.Set(url, body); err != nil {
 			equinoxReq.Logger.Error("Error caching item", zap.Error(err))
@@ -147,32 +180,11 @@ func (c *InternalClient) Execute(equinoxReq *api.EquinoxRequest, target any) err
 	return json.Unmarshal(body, &target)
 }
 
-// sendRequest sends an HTTP request and returns the response body as a byte array.
-func (c *InternalClient) sendRequest(equinoxReq *api.EquinoxRequest, retriedCount int) ([]byte, error) {
-	equinoxReq.Logger.Info("Sending request")
-	response, err := c.http.Do(equinoxReq.Request)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-	err = c.checkResponse(equinoxReq, response)
-	if err != nil && retriedCount < c.retry && errors.Is(err, api.ErrTooManyRequests) {
-		return c.sendRequest(equinoxReq, retriedCount+1)
-	} else if err != nil {
-		return nil, err
-	}
-	equinoxReq.Logger.Info("Request successful")
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
-	}
-	return body, nil
-}
-
-func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) error {
+func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.EquinoxRequest, response *http.Response) error {
 	if !slices.Contains(cdns, response.Request.Host) {
 		c.ratelimit.Update(equinoxReq, &response.Header)
 	}
+
 	if response.StatusCode == http.StatusTooManyRequests {
 		limitType := response.Header.Get(ratelimit.RATE_LIMIT_TYPE_HEADER)
 		if limitType != "" {
@@ -180,6 +192,7 @@ func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response 
 		} else {
 			equinoxReq.Logger.Warn("Rate limited but no service was specified")
 		}
+
 		if c.retry > 0 {
 			retryAfter := response.Header.Get(ratelimit.RETRY_AFTER_HEADER)
 			if retryAfter == "" {
@@ -194,6 +207,7 @@ func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response 
 			return api.ErrTooManyRequests
 		}
 	}
+
 	// Check if the response status code is not within the range of 200-299 (success codes)
 	if response.StatusCode < http.StatusOK || response.StatusCode > 299 {
 		equinoxReq.Logger.Error("Request failed", zap.Error(fmt.Errorf("endpoint method returned an error code: %v", response.Status)))
@@ -212,16 +226,16 @@ func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response 
 	return nil
 }
 
-func (c *InternalClient) GetDDragonLOLVersions(id string) ([]string, error) {
+func (c *InternalClient) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {
 	logger := c.Logger(id)
 	logger.Debug("Method started execution")
-	equinoxReq, err := c.Request(logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "/api/versions.json", "", nil)
+	equinoxReq, err := c.Request(ctx, logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "/api/versions.json", "", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data []string
-	err = c.Execute(equinoxReq, &data)
+	err = c.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

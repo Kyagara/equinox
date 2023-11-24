@@ -1,6 +1,7 @@
 package ddragon_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"testing"
@@ -50,7 +51,8 @@ func TestChampionAllChampions(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Champion.AllChampions("1.0", ddragon.PtBR)
+			ctx := context.Background()
+			gotData, gotErr := client.Champion.AllChampions(ctx, "1.0", ddragon.PtBR)
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 			if test.wantErr == nil {
 				require.Equal(t, data, gotData)
@@ -102,10 +104,9 @@ func TestChampionByName(t *testing.T) {
 				Reply(test.code).
 				JSON(test.want)
 
-			gotData, gotErr := client.Champion.ByName("1.0", ddragon.PtBR, "JarvanIV")
-
+			ctx := context.Background()
+			gotData, gotErr := client.Champion.ByName(ctx, "1.0", ddragon.PtBR, "JarvanIV")
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-
 			if test.wantErr == nil {
 				require.Equal(t, data, gotData)
 			}
