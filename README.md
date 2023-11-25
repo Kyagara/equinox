@@ -39,15 +39,12 @@
 
 ## Todo
 
-- More comments
-- Maybe make a queue for requests?
 - Readme section about cache and rate limit
 - Rework retry, only retry on 429 if received Retry-After
 - Properly use context
 - Verify and update rate limit buckets if necessary
 - More tests for the client
 - Improve DDragon/CDragon support
-- Maybe more logging
 
 ## Usage
 
