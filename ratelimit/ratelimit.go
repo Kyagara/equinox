@@ -24,13 +24,19 @@ const (
 )
 
 var (
-	ErrRateLimitedButNoRetryAfterHeader = errors.New("rate limited but no Retry-After header was found, stopping")
-	ErrContextDeadlineExceeded          = errors.New("waiting would exceed context deadline")
+	Err429ButNoRetryAfterHeader = errors.New("received 429 but no Retry-After header was found")
+	ErrContextDeadlineExceeded  = errors.New("waiting would exceed context deadline")
 )
 
 type RateLimit struct {
-	Buckets map[any]*Limits
-	mutex   sync.Mutex
+	// Map of limits, keyed by route
+	Limits map[any]*Limits
+	mutex  sync.Mutex
+}
+
+type Limits struct {
+	App     []*Bucket
+	Methods map[string][]*Bucket
 }
 
 func NewLimits() *Limits {
@@ -40,19 +46,16 @@ func NewLimits() *Limits {
 	}
 }
 
-type Limits struct {
-	App     []*Bucket
-	Methods map[string][]*Bucket
-}
-
 // Take decreases tokens for the App and Method rate limit buckets in a route by one.
+//
+// If rate limited, will block until the next bucket reset.
 func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	bucket := r.Buckets[equinoxReq.Route]
+	bucket := r.Limits[equinoxReq.Route]
 	if bucket == nil {
 		bucket = NewLimits()
-		r.Buckets[equinoxReq.Route] = bucket
+		r.Limits[equinoxReq.Route] = bucket
 	}
 	if bucket.Methods == nil {
 		bucket.Methods = make(map[string][]*Bucket)
@@ -70,6 +73,31 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 		return err
 	}
 	return nil
+}
+
+// Update creates new buckets in a route with the limits provided in the response headers.
+//
+// TODO: Maybe add a way to dinamically update the buckets with new rates?
+// Currently this only runs one time, when it is known that the buckets are empty.
+func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http.Header) {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+	bucket := r.Limits[equinoxReq.Route]
+	if bucket == nil {
+		bucket = NewLimits()
+		r.Limits[equinoxReq.Route] = bucket
+	}
+	if bucket.Methods == nil {
+		bucket.Methods = make(map[string][]*Bucket)
+	}
+	if len(bucket.App) == 0 {
+		bucket.App = parseHeaders(responseHeaders.Get(APP_RATE_LIMIT_HEADER), responseHeaders.Get(APP_RATE_LIMIT_COUNT_HEADER))
+	}
+	methodBucket := bucket.Methods[equinoxReq.MethodID]
+	if methodBucket == nil {
+		methodBucket = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
+		bucket.Methods[equinoxReq.MethodID] = methodBucket
+	}
 }
 
 func (r *RateLimit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest, buckets []*Bucket, bucket_type string) error {
@@ -92,30 +120,6 @@ func (r *RateLimit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxReq
 		}
 	}
 	return nil
-}
-
-// Update creates new buckets in a route with the limits provided in the response headers.
-// TODO: Maybe add a way to dinamically update the buckets with new rates?
-// Currently this only runs one time, when it is known that the buckets are empty.
-func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http.Header) {
-	r.mutex.Lock()
-	defer r.mutex.Unlock()
-	bucket := r.Buckets[equinoxReq.Route]
-	if bucket == nil {
-		bucket = NewLimits()
-		r.Buckets[equinoxReq.Route] = bucket
-	}
-	if bucket.Methods == nil {
-		bucket.Methods = make(map[string][]*Bucket)
-	}
-	if len(bucket.App) == 0 {
-		bucket.App = parseHeaders(responseHeaders.Get(APP_RATE_LIMIT_HEADER), responseHeaders.Get(APP_RATE_LIMIT_COUNT_HEADER))
-	}
-	methodBucket := bucket.Methods[equinoxReq.MethodID]
-	if methodBucket == nil {
-		methodBucket = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
-		bucket.Methods[equinoxReq.MethodID] = methodBucket
-	}
 }
 
 func parseHeaders(limitHeader string, countHeader string) []*Bucket {

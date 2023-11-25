@@ -3,7 +3,6 @@ package internal_test
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,7 +11,9 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
@@ -184,7 +185,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 		},
 		{
 			name:    "rate limited but no retry-after header found",
-			wantErr: errors.New("rate limited but no Retry-After header was found, stopping"),
+			wantErr: ratelimit.Err429ButNoRetryAfterHeader,
 			code:    429,
 		},
 		{
@@ -245,10 +246,9 @@ func TestInternalClientErrorResponses(t *testing.T) {
 	}
 }
 
-/*
 func TestInternalClientRetries(t *testing.T) {
 	config := equinox.NewTestEquinoxConfig()
-	config.Retry = 1
+	config.Retry = true
 	internalClient, err := internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
 
@@ -271,7 +271,7 @@ func TestInternalClientRetries(t *testing.T) {
 	err = internalClient.Execute(ctx, equinoxReq, &res)
 	require.Nil(t, err, "expecting nil error")
 	require.NotNil(t, res, "expecting non-nil response")
-} */
+}
 
 func TestGetDDragonLOLVersions(t *testing.T) {
 	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())

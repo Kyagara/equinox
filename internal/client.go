@@ -30,7 +30,8 @@ type InternalClient struct {
 }
 
 var (
-	errContextIsNil = errors.New("context must be non-nil")
+	errContextIsNil   = errors.New("context must be non-nil")
+	errKeyNotProvided = errors.New("api key not provided")
 
 	staticHeaders = http.Header{
 		"Accept":     {"application/json"},
@@ -69,10 +70,10 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		loggers: &Loggers{
 			main:    logger,
 			methods: make(map[string]*zap.Logger),
-			mu:      sync.Mutex{},
+			mutex:   sync.RWMutex{},
 		},
 		cache:          config.Cache,
-		ratelimit:      &ratelimit.RateLimit{Buckets: make(map[any]*ratelimit.Limits)},
+		ratelimit:      &ratelimit.RateLimit{Limits: make(map[any]*ratelimit.Limits)},
 		retry:          config.Retry,
 		isCacheEnabled: config.Cache.TTL > 0,
 	}
@@ -119,7 +120,7 @@ func (c *InternalClient) Request(ctx context.Context, logger *zap.Logger, baseUR
 		request.Header = staticHeaders
 	} else {
 		if c.key == "" {
-			return nil, fmt.Errorf("api key not provided")
+			return nil, errKeyNotProvided
 		}
 		request.Header = apiHeaders
 	}
@@ -197,11 +198,10 @@ func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.Equi
 		if c.retry {
 			retryAfter := response.Header.Get(ratelimit.RETRY_AFTER_HEADER)
 			if retryAfter == "" {
-				return ratelimit.ErrRateLimitedButNoRetryAfterHeader
+				return ratelimit.Err429ButNoRetryAfterHeader
 			}
 			seconds, _ := strconv.Atoi(retryAfter)
-			equinoxReq.Logger.Warn("Retrying request after sleep", zap.Int("sleep", seconds))
-			// Sleep for the retry duration
+			equinoxReq.Logger.Info("Retrying request after sleep", zap.Int("sleep", seconds))
 			time.Sleep(time.Second * time.Duration(seconds))
 			return api.ErrTooManyRequests
 		}

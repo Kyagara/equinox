@@ -66,6 +66,8 @@ func (b *Bucket) check() {
 }
 
 // wait should block if the rate limit is reached and wait until the bucket resets.
+//
+// If blocking would take longer than the deadline, return ErrContextDeadlineExceeded.
 func (b *Bucket) wait(ctx context.Context) error {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
@@ -74,10 +76,8 @@ func (b *Bucket) wait(ctx context.Context) error {
 	if ok && deadline.Before(b.next) {
 		return ErrContextDeadlineExceeded
 	}
-	timer := time.NewTimer(time.Until(b.next))
-	defer timer.Stop()
 	select {
-	case <-timer.C:
+	case <-time.After(time.Until(b.next)):
 		b.check()
 		b.tokens--
 		return nil
