@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
@@ -47,8 +48,10 @@ func TestRateLimitCheck(t *testing.T) {
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"19:2"},
 		}
 		ctx := context.Background()
-		r.Update(equinoxReq, &headers)
 		err := r.Take(ctx, equinoxReq)
+		require.Nil(t, err)
+		r.Update(equinoxReq, &headers)
+		err = r.Take(ctx, equinoxReq)
 		require.Nil(t, err)
 	})
 
@@ -59,8 +62,10 @@ func TestRateLimitCheck(t *testing.T) {
 			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:2,199:2"},
 		}
 		ctx := context.Background()
-		r.Update(equinoxReq, &headers)
 		err := r.Take(ctx, equinoxReq)
+		require.Nil(t, err)
+		r.Update(equinoxReq, &headers)
+		err = r.Take(ctx, equinoxReq)
 		require.Nil(t, err)
 	})
 
@@ -71,9 +76,44 @@ func TestRateLimitCheck(t *testing.T) {
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"20:2"},
 		}
 		ctx := context.Background()
+		err = r.Take(ctx, equinoxReq)
+		require.Nil(t, err)
 		r.Update(equinoxReq, &headers)
 		// This test should take around 2 seconds
 		err := r.Take(ctx, equinoxReq)
 		require.Nil(t, err)
 	})
+}
+
+func TestLimitsDontMatch(t *testing.T) {
+	client, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
+	require.Nil(t, err, "expecting nil error")
+	equinoxReq := &api.EquinoxRequest{
+		Route:    "route",
+		MethodID: "method",
+		Logger:   client.Logger("client_endpoint_method"),
+	}
+
+	r := &ratelimit.RateLimit{Limits: make(map[any]*ratelimit.Limits)}
+	headers := http.Header{
+		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
+		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},
+	}
+
+	ctx, c := context.WithTimeout(context.Background(), 1*time.Second)
+	defer c()
+	err = r.Take(ctx, equinoxReq)
+	require.Nil(t, err)
+	r.Update(equinoxReq, &headers)
+	err = r.Take(ctx, equinoxReq)
+	require.Nil(t, err)
+
+	headers = http.Header{
+		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"1:2"},
+		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},
+	}
+	r.Update(equinoxReq, &headers)
+	err = r.Take(ctx, equinoxReq)
+	// The buckets should've been updated, so this request should be rate limited
+	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 }

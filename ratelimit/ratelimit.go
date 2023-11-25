@@ -52,23 +52,20 @@ func NewLimits() *Limits {
 func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	bucket := r.Limits[equinoxReq.Route]
-	if bucket == nil {
-		bucket = NewLimits()
-		r.Limits[equinoxReq.Route] = bucket
+	limits := r.Limits[equinoxReq.Route]
+	if limits == nil {
+		limits = NewLimits()
+		r.Limits[equinoxReq.Route] = limits
 	}
-	if bucket.Methods == nil {
-		bucket.Methods = make(map[string][]*Bucket)
-	}
-	err := r.checkBuckets(ctx, equinoxReq, bucket.App, "app")
+	err := r.checkBuckets(ctx, equinoxReq, limits.App, "application")
 	if err != nil {
 		return err
 	}
-	methodBucket := bucket.Methods[equinoxReq.MethodID]
-	if methodBucket == nil {
-		bucket.Methods[equinoxReq.MethodID] = make([]*Bucket, 0)
+	methods := limits.Methods[equinoxReq.MethodID]
+	if methods == nil {
+		limits.Methods[equinoxReq.MethodID] = make([]*Bucket, 0)
 	}
-	err = r.checkBuckets(ctx, equinoxReq, methodBucket, "method")
+	err = r.checkBuckets(ctx, equinoxReq, methods, "method")
 	if err != nil {
 		return err
 	}
@@ -76,30 +73,43 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 }
 
 // Update creates new buckets in a route with the limits provided in the response headers.
-//
-// TODO: Maybe add a way to dinamically update the buckets with new rates?
-// Currently this only runs one time, when it is known that the buckets are empty.
 func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http.Header) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	bucket := r.Limits[equinoxReq.Route]
-	if bucket == nil {
-		bucket = NewLimits()
-		r.Limits[equinoxReq.Route] = bucket
+	limits := r.Limits[equinoxReq.Route]
+	if limitsDontMatch(limits.App, responseHeaders.Get(APP_RATE_LIMIT_HEADER)) {
+		equinoxReq.Logger.Info("Updating application limits")
+		limits.App = parseHeaders(responseHeaders.Get(APP_RATE_LIMIT_HEADER), responseHeaders.Get(APP_RATE_LIMIT_COUNT_HEADER))
 	}
-	if bucket.Methods == nil {
-		bucket.Methods = make(map[string][]*Bucket)
-	}
-	if len(bucket.App) == 0 {
-		bucket.App = parseHeaders(responseHeaders.Get(APP_RATE_LIMIT_HEADER), responseHeaders.Get(APP_RATE_LIMIT_COUNT_HEADER))
-	}
-	methodBucket := bucket.Methods[equinoxReq.MethodID]
-	if methodBucket == nil {
-		methodBucket = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
-		bucket.Methods[equinoxReq.MethodID] = methodBucket
+	if limitsDontMatch(limits.Methods[equinoxReq.MethodID], responseHeaders.Get(METHOD_RATE_LIMIT_HEADER)) {
+		equinoxReq.Logger.Info("Updating method limits")
+		limits.Methods[equinoxReq.MethodID] = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
 	}
 }
 
+// Checks if the limits given in the header match the current buckets
+//
+// Doesn't look good
+func limitsDontMatch(buckets []*Bucket, limitHeader string) bool {
+	limits := strings.Split(limitHeader, ",")
+	if len(buckets) != len(limits) {
+		return true
+	}
+	for i, pair := range limits {
+		if buckets[i] == nil {
+			return true
+		}
+		limit, interval := getNumbersFromPair(pair)
+		if buckets[i].limit != limit || buckets[i].interval != time.Duration(interval)*time.Second {
+			return true
+		}
+	}
+	return false
+}
+
+// checkBuckets checks if any of the buckets provided are rate limited, and if so, blocks until the next reset.
+//
+// It loops from the end of the slice to ensure that the bigger limits are checked first.
 func (r *RateLimit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest, buckets []*Bucket, bucket_type string) error {
 	var limited []*Bucket
 	for _, bucket := range buckets {
@@ -108,7 +118,7 @@ func (r *RateLimit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxReq
 		}
 	}
 	for i := len(limited) - 1; i >= 0; i-- {
-		equinoxReq.Logger.Warn("Rate limited", zap.String("bucket", bucket_type), zap.Any("route", equinoxReq.Route), zap.Object("bucket", limited[i]))
+		equinoxReq.Logger.Warn("Rate limited", zap.String("bucket_type", bucket_type), zap.Any("route", equinoxReq.Route), zap.Object("bucket", limited[i]))
 		err := limited[i].wait(ctx)
 		if err != nil {
 			select {
@@ -139,7 +149,7 @@ func parseHeaders(limitHeader string, countHeader string) []*Bucket {
 
 func getNumbersFromPair(pair string) (int, int) {
 	numbers := strings.Split(pair, ":")
-	seconds, _ := strconv.Atoi(numbers[1])
+	interval, _ := strconv.Atoi(numbers[1])
 	limitOrCount, _ := strconv.Atoi(numbers[0])
-	return limitOrCount, seconds
+	return limitOrCount, interval
 }
