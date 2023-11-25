@@ -161,6 +161,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	if err != nil && c.retry && errors.Is(err, api.ErrTooManyRequests) {
 		return c.Execute(ctx, equinoxReq, target)
 	} else if err != nil {
+		equinoxReq.Logger.Error("Request failed", zap.Error(err))
 		return err
 	}
 
@@ -196,9 +197,7 @@ func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.Equi
 		if c.retry {
 			retryAfter := response.Header.Get(ratelimit.RETRY_AFTER_HEADER)
 			if retryAfter == "" {
-				err := errors.New("rate limited but no Retry-After header was found, stopping")
-				equinoxReq.Logger.Error("Request failed", zap.Error(err))
-				return err
+				return ratelimit.ErrRateLimitedButNoRetryAfterHeader
 			}
 			seconds, _ := strconv.Atoi(retryAfter)
 			equinoxReq.Logger.Warn("Retrying request after sleep", zap.Int("sleep", seconds))
@@ -210,8 +209,7 @@ func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.Equi
 
 	// Check if the response status code is not within the range of 200-299 (success codes)
 	if response.StatusCode < http.StatusOK || response.StatusCode > 299 {
-		equinoxReq.Logger.Error("Request failed", zap.Error(fmt.Errorf("endpoint method returned an error code: %v", response.Status)))
-		// This StatusCodeToError solution is from https://github.com/KnutZuidema/golio
+		equinoxReq.Logger.Error("Response with error code", zap.String("code", response.Status))
 		err, ok := api.StatusCodeToError[response.StatusCode]
 		if !ok {
 			return api.ErrorResponse{

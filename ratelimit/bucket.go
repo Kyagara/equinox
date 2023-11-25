@@ -41,6 +41,20 @@ func NewBucket(interval time.Duration, limit int, tokens int) *Bucket {
 	}
 }
 
+func (b *Bucket) isRateLimited(ctx context.Context) bool {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
+	b.check()
+	if b.limit == 0 {
+		return false
+	}
+	if b.tokens-1 <= 0 {
+		return true
+	}
+	b.tokens--
+	return false
+}
+
 // Responsible for updating the bucket, resets the tokens if necessary.
 func (b *Bucket) check() {
 	now := time.Now()
@@ -51,36 +65,20 @@ func (b *Bucket) check() {
 	b.updated = now
 }
 
-func (b *Bucket) IsRateLimited(ctx context.Context) error {
-	b.mutex.Lock()
-	defer b.mutex.Unlock()
-	b.check()
-	if b.limit == 0 {
-		return nil
-	}
-	if b.tokens-1 <= 0 {
-		deadline, ok := ctx.Deadline()
-		if ok && deadline.Before(b.next) {
-			return ErrContextDeadlineExceeded
-		}
-		return ErrRateLimited
-	}
-	b.tokens--
-	return nil
-}
-
 // wait should block if the rate limit is reached and wait until the bucket resets.
 func (b *Bucket) wait(ctx context.Context) error {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
+	b.check()
+	deadline, ok := ctx.Deadline()
+	if ok && deadline.Before(b.next) {
+		return ErrContextDeadlineExceeded
+	}
 	timer := time.NewTimer(time.Until(b.next))
 	defer timer.Stop()
 	select {
 	case <-timer.C:
 		b.check()
-		if b.tokens-1 <= 0 {
-			return ErrRateLimited
-		}
 		b.tokens--
 		return nil
 	case <-ctx.Done():
