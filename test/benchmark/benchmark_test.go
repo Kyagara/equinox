@@ -104,7 +104,7 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 
 // More of a test less of an benchmark. Used to see how the library reacts to some parallel work.
 //
-// There seems to be an error with multiple limits, sometimes the first limit is reached two times before reaching the second.
+// This revealed problems with multiple limits in a bucket, only the first bucket was being respected.
 func BenchmarkRateLimit(b *testing.B) {
 	b.ReportAllocs()
 
@@ -122,8 +122,8 @@ func BenchmarkRateLimit(b *testing.B) {
 		Get("/lol/summoner/v4/summoners/by-puuid/puuid").
 		Persist().
 		Reply(200).SetHeaders(map[string]string{
-		ratelimit.APP_RATE_LIMIT_HEADER:       "1000:2,1500:4",
-		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: "1:2,1:4",
+		ratelimit.APP_RATE_LIMIT_HEADER:       "20:1,50:3,80:5",
+		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: "1:1,1:3,1:5",
 	}).
 		JSON(summoner)
 

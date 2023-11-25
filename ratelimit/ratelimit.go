@@ -24,8 +24,8 @@ const (
 )
 
 var (
-	ErrContextDeadlineExceeded = errors.New("waiting would exceed context deadline")
-	ErrRateLimited             = errors.New("rate limited")
+	ErrRateLimitedButNoRetryAfterHeader = errors.New("rate limited but no Retry-After header was found, stopping")
+	ErrContextDeadlineExceeded          = errors.New("waiting would exceed context deadline")
 )
 
 type RateLimit struct {
@@ -57,7 +57,7 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 	if bucket.Methods == nil {
 		bucket.Methods = make(map[string][]*Bucket)
 	}
-	err := r.checkBucket(ctx, equinoxReq, bucket.App, "app")
+	err := r.checkBuckets(ctx, equinoxReq, bucket.App, "app")
 	if err != nil {
 		return err
 	}
@@ -65,30 +65,30 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 	if methodBucket == nil {
 		bucket.Methods[equinoxReq.MethodID] = make([]*Bucket, 0)
 	}
-	err = r.checkBucket(ctx, equinoxReq, methodBucket, "method")
+	err = r.checkBuckets(ctx, equinoxReq, methodBucket, "method")
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (r *RateLimit) checkBucket(ctx context.Context, equinoxReq *api.EquinoxRequest, bucket []*Bucket, bucket_type string) error {
-	for _, bucket := range bucket {
-		err := bucket.IsRateLimited(ctx)
+func (r *RateLimit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest, buckets []*Bucket, bucket_type string) error {
+	var limited []*Bucket
+	for _, bucket := range buckets {
+		if bucket.isRateLimited(ctx) {
+			limited = append(limited, bucket)
+		}
+	}
+	for i := len(limited) - 1; i >= 0; i-- {
+		equinoxReq.Logger.Warn("Rate limited", zap.String("bucket", bucket_type), zap.Any("route", equinoxReq.Route), zap.Object("bucket", limited[i]))
+		err := limited[i].wait(ctx)
 		if err != nil {
-			if errors.Is(err, ErrRateLimited) {
-				equinoxReq.Logger.Warn("Rate limited", zap.String("bucket", bucket_type), zap.Any("route", equinoxReq.Route), zap.Object("bucket", bucket))
-				err = bucket.wait(ctx)
-				if err != nil {
-					select {
-					case <-ctx.Done():
-						return ctx.Err()
-					default:
-						return err
-					}
-				}
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				return err
 			}
-			return err
 		}
 	}
 	return nil
