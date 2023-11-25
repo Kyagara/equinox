@@ -40,9 +40,9 @@
 ## Todo
 
 - Readme section about cache and rate limit
-- Rework retry, only retry on 429 if received Retry-After
+- Rework retry, I believe rate limit is not respecting retry after header
 - Properly use context
-- Verify and update rate limit buckets if necessary
+- More tests for the rate limit
 - More tests for the client
 - Improve DDragon/CDragon support
 
@@ -54,7 +54,7 @@ Get the library:
 go get github.com/Kyagara/equinox
 ```
 
-To access the diferent parts of the Riot Games API, create a new instance of the Equinox client:
+Create a new instance of the Equinox client:
 
 ```go
 client, err := equinox.NewClient("RIOT_API_KEY")
