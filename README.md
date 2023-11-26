@@ -40,8 +40,9 @@
 ## Todo
 
 - Readme section about cache and rate limit
-- Rework retry, I believe rate limit is not respecting retry after header
+- Rework retry, I believe the ratelimit is not respecting retry after header
 - Properly use context
+- Fix issue with some ByAccessToken methods not being cached (dont want to use auth header as cache key)
 - More tests for the rate limit
 - More tests for the client
 - Improve DDragon/CDragon support

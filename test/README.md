@@ -1,4 +1,4 @@
-# Equinox tests
+# Tests
 
 ## Integration
 
