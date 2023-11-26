@@ -134,8 +134,13 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	}
 
 	url := equinoxReq.Request.URL.String()
+	// Don't want to cache using the auth header as key. Maybe use a hash?
+	// This results in the method ByAccessToken from tft-summoner-v1, account-v1 and summoner-v4
+	// not being cached
+	// TODO: Figure out a way fix this issue
+	hasAuthHeader := equinoxReq.Request.Header.Get("Authorization") != ""
 
-	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
+	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet && !hasAuthHeader {
 		if item, err := c.cache.Get(url); err != nil {
 			equinoxReq.Logger.Error("Error retrieving cached response", zap.Error(err))
 		} else if item != nil {
@@ -144,6 +149,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 		}
 	}
 
+	// Request not cached/cache disabled, so take from the bucket
 	if !slices.Contains(cdns, equinoxReq.Request.URL.Host) {
 		err := c.ratelimit.Take(ctx, equinoxReq)
 		if err != nil {
@@ -172,7 +178,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 		return err
 	}
 
-	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
+	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet && !hasAuthHeader {
 		if err := c.cache.Set(url, body); err != nil {
 			equinoxReq.Logger.Error("Error caching item", zap.Error(err))
 		} else {
@@ -202,6 +208,7 @@ func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.Equi
 			}
 			seconds, _ := strconv.Atoi(retryAfter)
 			equinoxReq.Logger.Info("Retrying request after sleep", zap.Int("sleep", seconds))
+			// Should some delay be added here?
 			time.Sleep(time.Second * time.Duration(seconds))
 			return api.ErrTooManyRequests
 		}
