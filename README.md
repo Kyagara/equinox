@@ -18,9 +18,7 @@
 		<a href="#features">Features</a> •
 		<a href="#todo">Todo</a> •
 		<a href="#usage">Usage</a> •
-		<a href="#example">Example</a> •
-		<a href="#about">About</a> •
-		<a href="#disclaimer">Disclaimer</a>
+		<a href="#example">Example</a>
 	</p>
 </div>
 
@@ -37,10 +35,13 @@
 - Caching
 - Retry on 429
 
+> equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json) package, read more about [here](https://github.com/golang/go/discussions/63397).
+
 ## Todo
 
 - Rework retry, I believe the ratelimit is not respecting retry after header
 - Properly use context
+- Maybe create a custom BigCache config
 - Fix issue with some ByAccessToken methods not being cached (dont want to use auth header as cache key)
 - More tests for the rate limit
 - More tests for the client
@@ -137,7 +138,7 @@ func main() {
 
 ## About
 
-This is my first time developing and publishing an API client, I am constantly changing the project as I test and learn new things, please, check the commits for any breaking changes.
+This is my first time developing and publishing an API client, I am constantly changing the project as I test and learn new things, please, check the commits for any breaking changes, this will change coming 1.0.0.
 
 These projects helped me learn a lot:
 

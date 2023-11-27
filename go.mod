@@ -1,10 +1,11 @@
 module github.com/Kyagara/equinox
 
-go 1.20
+go 1.21
 
 require (
 	github.com/alicebob/miniredis/v2 v2.31.0
 	github.com/allegro/bigcache/v3 v3.1.0
+	github.com/go-json-experiment/json v0.0.0-20231102232822-2e55bd4e08b0
 	github.com/h2non/gock v1.2.0
 	github.com/redis/go-redis/v9 v9.3.0
 	github.com/stretchr/testify v1.8.4
