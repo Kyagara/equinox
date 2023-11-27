@@ -15,7 +15,7 @@ type Bucket struct {
 	limit int
 	// Current number of tokens
 	tokens int
-	// Updates every time its checked
+	// Updates every time this bucket is checked
 	updated time.Time
 	// Next reset
 	next  time.Time

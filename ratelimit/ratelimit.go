@@ -57,13 +57,13 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 		limits = NewLimits()
 		r.Limits[equinoxReq.Route] = limits
 	}
-	err := r.checkBuckets(ctx, equinoxReq, limits.App, "application")
-	if err != nil {
-		return err
-	}
 	methods := limits.Methods[equinoxReq.MethodID]
 	if methods == nil {
 		limits.Methods[equinoxReq.MethodID] = make([]*Bucket, 0)
+	}
+	err := r.checkBuckets(ctx, equinoxReq, limits.App, "application")
+	if err != nil {
+		return err
 	}
 	err = r.checkBuckets(ctx, equinoxReq, methods, "method")
 	if err != nil {
