@@ -3,7 +3,6 @@ package internal
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -12,6 +11,8 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	jsonv2 "github.com/go-json-experiment/json"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
@@ -33,7 +34,7 @@ var (
 	errContextIsNil   = errors.New("context must be non-nil")
 	errKeyNotProvided = errors.New("api key not provided")
 
-	staticHeaders = http.Header{
+	cdnHeaders = http.Header{
 		"Accept":     {"application/json"},
 		"User-Agent": {"equinox - https://github.com/Kyagara/equinox"},
 	}
@@ -70,7 +71,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		loggers: &Loggers{
 			main:    logger,
 			methods: make(map[string]*zap.Logger),
-			mutex:   sync.RWMutex{},
+			mutex:   sync.Mutex{},
 		},
 		cache:          config.Cache,
 		ratelimit:      &ratelimit.RateLimit{Limits: make(map[any]*ratelimit.Limits)},
@@ -103,7 +104,7 @@ func (c *InternalClient) Request(ctx context.Context, logger *zap.Logger, baseUR
 
 	var buffer io.Reader
 	if equinoxReq.Body != nil {
-		bodyBytes, err := json.Marshal(equinoxReq.Body)
+		bodyBytes, err := jsonv2.Marshal(equinoxReq.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +118,7 @@ func (c *InternalClient) Request(ctx context.Context, logger *zap.Logger, baseUR
 	equinoxReq.Request = request
 
 	if slices.Contains(cdns, request.URL.Host) {
-		request.Header = staticHeaders
+		request.Header = cdnHeaders
 	} else {
 		if c.key == "" {
 			return nil, errKeyNotProvided
@@ -145,7 +146,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 			equinoxReq.Logger.Error("Error retrieving cached response", zap.Error(err))
 		} else if item != nil {
 			equinoxReq.Logger.Debug("Cache hit")
-			return json.Unmarshal(item, &target)
+			return jsonv2.Unmarshal(item, &target)
 		}
 	}
 
@@ -185,7 +186,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 			equinoxReq.Logger.Debug("Cache set")
 		}
 	}
-	return json.Unmarshal(body, &target)
+	return jsonv2.Unmarshal(body, &target)
 }
 
 func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.EquinoxRequest, response *http.Response) error {

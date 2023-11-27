@@ -2,7 +2,7 @@ package internal_test
 
 import (
 	"context"
-	"encoding/json"
+
 	"fmt"
 	"io"
 	"net/http"
@@ -14,6 +14,7 @@ import (
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
+	jsonv2 "github.com/go-json-experiment/json"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
@@ -84,7 +85,7 @@ func TestInternalClientRequest(t *testing.T) {
 	url := "https://cool.and.real.api/post"
 
 	t.Run("Request with body", func(t *testing.T) {
-		expectedBody, err := json.Marshal(body)
+		expectedBody, err := jsonv2.Marshal(body)
 		require.Nil(t, err, "expecting nil error")
 		logger := client.Logger("client_endpoint_method")
 		ctx := context.Background()
