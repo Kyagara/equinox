@@ -39,7 +39,6 @@
 
 ## Todo
 
-- Readme section about cache and rate limit
 - Rework retry, I believe the ratelimit is not respecting retry after header
 - Properly use context
 - Fix issue with some ByAccessToken methods not being cached (dont want to use auth header as cache key)
@@ -83,6 +82,11 @@ config := &api.EquinoxConfig{
 > A custom Client can be created using `equinox.NewClientWithConfig()`, requires an `&api.EquinoxConfig{}` struct.
 
 > A different storage can be provided to the client using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil in config.Cache disables caching.
+
+Readme more about the cache and rate limit implementations:
+
+- [Cache](https://github.com/Kyagara/equinox/tree/master/cache)
+- [Rate limit](https://github.com/Kyagara/equinox/tree/master/ratelimit)
 
 Using different endpoints:
 

@@ -41,6 +41,8 @@ func TestRateLimitCheck(t *testing.T) {
 		require.NotNil(t, r.Limits[equinoxReq.Route].Methods[equinoxReq.MethodID])
 	})
 
+	// These tests should take around 2 seconds each
+
 	t.Run("app rate limited", func(t *testing.T) {
 		r := &ratelimit.RateLimit{Limits: make(map[any]*ratelimit.Limits)}
 		headers := http.Header{
@@ -79,7 +81,6 @@ func TestRateLimitCheck(t *testing.T) {
 		err = r.Take(ctx, equinoxReq)
 		require.Nil(t, err)
 		r.Update(equinoxReq, &headers)
-		// This test should take around 2 seconds
 		err := r.Take(ctx, equinoxReq)
 		require.Nil(t, err)
 	})
