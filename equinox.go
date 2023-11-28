@@ -29,30 +29,6 @@ type Equinox struct {
 	LOR     *lor.LORClient
 }
 
-// Returns the default Equinox config with a provided key.
-//
-//   - `LogLevel`   : api.WARN_LOG_LEVEL
-//   - `HTTPClient` : http.Client with timeout of 15 seconds
-//   - `Retry`      : Retry on 429
-//   - `Cache`      : BigCache with TTL of 4 minutes
-func DefaultConfig(key string) (*api.EquinoxConfig, error) {
-	ctx := context.Background()
-	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
-	if err != nil {
-		return nil, err
-	}
-	config := &api.EquinoxConfig{
-		Key:      key,
-		LogLevel: api.WARN_LOG_LEVEL,
-		HTTPClient: &http.Client{
-			Timeout: 15 * time.Second,
-		},
-		Retry: true,
-		Cache: cache,
-	}
-	return config, nil
-}
-
 // Creates a new Equinox client with the default configuration
 func NewClient(key string) (*Equinox, error) {
 	config, err := DefaultConfig(key)
@@ -82,4 +58,28 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 		LOR:     lor.NewLORClient(client),
 	}
 	return equinox, nil
+}
+
+// Returns the default Equinox config with a provided key.
+//
+//   - `LogLevel`   : api.WARN_LOG_LEVEL
+//   - `HTTPClient` : http.Client with timeout of 15 seconds
+//   - `Retry`      : Retry on 429
+//   - `Cache`      : BigCache with TTL of 4 minutes
+func DefaultConfig(key string) (*api.EquinoxConfig, error) {
+	ctx := context.Background()
+	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
+	if err != nil {
+		return nil, err
+	}
+	config := &api.EquinoxConfig{
+		Key:      key,
+		LogLevel: api.WARN_LOG_LEVEL,
+		HTTPClient: &http.Client{
+			Timeout: 15 * time.Second,
+		},
+		Retry: true,
+		Cache: cache,
+	}
+	return config, nil
 }

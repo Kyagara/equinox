@@ -24,13 +24,11 @@ func TestNewEquinoxClient(t *testing.T) {
 	}{
 		{
 			name: "success",
-			want: &equinox.Equinox{},
 			key:  "RGAPI-TEST",
 		},
 		{
 			name: "nil key",
 			key:  "",
-			want: &equinox.Equinox{},
 		},
 	}
 

@@ -43,7 +43,7 @@
 - Properly use context
 - Maybe create a custom BigCache config
 - Fix issue with some ByAccessToken methods not being cached (dont want to use auth header as cache key)
-- More tests for the rate limit
+- More tests and revision for the rate limit
 - More tests for the client
 - Improve DDragon/CDragon support
 
@@ -80,7 +80,7 @@ config := &api.EquinoxConfig{
 }
 ```
 
-> A custom Client can be created using `equinox.NewClientWithConfig()`, requires an `&api.EquinoxConfig{}` struct.
+> A custom Client can be created using `equinox.NewClientWithConfig()`.
 
 > A different storage can be provided to the client using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil in config.Cache disables caching.
 
