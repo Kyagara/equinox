@@ -1,61 +1,73 @@
 name: Continuous Integration
 
 on:
-    push:
-        branches: '**'
-        paths:
-            - '**.go'
-            - '.github/workflows/ci.yaml'
-            - 'go.sum'
-    workflow_dispatch:
+  push:
+    branches:
+      - "**"
+    paths:
+      - "**.go"
+      - ".github/workflows/ci.yaml"
+      - "go.sum"
+  workflow_dispatch:
 
 jobs:
-    lint:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Set up Go
-              uses: actions/setup-go@v4
-              with:
-                  go-version: '>=1.20'
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ">=1.21"
+          cache: false
 
-            - name: golangci-lint
-              uses: golangci/golangci-lint-action@v3
-              with:
-                  version: latest
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
 
-    test:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+  codegen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Set up Go
-              uses: actions/setup-go@v4
-              with:
-                  go-version: '>=1.20'
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ">=1.21"
 
-            - name: Install structslop
-              run: go install github.com/orijtech/structslop/cmd/structslop@latest
+      - name: Install structslop
+        run: go install github.com/orijtech/structslop/cmd/structslop@latest
 
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                node-version: 18
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-            - name: Install node dependencies
-              run: npm ci --prefix srcgen
+      - name: Install node dependencies
+        run: npm ci --prefix srcgen
 
-            - name: Code generation
-              run: cd srcgen && npm run update && node index.js
+      - name: Code generation
+        run: cd srcgen && npm run update && node index.js
 
-            - name: Run tests
-              run: go test ./... -v -race -coverprofile cover.out -covermode atomic
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Run only DDragon/CDragon integration tests
-              run: go test -v -tags=integration ./test/integration
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ">=1.21"
 
-            - name: Upload coverage to Codecov
-              uses: codecov/codecov-action@v4
-              with:
-                  files: ./cover.out
+      - name: Run tests
+        run: go test ./... -v -race -coverprofile cover.out -covermode atomic
+
+      - name: Run only DDragon/CDragon integration tests
+        run: go test -v -tags=integration ./test/integration
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./cover.out
