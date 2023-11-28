@@ -8,6 +8,7 @@ import (
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
+	"github.com/Kyagara/equinox/test/util"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
@@ -84,7 +85,7 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 		Reply(200).
 		JSON(summoner)
 
-	config := equinox.NewTestEquinoxConfig()
+	config := util.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = true
 

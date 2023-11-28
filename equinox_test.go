@@ -10,6 +10,7 @@ import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/ratelimit"
+	"github.com/Kyagara/equinox/test/util"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
@@ -51,7 +52,7 @@ func TestNewEquinoxClient(t *testing.T) {
 }
 
 func TestNewEquinoxClientWithConfig(t *testing.T) {
-	emptyKeyConfig := equinox.NewTestEquinoxConfig()
+	emptyKeyConfig := util.NewTestEquinoxConfig()
 	emptyKeyConfig.Key = ""
 	tests := []struct {
 		name    string
@@ -62,7 +63,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 		{
 			name:   "success",
 			want:   &equinox.Equinox{},
-			config: equinox.NewTestEquinoxConfig(),
+			config: util.NewTestEquinoxConfig(),
 		},
 		{
 			name:    "nil config",
@@ -72,7 +73,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 		{
 			name:    "no cache",
 			want:    &equinox.Equinox{},
-			config:  equinox.NewTestEquinoxConfig(),
+			config:  util.NewTestEquinoxConfig(),
 			wantErr: nil,
 		},
 	}
@@ -112,7 +113,7 @@ func TestRateLimitWithMock(t *testing.T) {
 			JSON(&lol.SummonerV4DTO{})
 	}
 
-	config := equinox.NewTestEquinoxConfig()
+	config := util.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = true
 

@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
+	"github.com/Kyagara/equinox/test/util"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,7 +21,7 @@ func TestRateLimit(t *testing.T) {
 }
 
 func TestRateLimitCheck(t *testing.T) {
-	client, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
+	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",
@@ -87,7 +87,7 @@ func TestRateLimitCheck(t *testing.T) {
 }
 
 func TestLimitsDontMatch(t *testing.T) {
-	client, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
+	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",

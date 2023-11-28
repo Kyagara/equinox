@@ -12,20 +12,18 @@ package riot
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = a5a3a5f5d5f2a617a56302a0afac77c745e4fd56
+// Spec version = 2099d6a309eb237d31b9c5fc1071c36eca85d91f
 
 import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
 type RiotClient struct {
-	internalClient *internal.InternalClient
-	AccountV1      *AccountV1
+	AccountV1 *AccountV1
 }
 
 // Creates a new RiotClient using the InternalClient provided.
 func NewRiotClient(client *internal.InternalClient) *RiotClient {
 	return &RiotClient{
-		internalClient: client,
-		AccountV1:      &AccountV1{internalClient: client},
+		AccountV1: &AccountV1{internal: client},
 	}
 }

@@ -15,26 +15,24 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = a5a3a5f5d5f2a617a56302a0afac77c745e4fd56
+// Spec version = 2099d6a309eb237d31b9c5fc1071c36eca85d91f
 
 import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
 type TFTClient struct {
-	internalClient *internal.InternalClient
-	LeagueV1       *LeagueV1
-	MatchV1        *MatchV1
-	StatusV1       *StatusV1
-	SummonerV1     *SummonerV1
+	LeagueV1   *LeagueV1
+	MatchV1    *MatchV1
+	StatusV1   *StatusV1
+	SummonerV1 *SummonerV1
 }
 
 // Creates a new TFTClient using the InternalClient provided.
 func NewTFTClient(client *internal.InternalClient) *TFTClient {
 	return &TFTClient{
-		internalClient: client,
-		LeagueV1:       &LeagueV1{internalClient: client},
-		MatchV1:        &MatchV1{internalClient: client},
-		StatusV1:       &StatusV1{internalClient: client},
-		SummonerV1:     &SummonerV1{internalClient: client},
+		LeagueV1:   &LeagueV1{internal: client},
+		MatchV1:    &MatchV1{internal: client},
+		StatusV1:   &StatusV1{internal: client},
+		SummonerV1: &SummonerV1{internal: client},
 	}
 }

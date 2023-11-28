@@ -7,11 +7,11 @@ import (
 )
 
 type VersionEndpoint struct {
-	internalClient *internal.InternalClient
+	internal *internal.InternalClient
 }
 
 func (e *VersionEndpoint) Latest(ctx context.Context) (string, error) {
-	version, err := e.internalClient.GetDDragonLOLVersions(ctx, "DDragon_Version_Latest")
+	version, err := e.internal.GetDDragonLOLVersions(ctx, "DDragon_Version_Latest")
 	if err != nil {
 		return "", err
 	}
@@ -19,5 +19,5 @@ func (e *VersionEndpoint) Latest(ctx context.Context) (string, error) {
 }
 
 func (e *VersionEndpoint) List(ctx context.Context) ([]string, error) {
-	return e.internalClient.GetDDragonLOLVersions(ctx, "DDragon_Version_List")
+	return e.internal.GetDDragonLOLVersions(ctx, "DDragon_Version_List")
 }

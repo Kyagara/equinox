@@ -6,18 +6,18 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/cdragon"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/test/util"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
 
 func TestChampionByName(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
-	client := cdragon.NewCDragonClient(internalClient)
+	client := cdragon.NewCDragonClient(internal)
 	data := &cdragon.ChampionData{Name: "Jarvan IV"}
 
 	tests := []struct {
@@ -56,9 +56,9 @@ func TestChampionByName(t *testing.T) {
 }
 
 func TestChampionByID(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
-	client := cdragon.NewCDragonClient(internalClient)
+	client := cdragon.NewCDragonClient(internal)
 	data := &cdragon.ChampionData{Name: "Jarvan IV"}
 
 	tests := []struct {
