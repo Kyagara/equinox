@@ -94,15 +94,15 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 
 func TestRateLimitWithMock(t *testing.T) {
 	headers := map[string]string{
-		ratelimit.APP_RATE_LIMIT_HEADER:    "5:5",
-		ratelimit.METHOD_RATE_LIMIT_HEADER: "5:5",
+		ratelimit.APP_RATE_LIMIT_HEADER:    "5:3",
+		ratelimit.METHOD_RATE_LIMIT_HEADER: "5:3",
 	}
 
 	// Mock 5 responses
 	// The would be 5 request should be blocked from being created since it would exceed the rate limit
 	for i := 1; i <= 5; i++ {
-		headers[ratelimit.APP_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:5", i)
-		headers[ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:5", i)
+		headers[ratelimit.APP_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:3", i)
+		headers[ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:3", i)
 
 		gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
 			Get("/lol/summoner/v4/summoners/by-puuid/puuid").
@@ -126,15 +126,15 @@ func TestRateLimitWithMock(t *testing.T) {
 
 	// One request left, it should be blocked as it would exceed the rate limit
 
-	// A deadline is set, however, the bucket refill would take longer than the ctx deadline, waiting would exceed the deadline
-	// It also shouldn't add to the bucket count
+	// A deadline is set, however, the bucket refill would take longer than the ctx deadline, waiting would exceed that deadline
+	// It also shouldn't Take() a token from the bucket
 	ctx := context.Background()
 	ctx, c := context.WithTimeout(ctx, 2*time.Second)
 	defer c()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 
-	// This last request (5) should block until rate limit is reset, this test should take around 5 seconds
+	// This last request (5) should block until rate limit is reset, this test should take around 3 seconds
 	ctx = context.Background()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.Nil(t, err)

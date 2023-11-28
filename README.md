@@ -25,7 +25,7 @@
 - Caching
 - Retry on 429
 
-> equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json) package, read more about [here](https://github.com/golang/go/discussions/63397).
+> equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json) package, read more about it [here](https://github.com/golang/go/discussions/63397).
 
 ## Todo
 
@@ -35,6 +35,7 @@
 - Fix issue with some ByAccessToken methods not being cached (dont want to use auth header as cache key)
 - More tests and revision for the rate limit
 - More tests for the client
+- Maybe implement custom HTTP traffic mocking, removing `gock`
 - Improve DDragon/CDragon support
 
 ## Usage
@@ -42,7 +43,7 @@
 Get the library:
 
 ```bash
-go get github.com/Kyagara/equinox
+go get github.com/Kyagara/equinox # or: go get github.com/Kyagara/equinox@master
 ```
 
 Create a new instance of the Equinox client:
@@ -59,25 +60,11 @@ A client without a configuration comes with the default options:
 - **Cache**: `BigCache` with an eviction time of 4 minutes.
 - **Retry**: Retries a request 1 time if the API returns a 429 response.
 
-```go
-cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
-config := &api.EquinoxConfig{
-	Key: "RIOT_API_KEY",
-	LogLevel: api.WARN_LOG_LEVEL,
-	HTTPClient: &http.Client{Timeout: 15 * time.Second},
-	Cache: cache.NewBigCache(cacheConfig),
-	Retry: 1,
-}
-```
-
 > A custom Client can be created using `equinox.NewClientWithConfig()`.
 
 > A different storage can be provided to the client using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil in config.Cache disables caching.
 
-Readme more about the cache and rate limit implementations:
-
-- [Cache](https://github.com/Kyagara/equinox/tree/master/cache)
-- [Rate limit](https://github.com/Kyagara/equinox/tree/master/ratelimit)
+> See [Cache](https://github.com/Kyagara/equinox/tree/master/cache) and [Rate limit](https://github.com/Kyagara/equinox/tree/master/ratelimit) for more details.
 
 Using different endpoints:
 
