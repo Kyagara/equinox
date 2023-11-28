@@ -1,19 +1,9 @@
 <div align="center">
 	<h1>equinox</h1>
-	<p>
-		<a href="https://github.com/Kyagara/equinox/releases">
-			<img src="https://img.shields.io/github/v/tag/Kyagara/equinox?label=Version&style=flat-square"/>
-		</a>  
-		<a href="https://pkg.go.dev/github.com/Kyagara/equinox">
-			<img src="https://img.shields.io/static/v1?label=Godoc&message=reference&color=blue&style=flat-square"/>
-		</a>
-		<a href="https://github.com/Kyagara/equinox/actions?query=workflow">
-			<img src="https://img.shields.io/github/actions/workflow/status/Kyagara/equinox/ci.yaml?label=CI&style=flat-square"/>
-		</a>
-		<a href="https://codecov.io/gh/Kyagara/equinox">
-			<img src="https://img.shields.io/codecov/c/github/Kyagara/equinox?style=flat-square"/>
-		</a>
-	</p>
+	<img src="https://img.shields.io/github/go-mod/go-version/Kyagara/equinox?style=flat-square&label=go">
+	<a href="https://github.com/Kyagara/equinox/tags"><img src="https://img.shields.io/github/v/tag/Kyagara/equinox?label=release&style=flat-square"/></a>
+	<a href="https://pkg.go.dev/github.com/Kyagara/equinox"><img src="https://img.shields.io/static/v1?label=godoc&message=reference&color=blue&style=flat-square"/></a>
+	<a href="https://codecov.io/gh/Kyagara/equinox"><img src="https://img.shields.io/codecov/c/github/Kyagara/equinox?style=flat-square&color=blue&label=coverage"/></a>
 	<p>
 		<a href="#features">Features</a> •
 		<a href="#todo">Todo</a> •
