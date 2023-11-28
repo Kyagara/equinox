@@ -15,26 +15,24 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = a5a3a5f5d5f2a617a56302a0afac77c745e4fd56
+// Spec version = 2099d6a309eb237d31b9c5fc1071c36eca85d91f
 
 import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
 type VALClient struct {
-	internalClient *internal.InternalClient
-	ContentV1      *ContentV1
-	MatchV1        *MatchV1
-	RankedV1       *RankedV1
-	StatusV1       *StatusV1
+	ContentV1 *ContentV1
+	MatchV1   *MatchV1
+	RankedV1  *RankedV1
+	StatusV1  *StatusV1
 }
 
 // Creates a new VALClient using the InternalClient provided.
 func NewVALClient(client *internal.InternalClient) *VALClient {
 	return &VALClient{
-		internalClient: client,
-		ContentV1:      &ContentV1{internalClient: client},
-		MatchV1:        &MatchV1{internalClient: client},
-		RankedV1:       &RankedV1{internalClient: client},
-		StatusV1:       &StatusV1{internalClient: client},
+		ContentV1: &ContentV1{internal: client},
+		MatchV1:   &MatchV1{internal: client},
+		RankedV1:  &RankedV1{internal: client},
+		StatusV1:  &StatusV1{internal: client},
 	}
 }

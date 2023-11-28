@@ -13,7 +13,7 @@ jobs:
     lint:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Set up Go
               uses: actions/setup-go@v4
@@ -28,7 +28,7 @@ jobs:
     test:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Set up Go
               uses: actions/setup-go@v4
@@ -39,7 +39,7 @@ jobs:
               run: go install github.com/orijtech/structslop/cmd/structslop@latest
 
             - name: Setup Node
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                 node-version: 18
 
@@ -56,6 +56,6 @@ jobs:
               run: go test -v -tags=integration ./test/integration
 
             - name: Upload coverage to Codecov
-              uses: codecov/codecov-action@v3
+              uses: codecov/codecov-action@v4
               with:
                   files: ./cover.out

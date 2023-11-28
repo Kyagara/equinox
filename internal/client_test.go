@@ -9,11 +9,11 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
+	"github.com/Kyagara/equinox/test/util"
 	jsonv2 "github.com/go-json-experiment/json"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
@@ -23,7 +23,7 @@ func TestNewInternalClient(t *testing.T) {
 	_, err := internal.NewInternalClient(nil)
 	require.NotEmpty(t, err, "expecting non-nil error")
 
-	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
+	internalClient, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 	if err != nil {
 		require.ErrorContains(t, err, "error initializing logger")
@@ -31,7 +31,7 @@ func TestNewInternalClient(t *testing.T) {
 
 	require.NotEmpty(t, internalClient, "expecting non-nil InternalClient")
 
-	config := equinox.NewTestEquinoxConfig()
+	config := util.NewTestEquinoxConfig()
 	config.Cache.TTL = 1
 
 	internalClient, err = internal.NewInternalClient(config)
@@ -40,9 +40,9 @@ func TestNewInternalClient(t *testing.T) {
 }
 
 func TestInternalClientNewRequest(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
-	l := internalClient.Logger("client_endpoint_method")
+	l := internal.Logger("client_endpoint_method")
 	tests := []struct {
 		name    string
 		want    *http.Request
@@ -64,7 +64,7 @@ func TestInternalClientNewRequest(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			ctx := context.Background()
-			_, gotErr := internalClient.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "----", test.url, "", nil)
+			_, gotErr := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "----", test.url, "", nil)
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 		})
 	}
@@ -78,7 +78,7 @@ func TestInternalClientRequest(t *testing.T) {
 	body := map[string]any{
 		"message": "cool",
 	}
-	config := equinox.NewTestEquinoxConfig()
+	config := util.NewTestEquinoxConfig()
 	client, err := internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
 
@@ -223,7 +223,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			config := equinox.NewTestEquinoxConfig()
+			config := util.NewTestEquinoxConfig()
 			if test.name == "rate limited" {
 				config.Retry = false
 			} else if test.name == "rate limited but no retry-after header found" {
@@ -234,23 +234,23 @@ func TestInternalClientErrorResponses(t *testing.T) {
 				Get("/").
 				Reply(test.code)
 
-			internalClient, err := internal.NewInternalClient(config)
+			internal, err := internal.NewInternalClient(config)
 			require.Nil(t, err, "expecting nil error")
-			l := internalClient.Logger("client_endpoint_method")
+			l := internal.Logger("client_endpoint_method")
 			ctx := context.Background()
-			equinoxReq, err := internalClient.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", "", nil)
+			equinoxReq, err := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", "", nil)
 			require.Nil(t, err, "expecting nil error")
 			var gotData interface{}
-			gotErr := internalClient.Execute(ctx, equinoxReq, gotData)
+			gotErr := internal.Execute(ctx, equinoxReq, gotData)
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 		})
 	}
 }
 
 func TestInternalClientRetries(t *testing.T) {
-	config := equinox.NewTestEquinoxConfig()
+	config := util.NewTestEquinoxConfig()
 	config.Retry = true
-	internalClient, err := internal.NewInternalClient(config)
+	internal, err := internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
 
 	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
@@ -264,18 +264,18 @@ func TestInternalClientRetries(t *testing.T) {
 		JSON(&lol.PlatformDataV4DTO{})
 
 	res := lol.PlatformDataV4DTO{}
-	l := internalClient.Logger("client_endpoint_method")
+	l := internal.Logger("client_endpoint_method")
 	// This will take 1 second
 	ctx := context.Background()
-	equinoxReq, err := internalClient.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	equinoxReq, err := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
 	require.Nil(t, err, "expecting nil error")
-	err = internalClient.Execute(ctx, equinoxReq, &res)
+	err = internal.Execute(ctx, equinoxReq, &res)
 	require.Nil(t, err, "expecting nil error")
 	require.NotNil(t, res, "expecting non-nil response")
 }
 
 func TestGetDDragonLOLVersions(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
 
 	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "/api/versions.json")).
@@ -284,7 +284,7 @@ func TestGetDDragonLOLVersions(t *testing.T) {
 		JSON("[\"1.0\"]")
 
 	ctx := context.Background()
-	versions, err := internalClient.GetDDragonLOLVersions(ctx, "client_endpoint_method")
+	versions, err := internal.GetDDragonLOLVersions(ctx, "client_endpoint_method")
 	require.Nil(t, err, "expecting nil error")
 	require.Equal(t, "1.0", versions[0], "expecting nil error")
 }

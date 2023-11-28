@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = a5a3a5f5d5f2a617a56302a0afac77c745e4fd56
+// Spec version = 2099d6a309eb237d31b9c5fc1071c36eca85d91f
 
 import (
 	"context"
@@ -28,7 +28,7 @@ import (
 //
 // [val-content-v1]: https://developer.riotgames.com/apis#val-content-v1
 type ContentV1 struct {
-	internalClient *internal.InternalClient
+	internal *internal.InternalClient
 }
 
 // Get content optionally filtered by locale
@@ -45,9 +45,9 @@ type ContentV1 struct {
 //
 // [val-content-v1.getContent]: https://developer.riotgames.com/api-methods/#val-content-v1/GET_getContent
 func (e *ContentV1) Content(ctx context.Context, route PlatformRoute, locale string) (*ContentV1DTO, error) {
-	logger := e.internalClient.Logger("VAL_ContentV1_Content")
+	logger := e.internal.Logger("VAL_ContentV1_Content")
 	logger.Debug("Method started execution")
-	equinoxReq, err := e.internalClient.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/content/v1/contents", "val-content-v1.getContent", nil)
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/content/v1/contents", "val-content-v1.getContent", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
@@ -58,7 +58,7 @@ func (e *ContentV1) Content(ctx context.Context, route PlatformRoute, locale str
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data ContentV1DTO
-	err = e.internalClient.Execute(ctx, equinoxReq, &data)
+	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -75,7 +75,7 @@ func (e *ContentV1) Content(ctx context.Context, route PlatformRoute, locale str
 //
 // [val-match-v1]: https://developer.riotgames.com/apis#val-match-v1
 type MatchV1 struct {
-	internalClient *internal.InternalClient
+	internal *internal.InternalClient
 }
 
 // Get match by id
@@ -92,15 +92,15 @@ type MatchV1 struct {
 //
 // [val-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatch
 func (e *MatchV1) ByID(ctx context.Context, route PlatformRoute, matchId string) (*MatchV1DTO, error) {
-	logger := e.internalClient.Logger("VAL_MatchV1_ByID")
+	logger := e.internal.Logger("VAL_MatchV1_ByID")
 	logger.Debug("Method started execution")
-	equinoxReq, err := e.internalClient.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matches/%v", matchId), "val-match-v1.getMatch", nil)
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matches/%v", matchId), "val-match-v1.getMatch", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data MatchV1DTO
-	err = e.internalClient.Execute(ctx, equinoxReq, &data)
+	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -123,15 +123,15 @@ func (e *MatchV1) ByID(ctx context.Context, route PlatformRoute, matchId string)
 //
 // [val-match-v1.getMatchlist]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatchlist
 func (e *MatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, puuid string) (*MatchlistV1DTO, error) {
-	logger := e.internalClient.Logger("VAL_MatchV1_ListByPUUID")
+	logger := e.internal.Logger("VAL_MatchV1_ListByPUUID")
 	logger.Debug("Method started execution")
-	equinoxReq, err := e.internalClient.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matchlists/by-puuid/%v", puuid), "val-match-v1.getMatchlist", nil)
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matchlists/by-puuid/%v", puuid), "val-match-v1.getMatchlist", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data MatchlistV1DTO
-	err = e.internalClient.Execute(ctx, equinoxReq, &data)
+	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -158,15 +158,15 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, puuid st
 //
 // [val-match-v1.getRecent]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getRecent
 func (e *MatchV1) Recent(ctx context.Context, route PlatformRoute, queue string) (*RecentMatchesV1DTO, error) {
-	logger := e.internalClient.Logger("VAL_MatchV1_Recent")
+	logger := e.internal.Logger("VAL_MatchV1_Recent")
 	logger.Debug("Method started execution")
-	equinoxReq, err := e.internalClient.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/recent-matches/by-queue/%v", queue), "val-match-v1.getRecent", nil)
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/recent-matches/by-queue/%v", queue), "val-match-v1.getRecent", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data RecentMatchesV1DTO
-	err = e.internalClient.Execute(ctx, equinoxReq, &data)
+	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -183,7 +183,7 @@ func (e *MatchV1) Recent(ctx context.Context, route PlatformRoute, queue string)
 //
 // [val-ranked-v1]: https://developer.riotgames.com/apis#val-ranked-v1
 type RankedV1 struct {
-	internalClient *internal.InternalClient
+	internal *internal.InternalClient
 }
 
 // Get leaderboard for the competitive queue
@@ -202,9 +202,9 @@ type RankedV1 struct {
 //
 // [val-ranked-v1.getLeaderboard]: https://developer.riotgames.com/api-methods/#val-ranked-v1/GET_getLeaderboard
 func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, size int32, startIndex int32) (*LeaderboardV1DTO, error) {
-	logger := e.internalClient.Logger("VAL_RankedV1_Leaderboard")
+	logger := e.internal.Logger("VAL_RankedV1_Leaderboard")
 	logger.Debug("Method started execution")
-	equinoxReq, err := e.internalClient.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/ranked/v1/leaderboards/by-act/%v", actId), "val-ranked-v1.getLeaderboard", nil)
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/ranked/v1/leaderboards/by-act/%v", actId), "val-ranked-v1.getLeaderboard", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
@@ -218,7 +218,7 @@ func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId s
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data LeaderboardV1DTO
-	err = e.internalClient.Execute(ctx, equinoxReq, &data)
+	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err
@@ -235,7 +235,7 @@ func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId s
 //
 // [val-status-v1]: https://developer.riotgames.com/apis#val-status-v1
 type StatusV1 struct {
-	internalClient *internal.InternalClient
+	internal *internal.InternalClient
 }
 
 // Get VALORANT status for the given platform.
@@ -251,15 +251,15 @@ type StatusV1 struct {
 //
 // [val-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#val-status-v1/GET_getPlatformData
 func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV1DTO, error) {
-	logger := e.internalClient.Logger("VAL_StatusV1_Platform")
+	logger := e.internal.Logger("VAL_StatusV1_Platform")
 	logger.Debug("Method started execution")
-	equinoxReq, err := e.internalClient.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/status/v1/platform-data", "val-status-v1.getPlatformData", nil)
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/status/v1/platform-data", "val-status-v1.getPlatformData", nil)
 	if err != nil {
 		logger.Error("Error creating request", zap.Error(err))
 		return nil, err
 	}
 	var data PlatformDataV1DTO
-	err = e.internalClient.Execute(ctx, equinoxReq, &data)
+	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error("Error executing request", zap.Error(err))
 		return nil, err

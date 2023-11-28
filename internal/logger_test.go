@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/test/util"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zapcore"
 )
@@ -38,12 +38,12 @@ func TestNewLogger(t *testing.T) {
 }
 
 func TestLogger(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
-	require.NotEmpty(t, internalClient, "expecting non-nil InternalClient")
-	logger := internalClient.Logger("client_endpoint_method")
+	require.NotEmpty(t, internal, "expecting non-nil InternalClient")
+	logger := internal.Logger("client_endpoint_method")
 	require.NotEmpty(t, logger, "expecting non-nil Logger")
-	logger = internalClient.Logger("client_endpoint_method")
+	logger = internal.Logger("client_endpoint_method")
 	require.NotEmpty(t, logger, "expecting non-nil Logger")
 	logger.Debug("Debug log")
 	logger.Info("Info log")

@@ -12,16 +12,14 @@ const (
 )
 
 type CDragonClient struct {
-	internalClient *internal.InternalClient
-	Version        *VersionEndpoint
-	Champion       *ChampionEndpoint
+	Version  *VersionEndpoint
+	Champion *ChampionEndpoint
 }
 
 // Returns a new CDragonClient using the InternalClient provided.
 func NewCDragonClient(client *internal.InternalClient) *CDragonClient {
 	return &CDragonClient{
-		internalClient: client,
-		Version:        &VersionEndpoint{client},
-		Champion:       &ChampionEndpoint{client},
+		Version:  &VersionEndpoint{client},
+		Champion: &ChampionEndpoint{client},
 	}
 }

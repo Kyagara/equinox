@@ -6,18 +6,18 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/test/util"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
 
 func TestChampionAllChampions(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
-	client := ddragon.NewDDragonClient(internalClient)
+	client := ddragon.NewDDragonClient(internal)
 	json := &ddragon.ChampionsData{
 		Type:    "",
 		Format:  "",
@@ -62,21 +62,16 @@ func TestChampionAllChampions(t *testing.T) {
 }
 
 func TestChampionByName(t *testing.T) {
-	internalClient, err := internal.NewInternalClient(equinox.NewTestEquinoxConfig())
-
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.Nil(t, err, "expecting nil error")
-
-	client := ddragon.NewDDragonClient(internalClient)
-
+	client := ddragon.NewDDragonClient(internal)
 	json := &ddragon.FullChampionData{
 		Type:    "",
 		Format:  "",
 		Version: "",
 		Data:    map[string]ddragon.FullChampion{},
 	}
-
 	json.Data["JarvanIV"] = ddragon.FullChampion{}
-
 	data := &ddragon.FullChampion{}
 
 	tests := []struct {

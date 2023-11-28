@@ -24,13 +24,12 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = a5a3a5f5d5f2a617a56302a0afac77c745e4fd56
+// Spec version = 2099d6a309eb237d31b9c5fc1071c36eca85d91f
 
 import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
 type LOLClient struct {
-	internalClient    *internal.InternalClient
 	ChampionMasteryV4 *ChampionMasteryV4
 	ChampionV3        *ChampionV3
 	ClashV1           *ClashV1
@@ -49,19 +48,18 @@ type LOLClient struct {
 // Creates a new LOLClient using the InternalClient provided.
 func NewLOLClient(client *internal.InternalClient) *LOLClient {
 	return &LOLClient{
-		internalClient:    client,
-		ChampionMasteryV4: &ChampionMasteryV4{internalClient: client},
-		ChampionV3:        &ChampionV3{internalClient: client},
-		ClashV1:           &ClashV1{internalClient: client},
-		LeagueExpV4:       &LeagueExpV4{internalClient: client},
-		LeagueV4:          &LeagueV4{internalClient: client},
-		ChallengesV1:      &ChallengesV1{internalClient: client},
-		StatusV3:          &StatusV3{internalClient: client},
-		StatusV4:          &StatusV4{internalClient: client},
-		MatchV5:           &MatchV5{internalClient: client},
-		SpectatorV4:       &SpectatorV4{internalClient: client},
-		SummonerV4:        &SummonerV4{internalClient: client},
-		TournamentStubV5:  &TournamentStubV5{internalClient: client},
-		TournamentV5:      &TournamentV5{internalClient: client},
+		ChampionMasteryV4: &ChampionMasteryV4{internal: client},
+		ChampionV3:        &ChampionV3{internal: client},
+		ClashV1:           &ClashV1{internal: client},
+		LeagueExpV4:       &LeagueExpV4{internal: client},
+		LeagueV4:          &LeagueV4{internal: client},
+		ChallengesV1:      &ChallengesV1{internal: client},
+		StatusV3:          &StatusV3{internal: client},
+		StatusV4:          &StatusV4{internal: client},
+		MatchV5:           &MatchV5{internal: client},
+		SpectatorV4:       &SpectatorV4{internal: client},
+		SummonerV4:        &SummonerV4{internal: client},
+		TournamentStubV5:  &TournamentStubV5{internal: client},
+		TournamentV5:      &TournamentV5{internal: client},
 	}
 }

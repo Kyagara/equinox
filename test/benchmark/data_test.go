@@ -10,6 +10,7 @@ import (
 	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/val"
+	"github.com/Kyagara/equinox/test/util"
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/require"
 )
@@ -29,7 +30,7 @@ func BenchmarkMatchByID(b *testing.B) {
 	b.ReportAllocs()
 
 	var res lol.MatchV5DTO
-	err := ReadFile("../data/match.json", &res)
+	err := util.ReadFile("../data/match.json", &res)
 	require.Nil(b, err)
 
 	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
@@ -38,7 +39,7 @@ func BenchmarkMatchByID(b *testing.B) {
 		Reply(200).
 		JSON(res)
 
-	config := equinox.NewTestEquinoxConfig()
+	config := util.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = true
 
@@ -68,7 +69,7 @@ func BenchmarkMatchTimeline(b *testing.B) {
 	b.ReportAllocs()
 
 	var res lol.MatchTimelineV5DTO
-	err := ReadFile("../data/match.timeline.json", &res)
+	err := util.ReadFile("../data/match.timeline.json", &res)
 	require.Nil(b, err)
 
 	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
@@ -77,7 +78,7 @@ func BenchmarkMatchTimeline(b *testing.B) {
 		Reply(200).
 		JSON(res)
 
-	config := equinox.NewTestEquinoxConfig()
+	config := util.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = true
 
@@ -107,7 +108,7 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 	b.ReportAllocs()
 
 	var data ddragon.ChampionsData
-	err := ReadFile("../data/champions.json", &data)
+	err := util.ReadFile("../data/champions.json", &data)
 	require.Nil(b, err)
 
 	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
@@ -116,7 +117,7 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 		Reply(200).
 		JSON(data)
 
-	config := equinox.NewTestEquinoxConfig()
+	config := util.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = true
 
@@ -147,7 +148,7 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 	b.ReportAllocs()
 
 	var res val.ContentV1DTO
-	err := ReadFile("../data/val.content.all_locales.json", &res)
+	err := util.ReadFile("../data/val.content.all_locales.json", &res)
 	require.Nil(b, err)
 
 	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, val.BR)).
@@ -156,7 +157,7 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 		Reply(200).
 		JSON(res)
 
-	config := equinox.NewTestEquinoxConfig()
+	config := util.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
 	config.Retry = true
 
