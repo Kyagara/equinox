@@ -26,7 +26,7 @@ type InternalClient struct {
 	loggers        *Loggers
 	cache          *cache.Cache
 	ratelimit      *ratelimit.RateLimit
-	retry          bool
+	maxRetries     int
 	isCacheEnabled bool
 }
 
@@ -75,7 +75,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		},
 		cache:          config.Cache,
 		ratelimit:      &ratelimit.RateLimit{Limits: make(map[any]*ratelimit.Limits)},
-		retry:          config.Retry,
+		maxRetries:     config.Retry,
 		isCacheEnabled: config.Cache.TTL > 0,
 	}
 	apiHeaders.Set("X-Riot-Token", config.Key)
@@ -97,6 +97,7 @@ func (c *InternalClient) Request(ctx context.Context, logger *zap.Logger, baseUR
 		Path:     path,
 		Body:     body,
 		Request:  nil,
+		Retries:  0,
 	}
 
 	host := fmt.Sprintf(baseURL, route)
@@ -165,12 +166,26 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	}
 	defer response.Body.Close()
 
-	err = c.checkResponse(ctx, equinoxReq, response)
-	if err != nil && c.retry && errors.Is(err, api.ErrTooManyRequests) {
-		return c.Execute(ctx, equinoxReq, target)
-	} else if err != nil {
+	delay, err := c.checkResponse(ctx, equinoxReq, response)
+	if err != nil {
 		equinoxReq.Logger.Error("Request failed", zap.Error(err))
 		return err
+	}
+
+	if delay > 0 {
+		duration := time.Duration(delay) * time.Second
+		deadline, ok := ctx.Deadline()
+		if ok && deadline.Before(time.Now().Add(duration)) {
+			return ratelimit.ErrContextDeadlineExceeded
+		}
+		equinoxReq.Logger.Info("Retrying request after sleep", zap.Duration("sleep", duration))
+		select {
+		case <-time.After(duration):
+			equinoxReq.Retries++
+			return c.Execute(ctx, equinoxReq, target)
+		case <-ctx.Done():
+			return ctx.Err()
+		}
 	}
 
 	equinoxReq.Logger.Info("Request successful")
@@ -189,29 +204,23 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	return jsonv2.Unmarshal(body, &target)
 }
 
-func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.EquinoxRequest, response *http.Response) error {
+// Checks the response from the Riot API, returns an float64 if the response contained a Retry-After header.
+func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.EquinoxRequest, response *http.Response) (float64, error) {
 	if !slices.Contains(cdns, response.Request.Host) {
 		c.ratelimit.Update(equinoxReq, &response.Header)
 	}
 
 	if response.StatusCode == http.StatusTooManyRequests {
-		limitType := response.Header.Get(ratelimit.RATE_LIMIT_TYPE_HEADER)
-		if limitType != "" {
-			equinoxReq.Logger.Warn("Rate limited", zap.String("rate_limit", limitType))
-		} else {
-			equinoxReq.Logger.Warn("Rate limited but no service was specified")
-		}
+		equinoxReq.Logger.Warn("Rate limited", zap.String("limit_type", response.Header.Get(ratelimit.RATE_LIMIT_TYPE_HEADER)))
 
-		if c.retry {
+		if equinoxReq.Retries < c.maxRetries {
 			retryAfter := response.Header.Get(ratelimit.RETRY_AFTER_HEADER)
 			if retryAfter == "" {
-				return ratelimit.Err429ButNoRetryAfterHeader
+				return 0, ratelimit.Err429ButNoRetryAfterHeader
 			}
-			seconds, _ := strconv.Atoi(retryAfter)
-			equinoxReq.Logger.Info("Retrying request after sleep", zap.Int("sleep", seconds))
-			// Should some delay be added here?
-			time.Sleep(time.Second * time.Duration(seconds))
-			return api.ErrTooManyRequests
+			delay, _ := strconv.ParseFloat(retryAfter, 32)
+			delay += 0.5
+			return delay, nil
 		}
 	}
 
@@ -220,16 +229,16 @@ func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.Equi
 		equinoxReq.Logger.Error("Response with error code", zap.String("code", response.Status))
 		err, ok := api.StatusCodeToError[response.StatusCode]
 		if !ok {
-			return api.ErrorResponse{
+			return 0, api.ErrorResponse{
 				Status: api.Status{
 					Message:    "Unknown error",
 					StatusCode: response.StatusCode,
 				},
 			}
 		}
-		return err
+		return 0, err
 	}
-	return nil
+	return 0, nil
 }
 
 func (c *InternalClient) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {

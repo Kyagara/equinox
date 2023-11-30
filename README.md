@@ -29,7 +29,7 @@
 
 ## Todo
 
-- Rework retry, I believe the ratelimit is not respecting retry after header
+- Rework retry, I believe the ratelimit is not respecting retry-after header when running multiple goroutines
 - Properly use context
 - Maybe create a custom BigCache config
 - Fix issue with some ByAccessToken methods not being cached (dont want to use auth header as cache key)
@@ -58,7 +58,7 @@ A client without a configuration comes with the default options:
 - **LogLevel**: `WARN_LOG_LEVEL`. `NOP_LOG_LEVEL` disables logging.
 - **HTTPClient**: `http.Client` with a timeout of 15 seconds.
 - **Cache**: `BigCache` with an eviction time of 4 minutes.
-- **Retry**: Retries a request 1 time if the API returns a 429 response.
+- **Retry**: Retries a request n times if the API returns a 429 response, defaults to 1.
 
 > A custom Client can be created using `equinox.NewClientWithConfig()`.
 

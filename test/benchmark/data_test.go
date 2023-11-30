@@ -41,7 +41,7 @@ func BenchmarkMatchByID(b *testing.B) {
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
-	config.Retry = true
+	config.Retry = 1
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
@@ -80,7 +80,7 @@ func BenchmarkMatchTimeline(b *testing.B) {
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
-	config.Retry = true
+	config.Retry = 1
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
@@ -119,7 +119,7 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
-	config.Retry = true
+	config.Retry = 1
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
@@ -159,7 +159,7 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = api.WARN_LOG_LEVEL
-	config.Retry = true
+	config.Retry = 1
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)

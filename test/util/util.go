@@ -13,14 +13,14 @@ import (
 //
 //   - `LogLevel`   : api.DEBUG_LOG_LEVEL
 //   - `HTTPClient` : http.Client{}
-//   - `Retry`      : false
+//   - `Retry`      : 0
 //   - `Cache`      : &cache.Cache{TTL: 0}
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
 		Key:        "RGAPI-TEST",
 		LogLevel:   api.DEBUG_LOG_LEVEL,
 		HTTPClient: &http.Client{},
-		Retry:      false,
+		Retry:      0,
 		Cache:      &cache.Cache{TTL: 0},
 	}
 }
