@@ -16,14 +16,14 @@ type EquinoxConfig struct {
 	LogLevel LogLevel
 	// http.Client used internally.
 	HTTPClient *http.Client
-	// Retry a request if it returns a 429 status code.
-	Retry bool
+	// Retry a request n times if it returns a 429 status code.
+	Retry int
 	// The cache used to store all GET requests done by the client.
 	Cache *cache.Cache
 }
 
 func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
-	encoder.AddBool("retry-if-429", c.Retry)
+	encoder.AddInt("retry-if-429", c.Retry)
 	encoder.AddDuration("http-client-timeout", c.HTTPClient.Timeout)
 	if c.Cache.TTL > 0 {
 		cache := CacheConfig{Store: string(c.Cache.StoreType), TTL: c.Cache.TTL}

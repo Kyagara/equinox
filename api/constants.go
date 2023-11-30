@@ -26,6 +26,7 @@ type EquinoxRequest struct {
 	Path     string
 	Body     any
 	Request  *http.Request
+	Retries  int
 }
 
 // Base API URLs formats.
