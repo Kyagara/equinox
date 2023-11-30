@@ -78,12 +78,12 @@ func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http
 	defer r.mutex.Unlock()
 	limits := r.Limits[equinoxReq.Route]
 	if limitsDontMatch(limits.App, responseHeaders.Get(APP_RATE_LIMIT_HEADER)) {
-		equinoxReq.Logger.Info("Updating application limits")
 		limits.App = parseHeaders(responseHeaders.Get(APP_RATE_LIMIT_HEADER), responseHeaders.Get(APP_RATE_LIMIT_COUNT_HEADER))
+		equinoxReq.Logger.Debug("New Application buckets", zap.Objects("buckets", limits.App))
 	}
 	if limitsDontMatch(limits.Methods[equinoxReq.MethodID], responseHeaders.Get(METHOD_RATE_LIMIT_HEADER)) {
-		equinoxReq.Logger.Info("Updating method limits")
 		limits.Methods[equinoxReq.MethodID] = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
+		equinoxReq.Logger.Debug("New Method buckets", zap.Objects("buckets", limits.Methods[equinoxReq.MethodID]))
 	}
 }
 
@@ -91,6 +91,9 @@ func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http
 //
 // Doesn't look good
 func limitsDontMatch(buckets []*Bucket, limitHeader string) bool {
+	if limitHeader == "" {
+		return false
+	}
 	limits := strings.Split(limitHeader, ",")
 	if len(buckets) != len(limits) {
 		return true
