@@ -13,11 +13,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRateLimit(t *testing.T) {
-	buckets := ratelimit.NewLimits()
-	require.NotNil(t, buckets)
-	require.Empty(t, buckets.App, "app limits not initialized")
-	require.Empty(t, buckets.Methods, "methods limits not initialized")
+func TestNewLimits(t *testing.T) {
+	limits := ratelimit.NewLimits()
+	require.NotNil(t, limits)
+	require.NotEmpty(t, limits.App)
+	require.NotNil(t, limits.Methods)
 }
 
 func TestRateLimitCheck(t *testing.T) {
@@ -31,20 +31,20 @@ func TestRateLimitCheck(t *testing.T) {
 
 	t.Run("buckets not created", func(t *testing.T) {
 		r := &ratelimit.RateLimit{
-			Limits: make(map[any]*ratelimit.Limits),
+			Region: make(map[any]*ratelimit.Limits),
 		}
-		require.Nil(t, r.Limits[equinoxReq.Route])
+		require.Nil(t, r.Region[equinoxReq.Route])
 		ctx := context.Background()
 		err := r.Take(ctx, equinoxReq)
 		require.Nil(t, err)
-		require.NotNil(t, r.Limits[equinoxReq.Route].Methods)
-		require.NotNil(t, r.Limits[equinoxReq.Route].Methods[equinoxReq.MethodID])
+		require.NotNil(t, r.Region[equinoxReq.Route].Methods)
+		require.NotNil(t, r.Region[equinoxReq.Route].Methods[equinoxReq.MethodID])
 	})
 
 	// These tests should take around 2 seconds each
 
 	t.Run("app rate limited", func(t *testing.T) {
-		r := &ratelimit.RateLimit{Limits: make(map[any]*ratelimit.Limits)}
+		r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"19:2"},
@@ -58,7 +58,7 @@ func TestRateLimitCheck(t *testing.T) {
 	})
 
 	t.Run("method rate limited", func(t *testing.T) {
-		r := &ratelimit.RateLimit{Limits: make(map[any]*ratelimit.Limits)}
+		r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"100:2,200:2"},
 			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:2,199:2"},
@@ -72,7 +72,7 @@ func TestRateLimitCheck(t *testing.T) {
 	})
 
 	t.Run("waiting bucket to reset", func(t *testing.T) {
-		r := &ratelimit.RateLimit{Limits: make(map[any]*ratelimit.Limits)}
+		r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"20:2"},
@@ -95,7 +95,7 @@ func TestLimitsDontMatch(t *testing.T) {
 		Logger:   client.Logger("client_endpoint_method"),
 	}
 
-	r := &ratelimit.RateLimit{Limits: make(map[any]*ratelimit.Limits)}
+	r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
 	headers := http.Header{
 		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
 		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},

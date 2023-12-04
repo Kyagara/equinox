@@ -9,14 +9,12 @@ import (
 )
 
 type Bucket struct {
-	// Time interval in seconds
-	interval time.Duration
+	// Current number of tokens, starts at limit
+	tokens int
 	// Maximum number of tokens
 	limit int
-	// Current number of tokens
-	tokens int
-	// Updates every time this bucket is checked
-	updated time.Time
+	// Time interval in seconds
+	interval time.Duration
 	// Next reset
 	next  time.Time
 	mutex sync.Mutex
@@ -24,7 +22,6 @@ type Bucket struct {
 
 func (b *Bucket) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
 	encoder.AddDuration("interval", b.interval)
-	encoder.AddInt("tokens", b.tokens)
 	encoder.AddInt("limit", b.limit)
 	return nil
 }
@@ -35,13 +32,20 @@ func NewBucket(interval time.Duration, limit int, tokens int) *Bucket {
 		interval: interval * time.Second,
 		limit:    limit,
 		tokens:   tokens,
-		updated:  now,
 		next:     now.Add(interval * time.Second),
 		mutex:    sync.Mutex{},
 	}
 }
 
-func (b *Bucket) isRateLimited(ctx context.Context) bool {
+func (b *Bucket) check() {
+	now := time.Now()
+	if b.next.Before(now) {
+		b.tokens = b.limit
+		b.next = now.Add(b.interval)
+	}
+}
+
+func (b *Bucket) isRateLimited() bool {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 	b.check()
@@ -55,19 +59,7 @@ func (b *Bucket) isRateLimited(ctx context.Context) bool {
 	return false
 }
 
-// Responsible for updating the bucket, resets the tokens if necessary.
-func (b *Bucket) check() {
-	now := time.Now()
-	if b.next.Before(now) {
-		b.tokens = b.limit
-		b.next = now.Add(b.interval)
-	}
-	b.updated = now
-}
-
-// wait should block if the rate limit is reached and wait until the bucket resets.
-//
-// If blocking would take longer than the deadline, return ErrContextDeadlineExceeded.
+// wait() should block if the rate limit is reached and wait until the bucket resets.
 func (b *Bucket) wait(ctx context.Context) error {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()

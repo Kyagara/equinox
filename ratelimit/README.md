@@ -21,10 +21,8 @@ type Bucket struct {
 	interval time.Duration
 	// Maximum number of tokens
 	limit int
-	// Current number of tokens
+	// Current number of tokens, starts at limit
 	tokens int
-	// Updates every time this bucket is checked
-	updated time.Time
 	// Next reset
 	next  time.Time
 	mutex sync.Mutex
@@ -40,7 +38,6 @@ func NewBucket(interval time.Duration, limit int, tokens int) *Bucket {
 		interval: interval * time.Second,
 		limit:    limit,
 		tokens:   tokens,
-		updated:  now,
 		next:     now.Add(interval * time.Second),
 		mutex:    sync.Mutex{},
 	}
@@ -73,11 +70,6 @@ func parseHeaders(limitHeader string, countHeader string) []*Bucket {
 
 After creating a request and checking if it was cached, the client will use `Take()`, initializing the App and Method buckets in a **route** AND the **MethodID** if not initialized.
 
-```go
-ratelimit.Limits["br1"] = NewLimits()
-// Can now safelly use ratelimit.Limits["br1"].App and ratelimit.Limits["br1"].Methods["champion-mastery-v4.getAllChampionMasteriesByPUUID"]
-```
-
 If rate limited, `Take()` will block until the next bucket reset. A `context` can be passed, allowing for cancellation and checking if the deadline will be exceeded, cancelling the block if it will.
 
 `Take()` will then decrease tokens for the App and Method in the buckets by one.
@@ -86,4 +78,4 @@ If rate limited, `Take()` will block until the next bucket reset. A `context` ca
 
 After receiving a response, `Update()` will verify that the current buckets in-memory match the ones received by the Riot API, if they don't, it will force an update in all buckets.
 
-> By 'matching', I mean that the current **limit** or **interval** in these buckets match the ones received by the Riot API.
+> By 'matching', I mean that the current **limit** and **interval** in these buckets match the ones received by the Riot API.

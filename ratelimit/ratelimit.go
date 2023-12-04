@@ -21,6 +21,9 @@ const (
 	APP_RATE_LIMIT_COUNT_HEADER    = "X-App-Rate-Limit-Count"
 	METHOD_RATE_LIMIT_HEADER       = "X-Method-Rate-Limit"
 	METHOD_RATE_LIMIT_COUNT_HEADER = "X-Method-Rate-Limit-Count"
+
+	APP_RATE_LIMIT_TYPE    = "application"
+	METHOD_RATE_LIMIT_TYPE = "method"
 )
 
 var (
@@ -29,20 +32,20 @@ var (
 )
 
 type RateLimit struct {
-	// Map of limits, keyed by route
-	Limits map[any]*Limits
+	Region map[any]*Limits
 	mutex  sync.Mutex
 }
 
+// Limits in a region.
 type Limits struct {
-	App     []*Bucket
-	Methods map[string][]*Bucket
+	App     *Limit
+	Methods map[string]*Limit
 }
 
 func NewLimits() *Limits {
 	return &Limits{
-		App:     []*Bucket{},
-		Methods: make(map[string][]*Bucket),
+		App:     NewLimit(APP_RATE_LIMIT_TYPE),
+		Methods: make(map[string]*Limit),
 	}
 }
 
@@ -52,20 +55,21 @@ func NewLimits() *Limits {
 func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	limits := r.Limits[equinoxReq.Route]
+	limits := r.Region[equinoxReq.Route]
 	if limits == nil {
 		limits = NewLimits()
-		r.Limits[equinoxReq.Route] = limits
+		r.Region[equinoxReq.Route] = limits
 	}
 	methods := limits.Methods[equinoxReq.MethodID]
 	if methods == nil {
-		limits.Methods[equinoxReq.MethodID] = make([]*Bucket, 0)
+		methods = NewLimit(METHOD_RATE_LIMIT_TYPE)
+		limits.Methods[equinoxReq.MethodID] = methods
 	}
-	err := r.checkBuckets(ctx, equinoxReq, limits.App, "application")
+	err := r.checkBuckets(ctx, equinoxReq, limits.App)
 	if err != nil {
 		return err
 	}
-	err = r.checkBuckets(ctx, equinoxReq, methods, "method")
+	err = r.checkBuckets(ctx, equinoxReq, methods)
 	if err != nil {
 		return err
 	}
@@ -76,52 +80,27 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http.Header) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	limits := r.Limits[equinoxReq.Route]
-	if limitsDontMatch(limits.App, responseHeaders.Get(APP_RATE_LIMIT_HEADER)) {
-		limits.App = parseHeaders(responseHeaders.Get(APP_RATE_LIMIT_HEADER), responseHeaders.Get(APP_RATE_LIMIT_COUNT_HEADER))
-		equinoxReq.Logger.Debug("New Application buckets", zap.Objects("buckets", limits.App))
+	limits := r.Region[equinoxReq.Route]
+	if limits.App.limitsDontMatch(responseHeaders.Get(APP_RATE_LIMIT_HEADER)) {
+		limits.App = parseHeaders(responseHeaders.Get(APP_RATE_LIMIT_HEADER), responseHeaders.Get(APP_RATE_LIMIT_COUNT_HEADER), APP_RATE_LIMIT_TYPE)
+		equinoxReq.Logger.Debug("New Application buckets", zap.Objects("buckets", limits.App.buckets))
 	}
-	if limitsDontMatch(limits.Methods[equinoxReq.MethodID], responseHeaders.Get(METHOD_RATE_LIMIT_HEADER)) {
-		limits.Methods[equinoxReq.MethodID] = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER))
-		equinoxReq.Logger.Debug("New Method buckets", zap.Objects("buckets", limits.Methods[equinoxReq.MethodID]))
+	if limits.Methods[equinoxReq.MethodID].limitsDontMatch(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER)) {
+		limits.Methods[equinoxReq.MethodID] = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
+		equinoxReq.Logger.Debug("New Method buckets", zap.Objects("buckets", limits.Methods[equinoxReq.MethodID].buckets))
 	}
 }
 
-// Checks if the limits given in the header match the current buckets
-//
-// Doesn't look good
-func limitsDontMatch(buckets []*Bucket, limitHeader string) bool {
-	if limitHeader == "" {
-		return false
-	}
-	limits := strings.Split(limitHeader, ",")
-	if len(buckets) != len(limits) {
-		return true
-	}
-	for i, pair := range limits {
-		if buckets[i] == nil {
-			return true
-		}
-		limit, interval := getNumbersFromPair(pair)
-		if buckets[i].limit != limit || buckets[i].interval != time.Duration(interval)*time.Second {
-			return true
-		}
-	}
-	return false
-}
-
-// checkBuckets checks if any of the buckets provided are rate limited, and if so, blocks until the next reset.
-//
-// It loops from the end of the slice to ensure that the bigger limits are checked first.
-func (r *RateLimit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest, buckets []*Bucket, bucket_type string) error {
+// Checks if any of the buckets provided are rate limited, and if so, blocks until the next reset.
+func (r *RateLimit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest, limit *Limit) error {
 	var limited []*Bucket
-	for _, bucket := range buckets {
-		if bucket.isRateLimited(ctx) {
+	for _, bucket := range limit.buckets {
+		if bucket.isRateLimited() {
 			limited = append(limited, bucket)
 		}
 	}
 	for i := len(limited) - 1; i >= 0; i-- {
-		equinoxReq.Logger.Warn("Rate limited", zap.String("bucket_type", bucket_type), zap.Any("route", equinoxReq.Route), zap.Object("bucket", limited[i]))
+		equinoxReq.Logger.Warn("Rate limited", zap.String("limit_type", limit.limitType), zap.Any("route", equinoxReq.Route), zap.Object("bucket", limited[i]))
 		err := limited[i].wait(ctx)
 		if err != nil {
 			select {
@@ -135,19 +114,21 @@ func (r *RateLimit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxReq
 	return nil
 }
 
-func parseHeaders(limitHeader string, countHeader string) []*Bucket {
+func parseHeaders(limitHeader string, countHeader string, limitType string) *Limit {
 	if limitHeader == "" || countHeader == "" {
-		return []*Bucket{}
+		return NewLimit(limitType)
 	}
 	limits := strings.Split(limitHeader, ",")
 	counts := strings.Split(countHeader, ",")
+	limit := NewLimit(limitType)
 	rates := make([]*Bucket, len(limits))
 	for i := range limits {
 		limit, seconds := getNumbersFromPair(limits[i])
 		count, _ := getNumbersFromPair(counts[i])
 		rates[i] = NewBucket(time.Duration(seconds), limit, limit-count)
 	}
-	return rates
+	limit.buckets = rates
+	return limit
 }
 
 func getNumbersFromPair(pair string) (int, int) {
