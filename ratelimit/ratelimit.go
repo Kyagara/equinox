@@ -55,22 +55,20 @@ func NewLimits() *Limits {
 func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	limits := r.Region[equinoxReq.Route]
-	if limits == nil {
+	limits, ok := r.Region[equinoxReq.Route]
+	if !ok {
 		limits = NewLimits()
 		r.Region[equinoxReq.Route] = limits
 	}
-	methods := limits.Methods[equinoxReq.MethodID]
-	if methods == nil {
+	methods, ok := limits.Methods[equinoxReq.MethodID]
+	if !ok {
 		methods = NewLimit(METHOD_RATE_LIMIT_TYPE)
 		limits.Methods[equinoxReq.MethodID] = methods
 	}
-	err := r.checkBuckets(ctx, equinoxReq, limits.App)
-	if err != nil {
+	if err := limits.App.checkBuckets(ctx, equinoxReq); err != nil {
 		return err
 	}
-	err = r.checkBuckets(ctx, equinoxReq, methods)
-	if err != nil {
+	if err := methods.checkBuckets(ctx, equinoxReq); err != nil {
 		return err
 	}
 	return nil
@@ -89,29 +87,6 @@ func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http
 		limits.Methods[equinoxReq.MethodID] = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
 		equinoxReq.Logger.Debug("New Method buckets", zap.Objects("buckets", limits.Methods[equinoxReq.MethodID].buckets))
 	}
-}
-
-// Checks if any of the buckets provided are rate limited, and if so, blocks until the next reset.
-func (r *RateLimit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest, limit *Limit) error {
-	var limited []*Bucket
-	for _, bucket := range limit.buckets {
-		if bucket.isRateLimited() {
-			limited = append(limited, bucket)
-		}
-	}
-	for i := len(limited) - 1; i >= 0; i-- {
-		equinoxReq.Logger.Warn("Rate limited", zap.String("limit_type", limit.limitType), zap.Any("route", equinoxReq.Route), zap.Object("bucket", limited[i]))
-		err := limited[i].wait(ctx)
-		if err != nil {
-			select {
-			case <-ctx.Done():
-				return ctx.Err()
-			default:
-				return err
-			}
-		}
-	}
-	return nil
 }
 
 func parseHeaders(limitHeader string, countHeader string, limitType string) *Limit {
