@@ -74,7 +74,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 			mutex:   sync.Mutex{},
 		},
 		cache:          config.Cache,
-		ratelimit:      &ratelimit.RateLimit{Limits: make(map[any]*ratelimit.Limits)},
+		ratelimit:      &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)},
 		maxRetries:     config.Retry,
 		isCacheEnabled: config.Cache.TTL > 0,
 	}
@@ -166,7 +166,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	}
 	defer response.Body.Close()
 
-	delay, err := c.checkResponse(ctx, equinoxReq, response)
+	delay, err := c.checkResponse(equinoxReq, response)
 	if err != nil {
 		equinoxReq.Logger.Error("Request failed", zap.Error(err))
 		return err
@@ -205,7 +205,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 }
 
 // Checks the response from the Riot API, returns an float64 if the response contained a Retry-After header.
-func (c *InternalClient) checkResponse(ctx context.Context, equinoxReq *api.EquinoxRequest, response *http.Response) (float64, error) {
+func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) (float64, error) {
 	if !slices.Contains(cdns, response.Request.Host) {
 		c.ratelimit.Update(equinoxReq, &response.Header)
 	}

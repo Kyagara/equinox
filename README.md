@@ -5,10 +5,11 @@
 	<a href="https://pkg.go.dev/github.com/Kyagara/equinox"><img src="https://img.shields.io/static/v1?label=godoc&message=reference&color=blue&style=flat-square"/></a>
 	<a href="https://codecov.io/gh/Kyagara/equinox"><img src="https://img.shields.io/codecov/c/github/Kyagara/equinox?style=flat-square&color=blue&label=coverage"/></a>
 	<p>
-		<a href="#features">Features</a> •
-		<a href="#todo">Todo</a> •
 		<a href="#usage">Usage</a> •
-		<a href="#example">Example</a>
+		<a href="#example">Example</a> •
+		<a href="#todo">Todo</a> •
+		<a href="#known-issues">Known Issues</a> •
+		<a href="#about">About</a>
 	</p>
 </div>
 
@@ -26,17 +27,6 @@
 - Retry on 429
 
 > equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json) package, read more about it [here](https://github.com/golang/go/discussions/63397).
-
-## Todo
-
-- Rework retry, I believe the ratelimit is not respecting retry-after header when running multiple goroutines
-- Properly use context
-- Maybe create a custom BigCache config
-- Fix issue with some ByAccessToken methods not being cached (dont want to use auth header as cache key)
-- More tests and revision for the rate limit
-- More tests for the client
-- Maybe implement custom HTTP traffic mocking, removing `gock`
-- Improve DDragon/CDragon support
 
 ## Usage
 
@@ -112,6 +102,18 @@ func main() {
 	// MaxNewPlayerLevel:10}
 }
 ```
+
+## Todo
+
+- Maybe create a custom BigCache config
+- More tests for the internal client and rate limit
+- Maybe implement custom HTTP traffic mocking, removing `gock`
+- Improve DDragon/CDragon support
+
+## Known Issues
+
+- ByAccessToken methods not being cached since the only unique identifier is the Authorization Header.
+- `ratelimit` is not respecting Retry-After headers when running parallel requests.
 
 ## About
 
