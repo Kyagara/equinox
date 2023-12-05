@@ -25,6 +25,7 @@ type EquinoxRequest struct {
 	Method   string
 	Path     string
 	Body     any
+	IsCDN    bool
 	Request  *http.Request
 	Retries  int
 }

@@ -22,8 +22,9 @@ const (
 	METHOD_RATE_LIMIT_HEADER       = "X-Method-Rate-Limit"
 	METHOD_RATE_LIMIT_COUNT_HEADER = "X-Method-Rate-Limit-Count"
 
-	APP_RATE_LIMIT_TYPE    = "application"
-	METHOD_RATE_LIMIT_TYPE = "method"
+	APP_RATE_LIMIT_TYPE     = "application"
+	METHOD_RATE_LIMIT_TYPE  = "method"
+	SERVICE_RATE_LIMIT_TYPE = "service"
 )
 
 var (
@@ -75,18 +76,41 @@ func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) er
 }
 
 // Update creates new buckets in a route with the limits provided in the response headers.
-func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, responseHeaders *http.Header) {
+func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, headers *http.Header) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 	limits := r.Region[equinoxReq.Route]
-	if limits.App.limitsDontMatch(responseHeaders.Get(APP_RATE_LIMIT_HEADER)) {
-		limits.App = parseHeaders(responseHeaders.Get(APP_RATE_LIMIT_HEADER), responseHeaders.Get(APP_RATE_LIMIT_COUNT_HEADER), APP_RATE_LIMIT_TYPE)
+	if limits.App.limitsDontMatch(headers.Get(APP_RATE_LIMIT_HEADER)) {
+		limits.App = parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER), APP_RATE_LIMIT_TYPE)
 		equinoxReq.Logger.Debug("New Application buckets", zap.Objects("buckets", limits.App.buckets))
 	}
-	if limits.Methods[equinoxReq.MethodID].limitsDontMatch(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER)) {
-		limits.Methods[equinoxReq.MethodID] = parseHeaders(responseHeaders.Get(METHOD_RATE_LIMIT_HEADER), responseHeaders.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
+	if limits.Methods[equinoxReq.MethodID].limitsDontMatch(headers.Get(METHOD_RATE_LIMIT_HEADER)) {
+		limits.Methods[equinoxReq.MethodID] = parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
 		equinoxReq.Logger.Debug("New Method buckets", zap.Objects("buckets", limits.Methods[equinoxReq.MethodID].buckets))
 	}
+}
+
+func (r *RateLimit) CheckRetryAfter(equinoxReq *api.EquinoxRequest, headers *http.Header) (time.Duration, error) {
+	retryAfter := headers.Get(RETRY_AFTER_HEADER)
+	if retryAfter == "" {
+		return 0, Err429ButNoRetryAfterHeader
+	}
+
+	delayF, _ := strconv.ParseFloat(retryAfter, 32)
+	delay := time.Duration(delayF+0.5) * time.Second
+
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
+	limits := r.Region[equinoxReq.Route]
+	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
+
+	if limitType == APP_RATE_LIMIT_TYPE {
+		limits.App.setDelay(delay)
+	} else {
+		limits.Methods[equinoxReq.MethodID].setDelay(delay)
+	}
+	return delay, nil
 }
 
 func parseHeaders(limitHeader string, countHeader string, limitType string) *Limit {

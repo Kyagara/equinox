@@ -8,7 +8,6 @@
 		<a href="#usage">Usage</a> •
 		<a href="#example">Example</a> •
 		<a href="#todo">Todo</a> •
-		<a href="#known-issues">Known Issues</a> •
 		<a href="#about">About</a>
 	</p>
 </div>
@@ -109,11 +108,6 @@ func main() {
 - More tests for the internal client and rate limit
 - Maybe implement custom HTTP traffic mocking, removing `gock`
 - Improve DDragon/CDragon support
-
-## Known Issues
-
-- ByAccessToken methods not being cached since the only unique identifier is the Authorization Header.
-- `ratelimit` is not respecting Retry-After headers when running parallel requests.
 
 ## About
 

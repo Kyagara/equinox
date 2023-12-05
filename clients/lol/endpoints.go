@@ -1407,7 +1407,7 @@ func (e *SummonerV4) ByAccessToken(ctx context.Context, route PlatformRoute, aut
 	if authorization == "" {
 		return new(SummonerV4DTO), fmt.Errorf("'authorization' header is required")
 	}
-	equinoxReq.Request.Header.Set("authorization", fmt.Sprint(authorization))
+	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data SummonerV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {

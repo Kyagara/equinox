@@ -224,10 +224,7 @@ function formatJsonProperty(name) {
 function formatAddQueryParam(param) {
   const name = normalizePropName(param.name)
   const prop = param.schema
-  let letHeaderName = name
-  if (name.endsWith('_')) {
-    letHeaderName = name.slice(0, -1)
-  }
+  let letHeaderName = name.endsWith('_') ? name.slice(0, -1) : name
   let condition
   if (prop.type === 'string') {
     condition = `${name} != ""`
@@ -236,13 +233,9 @@ function formatAddQueryParam(param) {
   } else {
     throw new Error(`${prop.type} not supported`)
   }
-  if (prop.type === 'string') {
-    return `if ${condition} {
-    values.Set("${letHeaderName}", ${name})
-  }`
-  }
+  const value = prop.type === 'string' ? name : `fmt.Sprint(${name})`
   return `if ${condition} {
-    values.Set("${letHeaderName}", fmt.Sprint(${name}))
+    values.Set("${letHeaderName}", ${value});
   }`
 }
 
@@ -251,15 +244,10 @@ function formatAddHeaderParam(param, returnValue, isPrimitive) {
   let value = `new(${returnValue})`
   if (isPrimitive) value = '*' + value
   const letHeaderName = name.endsWith('_') ? name.slice(0, -1) : name
-  switch (param.schema.type) {
-    case 'string':
-      return `if ${name} == "" {
+  return `if ${name} == "" {
     return ${value}, fmt.Errorf("'${name}' header is required")
   }
-  equinoxReq.Request.Header.Set("${letHeaderName}", fmt.Sprint(${name}))`
-    default:
-      throw new Error(`${param.schema.type} not supported`)
-  }
+  equinoxReq.Request.Header.Set("${letHeaderName}", ${name})`
 }
 
 function formatRouteArgument(route, pathParams = []) {
@@ -311,3 +299,4 @@ module.exports = {
   formatAddHeaderParam,
   formatRouteArgument,
 }
+
