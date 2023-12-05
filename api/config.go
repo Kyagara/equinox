@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/Kyagara/equinox/cache"
 	"github.com/rs/zerolog"
@@ -16,25 +15,20 @@ type EquinoxConfig struct {
 	LogLevel zerolog.Level
 	// http.Client used internally.
 	HTTPClient *http.Client
-	// Retry a request `n` times if it returns a 429 status code.
-	Retry int
+	// Maximum amount of times to retry a request on error.
+	Retries int
 	// The cache used to store all GET requests done by the client.
 	Cache *cache.Cache
 }
 
 func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
-	encoder.Int("retry-if-429", c.Retry).Dur("http-client-timeout", c.HTTPClient.Timeout)
-	if c.Cache.TTL > 0 {
-		cache := CacheConfig{Store: string(c.Cache.StoreType), TTL: c.Cache.TTL}
-		encoder.Object("cache", cache)
+	if c.Retries > 0 {
+		encoder.Int("max_retries", c.Retries)
 	}
-}
-
-type CacheConfig struct {
-	TTL   time.Duration
-	Store string
-}
-
-func (c CacheConfig) MarshalZerologObject(encoder *zerolog.Event) {
-	encoder.Str("store", c.Store).Dur("cache-ttl", c.TTL)
+	if c.HTTPClient.Timeout > 0 {
+		encoder.Dur("http_client_timeout", c.HTTPClient.Timeout)
+	}
+	if c.Cache.TTL > 0 {
+		encoder.Str("cache_store", string(c.Cache.StoreType)).Dur("cache_ttl", c.Cache.TTL)
+	}
 }

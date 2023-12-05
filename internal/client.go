@@ -33,6 +33,7 @@ type InternalClient struct {
 var (
 	errContextIsNil   = errors.New("context must be non-nil")
 	errKeyNotProvided = errors.New("api key not provided")
+	errServerError    = errors.New("server error")
 
 	cdnHeaders = http.Header{
 		"Accept":     {"application/json"},
@@ -72,7 +73,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		},
 		cache:          config.Cache,
 		ratelimit:      &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)},
-		maxRetries:     config.Retry,
+		maxRetries:     config.Retries,
 		isCacheEnabled: config.Cache.TTL > 0,
 	}
 	apiHeaders.Set("X-Riot-Token", config.Key)
@@ -160,12 +161,12 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	defer response.Body.Close()
 
 	delay, err := c.checkResponse(equinoxReq, response)
-	if err != nil {
+	if err != nil && !errors.Is(err, errServerError) {
 		equinoxReq.Logger.Error().Err(err).Msg("Request failed")
 		return err
 	}
 
-	if delay > 0 {
+	if delay > 0 || errors.Is(err, errServerError) {
 		equinoxReq.Logger.Info().Dur("sleep", delay).Msg("Retrying request after sleep")
 		err := ratelimit.WaitN(ctx, time.Now().Add(delay), delay)
 		if err != nil {
@@ -195,33 +196,36 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) (time.Duration, error) {
 	if !equinoxReq.IsCDN {
 		c.ratelimit.Update(equinoxReq, &response.Header)
-		if response.StatusCode == http.StatusTooManyRequests && equinoxReq.Retries < c.maxRetries {
+	}
+
+	// 2xx responses
+	if response.StatusCode >= 200 && response.StatusCode < 300 {
+		return 0, nil
+	}
+
+	// 4xx and 5xx responses are retried
+	if equinoxReq.Retries < c.maxRetries {
+		if response.StatusCode == http.StatusTooManyRequests {
+			equinoxReq.Logger.Warn().Msg("Received 429 response, checking Retry-After header")
 			return c.ratelimit.CheckRetryAfter(equinoxReq, &response.Header)
 		}
-	}
 
-	if response.StatusCode < http.StatusOK || response.StatusCode > 299 {
-		equinoxReq.Logger.Error().Str("code", response.Status).Msg("Response with error code")
-		err, ok := api.StatusCodeToError[response.StatusCode]
-		if !ok {
-			return 0, api.ErrorResponse{
-				Status: api.Status{
-					Message:    "Unknown error",
-					StatusCode: response.StatusCode,
-				},
-			}
+		if response.StatusCode >= 500 && response.StatusCode < 600 {
+			equinoxReq.Logger.Warn().Str("status_code", response.Status).Msg("Retrying request")
+			return 0, errServerError
 		}
-		return 0, err
 	}
-	return 0, nil
-}
 
-// Generates a hash for the Authorization header. Don't want to store the Authorization header as key in plaintext.
-func getAuthorizationHeaderHash(key string) string {
-	if key == "" {
-		return ""
+	err, ok := api.StatusCodeToError[response.StatusCode]
+	if !ok {
+		return 0, api.ErrorResponse{
+			Status: api.Status{
+				Message:    "Unknown error",
+				StatusCode: response.StatusCode,
+			},
+		}
 	}
-	return fmt.Sprintf("%x", sha256.Sum256([]byte(key)))
+	return 0, err
 }
 
 func (c *InternalClient) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {
@@ -239,4 +243,12 @@ func (c *InternalClient) GetDDragonLOLVersions(ctx context.Context, id string) (
 		return nil, err
 	}
 	return data, nil
+}
+
+// Generates a hash for the Authorization header. Don't want to store the Authorization header as key in plaintext.
+func getAuthorizationHeaderHash(key string) string {
+	if key == "" {
+		return ""
+	}
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(key)))
 }

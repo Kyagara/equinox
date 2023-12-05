@@ -23,7 +23,7 @@
 - Data Dragon and Community Dragon (Incomplete)
 - Rate limit (WIP)
 - Caching
-- Retry on 429 `n` times
+- Retry `n` times
 
 > equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json) package, read more about it [here](https://github.com/golang/go/discussions/63397).
 
@@ -47,7 +47,7 @@ A client without a configuration comes with the default options:
 - **LogLevel**: `zerolog.WarnLevel`. `zerolog.Disabled` disables logging.
 - **HTTPClient**: `http.Client` with a timeout of 15 seconds.
 - **Cache**: `BigCache` with an eviction time of 4 minutes.
-- **Retry**: Retries a request n times if the API returns a 429 response, defaults to 3.
+- **Retries**: Retries a request n times if the API returns an error, defaults to 3.
 
 > A custom Client can be created using `equinox.NewClientWithConfig()`.
 
