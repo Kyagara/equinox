@@ -15,6 +15,7 @@ import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
 	"github.com/allegro/bigcache/v3"
+	"github.com/rs/zerolog"
 )
 
 var (
@@ -44,7 +45,7 @@ func init() {
 	}
 	config := &api.EquinoxConfig{
 		Key:      key,
-		LogLevel: api.DEBUG_LOG_LEVEL,
+		LogLevel: zerolog.DebugLevel,
 		HTTPClient: &http.Client{
 			Timeout: 15 * time.Second,
 		},

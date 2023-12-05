@@ -16,6 +16,7 @@ import (
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/allegro/bigcache/v3"
+	"github.com/rs/zerolog"
 )
 
 type Equinox struct {
@@ -62,7 +63,7 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 
 // Returns the default Equinox config with a provided key.
 //
-//   - `LogLevel`   : api.WARN_LOG_LEVEL
+//   - `LogLevel`   : zerolog.WarnLevel
 //   - `HTTPClient` : http.Client with timeout of 15 seconds
 //   - `Retry`      : Retry on 429 1 time
 //   - `Cache`      : BigCache with TTL of 4 minutes
@@ -74,7 +75,7 @@ func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 	}
 	config := &api.EquinoxConfig{
 		Key:      key,
-		LogLevel: api.WARN_LOG_LEVEL,
+		LogLevel: zerolog.WarnLevel,
 		HTTPClient: &http.Client{
 			Timeout: 15 * time.Second,
 		},

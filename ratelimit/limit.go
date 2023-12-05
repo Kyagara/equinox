@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox/api"
-	"go.uber.org/zap"
 )
 
 // Limit represents a collection of buckets and the type of limit (application or method).
@@ -48,7 +47,7 @@ func (l *Limit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest
 		}
 	}
 	for i := len(limited) - 1; i >= 0; i-- {
-		equinoxReq.Logger.Warn("Rate limited", zap.Any("route", equinoxReq.Route), zap.String("method_id", equinoxReq.MethodID), zap.String("limit_type", string(l.limitType)))
+		equinoxReq.Logger.Warn().Any("route", equinoxReq.Route).Str("method_id", equinoxReq.MethodID).Str("limit_type", l.limitType).Object("bucket", limited[i]).Msg("Rate limited")
 		err := limited[i].wait(ctx)
 		if err != nil {
 			select {

@@ -7,6 +7,7 @@ import (
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
 	jsonv2 "github.com/go-json-experiment/json"
+	"github.com/rs/zerolog"
 )
 
 // Creates an EquinoxConfig for tests.
@@ -18,7 +19,7 @@ import (
 func NewTestEquinoxConfig() *api.EquinoxConfig {
 	return &api.EquinoxConfig{
 		Key:        "RGAPI-TEST",
-		LogLevel:   api.DEBUG_LOG_LEVEL,
+		LogLevel:   zerolog.DebugLevel,
 		HTTPClient: &http.Client{},
 		Retry:      0,
 		Cache:      &cache.Cache{TTL: 0},

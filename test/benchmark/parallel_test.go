@@ -11,11 +11,9 @@ import (
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/h2non/gock"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
-
-// These parallel benchmarks are more of a test less of an benchmark.
-// Used to see how the library reacts to some parallel work.
 
 // This revealed problems with multiple limits in a bucket, only the first bucket was being respected.
 func BenchmarkParallelRateLimit(b *testing.B) {
@@ -41,7 +39,7 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 		JSON(summoner)
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = api.WARN_LOG_LEVEL
+	config.LogLevel = zerolog.WarnLevel
 	config.Retry = 1
 
 	client, err := equinox.NewClientWithConfig(config)
@@ -131,7 +129,7 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 		JSON(summoner)
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = api.WARN_LOG_LEVEL
+	config.LogLevel = zerolog.WarnLevel
 	config.Retry = 1
 
 	client, err := equinox.NewClientWithConfig(config)

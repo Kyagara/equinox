@@ -1,48 +1,44 @@
 package internal
 
 import (
-	"fmt"
+	"os"
 	"strings"
 	"sync"
 
 	"github.com/Kyagara/equinox/api"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
+	"github.com/rs/zerolog"
 )
 
 type Loggers struct {
-	main    *zap.Logger
-	methods map[string]*zap.Logger
+	main    zerolog.Logger
+	methods map[string]zerolog.Logger
 	mutex   sync.Mutex
 }
 
-// Creates a new zap.Logger from the configuration parameters provided.
-func NewLogger(config *api.EquinoxConfig) (*zap.Logger, error) {
+func NewLogger(config *api.EquinoxConfig) zerolog.Logger {
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	if config == nil {
-		return nil, fmt.Errorf("error initializing logger, equinox configuration not provided")
+		return zerolog.Nop()
 	}
-	var zapConfig zap.Config
 	switch config.LogLevel {
-	case api.NOP_LOG_LEVEL:
-		return zap.NewNop(), nil
-	case api.DEBUG_LOG_LEVEL:
-		zapConfig = zap.NewDevelopmentConfig()
+	case zerolog.Disabled:
+		return zerolog.Nop()
+	case zerolog.DebugLevel:
+		return zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Object("equinox", config).Timestamp().Logger()
 	default:
-		zapConfig = zap.NewProductionConfig()
-		zapConfig.Level = zap.NewAtomicLevelAt(zapcore.Level(config.LogLevel))
+		return zerolog.New(os.Stderr).Level(config.LogLevel).With().Object("equinox", config).Timestamp().Logger()
 	}
-	return zapConfig.Build(zap.Fields(zap.Object("equinox", config)))
 }
 
 // Used to access the internal logger, this is used to log events from other clients (RiotClient, LOLClient...).
-func (c *InternalClient) Logger(id string) *zap.Logger {
+func (c *InternalClient) Logger(id string) zerolog.Logger {
 	c.loggers.mutex.Lock()
 	defer c.loggers.mutex.Unlock()
 	if logger, ok := c.loggers.methods[id]; ok {
 		return logger
 	}
 	names := strings.Split(id, "_")
-	logger := c.loggers.main.With(zap.String("client", names[0]), zap.String("endpoint", names[1]), zap.String("method", names[2]))
+	logger := c.loggers.main.With().Str("client", names[0]).Str("endpoint", names[1]).Str("method", names[2]).Logger()
 	c.loggers.methods[id] = logger
 	return logger
 }
