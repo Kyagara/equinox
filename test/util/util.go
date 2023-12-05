@@ -21,7 +21,7 @@ func NewTestEquinoxConfig() *api.EquinoxConfig {
 		Key:        "RGAPI-TEST",
 		LogLevel:   zerolog.DebugLevel,
 		HTTPClient: &http.Client{},
-		Retry:      0,
+		Retries:    0,
 		Cache:      &cache.Cache{TTL: 0},
 	}
 }

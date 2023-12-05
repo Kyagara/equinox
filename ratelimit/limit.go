@@ -45,7 +45,12 @@ func (l *Limit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest
 
 	for i := len(limited) - 1; i >= 0; i-- {
 		bucket := limited[i]
-		equinoxReq.Logger.Warn().Any("route", equinoxReq.Route).Str("method_id", equinoxReq.MethodID).Str("limit_type", l.limitType).Object("bucket", bucket).Msg("Rate limited")
+		equinoxReq.Logger.Warn().
+			Any("route", equinoxReq.Route).
+			Str("method_id", equinoxReq.MethodID).
+			Str("limit_type", l.limitType).
+			Object("bucket", bucket).
+			Msg("Rate limited")
 		bucket.mutex.Lock()
 		defer bucket.mutex.Unlock()
 		bucket.check()

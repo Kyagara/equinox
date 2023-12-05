@@ -40,7 +40,7 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
-	config.Retry = 3
+	config.Retries = 3
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
@@ -130,7 +130,7 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
-	config.Retry = 3
+	config.Retries = 3
 
 	client, err := equinox.NewClientWithConfig(config)
 	require.Nil(b, err)
