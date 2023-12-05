@@ -55,7 +55,7 @@ func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorizati
 	if authorization == "" {
 		return *new([]DeckV1DTO), fmt.Errorf("'authorization' header is required")
 	}
-	equinoxReq.Request.Header.Set("authorization", fmt.Sprint(authorization))
+	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data []DeckV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
@@ -90,7 +90,7 @@ func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *
 	if authorization == "" {
 		return *new(string), fmt.Errorf("'authorization' header is required")
 	}
-	equinoxReq.Request.Header.Set("authorization", fmt.Sprint(authorization))
+	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
@@ -136,7 +136,7 @@ func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, author
 	if authorization == "" {
 		return *new([]CardV1DTO), fmt.Errorf("'authorization' header is required")
 	}
-	equinoxReq.Request.Header.Set("authorization", fmt.Sprint(authorization))
+	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data []CardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {

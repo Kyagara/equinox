@@ -118,7 +118,7 @@ func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, 
 	if authorization == "" {
 		return new(AccountV1DTO), fmt.Errorf("'authorization' header is required")
 	}
-	equinoxReq.Request.Header.Set("authorization", fmt.Sprint(authorization))
+	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data AccountV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {

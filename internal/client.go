@@ -3,12 +3,12 @@ package internal
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"slices"
-	"strconv"
 	"sync"
 	"time"
 
@@ -117,8 +117,9 @@ func (c *InternalClient) Request(ctx context.Context, logger *zap.Logger, baseUR
 		return nil, err
 	}
 	equinoxReq.Request = request
+	equinoxReq.IsCDN = slices.Contains(cdns, request.URL.Host)
 
-	if slices.Contains(cdns, request.URL.Host) {
+	if equinoxReq.IsCDN {
 		request.Header = cdnHeaders
 	} else {
 		if c.key == "" {
@@ -135,14 +136,9 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 		return errContextIsNil
 	}
 
-	url := equinoxReq.Request.URL.String()
-	// Don't want to cache using the auth header as key. Maybe use a hash?
-	// This results in the method ByAccessToken from tft-summoner-v1, account-v1 and summoner-v4
-	// not being cached
-	// TODO: Figure out a way fix this issue
-	hasAuthHeader := equinoxReq.Request.Header.Get("Authorization") != ""
+	url := equinoxReq.Request.URL.String() + getAuthorizationHeaderHash(equinoxReq.Request.Header.Get("Authorization"))
 
-	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet && !hasAuthHeader {
+	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
 		if item, err := c.cache.Get(url); err != nil {
 			equinoxReq.Logger.Error("Error retrieving cached response", zap.Error(err))
 		} else if item != nil {
@@ -152,7 +148,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	}
 
 	// Request not cached/cache disabled, so take from the bucket
-	if !slices.Contains(cdns, equinoxReq.Request.URL.Host) {
+	if !equinoxReq.IsCDN {
 		err := c.ratelimit.Take(ctx, equinoxReq)
 		if err != nil {
 			return err
@@ -173,14 +169,13 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	}
 
 	if delay > 0 {
-		duration := time.Duration(delay) * time.Second
 		deadline, ok := ctx.Deadline()
-		if ok && deadline.Before(time.Now().Add(duration)) {
+		if ok && deadline.Before(time.Now().Add(delay)) {
 			return ratelimit.ErrContextDeadlineExceeded
 		}
-		equinoxReq.Logger.Info("Retrying request after sleep", zap.Duration("sleep", duration))
+		equinoxReq.Logger.Info("Retrying request after sleep", zap.Duration("sleep", delay))
 		select {
-		case <-time.After(duration):
+		case <-time.After(delay):
 			equinoxReq.Retries++
 			return c.Execute(ctx, equinoxReq, target)
 		case <-ctx.Done():
@@ -194,7 +189,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 		return err
 	}
 
-	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet && !hasAuthHeader {
+	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
 		if err := c.cache.Set(url, body); err != nil {
 			equinoxReq.Logger.Error("Error caching item", zap.Error(err))
 		} else {
@@ -204,27 +199,15 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	return jsonv2.Unmarshal(body, &target)
 }
 
-// Checks the response from the Riot API, returns an float64 if the response contained a Retry-After header.
-func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) (float64, error) {
-	if !slices.Contains(cdns, response.Request.Host) {
+// Checks the response from the Riot API and returns a Retry-After value if present.
+func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) (time.Duration, error) {
+	if !equinoxReq.IsCDN {
 		c.ratelimit.Update(equinoxReq, &response.Header)
-	}
-
-	if response.StatusCode == http.StatusTooManyRequests {
-		equinoxReq.Logger.Warn("Rate limited", zap.String("limit_type", response.Header.Get(ratelimit.RATE_LIMIT_TYPE_HEADER)))
-
-		if equinoxReq.Retries < c.maxRetries {
-			retryAfter := response.Header.Get(ratelimit.RETRY_AFTER_HEADER)
-			if retryAfter == "" {
-				return 0, ratelimit.Err429ButNoRetryAfterHeader
-			}
-			delay, _ := strconv.ParseFloat(retryAfter, 32)
-			delay += 0.5
-			return delay, nil
+		if response.StatusCode == http.StatusTooManyRequests && equinoxReq.Retries < c.maxRetries {
+			return c.ratelimit.CheckRetryAfter(equinoxReq, &response.Header)
 		}
 	}
 
-	// Check if the response status code is not within the range of 200-299 (success codes)
 	if response.StatusCode < http.StatusOK || response.StatusCode > 299 {
 		equinoxReq.Logger.Error("Response with error code", zap.String("code", response.Status))
 		err, ok := api.StatusCodeToError[response.StatusCode]
@@ -239,6 +222,14 @@ func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response 
 		return 0, err
 	}
 	return 0, nil
+}
+
+// Generates a hash for the Authorization header. Don't want to store the Authorization header as key in plaintext.
+func getAuthorizationHeaderHash(key string) string {
+	if key == "" {
+		return ""
+	}
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(key)))
 }
 
 func (c *InternalClient) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {
