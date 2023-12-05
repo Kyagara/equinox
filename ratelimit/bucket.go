@@ -1,7 +1,6 @@
 package ratelimit
 
 import (
-	"context"
 	"sync"
 	"time"
 
@@ -55,23 +54,4 @@ func (b *Bucket) isRateLimited() bool {
 	}
 	b.tokens--
 	return false
-}
-
-// wait() should block if the rate limit is reached and wait until the bucket resets.
-func (b *Bucket) wait(ctx context.Context) error {
-	b.mutex.Lock()
-	defer b.mutex.Unlock()
-	b.check()
-	deadline, ok := ctx.Deadline()
-	if ok && deadline.Before(b.next) {
-		return ErrContextDeadlineExceeded
-	}
-	select {
-	case <-time.After(time.Until(b.next)):
-		b.check()
-		b.tokens--
-		return nil
-	case <-ctx.Done():
-		return ctx.Err()
-	}
 }

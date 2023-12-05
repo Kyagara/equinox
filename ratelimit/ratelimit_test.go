@@ -115,6 +115,34 @@ func TestLimitsDontMatch(t *testing.T) {
 	}
 	r.Update(equinoxReq, &headers)
 	err = r.Take(ctx, equinoxReq)
-	// The buckets should've been updated, so this request should be rate limited
+	// The buckets should've been updated, so this request should be rate limited now
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
+}
+
+func TestCheckRetryAfter(t *testing.T) {
+	r := &ratelimit.RateLimit{
+		Region: map[any]*ratelimit.Limits{
+			"route": {
+				App: ratelimit.NewLimit(ratelimit.APP_RATE_LIMIT_TYPE),
+				Methods: map[string]*ratelimit.Limit{
+					"method": ratelimit.NewLimit(ratelimit.METHOD_RATE_LIMIT_TYPE),
+				},
+			},
+		},
+	}
+
+	headers := http.Header{}
+	equinoxReq := &api.EquinoxRequest{
+		Route:    "route",
+		MethodID: "method",
+	}
+
+	headers.Set(ratelimit.RETRY_AFTER_HEADER, "")
+	_, err := r.CheckRetryAfter(equinoxReq, &headers)
+	require.Equal(t, ratelimit.Err429ButNoRetryAfterHeader, err)
+
+	headers.Set(ratelimit.RETRY_AFTER_HEADER, "10")
+	delay, err := r.CheckRetryAfter(equinoxReq, &headers)
+	require.Nil(t, err)
+	require.Equal(t, 10*time.Second, delay)
 }

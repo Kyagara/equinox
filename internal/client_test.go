@@ -227,7 +227,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			if test.name == "rate limited" {
 				config.Retry = 0
 			} else if test.name == "rate limited but no retry-after header found" {
-				config.Retry = 1
+				config.Retry = 3
 			}
 
 			gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, "tests")).
@@ -249,7 +249,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 
 func TestInternalClientRetries(t *testing.T) {
 	config := util.NewTestEquinoxConfig()
-	config.Retry = 1
+	config.Retry = 3
 	internal, err := internal.NewInternalClient(config)
 	require.Nil(t, err, "expecting nil error")
 

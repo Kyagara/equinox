@@ -112,6 +112,20 @@ func (r *RateLimit) CheckRetryAfter(equinoxReq *api.EquinoxRequest, headers *htt
 	return delay, nil
 }
 
+// WaitN waits for the given duration after checking if the context deadline will be exceeded.
+func WaitN(ctx context.Context, estimated time.Time, duration time.Duration) error {
+	deadline, ok := ctx.Deadline()
+	if ok && deadline.Before(estimated) {
+		return ErrContextDeadlineExceeded
+	}
+	select {
+	case <-time.After(duration):
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+	return nil
+}
+
 func parseHeaders(limitHeader string, countHeader string, limitType string) *Limit {
 	if limitHeader == "" || countHeader == "" {
 		return NewLimit(limitType)

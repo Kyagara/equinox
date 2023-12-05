@@ -166,18 +166,13 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	}
 
 	if delay > 0 {
-		deadline, ok := ctx.Deadline()
-		if ok && deadline.Before(time.Now().Add(delay)) {
-			return ratelimit.ErrContextDeadlineExceeded
-		}
 		equinoxReq.Logger.Info().Dur("sleep", delay).Msg("Retrying request after sleep")
-		select {
-		case <-time.After(delay):
-			equinoxReq.Retries++
-			return c.Execute(ctx, equinoxReq, target)
-		case <-ctx.Done():
-			return ctx.Err()
+		err := ratelimit.WaitN(ctx, time.Now().Add(delay), delay)
+		if err != nil {
+			return err
 		}
+		equinoxReq.Retries++
+		return c.Execute(ctx, equinoxReq, target)
 	}
 
 	equinoxReq.Logger.Info().Msg("Request successful")
