@@ -5,15 +5,15 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox/cache"
-	"go.uber.org/zap/zapcore"
+	"github.com/rs/zerolog"
 )
 
 // Configuration for the Equinox client.
 type EquinoxConfig struct {
 	// Riot API Key.
 	Key string
-	// Log level.
-	LogLevel LogLevel
+	// Zerolog log level.
+	LogLevel zerolog.Level
 	// http.Client used internally.
 	HTTPClient *http.Client
 	// Retry a request n times if it returns a 429 status code.
@@ -22,17 +22,12 @@ type EquinoxConfig struct {
 	Cache *cache.Cache
 }
 
-func (c *EquinoxConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
-	encoder.AddInt("retry-if-429", c.Retry)
-	encoder.AddDuration("http-client-timeout", c.HTTPClient.Timeout)
+func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
+	encoder.Int("retry-if-429", c.Retry).Dur("http-client-timeout", c.HTTPClient.Timeout)
 	if c.Cache.TTL > 0 {
 		cache := CacheConfig{Store: string(c.Cache.StoreType), TTL: c.Cache.TTL}
-		err := encoder.AddObject("cache", cache)
-		if err != nil {
-			return err
-		}
+		encoder.Object("cache", cache)
 	}
-	return nil
 }
 
 type CacheConfig struct {
@@ -40,8 +35,6 @@ type CacheConfig struct {
 	Store string
 }
 
-func (c CacheConfig) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
-	encoder.AddString("store", c.Store)
-	encoder.AddDuration("cache-ttl", c.TTL)
-	return nil
+func (c CacheConfig) MarshalZerologObject(encoder *zerolog.Event) {
+	encoder.Str("store", c.Store).Dur("cache-ttl", c.TTL)
 }

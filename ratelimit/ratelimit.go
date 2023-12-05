@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox/api"
-	"go.uber.org/zap"
 )
 
 const (
@@ -82,11 +81,11 @@ func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, headers *http.Header)
 	limits := r.Region[equinoxReq.Route]
 	if limits.App.limitsDontMatch(headers.Get(APP_RATE_LIMIT_HEADER)) {
 		limits.App = parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER), APP_RATE_LIMIT_TYPE)
-		equinoxReq.Logger.Debug("New Application buckets", zap.Objects("buckets", limits.App.buckets))
+		equinoxReq.Logger.Debug().Msg("New Application buckets")
 	}
 	if limits.Methods[equinoxReq.MethodID].limitsDontMatch(headers.Get(METHOD_RATE_LIMIT_HEADER)) {
 		limits.Methods[equinoxReq.MethodID] = parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
-		equinoxReq.Logger.Debug("New Method buckets", zap.Objects("buckets", limits.Methods[equinoxReq.MethodID].buckets))
+		equinoxReq.Logger.Debug().Msg("New Method buckets")
 	}
 }
 

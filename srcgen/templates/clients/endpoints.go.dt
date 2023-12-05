@@ -13,7 +13,6 @@ import (
     
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
-	"go.uber.org/zap"
 )
 
 {{
@@ -141,10 +140,10 @@ type {{= normalizedStructName }} struct {
 // [{{= operationId }}]: {{= operation.externalDocs.url }}
 func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}) {{= !hasReturn ? "error" : `(${isPrimitiveType ? "" : "*"}${returnValue}, error)` }} {
   logger := e.internal.Logger("{{= clientNormalizedName + "_" + normalizedStructName + "_" + method }}")
-  logger.Debug("Method started execution")
+  logger.Debug().Msg("Method started execution")
   equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.Method{{= dotUtils.capitalize(verb) }}, route, {{= routeArgument }}, "{{= operationId }}", {{? bodyType }}body{{?? true }}nil{{?}})
   if err != nil {
-    logger.Error("Error creating request", zap.Error(err))
+    logger.Error().Err(err).Msg("Error creating request")
     return {{? hasReturn }}{{= isPrimitiveType ? `*new(${returnValue})` : "nil" }}, err{{?? true }}{{= isPrimitiveType ? `*new(${returnValue})` : "nil" }}{{?}}
 	}
 {{
@@ -178,10 +177,10 @@ func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}
   {{? hasReturn }}var data {{= returnValue }}{{?}}
   err = e.internal.Execute(ctx, equinoxReq, {{? hasReturn }}&data{{?? true }}nil{{?}})
   if err != nil {
-    logger.Error("Error executing request", zap.Error(err))
+    logger.Error().Err(err).Msg("Error executing request")
     return {{= isPrimitiveType ? `*new(${returnValue})` : "nil"}}{{? hasReturn }}, err{{?}}
   }
-  logger.Debug("Method executed successfully")
+  logger.Debug().Msg("Method executed successfully")
   return {{? hasReturn }}{{= isPrimitiveType ? "data" : "&data" }}, nil{{?? true }}{{= isPrimitiveType ? `*new(${returnValue})` : "nil" }}
 {{?}}
 }

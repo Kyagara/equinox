@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"go.uber.org/zap/zapcore"
+	"github.com/rs/zerolog"
 )
 
 type Bucket struct {
@@ -20,10 +20,8 @@ type Bucket struct {
 	mutex sync.Mutex
 }
 
-func (b *Bucket) MarshalLogObject(encoder zapcore.ObjectEncoder) error {
-	encoder.AddDuration("interval", b.interval)
-	encoder.AddInt("limit", b.limit)
-	return nil
+func (b *Bucket) MarshalZerologObject(encoder *zerolog.Event) {
+	encoder.Int("tokens", b.tokens).Int("limit", b.limit).Dur("interval", b.interval).Time("next", b.next)
 }
 
 func NewBucket(interval time.Duration, limit int, tokens int) *Bucket {

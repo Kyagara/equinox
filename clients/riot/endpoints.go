@@ -17,7 +17,6 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
-	"go.uber.org/zap"
 )
 
 // # Riot API Reference
@@ -46,19 +45,19 @@ type AccountV1 struct {
 // [account-v1.getByPuuid]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByPuuid
 func (e *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute, puuid string) (*AccountV1DTO, error) {
 	logger := e.internal.Logger("Riot_AccountV1_ByPUUID")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-puuid/%v", puuid), "account-v1.getByPuuid", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data AccountV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -78,19 +77,19 @@ func (e *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute, puuid 
 // [account-v1.getByRiotId]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByRiotId
 func (e *AccountV1) ByRiotID(ctx context.Context, route api.RegionalRoute, gameName string, tagLine string) (*AccountV1DTO, error) {
 	logger := e.internal.Logger("Riot_AccountV1_ByRiotID")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-riot-id/%v/%v", gameName, tagLine), "account-v1.getByRiotId", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data AccountV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -109,10 +108,10 @@ func (e *AccountV1) ByRiotID(ctx context.Context, route api.RegionalRoute, gameN
 // [account-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByAccessToken
 func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
 	logger := e.internal.Logger("Riot_AccountV1_ByAccessToken")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/riot/account/v1/accounts/me", "account-v1.getByAccessToken", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	if authorization == "" {
@@ -122,10 +121,10 @@ func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, 
 	var data AccountV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -145,18 +144,18 @@ func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, 
 // [account-v1.getActiveShard]: https://developer.riotgames.com/api-methods/#account-v1/GET_getActiveShard
 func (e *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRoute, game string, puuid string) (*ActiveShardV1DTO, error) {
 	logger := e.internal.Logger("Riot_AccountV1_ActiveShard")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), "account-v1.getActiveShard", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data ActiveShardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }

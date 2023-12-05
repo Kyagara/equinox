@@ -17,7 +17,6 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
-	"go.uber.org/zap"
 )
 
 // # Riot API Reference
@@ -46,10 +45,10 @@ type DeckV1 struct {
 // [lor-deck-v1.getDecks]: https://developer.riotgames.com/api-methods/#lor-deck-v1/GET_getDecks
 func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorization string) ([]DeckV1DTO, error) {
 	logger := e.internal.Logger("LOR_DeckV1_Decks")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/deck/v1/decks/me", "lor-deck-v1.getDecks", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return *new([]DeckV1DTO), err
 	}
 	if authorization == "" {
@@ -59,10 +58,10 @@ func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorizati
 	var data []DeckV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return *new([]DeckV1DTO), err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return data, nil
 }
 
@@ -81,10 +80,10 @@ func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorizati
 // [lor-deck-v1.createDeck]: https://developer.riotgames.com/api-methods/#lor-deck-v1/POST_createDeck
 func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *NewDeckV1DTO, authorization string) (string, error) {
 	logger := e.internal.Logger("LOR_DeckV1_CreateDeck")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lor/deck/v1/decks/me", "lor-deck-v1.createDeck", body)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return *new(string), err
 	}
 	if authorization == "" {
@@ -94,10 +93,10 @@ func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *
 	var data string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return *new(string), err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return data, nil
 }
 
@@ -127,10 +126,10 @@ type InventoryV1 struct {
 // [lor-inventory-v1.getCards]: https://developer.riotgames.com/api-methods/#lor-inventory-v1/GET_getCards
 func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, authorization string) ([]CardV1DTO, error) {
 	logger := e.internal.Logger("LOR_InventoryV1_Cards")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/inventory/v1/cards/me", "lor-inventory-v1.getCards", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return *new([]CardV1DTO), err
 	}
 	if authorization == "" {
@@ -140,10 +139,10 @@ func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, author
 	var data []CardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return *new([]CardV1DTO), err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return data, nil
 }
 
@@ -173,19 +172,19 @@ type MatchV1 struct {
 // [lor-match-v1.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#lor-match-v1/GET_getMatchIdsByPUUID
 func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string) ([]string, error) {
 	logger := e.internal.Logger("LOR_MatchV1_ListByPUUID")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/by-puuid/%v/ids", puuid), "lor-match-v1.getMatchIdsByPUUID", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return *new([]string), err
 	}
 	var data []string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return *new([]string), err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return data, nil
 }
 
@@ -204,19 +203,19 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puui
 // [lor-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#lor-match-v1/GET_getMatch
 func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId string) (*MatchV1DTO, error) {
 	logger := e.internal.Logger("LOR_MatchV1_ByID")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/%v", matchId), "lor-match-v1.getMatch", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data MatchV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -245,19 +244,19 @@ type RankedV1 struct {
 // [lor-ranked-v1.getLeaderboards]: https://developer.riotgames.com/api-methods/#lor-ranked-v1/GET_getLeaderboards
 func (e *RankedV1) Leaderboards(ctx context.Context, route api.RegionalRoute) (*LeaderboardV1DTO, error) {
 	logger := e.internal.Logger("LOR_RankedV1_Leaderboards")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/ranked/v1/leaderboards", "lor-ranked-v1.getLeaderboards", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data LeaderboardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -286,18 +285,18 @@ type StatusV1 struct {
 // [lor-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#lor-status-v1/GET_getPlatformData
 func (e *StatusV1) Platform(ctx context.Context, route api.RegionalRoute) (*PlatformDataV1DTO, error) {
 	logger := e.internal.Logger("LOR_StatusV1_Platform")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/status/v1/platform-data", "lor-status-v1.getPlatformData", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data PlatformDataV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }

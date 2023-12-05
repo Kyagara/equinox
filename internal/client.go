@@ -13,11 +13,11 @@ import (
 	"time"
 
 	jsonv2 "github.com/go-json-experiment/json"
+	"github.com/rs/zerolog"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/ratelimit"
-	"go.uber.org/zap"
 )
 
 type InternalClient struct {
@@ -52,12 +52,9 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	if config == nil {
 		return nil, fmt.Errorf("equinox configuration not provided")
 	}
-	logger, err := NewLogger(config)
-	if err != nil {
-		return nil, err
-	}
+	logger := NewLogger(config)
 	if config.Key == "" {
-		logger.Warn("API key was not provided, requests using other clients will result in errors.")
+		logger.Warn().Msg("API key was not provided, requests using other clients will result in errors.")
 	}
 	if config.Cache == nil {
 		config.Cache = &cache.Cache{TTL: 0}
@@ -70,7 +67,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 		http: config.HTTPClient,
 		loggers: &Loggers{
 			main:    logger,
-			methods: make(map[string]*zap.Logger),
+			methods: make(map[string]zerolog.Logger),
 			mutex:   sync.Mutex{},
 		},
 		cache:          config.Cache,
@@ -83,7 +80,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 }
 
 // Creates a request to the provided route and URL.
-func (c *InternalClient) Request(ctx context.Context, logger *zap.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (*api.EquinoxRequest, error) {
+func (c *InternalClient) Request(ctx context.Context, logger zerolog.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (*api.EquinoxRequest, error) {
 	if ctx == nil {
 		return nil, errContextIsNil
 	}
@@ -140,9 +137,9 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 
 	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
 		if item, err := c.cache.Get(url); err != nil {
-			equinoxReq.Logger.Error("Error retrieving cached response", zap.Error(err))
+			equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
 		} else if item != nil {
-			equinoxReq.Logger.Debug("Cache hit")
+			equinoxReq.Logger.Debug().Msg("Cache hit")
 			return jsonv2.Unmarshal(item, &target)
 		}
 	}
@@ -155,7 +152,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 		}
 	}
 
-	equinoxReq.Logger.Info("Sending request")
+	equinoxReq.Logger.Info().Msg("Sending request")
 	response, err := c.http.Do(equinoxReq.Request)
 	if err != nil {
 		return err
@@ -164,7 +161,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 
 	delay, err := c.checkResponse(equinoxReq, response)
 	if err != nil {
-		equinoxReq.Logger.Error("Request failed", zap.Error(err))
+		equinoxReq.Logger.Error().Err(err).Msg("Request failed")
 		return err
 	}
 
@@ -173,7 +170,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 		if ok && deadline.Before(time.Now().Add(delay)) {
 			return ratelimit.ErrContextDeadlineExceeded
 		}
-		equinoxReq.Logger.Info("Retrying request after sleep", zap.Duration("sleep", delay))
+		equinoxReq.Logger.Info().Dur("sleep", delay).Msg("Retrying request after sleep")
 		select {
 		case <-time.After(delay):
 			equinoxReq.Retries++
@@ -183,7 +180,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 		}
 	}
 
-	equinoxReq.Logger.Info("Request successful")
+	equinoxReq.Logger.Info().Msg("Request successful")
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return err
@@ -191,9 +188,9 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 
 	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
 		if err := c.cache.Set(url, body); err != nil {
-			equinoxReq.Logger.Error("Error caching item", zap.Error(err))
+			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
 		} else {
-			equinoxReq.Logger.Debug("Cache set")
+			equinoxReq.Logger.Debug().Msg("Cache set")
 		}
 	}
 	return jsonv2.Unmarshal(body, &target)
@@ -209,7 +206,7 @@ func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response 
 	}
 
 	if response.StatusCode < http.StatusOK || response.StatusCode > 299 {
-		equinoxReq.Logger.Error("Response with error code", zap.String("code", response.Status))
+		equinoxReq.Logger.Error().Str("code", response.Status).Msg("Response with error code")
 		err, ok := api.StatusCodeToError[response.StatusCode]
 		if !ok {
 			return 0, api.ErrorResponse{
@@ -234,16 +231,16 @@ func getAuthorizationHeaderHash(key string) string {
 
 func (c *InternalClient) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {
 	logger := c.Logger(id)
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := c.Request(ctx, logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "/api/versions.json", "", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data []string
 	err = c.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return data, nil

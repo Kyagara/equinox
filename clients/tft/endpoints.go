@@ -17,7 +17,6 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
-	"go.uber.org/zap"
 )
 
 // # Riot API Reference
@@ -46,10 +45,10 @@ type LeagueV1 struct {
 // [tft-league-v1.getChallengerLeague]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getChallengerLeague
 func (e *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_ChallengerByQueue")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/league/v1/challenger", "tft-league-v1.getChallengerLeague", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
@@ -60,10 +59,10 @@ func (e *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformRoute, q
 	var data LeagueListV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -82,19 +81,19 @@ func (e *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformRoute, q
 // [tft-league-v1.getLeagueEntriesForSummoner]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueEntriesForSummoner
 func (e *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, summonerId string) ([]LeagueEntryV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_SummonerEntries")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/entries/by-summoner/%v", summonerId), "tft-league-v1.getLeagueEntriesForSummoner", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return *new([]LeagueEntryV1DTO), err
 	}
 	var data []LeagueEntryV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return *new([]LeagueEntryV1DTO), err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return data, nil
 }
 
@@ -116,10 +115,10 @@ func (e *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, sum
 // [tft-league-v1.getLeagueEntries]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueEntries
 func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, division string, queue string, page int32) ([]LeagueEntryV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_Entries")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/entries/%v/%v", tier, division), "tft-league-v1.getLeagueEntries", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return *new([]LeagueEntryV1DTO), err
 	}
 	values := equinoxReq.Request.URL.Query()
@@ -133,10 +132,10 @@ func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, 
 	var data []LeagueEntryV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return *new([]LeagueEntryV1DTO), err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return data, nil
 }
 
@@ -155,10 +154,10 @@ func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, 
 // [tft-league-v1.getGrandmasterLeague]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getGrandmasterLeague
 func (e *LeagueV1) GrandmasterByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_GrandmasterByQueue")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/league/v1/grandmaster", "tft-league-v1.getGrandmasterLeague", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
@@ -169,10 +168,10 @@ func (e *LeagueV1) GrandmasterByQueue(ctx context.Context, route PlatformRoute, 
 	var data LeagueListV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -191,19 +190,19 @@ func (e *LeagueV1) GrandmasterByQueue(ctx context.Context, route PlatformRoute, 
 // [tft-league-v1.getLeagueById]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueById
 func (e *LeagueV1) ByID(ctx context.Context, route PlatformRoute, leagueId string) (*LeagueListV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_ByID")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/leagues/%v", leagueId), "tft-league-v1.getLeagueById", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data LeagueListV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -222,10 +221,10 @@ func (e *LeagueV1) ByID(ctx context.Context, route PlatformRoute, leagueId strin
 // [tft-league-v1.getMasterLeague]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getMasterLeague
 func (e *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_MasterByQueue")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/league/v1/master", "tft-league-v1.getMasterLeague", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
@@ -236,10 +235,10 @@ func (e *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute, queue
 	var data LeagueListV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -258,19 +257,19 @@ func (e *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute, queue
 // [tft-league-v1.getTopRatedLadder]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getTopRatedLadder
 func (e *LeagueV1) TopRatedLadder(ctx context.Context, route PlatformRoute, queue QueueType) ([]TopRatedLadderEntryV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_TopRatedLadder")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/rated-ladders/%v/top", queue), "tft-league-v1.getTopRatedLadder", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return *new([]TopRatedLadderEntryV1DTO), err
 	}
 	var data []TopRatedLadderEntryV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return *new([]TopRatedLadderEntryV1DTO), err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return data, nil
 }
 
@@ -304,10 +303,10 @@ type MatchV1 struct {
 // [tft-match-v1.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#tft-match-v1/GET_getMatchIdsByPUUID
 func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, start int32, endTime int64, startTime int64, count int32) ([]string, error) {
 	logger := e.internal.Logger("TFT_MatchV1_ListByPUUID")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/match/v1/matches/by-puuid/%v/ids", puuid), "tft-match-v1.getMatchIdsByPUUID", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return *new([]string), err
 	}
 	values := equinoxReq.Request.URL.Query()
@@ -327,10 +326,10 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puui
 	var data []string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return *new([]string), err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return data, nil
 }
 
@@ -349,19 +348,19 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puui
 // [tft-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#tft-match-v1/GET_getMatch
 func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId string) (*MatchV1DTO, error) {
 	logger := e.internal.Logger("TFT_MatchV1_ByID")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/match/v1/matches/%v", matchId), "tft-match-v1.getMatch", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data MatchV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -390,19 +389,19 @@ type StatusV1 struct {
 // [tft-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#tft-status-v1/GET_getPlatformData
 func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV1DTO, error) {
 	logger := e.internal.Logger("TFT_StatusV1_Platform")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/status/v1/platform-data", "tft-status-v1.getPlatformData", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data PlatformDataV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -432,19 +431,19 @@ type SummonerV1 struct {
 // [tft-summoner-v1.getByAccountId]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByAccountId
 func (e *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute, encryptedAccountId string) (*SummonerV1DTO, error) {
 	logger := e.internal.Logger("TFT_SummonerV1_ByAccountID")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/summoner/v1/summoners/by-account/%v", encryptedAccountId), "tft-summoner-v1.getByAccountId", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data SummonerV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -463,19 +462,19 @@ func (e *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute, encry
 // [tft-summoner-v1.getBySummonerName]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getBySummonerName
 func (e *SummonerV1) ByName(ctx context.Context, route PlatformRoute, summonerName string) (*SummonerV1DTO, error) {
 	logger := e.internal.Logger("TFT_SummonerV1_ByName")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/summoner/v1/summoners/by-name/%v", summonerName), "tft-summoner-v1.getBySummonerName", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data SummonerV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -494,19 +493,19 @@ func (e *SummonerV1) ByName(ctx context.Context, route PlatformRoute, summonerNa
 // [tft-summoner-v1.getByPUUID]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByPUUID
 func (e *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (*SummonerV1DTO, error) {
 	logger := e.internal.Logger("TFT_SummonerV1_ByPUUID")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/summoner/v1/summoners/by-puuid/%v", encryptedPUUID), "tft-summoner-v1.getByPUUID", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data SummonerV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -525,10 +524,10 @@ func (e *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, encrypted
 // [tft-summoner-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByAccessToken
 func (e *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, authorization string) (*SummonerV1DTO, error) {
 	logger := e.internal.Logger("TFT_SummonerV1_ByAccessToken")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/summoner/v1/summoners/me", "tft-summoner-v1.getByAccessToken", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	if authorization == "" {
@@ -538,10 +537,10 @@ func (e *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, aut
 	var data SummonerV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -560,18 +559,18 @@ func (e *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, aut
 // [tft-summoner-v1.getBySummonerId]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getBySummonerId
 func (e *SummonerV1) BySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*SummonerV1DTO, error) {
 	logger := e.internal.Logger("TFT_SummonerV1_BySummonerID")
-	logger.Debug("Method started execution")
+	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/summoner/v1/summoners/%v", encryptedSummonerId), "tft-summoner-v1.getBySummonerId", nil)
 	if err != nil {
-		logger.Error("Error creating request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data SummonerV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
-		logger.Error("Error executing request", zap.Error(err))
+		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug("Method executed successfully")
+	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }

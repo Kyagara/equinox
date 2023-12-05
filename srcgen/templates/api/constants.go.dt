@@ -8,12 +8,12 @@
 import (
 	"net/http"
 
-	"go.uber.org/zap"
+	"github.com/rs/zerolog"
 )
 
 // EquinoxRequest represents a request to the Riot API and CDNs, its a struct that contains all information about a request.
 type EquinoxRequest struct {
-	Logger   *zap.Logger
+	Logger   zerolog.Logger
 	MethodID string
 	Route    any
 	BaseURL  string
@@ -30,21 +30,6 @@ const (
 	RIOT_API_BASE_URL_FORMAT = "https://%s.api.riotgames.com"
 	D_DRAGON_BASE_URL_FORMAT = "https://ddragon.leagueoflegends.com%s"
 	C_DRAGON_BASE_URL_FORMAT = "https://cdn.communitydragon.org%s"
-)
-
-type LogLevel int8
-
-const (
-	// NOP_LOG_LEVEL won't log anything, this is the default behaviour for the Default client.
-	NOP_LOG_LEVEL LogLevel = iota - 2
-	// DEBUG_LOG_LEVEL will log everything.
-	DEBUG_LOG_LEVEL
-	// INFO_LOG_LEVEL will log the requests being made and if they were successful.
-	INFO_LOG_LEVEL
-	// WARN_LOG_LEVEL will log when a request was rate limited.
-	WARN_LOG_LEVEL
-	// ERROR_LOG_LEVEL will log every error.
-	ERROR_LOG_LEVEL
 )
 
 // Regional routes, used in tournament services, Legends of Runeterra (LoR), and some other endpoints.

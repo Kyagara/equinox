@@ -12,6 +12,7 @@ import (
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/h2non/gock"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -40,7 +41,7 @@ func BenchmarkMatchByID(b *testing.B) {
 		JSON(res)
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = api.WARN_LOG_LEVEL
+	config.LogLevel = zerolog.WarnLevel
 	config.Retry = 1
 
 	client, err := equinox.NewClientWithConfig(config)
@@ -79,7 +80,7 @@ func BenchmarkMatchTimeline(b *testing.B) {
 		JSON(res)
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = api.WARN_LOG_LEVEL
+	config.LogLevel = zerolog.WarnLevel
 	config.Retry = 1
 
 	client, err := equinox.NewClientWithConfig(config)
@@ -118,7 +119,7 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 		JSON(data)
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = api.WARN_LOG_LEVEL
+	config.LogLevel = zerolog.WarnLevel
 	config.Retry = 1
 
 	client, err := equinox.NewClientWithConfig(config)
@@ -158,7 +159,7 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 		JSON(res)
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = api.WARN_LOG_LEVEL
+	config.LogLevel = zerolog.WarnLevel
 	config.Retry = 1
 
 	client, err := equinox.NewClientWithConfig(config)
