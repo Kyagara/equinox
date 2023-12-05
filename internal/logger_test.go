@@ -14,12 +14,15 @@ import (
 )
 
 func TestNewLogger(t *testing.T) {
+	logger := internal.NewLogger(nil)
+	require.Equal(t, logger.GetLevel(), zerolog.Disabled)
+
 	config := &api.EquinoxConfig{
 		LogLevel: zerolog.Disabled, Cache: &cache.Cache{TTL: 60 * time.Second},
 		HTTPClient: &http.Client{Timeout: 15 * time.Second},
 	}
 
-	logger := internal.NewLogger(config)
+	logger = internal.NewLogger(config)
 	require.NotEmpty(t, logger, "expecting non-nil logger")
 
 	config.LogLevel = zerolog.DebugLevel

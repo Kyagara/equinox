@@ -29,35 +29,34 @@ func NewLimit(limitType string) *Limit {
 // Checks if any of the buckets provided are rate limited, and if so, blocks until the next reset.
 func (l *Limit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
 	if l.retryAfter > 0 {
-		deadline, ok := ctx.Deadline()
-		if ok && deadline.Before(time.Now().Add(l.retryAfter)) {
-			return ErrContextDeadlineExceeded
-		}
-		select {
-		case <-time.After(l.retryAfter):
-		case <-ctx.Done():
-			return ctx.Err()
+		err := WaitN(ctx, time.Now().Add(l.retryAfter), l.retryAfter)
+		if err != nil {
+			return err
 		}
 		l.retryAfter = 0
 	}
+
 	var limited []*Bucket
 	for _, bucket := range l.buckets {
 		if bucket.isRateLimited() {
 			limited = append(limited, bucket)
 		}
 	}
+
 	for i := len(limited) - 1; i >= 0; i-- {
-		equinoxReq.Logger.Warn().Any("route", equinoxReq.Route).Str("method_id", equinoxReq.MethodID).Str("limit_type", l.limitType).Object("bucket", limited[i]).Msg("Rate limited")
-		err := limited[i].wait(ctx)
+		bucket := limited[i]
+		equinoxReq.Logger.Warn().Any("route", equinoxReq.Route).Str("method_id", equinoxReq.MethodID).Str("limit_type", l.limitType).Object("bucket", bucket).Msg("Rate limited")
+		bucket.mutex.Lock()
+		defer bucket.mutex.Unlock()
+		bucket.check()
+		err := WaitN(ctx, bucket.next, time.Until(bucket.next))
 		if err != nil {
-			select {
-			case <-ctx.Done():
-				return ctx.Err()
-			default:
-				return err
-			}
+			return err
 		}
+		bucket.check()
+		bucket.tokens--
 	}
+
 	return nil
 }
 

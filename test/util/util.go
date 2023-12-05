@@ -12,7 +12,7 @@ import (
 
 // Creates an EquinoxConfig for tests.
 //
-//   - `LogLevel`   : api.DEBUG_LOG_LEVEL
+//   - `LogLevel`   : zerolog.DebugLevel
 //   - `HTTPClient` : http.Client{}
 //   - `Retry`      : 0
 //   - `Cache`      : &cache.Cache{TTL: 0}

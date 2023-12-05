@@ -65,7 +65,7 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 //
 //   - `LogLevel`   : zerolog.WarnLevel
 //   - `HTTPClient` : http.Client with timeout of 15 seconds
-//   - `Retry`      : Retry on 429 1 time
+//   - `Retry`      : Retry on 429 3 times
 //   - `Cache`      : BigCache with TTL of 4 minutes
 func DefaultConfig(key string) (*api.EquinoxConfig, error) {
 	ctx := context.Background()
