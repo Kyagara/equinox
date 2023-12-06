@@ -3,6 +3,7 @@
     const spec = dotUtils.spec;
     const clientName = "{{# def.clientName }}";
     const clientNormalizedName = "{{# def.clientNormalizedName }}";
+    let needsConvPackage = false;
 }}
 {{= dotUtils.preamble(clientName, spec.info.version) }}
 
@@ -101,12 +102,14 @@ type {{= normalizedStructName }} struct {
             if (returnType === "float32" || returnType === "float64") {
               isPrimitiveType = true;
             }
-            if (returnType === "string" || returnType === "[]string") {
+            if (returnType === "string") {
               isPrimitiveType = true;
             }
             if (returnType.startsWith("map[") || returnType.startsWith("[]")) {
               isPrimitiveType = true;
             }
+
+            const nilValue = dotUtils.getNilValue(returnType);
 
             /* Description processing. */
             const descArr = operation.description.replace("##", "#").replace(/\n\n/g, "\n").split('\n');
@@ -144,7 +147,7 @@ func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}
   equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.Method{{= dotUtils.capitalize(verb) }}, route, {{= routeArgument }}, "{{= operationId }}", {{? bodyType }}body{{?? true }}nil{{?}})
   if err != nil {
     logger.Error().Err(err).Msg("Error creating request")
-    return {{? hasReturn }}{{= isPrimitiveType ? `*new(${returnValue})` : "nil" }}, err{{?? true }}{{= isPrimitiveType ? `*new(${returnValue})` : "nil" }}{{?}}
+    return {{? hasReturn }}{{= isPrimitiveType ? `${nilValue}` : "nil" }}, err{{?? true }}{{= isPrimitiveType ? `${nilValue}` : "nil" }}{{?}}
 	}
 {{
   if (queryParams.length > 0) {
@@ -170,7 +173,7 @@ func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}
 {{
   for (const headerParam of headerParams) {
 }}
-  {{= dotUtils.formatAddHeaderParam(headerParam, returnValue, isPrimitiveType) }}
+  {{= dotUtils.formatAddHeaderParam(headerParam, nilValue) }}
 {{
   }
 }}
@@ -178,10 +181,10 @@ func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}
   err = e.internal.Execute(ctx, equinoxReq, {{? hasReturn }}&data{{?? true }}nil{{?}})
   if err != nil {
     logger.Error().Err(err).Msg("Error executing request")
-    return {{= isPrimitiveType ? `*new(${returnValue})` : "nil"}}{{? hasReturn }}, err{{?}}
+    return {{= isPrimitiveType ? `${nilValue}` : "nil"}}{{? hasReturn }}, err{{?}}
   }
   logger.Debug().Msg("Method executed successfully")
-  return {{? hasReturn }}{{= isPrimitiveType ? "data" : "&data" }}, nil{{?? true }}{{= isPrimitiveType ? `*new(${returnValue})` : "nil" }}
+  return {{? hasReturn }}{{= isPrimitiveType ? "data" : "&data" }}, nil{{?? true }}{{= isPrimitiveType ? `${nilValue}` : "nil" }}
 {{?}}
 }
 

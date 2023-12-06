@@ -14,6 +14,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -85,13 +86,13 @@ func (e *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, sum
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/entries/by-summoner/%v", summonerId), "tft-league-v1.getLeagueEntriesForSummoner", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]LeagueEntryV1DTO), err
+		return nil, err
 	}
 	var data []LeagueEntryV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]LeagueEntryV1DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -119,21 +120,21 @@ func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, 
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/entries/%v/%v", tier, division), "tft-league-v1.getLeagueEntries", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]LeagueEntryV1DTO), err
+		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
 	if queue != "" {
 		values.Set("queue", queue)
 	}
 	if page != -1 {
-		values.Set("page", fmt.Sprint(page))
+		values.Set("page", strconv.FormatInt(int64(page), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []LeagueEntryV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]LeagueEntryV1DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -261,13 +262,13 @@ func (e *LeagueV1) TopRatedLadder(ctx context.Context, route PlatformRoute, queu
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/rated-ladders/%v/top", queue), "tft-league-v1.getTopRatedLadder", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]TopRatedLadderEntryV1DTO), err
+		return nil, err
 	}
 	var data []TopRatedLadderEntryV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]TopRatedLadderEntryV1DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -307,27 +308,27 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puui
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/match/v1/matches/by-puuid/%v/ids", puuid), "tft-match-v1.getMatchIdsByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]string), err
+		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
 	if start != -1 {
-		values.Set("start", fmt.Sprint(start))
+		values.Set("start", strconv.FormatInt(int64(start), 10))
 	}
 	if endTime != -1 {
-		values.Set("endTime", fmt.Sprint(endTime))
+		values.Set("endTime", strconv.FormatInt(endTime, 10))
 	}
 	if startTime != -1 {
-		values.Set("startTime", fmt.Sprint(startTime))
+		values.Set("startTime", strconv.FormatInt(startTime, 10))
 	}
 	if count != -1 {
-		values.Set("count", fmt.Sprint(count))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]string), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -531,7 +532,7 @@ func (e *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, aut
 		return nil, err
 	}
 	if authorization == "" {
-		return new(SummonerV1DTO), fmt.Errorf("'authorization' header is required")
+		return nil, fmt.Errorf("'authorization' header is required")
 	}
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data SummonerV1DTO
