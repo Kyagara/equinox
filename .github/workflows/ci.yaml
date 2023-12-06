@@ -37,8 +37,8 @@ jobs:
         with:
           go-version: ">=1.21"
 
-      - name: Install structslop
-        run: go install github.com/orijtech/structslop/cmd/structslop@latest
+      - name: Install betteralign
+        run: go install github.com/dkorunic/betteralign/cmd/betteralign@latest
 
       - name: Setup Node
         uses: actions/setup-node@v4

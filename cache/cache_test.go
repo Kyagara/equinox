@@ -1,7 +1,6 @@
 package cache_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/Kyagara/equinox/cache"
@@ -14,15 +13,15 @@ func TestCacheMethods(t *testing.T) {
 
 	bytes := []byte("data")
 	err := cacheStore.Set("test", bytes)
-	require.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", nil, err))
+	require.Equal(t, cache.ErrCacheIsDisabled, err)
 	_, err = cacheStore.Get("test")
-	require.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", nil, err))
+	require.Equal(t, cache.ErrCacheIsDisabled, err)
 	err = cacheStore.Delete("test")
-	require.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", nil, err))
+	require.Equal(t, cache.ErrCacheIsDisabled, err)
 	err = cacheStore.Set("test", bytes)
-	require.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", nil, err))
+	require.Equal(t, cache.ErrCacheIsDisabled, err)
 	err = cacheStore.Clear()
-	require.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", nil, err))
+	require.Equal(t, cache.ErrCacheIsDisabled, err)
 	_, err = cacheStore.Get("test")
-	require.Equal(t, cache.ErrCacheIsDisabled, err, fmt.Sprintf("want err %v, got %v", nil, err))
+	require.Equal(t, cache.ErrCacheIsDisabled, err)
 }

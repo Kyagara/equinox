@@ -43,13 +43,13 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 	config.Retries = 3
 
 	client, err := equinox.NewClientWithConfig(config)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-			require.Nil(b, err)
+			require.NoError(b, err)
 			require.Equal(b, "Phanes", data.Name)
 		}
 	})
@@ -86,13 +86,13 @@ func BenchmarkParallelCachedSummonerByPUUID(b *testing.B) {
 		JSON(summoner)
 
 	client, err := equinox.NewClient("RGAPI-TEST")
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-			require.Nil(b, err)
+			require.NoError(b, err)
 			require.Equal(b, "Phanes", data.Name)
 		}
 	})
@@ -133,13 +133,13 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	config.Retries = 3
 
 	client, err := equinox.NewClientWithConfig(config)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-			require.Nil(b, err)
+			require.NoError(b, err)
 			require.Equal(b, "Phanes", data.Name)
 		}
 	})

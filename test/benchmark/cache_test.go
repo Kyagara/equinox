@@ -49,12 +49,12 @@ func BenchmarkInMemoryCachedSummonerByPUUID(b *testing.B) {
 		JSON(summoner)
 
 	client, err := equinox.NewClient("RGAPI-TEST")
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-		require.Nil(b, err)
+		require.NoError(b, err)
 		require.Equal(b, "Phanes", data.Name)
 	}
 }
@@ -95,7 +95,7 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 		Addr:    "127.0.0.1:6379",
 	}
 	cache, err := cache.NewRedis(ctx, redisConfig, 4*time.Minute)
-	require.Nil(b, err)
+	require.NoError(b, err)
 	config := &api.EquinoxConfig{
 		Key:      "RGAPI-TEST",
 		LogLevel: zerolog.WarnLevel,
@@ -106,12 +106,12 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 		Cache:   cache,
 	}
 	client, err := equinox.NewClientWithConfig(config)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-		require.Nil(b, err)
+		require.NoError(b, err)
 		require.Equal(b, "Phanes", data.Name)
 	}
 }
@@ -151,12 +151,12 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 	config.Retries = 3
 
 	client, err := equinox.NewClientWithConfig(config)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-		require.Nil(b, err)
+		require.NoError(b, err)
 		require.Equal(b, "Phanes", data.Name)
 	}
 }

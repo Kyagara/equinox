@@ -23,9 +23,9 @@ func TestNewRedis(t *testing.T) {
 
 	_, err := cache.NewRedis(ctx, nil, 4*time.Minute)
 	redisErr := fmt.Errorf("redis options is empty")
-	require.Equal(t, redisErr, err, fmt.Sprintf("want err %v, got %v", redisErr, err))
+	require.Equal(t, redisErr, err)
 	cache, err := cache.NewRedis(ctx, config, 4*time.Minute)
-	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
+	require.NoError(t, err)
 	require.NotEmpty(t, cache, "expecting non-nil Redis")
 }
 
@@ -39,22 +39,22 @@ func TestRedisMethods(t *testing.T) {
 	}
 
 	cache, err := cache.NewRedis(ctx, config, 4*time.Minute)
-	require.Equal(t, nil, err, fmt.Sprintf("want err %v, got %v", nil, err))
+	require.NoError(t, err)
 	require.NotEmpty(t, cache, "expecting non-nil Redis")
 
 	bytes := []byte("data")
 	err = cache.Set("test", bytes)
-	require.Nil(t, err, "expecting nil error")
+	require.NoError(t, err)
 	data, err := cache.Get("test")
-	require.Nil(t, err, "expecting nil error")
-	require.Equal(t, bytes, data, fmt.Sprintf("want data %v, got %v", bytes, data))
+	require.NoError(t, err)
+	require.Equal(t, bytes, data)
 	err = cache.Delete("test")
-	require.Nil(t, err, "expecting nil error")
+	require.NoError(t, err)
 	err = cache.Set("test", bytes)
-	require.Nil(t, err, "expecting nil error")
+	require.NoError(t, err)
 	err = cache.Clear()
-	require.Nil(t, err, "expecting nil error")
+	require.NoError(t, err)
 	data, err = cache.Get("test")
-	require.Nil(t, err, "expecting nil error")
+	require.NoError(t, err)
 	require.Empty(t, data)
 }

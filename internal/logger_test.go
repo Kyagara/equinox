@@ -15,7 +15,7 @@ import (
 
 func TestNewLogger(t *testing.T) {
 	logger := internal.NewLogger(nil)
-	require.Equal(t, logger.GetLevel(), zerolog.Disabled)
+	require.Equal(t, zerolog.Disabled, logger.GetLevel())
 
 	config := &api.EquinoxConfig{
 		LogLevel: zerolog.Disabled, Cache: &cache.Cache{TTL: 60 * time.Second},
@@ -27,16 +27,16 @@ func TestNewLogger(t *testing.T) {
 
 	config.LogLevel = zerolog.DebugLevel
 	logger = internal.NewLogger(config)
-	require.Equal(t, logger.Debug().Enabled(), true, "expecting logger to be enabled for Debug level")
+	require.True(t, logger.Debug().Enabled(), "expecting logger to be enabled for Debug level")
 
 	config.LogLevel = zerolog.InfoLevel
 	logger = internal.NewLogger(config)
-	require.Equal(t, logger.Info().Enabled(), true, "expecting logger to be enabled for Debug level")
+	require.True(t, logger.Info().Enabled(), "expecting logger to be enabled for Debug level")
 }
 
 func TestLogger(t *testing.T) {
 	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.Nil(t, err, "expecting nil error")
+	require.NoError(t, err)
 	require.NotEmpty(t, internal, "expecting non-nil InternalClient")
 	logger := internal.Logger("client_endpoint_method")
 	require.NotEmpty(t, logger, "expecting non-nil Logger")

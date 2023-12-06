@@ -14,7 +14,8 @@ type RealmEndpoint struct {
 }
 
 type RealmData struct {
-	N struct {
+	Store any `json:"store,omitempty"`
+	N     struct {
 		Item        string `json:"item"`
 		Rune        string `json:"rune"`
 		Mastery     string `json:"mastery"`
@@ -32,7 +33,6 @@ type RealmData struct {
 	LG             string `json:"lg"`
 	CSS            string `json:"css"`
 	ProfileIconMax int    `json:"profileiconmax"`
-	Store          any    `json:"store,omitempty"`
 }
 
 func (e *RealmEndpoint) ByName(ctx context.Context, realm Realm) (*RealmData, error) {

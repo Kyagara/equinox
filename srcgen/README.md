@@ -16,7 +16,7 @@ Separated the download and compilation process in separate scripts.
 
 ## Usage
 
-> `npm run compile` uses structslop, make sure to install it with `go install github.com/orijtech/structslop/cmd/structslop@latest`.
+> `npm run compile` uses `betteralign`, make sure to install it with `go install github.com/dkorunic/betteralign/cmd/betteralign@latest`.
 
 After installing the dependencies with `npm i`, run `npm run update` and then `npm run compile`.
 

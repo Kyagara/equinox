@@ -9,16 +9,16 @@ import (
 
 // Configuration for the Equinox client.
 type EquinoxConfig struct {
-	// Riot API Key.
-	Key string
-	// Zerolog log level.
-	LogLevel zerolog.Level
 	// http.Client used internally.
 	HTTPClient *http.Client
-	// Maximum amount of times to retry a request on error.
-	Retries int
 	// The cache used to store all GET requests done by the client.
 	Cache *cache.Cache
+	// Riot API Key.
+	Key string
+	// Maximum amount of times to retry a request on error.
+	Retries int
+	// Zerolog log level.
+	LogLevel zerolog.Level
 }
 
 func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
