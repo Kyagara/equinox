@@ -49,17 +49,17 @@ func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorizati
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/deck/v1/decks/me", "lor-deck-v1.getDecks", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]DeckV1DTO), err
+		return nil, err
 	}
 	if authorization == "" {
-		return *new([]DeckV1DTO), fmt.Errorf("'authorization' header is required")
+		return nil, fmt.Errorf("'authorization' header is required")
 	}
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data []DeckV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]DeckV1DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -84,17 +84,17 @@ func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lor/deck/v1/decks/me", "lor-deck-v1.createDeck", body)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new(string), err
+		return "", err
 	}
 	if authorization == "" {
-		return *new(string), fmt.Errorf("'authorization' header is required")
+		return "", fmt.Errorf("'authorization' header is required")
 	}
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new(string), err
+		return "", err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -130,17 +130,17 @@ func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, author
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/inventory/v1/cards/me", "lor-inventory-v1.getCards", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]CardV1DTO), err
+		return nil, err
 	}
 	if authorization == "" {
-		return *new([]CardV1DTO), fmt.Errorf("'authorization' header is required")
+		return nil, fmt.Errorf("'authorization' header is required")
 	}
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data []CardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]CardV1DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -176,13 +176,13 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puui
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/by-puuid/%v/ids", puuid), "lor-match-v1.getMatchIdsByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]string), err
+		return nil, err
 	}
 	var data []string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]string), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil

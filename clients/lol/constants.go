@@ -183,6 +183,6 @@ const (
 	RANKED_FLEX_SR QueueType = "RANKED_FLEX_SR"
 	// 3v3 Ranked Flex games
 	//
-	// Deprecated in patch 9.23
+	// Deprecated: Deprecated in patch 9.23
 	RANKED_FLEX_TT QueueType = "RANKED_FLEX_TT"
 )

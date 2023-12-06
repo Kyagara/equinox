@@ -16,7 +16,7 @@ Separated the download and compilation process in separate scripts.
 
 ## Usage
 
-> `npm run compile` uses `betteralign`, make sure to install it with `go install github.com/dkorunic/betteralign/cmd/betteralign@latest`.
+> `npm run compile` uses `betteralign` and `goimports`, make sure to install both with `go install github.com/dkorunic/betteralign/cmd/betteralign@latest && go install golang.org/x/tools/cmd/goimports@latest`.
 
 After installing the dependencies with `npm i`, run `npm run update` and then `npm run compile`.
 

@@ -155,7 +155,7 @@ const (
 {{~}}
 {{? queueType['x-deprecated'] }}
     //
-    // {{= queueType.notes }}
+    // Deprecated: {{= queueType.notes }}
 {{?}}
     {{= dotUtils.changeCase.constantCase(queueType['x-name']) }} QueueType = "{{= queueType['x-name'] }}"
 {{

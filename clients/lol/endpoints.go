@@ -14,6 +14,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -49,13 +50,13 @@ func (e *ChampionMasteryV4) AllMasteriesByPUUID(ctx context.Context, route Platf
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v", encryptedPUUID), "champion-mastery-v4.getAllChampionMasteriesByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]ChampionMasteryV4DTO), err
+		return nil, err
 	}
 	var data []ChampionMasteryV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]ChampionMasteryV4DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -113,18 +114,18 @@ func (e *ChampionMasteryV4) TopMasteriesByPUUID(ctx context.Context, route Platf
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-puuid/%v/top", encryptedPUUID), "champion-mastery-v4.getTopChampionMasteriesByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]ChampionMasteryV4DTO), err
+		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
 	if count != -1 {
-		values.Set("count", fmt.Sprint(count))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []ChampionMasteryV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]ChampionMasteryV4DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -149,13 +150,13 @@ func (e *ChampionMasteryV4) AllMasteriesBySummonerID(ctx context.Context, route 
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v", encryptedSummonerId), "champion-mastery-v4.getAllChampionMasteries", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]ChampionMasteryV4DTO), err
+		return nil, err
 	}
 	var data []ChampionMasteryV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]ChampionMasteryV4DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -213,18 +214,18 @@ func (e *ChampionMasteryV4) TopMasteriesBySummonerID(ctx context.Context, route 
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v/top", encryptedSummonerId), "champion-mastery-v4.getTopChampionMasteries", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]ChampionMasteryV4DTO), err
+		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
 	if count != -1 {
-		values.Set("count", fmt.Sprint(count))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []ChampionMasteryV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]ChampionMasteryV4DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -249,13 +250,13 @@ func (e *ChampionMasteryV4) MasteryScoreByPUUID(ctx context.Context, route Platf
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-puuid/%v", encryptedPUUID), "champion-mastery-v4.getChampionMasteryScoreByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new(int32), err
+		return 0, err
 	}
 	var data int32
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new(int32), err
+		return 0, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -280,13 +281,13 @@ func (e *ChampionMasteryV4) ScoreBySummonerID(ctx context.Context, route Platfor
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-summoner/%v", encryptedSummonerId), "champion-mastery-v4.getChampionMasteryScore", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new(int32), err
+		return 0, err
 	}
 	var data int32
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new(int32), err
+		return 0, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -367,13 +368,13 @@ func (e *ClashV1) SummonerEntriesBySummonerID(ctx context.Context, route Platfor
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/players/by-summoner/%v", summonerId), "clash-v1.getPlayersBySummoner", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]PlayerV1DTO), err
+		return nil, err
 	}
 	var data []PlayerV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]PlayerV1DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -428,13 +429,13 @@ func (e *ClashV1) Tournaments(ctx context.Context, route PlatformRoute) ([]Tourn
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/clash/v1/tournaments", "clash-v1.getTournaments", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]TournamentV1DTO), err
+		return nil, err
 	}
 	var data []TournamentV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]TournamentV1DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -535,18 +536,18 @@ func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue Qu
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league-exp/v4/entries/%v/%v/%v", queue, tier, division), "league-exp-v4.getLeagueEntries", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]LeagueEntryV4DTO), err
+		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
 	if page != -1 {
-		values.Set("page", fmt.Sprint(page))
+		values.Set("page", strconv.FormatInt(int64(page), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []LeagueEntryV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]LeagueEntryV4DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -613,13 +614,13 @@ func (e *LeagueV4) SummonerEntries(ctx context.Context, route PlatformRoute, enc
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/entries/by-summoner/%v", encryptedSummonerId), "league-v4.getLeagueEntriesForSummoner", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]LeagueEntryV4DTO), err
+		return nil, err
 	}
 	var data []LeagueEntryV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]LeagueEntryV4DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -647,18 +648,18 @@ func (e *LeagueV4) Entries(ctx context.Context, route PlatformRoute, queue Queue
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/entries/%v/%v/%v", queue, tier, division), "league-v4.getLeagueEntries", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]LeagueEntryV4DTO), err
+		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
 	if page != -1 {
-		values.Set("page", fmt.Sprint(page))
+		values.Set("page", strconv.FormatInt(int64(page), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []LeagueEntryV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]LeagueEntryV4DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -786,13 +787,13 @@ func (e *ChallengesV1) AllConfigs(ctx context.Context, route PlatformRoute) ([]C
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/challenges/v1/challenges/config", "lol-challenges-v1.getAllChallengeConfigs", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]ChallengeConfigInfoV1DTO), err
+		return nil, err
 	}
 	var data []ChallengeConfigInfoV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]ChallengeConfigInfoV1DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -816,13 +817,13 @@ func (e *ChallengesV1) AllPercentiles(ctx context.Context, route PlatformRoute) 
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/challenges/v1/challenges/percentiles", "lol-challenges-v1.getAllChallengePercentiles", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new(map[int64]map[Tier]float64), err
+		return nil, err
 	}
 	var data map[int64]map[Tier]float64
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new(map[int64]map[Tier]float64), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -880,18 +881,18 @@ func (e *ChallengesV1) Leaderboards(ctx context.Context, route PlatformRoute, ch
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/leaderboards/by-level/%v", challengeId, level), "lol-challenges-v1.getChallengeLeaderboards", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]ApexPlayerInfoV1DTO), err
+		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
 	if limit != -1 {
-		values.Set("limit", fmt.Sprint(limit))
+		values.Set("limit", strconv.FormatInt(int64(limit), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []ApexPlayerInfoV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]ApexPlayerInfoV1DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -916,13 +917,13 @@ func (e *ChallengesV1) Percentiles(ctx context.Context, route PlatformRoute, cha
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/percentiles", challengeId), "lol-challenges-v1.getChallengePercentiles", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new(map[Tier]float64), err
+		return nil, err
 	}
 	var data map[Tier]float64
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new(map[Tier]float64), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -1081,33 +1082,33 @@ func (e *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRoute, puui
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/match/v5/matches/by-puuid/%v/ids", puuid), "match-v5.getMatchIdsByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]string), err
+		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
 	if startTime != -1 {
-		values.Set("startTime", fmt.Sprint(startTime))
+		values.Set("startTime", strconv.FormatInt(startTime, 10))
 	}
 	if endTime != -1 {
-		values.Set("endTime", fmt.Sprint(endTime))
+		values.Set("endTime", strconv.FormatInt(endTime, 10))
 	}
 	if queue != -1 {
-		values.Set("queue", fmt.Sprint(queue))
+		values.Set("queue", strconv.FormatInt(int64(queue), 10))
 	}
 	if type_ != "" {
 		values.Set("type", type_)
 	}
 	if start != -1 {
-		values.Set("start", fmt.Sprint(start))
+		values.Set("start", strconv.FormatInt(int64(start), 10))
 	}
 	if count != -1 {
-		values.Set("count", fmt.Sprint(count))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]string), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -1404,7 +1405,7 @@ func (e *SummonerV4) ByAccessToken(ctx context.Context, route PlatformRoute, aut
 		return nil, err
 	}
 	if authorization == "" {
-		return new(SummonerV4DTO), fmt.Errorf("'authorization' header is required")
+		return nil, fmt.Errorf("'authorization' header is required")
 	}
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data SummonerV4DTO
@@ -1479,21 +1480,21 @@ func (e *TournamentStubV5) CreateTournamentCode(ctx context.Context, route api.R
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament-stub/v5/codes", "tournament-stub-v5.createTournamentCode", body)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]string), err
+		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
 	if count != -1 {
-		values.Set("count", fmt.Sprint(count))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	if tournamentId != -1 {
-		values.Set("tournamentId", fmt.Sprint(tournamentId))
+		values.Set("tournamentId", strconv.FormatInt(tournamentId, 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]string), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -1583,13 +1584,13 @@ func (e *TournamentStubV5) RegisterProviderData(ctx context.Context, route api.R
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament-stub/v5/providers", "tournament-stub-v5.registerProviderData", body)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new(int32), err
+		return 0, err
 	}
 	var data int32
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new(int32), err
+		return 0, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -1613,13 +1614,13 @@ func (e *TournamentStubV5) RegisterTournament(ctx context.Context, route api.Reg
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament-stub/v5/tournaments", "tournament-stub-v5.registerTournament", body)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new(int32), err
+		return 0, err
 	}
 	var data int32
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new(int32), err
+		return 0, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -1656,21 +1657,21 @@ func (e *TournamentV5) CreateTournamentCode(ctx context.Context, route api.Regio
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament/v5/codes", "tournament-v5.createTournamentCode", body)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]string), err
+		return nil, err
 	}
 	values := equinoxReq.Request.URL.Query()
 	if tournamentId != -1 {
-		values.Set("tournamentId", fmt.Sprint(tournamentId))
+		values.Set("tournamentId", strconv.FormatInt(tournamentId, 10))
 	}
 	if count != -1 {
-		values.Set("count", fmt.Sprint(count))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]string), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -1765,13 +1766,13 @@ func (e *TournamentV5) Games(ctx context.Context, route api.RegionalRoute, tourn
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/games/by-code/%v", tournamentCode), "tournament-v5.getGames", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new([]TournamentGamesV5DTO), err
+		return nil, err
 	}
 	var data []TournamentGamesV5DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new([]TournamentGamesV5DTO), err
+		return nil, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -1830,13 +1831,13 @@ func (e *TournamentV5) RegisterProviderData(ctx context.Context, route api.Regio
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament/v5/providers", "tournament-v5.registerProviderData", body)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new(int32), err
+		return 0, err
 	}
 	var data int32
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new(int32), err
+		return 0, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil
@@ -1860,13 +1861,13 @@ func (e *TournamentV5) RegisterTournament(ctx context.Context, route api.Regiona
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lol/tournament/v5/tournaments", "tournament-v5.registerTournament", body)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
-		return *new(int32), err
+		return 0, err
 	}
 	var data int32
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
-		return *new(int32), err
+		return 0, err
 	}
 	logger.Debug().Msg("Method executed successfully")
 	return data, nil

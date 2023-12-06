@@ -133,7 +133,12 @@ function getNormalizedFieldName(name) {
       return 'XP'
     case 'Id':
       return 'ID'
+    case 'Url':
+      return 'URL'
     default:
+      if (temp.startsWith('RiotId')) {
+        temp = temp.replace('RiotId', 'RiotID')
+      }
       if (temp.endsWith('Id')) {
         temp = temp.slice(0, temp.length - 2) + 'ID'
       }
@@ -217,6 +222,22 @@ function stringifyType(prop) {
   }
 }
 
+function getNilValue(returnType) {
+  const nilValues = {
+    int32: '0',
+    int64: '0',
+    float32: '0',
+    float64: '0',
+  }
+  if (returnType === 'string') {
+    return '""'
+  }
+  if (returnType === 'bool') {
+    return 'false'
+  }
+  return nilValues[returnType] || 'nil'
+}
+
 function formatJsonProperty(name) {
   return `\`json:"${name},omitempty"\``
 }
@@ -226,6 +247,7 @@ function formatAddQueryParam(param) {
   const prop = param.schema
   let letHeaderName = name.endsWith('_') ? name.slice(0, -1) : name
   let condition
+  let conversion = `fmt.Sprint(`
   if (prop.type === 'string') {
     condition = `${name} != ""`
   } else if (prop.type === 'integer') {
@@ -233,19 +255,26 @@ function formatAddQueryParam(param) {
   } else {
     throw new Error(`${prop.type} not supported`)
   }
-  const value = prop.type === 'string' ? name : `fmt.Sprint(${name})`
+  let end = `)`
+  if (prop.format === 'int32') {
+    conversion = 'strconv.FormatInt(int64('
+    end = `), 10)`
+  } else if (prop.format === 'int64') {
+    conversion = 'strconv.FormatInt('
+    end = `, 10)`
+  }
+
+  const value = prop.type === 'string' ? name : `${conversion}${name}${end}`
   return `if ${condition} {
     values.Set("${letHeaderName}", ${value});
   }`
 }
 
-function formatAddHeaderParam(param, returnValue, isPrimitive) {
+function formatAddHeaderParam(param, nilValue) {
   const name = normalizePropName(param.name)
-  let value = `new(${returnValue})`
-  if (isPrimitive) value = '*' + value
   const letHeaderName = name.endsWith('_') ? name.slice(0, -1) : name
   return `if ${name} == "" {
-    return ${value}, fmt.Errorf("'${name}' header is required")
+    return ${nilValue}, fmt.Errorf("'${name}' header is required")
   }
   equinoxReq.Request.Header.Set("${letHeaderName}", ${name})`
 }
@@ -286,6 +315,7 @@ module.exports = {
   getFullAPIName,
   removeClientName,
 
+  getNilValue,
   getNormalizedFieldName,
   getNormalizedDTOStructName,
   stringifyType,

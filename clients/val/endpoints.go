@@ -14,6 +14,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
@@ -210,10 +211,10 @@ func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId s
 	}
 	values := equinoxReq.Request.URL.Query()
 	if size != -1 {
-		values.Set("size", fmt.Sprint(size))
+		values.Set("size", strconv.FormatInt(int64(size), 10))
 	}
 	if startIndex != -1 {
-		values.Set("startIndex", fmt.Sprint(startIndex))
+		values.Set("startIndex", strconv.FormatInt(int64(startIndex), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data LeaderboardV1DTO

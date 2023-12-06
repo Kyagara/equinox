@@ -409,9 +409,9 @@ type ParticipantV5DTO struct {
 	IndividualPosition string `json:"individualPosition,omitempty"`
 	Lane               string `json:"lane,omitempty"`
 	PUUID              string `json:"puuid,omitempty"`
-	RiotIdName         string `json:"riotIdName,omitempty"`
-	RiotIdGameName     string `json:"riotIdGameName,omitempty"`
-	RiotIdTagline      string `json:"riotIdTagline,omitempty"`
+	RiotIDName         string `json:"riotIdName,omitempty"`
+	RiotIDGameName     string `json:"riotIdGameName,omitempty"`
+	RiotIDTagline      string `json:"riotIdTagline,omitempty"`
 	Role               string `json:"role,omitempty"`
 	SummonerID         string `json:"summonerId,omitempty"`
 	SummonerName       string `json:"summonerName,omitempty"`
@@ -1163,7 +1163,7 @@ type StubProviderRegistrationParametersV5DTO struct {
 	// (Legal values:  BR,  EUNE,  EUW,  JP,  LAN,  LAS,  NA,  OCE,  PBE,  RU,  TR,  KR)
 	Region string `json:"region,omitempty"`
 	// The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
-	Url string `json:"url,omitempty"`
+	URL string `json:"url,omitempty"`
 }
 
 // TournamentRegistrationParametersV5DTO data object.
@@ -1286,7 +1286,7 @@ type ProviderRegistrationParametersV5DTO struct {
 	// (Legal values:  BR,  EUNE,  EUW,  JP,  LAN,  LAS,  NA,  OCE,  PBE,  RU,  TR,  KR)
 	Region string `json:"region,omitempty"`
 	// The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
-	Url string `json:"url,omitempty"`
+	URL string `json:"url,omitempty"`
 }
 
 // TournamentRegistrationParametersV5DTO data object.
