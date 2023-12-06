@@ -9,6 +9,7 @@ import (
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
+	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/h2non/gock"
@@ -66,7 +67,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 		},
 		{
 			name:    "nil config",
-			wantErr: fmt.Errorf("equinox configuration not provided"),
+			wantErr: internal.ErrConfigurationNotProvided,
 			config:  nil,
 		},
 		{
@@ -105,8 +106,8 @@ func TestRateLimitWithMock(t *testing.T) {
 		headers[ratelimit.APP_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:3", i)
 		headers[ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:3", i)
 
-		gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
-			Get("/lol/summoner/v4/summoners/by-puuid/puuid").
+		gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "/lol/summoner/v4/summoners/by-puuid/puuid")).
+			Get("").
 			Reply(200).
 			SetHeaders(headers).
 			JSON(&lol.SummonerV4DTO{})

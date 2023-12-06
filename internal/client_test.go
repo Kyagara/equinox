@@ -89,7 +89,7 @@ func TestInternalClientRequest(t *testing.T) {
 		require.NoError(t, err)
 		logger := client.Logger("client_endpoint_method")
 		ctx := context.Background()
-		equinoxReq, err := client.Request(ctx, logger, "https://cool.and.real.api%v", "POST", "", "/post", "", body)
+		equinoxReq, err := client.Request(ctx, logger, "https://cool.and.real.api%v%v", "POST", "", "/post", "", body)
 		require.NoError(t, err)
 
 		if equinoxReq.Request.URL.String() != url {
@@ -119,7 +119,7 @@ func TestInternalClientRequest(t *testing.T) {
 	t.Run("Request without body", func(t *testing.T) {
 		logger := client.Logger("client_endpoint_method")
 		ctx := context.Background()
-		equinoxReq, err := client.Request(ctx, logger, "https://cool.and.real.api%v", "POST", "", "/post", "", nil)
+		equinoxReq, err := client.Request(ctx, logger, "https://cool.and.real.api%v%v", "POST", "", "/post", "", nil)
 		require.NoError(t, err)
 
 		if equinoxReq.Request.URL.String() != url {
@@ -230,7 +230,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 				config.Retries = 3
 			}
 
-			gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, "tests")).
+			gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, "tests", "")).
 				Get("/").
 				Reply(test.code)
 
@@ -253,12 +253,12 @@ func TestInternalClientRetries(t *testing.T) {
 	internal, err := internal.NewInternalClient(config)
 	require.NoError(t, err)
 
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "")).
 		Get("/lol/status/v4/platform-data").
 		Reply(429).SetHeader("Retry-After", "1").
 		JSON(&lol.PlatformDataV4DTO{})
 
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "")).
 		Get("/lol/status/v4/platform-data").
 		Reply(200).
 		JSON(&lol.PlatformDataV4DTO{})
@@ -278,8 +278,8 @@ func TestGetDDragonLOLVersions(t *testing.T) {
 	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NoError(t, err)
 
-	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "/api/versions.json")).
-		Get("").
+	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "", "")).
+		Get("/api/versions.json").
 		Reply(200).
 		JSON("[\"1.0\"]")
 

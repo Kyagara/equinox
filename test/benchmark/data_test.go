@@ -34,7 +34,7 @@ func BenchmarkMatchByID(b *testing.B) {
 	err := util.ReadFile("../data/match.json", &res)
 	require.NoError(b, err)
 
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS, "")).
 		Get(fmt.Sprintf("/lol/match/v5/matches/%v", "BR1_2744215970")).
 		Persist().
 		Reply(200).
@@ -73,7 +73,7 @@ func BenchmarkMatchTimeline(b *testing.B) {
 	err := util.ReadFile("../data/match.timeline.json", &res)
 	require.NoError(b, err)
 
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS, "")).
 		Get(fmt.Sprintf("/lol/match/v5/matches/%v/timeline", "BR1_2744215970")).
 		Persist().
 		Reply(200).
@@ -112,7 +112,7 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 	err := util.ReadFile("../data/champions.json", &data)
 	require.NoError(b, err)
 
-	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
+	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "", "")).
 		Get(fmt.Sprintf(ddragon.ChampionsURL, "13.22.1", ddragon.EnUS)).
 		Persist().
 		Reply(200).
@@ -152,7 +152,7 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 	err := util.ReadFile("../data/val.content.all_locales.json", &res)
 	require.NoError(b, err)
 
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, val.BR)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, val.BR, "")).
 		Get("/val/content/v1/contents").
 		Persist().
 		Reply(200).

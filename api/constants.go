@@ -8,7 +8,7 @@ package api
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 2099d6a309eb237d31b9c5fc1071c36eca85d91f
+// Spec version = cd204d7d764a025c280943766bc498278e439a6c
 
 import (
 	"net/http"
@@ -32,9 +32,9 @@ type EquinoxRequest struct {
 
 // Base API URLs formats.
 const (
-	RIOT_API_BASE_URL_FORMAT = "https://%s.api.riotgames.com"
-	D_DRAGON_BASE_URL_FORMAT = "https://ddragon.leagueoflegends.com%s"
-	C_DRAGON_BASE_URL_FORMAT = "https://cdn.communitydragon.org%s"
+	RIOT_API_BASE_URL_FORMAT = "https://%s.api.riotgames.com%s"
+	D_DRAGON_BASE_URL_FORMAT = "https://ddragon.leagueoflegends.com%s%s"
+	C_DRAGON_BASE_URL_FORMAT = "https://cdn.communitydragon.org%s%s"
 )
 
 // Regional routes, used in tournament services, Legends of Runeterra (LoR), and some other endpoints.
@@ -50,6 +50,7 @@ const (
 	// South East Asia, used for LoR, LoL matches (`match-v5`), and TFT matches (`tft-match-v1`).
 	SEA RegionalRoute = "sea"
 	// Asia-Pacific, deprecated, for some old matches in `lor-match-v1`.
+	//
 	// Deprecated
 	APAC RegionalRoute = "apac"
 	// Special esports platform for `account-v1`. Do not confuse with the `esports` Valorant platform route.

@@ -4,7 +4,6 @@ package cache
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/allegro/bigcache/v3"
@@ -32,7 +31,8 @@ type Store interface {
 }
 
 var (
-	ErrCacheIsDisabled = errors.New("Cache is disabled")
+	ErrCacheIsDisabled = errors.New("cache is disabled")
+	ErrRedisOptionsNil = errors.New("redis options is nil")
 )
 
 // Creates a new Cache using BigCache.
@@ -54,7 +54,7 @@ func NewBigCache(ctx context.Context, config bigcache.Config) (*Cache, error) {
 // Creates a new Cache using go-redis.
 func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*Cache, error) {
 	if options == nil {
-		return nil, fmt.Errorf("redis options is empty")
+		return nil, ErrRedisOptionsNil
 	}
 	redis := redis.NewClient(options)
 	err := redis.Ping(ctx).Err()

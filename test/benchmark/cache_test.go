@@ -42,7 +42,7 @@ func BenchmarkInMemoryCachedSummonerByPUUID(b *testing.B) {
 		SummonerLevel: 68,
 	}
 
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "")).
 		Get("/lol/summoner/v4/summoners/by-puuid/puuid").
 		Persist().
 		Reply(200).
@@ -83,7 +83,7 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 		SummonerLevel: 68,
 	}
 
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "")).
 		Get("/lol/summoner/v4/summoners/by-puuid/puuid").
 		Persist().
 		Reply(200).
@@ -140,7 +140,7 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 		SummonerLevel: 68,
 	}
 
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1)).
+	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "")).
 		Get("/lol/summoner/v4/summoners/by-puuid/puuid").
 		Persist().
 		Reply(200).

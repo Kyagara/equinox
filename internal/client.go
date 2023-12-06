@@ -31,6 +31,8 @@ type Client struct {
 }
 
 var (
+	ErrConfigurationNotProvided = errors.New("configuration not provided")
+
 	errContextIsNil   = errors.New("context must be non-nil")
 	errKeyNotProvided = errors.New("api key not provided")
 	errServerError    = errors.New("server error")
@@ -50,12 +52,9 @@ var (
 
 func NewInternalClient(config *api.EquinoxConfig) (*Client, error) {
 	if config == nil {
-		return nil, fmt.Errorf("equinox configuration not provided")
+		return nil, ErrConfigurationNotProvided
 	}
 	logger := NewLogger(config)
-	if config.Key == "" {
-		logger.Warn().Msg("API key was not provided, requests using other clients will result in errors.")
-	}
 	if config.Cache == nil {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
@@ -96,8 +95,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 		Retries:  0,
 	}
 
-	host := fmt.Sprintf(baseURL, route)
-	url := fmt.Sprintf("%s%s", host, path)
+	url := fmt.Sprintf(baseURL, route, path)
 
 	var buffer io.Reader
 	if equinoxReq.Body != nil {
@@ -131,7 +129,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, ta
 		return errContextIsNil
 	}
 
-	url := equinoxReq.Request.URL.String() + getAuthorizationHeaderHash(equinoxReq.Request.Header.Get("Authorization"))
+	url := getURLWithAuthorizationHash(equinoxReq.Request)
 
 	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
 		if item, err := c.cache.Get(url); err != nil {
@@ -239,10 +237,12 @@ func (c *Client) GetDDragonLOLVersions(ctx context.Context, id string) ([]string
 	return data, nil
 }
 
-// Generates a hash for the Authorization header. Don't want to store the Authorization header as key in plaintext.
-func getAuthorizationHeaderHash(key string) string {
-	if key == "" {
-		return ""
+// Generates an URL with the Authorization header if it exists. Don't want to store the Authorization header as key in plaintext.
+func getURLWithAuthorizationHash(req *http.Request) string {
+	url := req.URL.String()
+	auth := req.Header.Get("Authorization")
+	if auth == "" {
+		return url
 	}
-	return fmt.Sprintf("%x", sha256.Sum256([]byte(key)))
+	return fmt.Sprintf("%s%x", url, sha256.Sum256([]byte(auth)))
 }
