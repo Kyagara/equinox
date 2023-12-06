@@ -48,7 +48,6 @@ var (
 	cdns = []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
 )
 
-// Returns a new InternalClient using the configuration provided.
 func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	if config == nil {
 		return nil, fmt.Errorf("equinox configuration not provided")
@@ -80,7 +79,6 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	return client, nil
 }
 
-// Creates a request to the provided route and URL.
 func (c *InternalClient) Request(ctx context.Context, logger zerolog.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (*api.EquinoxRequest, error) {
 	if ctx == nil {
 		return nil, errContextIsNil
@@ -128,7 +126,6 @@ func (c *InternalClient) Request(ctx context.Context, logger zerolog.Logger, bas
 	return equinoxReq, nil
 }
 
-// Performs a request to the Riot API.
 func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, target any) error {
 	if ctx == nil {
 		return errContextIsNil
@@ -145,7 +142,6 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 		}
 	}
 
-	// Request not cached/cache disabled, so take from the bucket
 	if !equinoxReq.IsCDN {
 		err := c.ratelimit.Take(ctx, equinoxReq)
 		if err != nil {
@@ -162,7 +158,6 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 
 	delay, err := c.checkResponse(equinoxReq, response)
 	if err != nil && !errors.Is(err, errServerError) {
-		equinoxReq.Logger.Error().Err(err).Msg("Request failed")
 		return err
 	}
 
@@ -192,7 +187,6 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	return jsonv2.Unmarshal(body, &target)
 }
 
-// Checks the response from the Riot API and returns a Retry-After value if present.
 func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) (time.Duration, error) {
 	if !equinoxReq.IsCDN {
 		c.ratelimit.Update(equinoxReq, &response.Header)
@@ -203,7 +197,7 @@ func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response 
 		return 0, nil
 	}
 
-	// 4xx and 5xx responses are retried
+	// 4xx and 5xx responses will be retried
 	if equinoxReq.Retries < c.maxRetries {
 		if response.StatusCode == http.StatusTooManyRequests {
 			equinoxReq.Logger.Warn().Msg("Received 429 response, checking Retry-After header")
@@ -216,16 +210,16 @@ func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response 
 		}
 	}
 
-	err, ok := api.StatusCodeToError[response.StatusCode]
-	if !ok {
-		return 0, api.ErrorResponse{
-			Status: api.Status{
-				Message:    "Unknown error",
-				StatusCode: response.StatusCode,
-			},
-		}
+	if err, ok := api.StatusCodeToError[response.StatusCode]; ok {
+		return 0, err
 	}
-	return 0, err
+
+	return 0, api.ErrorResponse{
+		Status: api.Status{
+			Message:    "Unknown error",
+			StatusCode: response.StatusCode,
+		},
+	}
 }
 
 func (c *InternalClient) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {
