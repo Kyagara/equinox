@@ -17,13 +17,13 @@ package riot
 import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
-type RiotClient struct {
+type Client struct {
 	AccountV1 *AccountV1
 }
 
-// Creates a new RiotClient using the internal.Client provided.
-func NewRiotClient(client *internal.Client) *RiotClient {
-	return &RiotClient{
+// Creates a new Riot Client using the internal.Client provided.
+func NewRiotClient(client *internal.Client) *Client {
+	return &Client{
 		AccountV1: &AccountV1{internal: client},
 	}
 }
