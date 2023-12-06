@@ -178,10 +178,8 @@ type QueueType string
 
 const (
 	// 5v5 Ranked Solo games
-	//
 	RANKED_SOLO_5X5 QueueType = "RANKED_SOLO_5x5"
 	// 5v5 Ranked Flex games
-	//
 	RANKED_FLEX_SR QueueType = "RANKED_FLEX_SR"
 	// 3v3 Ranked Flex games
 	//

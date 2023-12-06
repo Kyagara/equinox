@@ -19,8 +19,8 @@ type DDragonClient struct {
 	Champion *ChampionEndpoint
 }
 
-// Returns a new DDragonClient using the InternalClient provided.
-func NewDDragonClient(client *internal.InternalClient) *DDragonClient {
+// Returns a new DDragonClient using the internal.Client provided.
+func NewDDragonClient(client *internal.Client) *DDragonClient {
 	return &DDragonClient{
 		Version:  &VersionEndpoint{client},
 		Realm:    &RealmEndpoint{client},

@@ -29,7 +29,7 @@ import (
 //
 // [{{= endpointName }}]: https://developer.riotgames.com/apis#{{= endpointName }}
 type {{= normalizedStructName }} struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 {{

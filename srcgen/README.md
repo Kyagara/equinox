@@ -21,3 +21,13 @@ Separated the download and compilation process in separate scripts.
 After installing the dependencies with `npm i`, run `npm run update` and then `npm run compile`.
 
 If you are running multiple go and node commands, you can use `npm run compile --prefix srcgen` at the project root, so you don't need to keep changing directories or have multiple terminals open.
+
+Sometimes you will need to run `npm run align` after `npm run compile` because some structs won't be aligned on `compile`.
+
+A normal workflow would be:
+
+```bash
+npm run update
+npm run compile
+npm run align
+```

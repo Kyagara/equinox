@@ -27,7 +27,7 @@ import (
 //
 // [val-content-v1]: https://developer.riotgames.com/apis#val-content-v1
 type ContentV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get content optionally filtered by locale
@@ -74,7 +74,7 @@ func (e *ContentV1) Content(ctx context.Context, route PlatformRoute, locale str
 //
 // [val-match-v1]: https://developer.riotgames.com/apis#val-match-v1
 type MatchV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get match by id
@@ -182,7 +182,7 @@ func (e *MatchV1) Recent(ctx context.Context, route PlatformRoute, queue string)
 //
 // [val-ranked-v1]: https://developer.riotgames.com/apis#val-ranked-v1
 type RankedV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get leaderboard for the competitive queue
@@ -234,7 +234,7 @@ func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId s
 //
 // [val-status-v1]: https://developer.riotgames.com/apis#val-status-v1
 type StatusV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get VALORANT status for the given platform.

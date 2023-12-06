@@ -16,8 +16,8 @@ type CDragonClient struct {
 	Champion *ChampionEndpoint
 }
 
-// Returns a new CDragonClient using the InternalClient provided.
-func NewCDragonClient(client *internal.InternalClient) *CDragonClient {
+// Returns a new CDragonClient using the internal.Client provided.
+func NewCDragonClient(client *internal.Client) *CDragonClient {
 	return &CDragonClient{
 		Version:  &VersionEndpoint{client},
 		Champion: &ChampionEndpoint{client},

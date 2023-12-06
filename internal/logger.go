@@ -31,7 +31,7 @@ func NewLogger(config *api.EquinoxConfig) zerolog.Logger {
 }
 
 // Used to access the internal logger, this is used to log events from other clients (RiotClient, LOLClient...).
-func (c *InternalClient) Logger(id string) zerolog.Logger {
+func (c *Client) Logger(id string) zerolog.Logger {
 	c.loggers.mutex.Lock()
 	defer c.loggers.mutex.Unlock()
 	if logger, ok := c.loggers.methods[id]; ok {

@@ -21,8 +21,8 @@ type RiotClient struct {
 	AccountV1 *AccountV1
 }
 
-// Creates a new RiotClient using the InternalClient provided.
-func NewRiotClient(client *internal.InternalClient) *RiotClient {
+// Creates a new RiotClient using the internal.Client provided.
+func NewRiotClient(client *internal.Client) *RiotClient {
 	return &RiotClient{
 		AccountV1: &AccountV1{internal: client},
 	}

@@ -20,7 +20,7 @@ import (
 	"github.com/Kyagara/equinox/ratelimit"
 )
 
-type InternalClient struct {
+type Client struct {
 	http           *http.Client
 	loggers        *Loggers
 	cache          *cache.Cache
@@ -48,7 +48,7 @@ var (
 	cdns = []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
 )
 
-func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
+func NewInternalClient(config *api.EquinoxConfig) (*Client, error) {
 	if config == nil {
 		return nil, fmt.Errorf("equinox configuration not provided")
 	}
@@ -62,7 +62,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	if config.HTTPClient == nil {
 		config.HTTPClient = &http.Client{Timeout: 15 * time.Second}
 	}
-	client := &InternalClient{
+	client := &Client{
 		key:  config.Key,
 		http: config.HTTPClient,
 		loggers: &Loggers{
@@ -79,7 +79,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*InternalClient, error) {
 	return client, nil
 }
 
-func (c *InternalClient) Request(ctx context.Context, logger zerolog.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (*api.EquinoxRequest, error) {
+func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (*api.EquinoxRequest, error) {
 	if ctx == nil {
 		return nil, errContextIsNil
 	}
@@ -126,7 +126,7 @@ func (c *InternalClient) Request(ctx context.Context, logger zerolog.Logger, bas
 	return equinoxReq, nil
 }
 
-func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, target any) error {
+func (c *Client) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, target any) error {
 	if ctx == nil {
 		return errContextIsNil
 	}
@@ -187,7 +187,7 @@ func (c *InternalClient) Execute(ctx context.Context, equinoxReq *api.EquinoxReq
 	return jsonv2.Unmarshal(body, &target)
 }
 
-func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) (time.Duration, error) {
+func (c *Client) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) (time.Duration, error) {
 	if !equinoxReq.IsCDN {
 		c.ratelimit.Update(equinoxReq, &response.Header)
 	}
@@ -222,7 +222,7 @@ func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response 
 	}
 }
 
-func (c *InternalClient) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {
+func (c *Client) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {
 	logger := c.Logger(id)
 	logger.Debug().Msg("Method started execution")
 	equinoxReq, err := c.Request(ctx, logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "/api/versions.json", "", nil)

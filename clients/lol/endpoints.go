@@ -27,7 +27,7 @@ import (
 //
 // [champion-mastery-v4]: https://developer.riotgames.com/apis#champion-mastery-v4
 type ChampionMasteryV4 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get all champion mastery entries sorted by number of champion points descending.
@@ -300,7 +300,7 @@ func (e *ChampionMasteryV4) ScoreBySummonerID(ctx context.Context, route Platfor
 //
 // [champion-v3]: https://developer.riotgames.com/apis#champion-v3
 type ChampionV3 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Returns champion rotations, including free-to-play and low-level free-to-play rotations (REST)
@@ -341,7 +341,7 @@ func (e *ChampionV3) Rotation(ctx context.Context, route PlatformRoute) (*Champi
 //
 // [clash-v1]: https://developer.riotgames.com/apis#clash-v1
 type ClashV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get players by summoner ID.
@@ -510,7 +510,7 @@ func (e *ClashV1) ByID(ctx context.Context, route PlatformRoute, tournamentId in
 //
 // [league-exp-v4]: https://developer.riotgames.com/apis#league-exp-v4
 type LeagueExpV4 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get all the league entries.
@@ -560,7 +560,7 @@ func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue Qu
 //
 // [league-v4]: https://developer.riotgames.com/apis#league-v4
 type LeagueV4 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get the challenger league for given queue.
@@ -765,7 +765,7 @@ func (e *LeagueV4) MasterByQueue(ctx context.Context, route PlatformRoute, queue
 //
 // [lol-challenges-v1]: https://developer.riotgames.com/apis#lol-challenges-v1
 type ChallengesV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // List of all basic challenge configuration information (includes all translations for names and descriptions)
@@ -967,7 +967,7 @@ func (e *ChallengesV1) ByPUUID(ctx context.Context, route PlatformRoute, puuid s
 //
 // [lol-status-v3]: https://developer.riotgames.com/apis#lol-status-v3
 type StatusV3 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get League of Legends status for the given shard.
@@ -1012,7 +1012,7 @@ func (e *StatusV3) Shard(ctx context.Context, route PlatformRoute) (*ShardStatus
 //
 // [lol-status-v4]: https://developer.riotgames.com/apis#lol-status-v4
 type StatusV4 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get League of Legends status for the given platform.
@@ -1053,7 +1053,7 @@ func (e *StatusV4) Platform(ctx context.Context, route PlatformRoute) (*Platform
 //
 // [match-v5]: https://developer.riotgames.com/apis#match-v5
 type MatchV5 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get a list of match ids by puuid
@@ -1183,7 +1183,7 @@ func (e *MatchV5) Timeline(ctx context.Context, route api.RegionalRoute, matchId
 //
 // [spectator-v4]: https://developer.riotgames.com/apis#spectator-v4
 type SpectatorV4 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get current game information for the given summoner ID.
@@ -1255,7 +1255,7 @@ func (e *SpectatorV4) Featured(ctx context.Context, route PlatformRoute) (*Featu
 //
 // [summoner-v4]: https://developer.riotgames.com/apis#summoner-v4
 type SummonerV4 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get a summoner by its RSO encrypted PUUID.
@@ -1456,7 +1456,7 @@ func (e *SummonerV4) BySummonerID(ctx context.Context, route PlatformRoute, encr
 //
 // [tournament-stub-v5]: https://developer.riotgames.com/apis#tournament-stub-v5
 type TournamentStubV5 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Create a tournament code for the given tournament - Stub method
@@ -1633,7 +1633,7 @@ func (e *TournamentStubV5) RegisterTournament(ctx context.Context, route api.Reg
 //
 // [tournament-v5]: https://developer.riotgames.com/apis#tournament-v5
 type TournamentV5 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Create a tournament code for the given tournament.

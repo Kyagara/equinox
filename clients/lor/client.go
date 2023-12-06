@@ -29,8 +29,8 @@ type LORClient struct {
 	StatusV1    *StatusV1
 }
 
-// Creates a new LORClient using the InternalClient provided.
-func NewLORClient(client *internal.InternalClient) *LORClient {
+// Creates a new LORClient using the internal.Client provided.
+func NewLORClient(client *internal.Client) *LORClient {
 	return &LORClient{
 		DeckV1:      &DeckV1{internal: client},
 		InventoryV1: &InventoryV1{internal: client},

@@ -27,7 +27,7 @@ import (
 //
 // [tft-league-v1]: https://developer.riotgames.com/apis#tft-league-v1
 type LeagueV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get the challenger league.
@@ -281,7 +281,7 @@ func (e *LeagueV1) TopRatedLadder(ctx context.Context, route PlatformRoute, queu
 //
 // [tft-match-v1]: https://developer.riotgames.com/apis#tft-match-v1
 type MatchV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get a list of match ids by PUUID
@@ -372,7 +372,7 @@ func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId str
 //
 // [tft-status-v1]: https://developer.riotgames.com/apis#tft-status-v1
 type StatusV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get Teamfight Tactics status for the given platform.
@@ -413,7 +413,7 @@ func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*Platform
 //
 // [tft-summoner-v1]: https://developer.riotgames.com/apis#tft-summoner-v1
 type SummonerV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get a summoner by account ID.

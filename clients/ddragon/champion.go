@@ -10,7 +10,7 @@ import (
 )
 
 type ChampionEndpoint struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 type ChampionsData struct {

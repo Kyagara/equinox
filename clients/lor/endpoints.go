@@ -27,7 +27,7 @@ import (
 //
 // [lor-deck-v1]: https://developer.riotgames.com/apis#lor-deck-v1
 type DeckV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get a list of the calling user's decks.
@@ -108,7 +108,7 @@ func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *
 //
 // [lor-inventory-v1]: https://developer.riotgames.com/apis#lor-inventory-v1
 type InventoryV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Return a list of cards owned by the calling user.
@@ -154,7 +154,7 @@ func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, author
 //
 // [lor-match-v1]: https://developer.riotgames.com/apis#lor-match-v1
 type MatchV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get a list of match ids by PUUID
@@ -227,7 +227,7 @@ func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId str
 //
 // [lor-ranked-v1]: https://developer.riotgames.com/apis#lor-ranked-v1
 type RankedV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get the players in Master tier.
@@ -268,7 +268,7 @@ func (e *RankedV1) Leaderboards(ctx context.Context, route api.RegionalRoute) (*
 //
 // [lor-status-v1]: https://developer.riotgames.com/apis#lor-status-v1
 type StatusV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get Legends of Runeterra status for the given platform.

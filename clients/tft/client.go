@@ -27,8 +27,8 @@ type TFTClient struct {
 	SummonerV1 *SummonerV1
 }
 
-// Creates a new TFTClient using the InternalClient provided.
-func NewTFTClient(client *internal.InternalClient) *TFTClient {
+// Creates a new TFTClient using the internal.Client provided.
+func NewTFTClient(client *internal.Client) *TFTClient {
 	return &TFTClient{
 		LeagueV1:   &LeagueV1{internal: client},
 		MatchV1:    &MatchV1{internal: client},

@@ -189,9 +189,9 @@ type LocationV1DTO struct {
 type PlayerRoundStatsV1DTO struct {
 	Ability AbilityV1DTO  `json:"ability,omitempty"`
 	PUUID   string        `json:"puuid,omitempty"`
-	Economy EconomyV1DTO  `json:"economy,omitempty"`
 	Kills   []KillV1DTO   `json:"kills,omitempty"`
 	Damage  []DamageV1DTO `json:"damage,omitempty"`
+	Economy EconomyV1DTO  `json:"economy,omitempty"`
 	Score   int32         `json:"score,omitempty"`
 }
 

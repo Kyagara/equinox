@@ -45,8 +45,8 @@ type LOLClient struct {
 	TournamentV5      *TournamentV5
 }
 
-// Creates a new LOLClient using the InternalClient provided.
-func NewLOLClient(client *internal.InternalClient) *LOLClient {
+// Creates a new LOLClient using the internal.Client provided.
+func NewLOLClient(client *internal.Client) *LOLClient {
 	return &LOLClient{
 		ChampionMasteryV4: &ChampionMasteryV4{internal: client},
 		ChampionV3:        &ChampionV3{internal: client},

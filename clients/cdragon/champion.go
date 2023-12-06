@@ -10,7 +10,7 @@ import (
 )
 
 type ChampionEndpoint struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 type ChampionData struct {
@@ -21,11 +21,6 @@ type ChampionData struct {
 		AbilityVideoImagePath string `json:"abilityVideoImagePath"`
 		Description           string `json:"description"`
 	} `json:"passive"`
-	TacticalInfo struct {
-		DamageType string `json:"damageType"`
-		Style      int    `json:"style"`
-		Difficulty int    `json:"difficulty"`
-	} `json:"tacticalInfo"`
 	Name                    string   `json:"name"`
 	Alias                   string   `json:"alias"`
 	Title                   string   `json:"title"`
@@ -108,6 +103,11 @@ type ChampionData struct {
 		} `json:"coefficients"`
 		MaxLevel int `json:"maxLevel"`
 	} `json:"spells"`
+	TacticalInfo struct {
+		DamageType string `json:"damageType"`
+		Style      int    `json:"style"`
+		Difficulty int    `json:"difficulty"`
+	} `json:"tacticalInfo"`
 	PlaystyleInfo struct {
 		Damage       int `json:"damage"`
 		Durability   int `json:"durability"`

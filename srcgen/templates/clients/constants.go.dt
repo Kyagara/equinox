@@ -152,9 +152,9 @@ const (
 }}
 {{~ desc :line }}
     // {{= line }}
-    //
 {{~}}
 {{? queueType['x-deprecated'] }}
+    //
     // {{= queueType.notes }}
 {{?}}
     {{= dotUtils.changeCase.constantCase(queueType['x-name']) }} QueueType = "{{= queueType['x-name'] }}"
@@ -175,9 +175,9 @@ const (
 }}
 {{~ desc :line }}
     // {{= line }}
-    //
 {{~}}
 {{? queueType['x-deprecated'] }}
+    //
     // Deprecated: {{= queueType.notes }}
 {{?}}
     {{= dotUtils.changeCase.constantCase(queueType['x-name']) }} QueueType = "{{= queueType['x-name'] }}"

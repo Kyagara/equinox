@@ -7,7 +7,7 @@ import (
 )
 
 type VersionEndpoint struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 func (e *VersionEndpoint) Latest(ctx context.Context) (string, error) {
