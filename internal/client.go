@@ -214,7 +214,7 @@ func (c *InternalClient) checkResponse(equinoxReq *api.EquinoxRequest, response 
 		return 0, err
 	}
 
-	return 0, api.ErrorResponse{
+	return 0, api.HTTPErrorResponse{
 		Status: api.Status{
 			Message:    "Unknown error",
 			StatusCode: response.StatusCode,
