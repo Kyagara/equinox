@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 2099d6a309eb237d31b9c5fc1071c36eca85d91f
+// Spec version = cd204d7d764a025c280943766bc498278e439a6c
 
 // LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string

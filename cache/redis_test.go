@@ -2,7 +2,6 @@ package cache_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"time"
 
@@ -22,8 +21,7 @@ func TestNewRedis(t *testing.T) {
 	}
 
 	_, err := cache.NewRedis(ctx, nil, 4*time.Minute)
-	redisErr := fmt.Errorf("redis options is empty")
-	require.Equal(t, redisErr, err)
+	require.Equal(t, cache.ErrRedisOptionsNil, err)
 	cache, err := cache.NewRedis(ctx, config, 4*time.Minute)
 	require.NoError(t, err)
 	require.NotEmpty(t, cache, "expecting non-nil Redis")
