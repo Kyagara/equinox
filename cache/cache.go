@@ -11,16 +11,16 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type CacheStoreType string
+type StoreType string
 
 const (
-	BigCache   CacheStoreType = "BigCache"
-	RedisCache CacheStoreType = "Redis"
+	BigCache   StoreType = "BigCache"
+	RedisCache StoreType = "Redis"
 )
 
 type Cache struct {
 	store     Store
-	StoreType CacheStoreType
+	StoreType StoreType
 	TTL       time.Duration
 }
 

@@ -211,7 +211,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 		},
 		{
 			name: "unknown error",
-			wantErr: api.ErrorResponse{
+			wantErr: api.HTTPErrorResponse{
 				Status: api.Status{
 					Message:    "Unknown error",
 					StatusCode: 418,

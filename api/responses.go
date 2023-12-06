@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-type ErrorResponse struct {
+type HTTPErrorResponse struct {
 	Status Status `json:"status"`
 }
 
@@ -13,78 +13,78 @@ type Status struct {
 	StatusCode int    `json:"status_code"`
 }
 
-func (e ErrorResponse) Error() string {
+func (e HTTPErrorResponse) Error() string {
 	return e.Status.Message
 }
 
 var (
-	ErrBadRequest = ErrorResponse{
+	ErrBadRequest = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Bad Request",
 			StatusCode: http.StatusBadRequest,
 		},
 	}
-	ErrUnauthorized = ErrorResponse{
+	ErrUnauthorized = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Unauthorized",
 			StatusCode: http.StatusUnauthorized,
 		},
 	}
-	ErrForbidden = ErrorResponse{
+	ErrForbidden = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Forbidden",
 			StatusCode: http.StatusForbidden,
 		},
 	}
-	ErrNotFound = ErrorResponse{
+	ErrNotFound = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Not Found",
 			StatusCode: http.StatusNotFound,
 		},
 	}
-	ErrMethodNotAllowed = ErrorResponse{
+	ErrMethodNotAllowed = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Method not allowed",
 			StatusCode: http.StatusMethodNotAllowed,
 		},
 	}
-	ErrUnsupportedMediaType = ErrorResponse{
+	ErrUnsupportedMediaType = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Unsupported media type",
 			StatusCode: http.StatusUnsupportedMediaType,
 		},
 	}
-	ErrTooManyRequests = ErrorResponse{
+	ErrTooManyRequests = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Rate limited",
 			StatusCode: http.StatusTooManyRequests,
 		},
 	}
-	ErrInternalServer = ErrorResponse{
+	ErrInternalServer = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Internal server error",
 			StatusCode: http.StatusInternalServerError,
 		},
 	}
-	ErrBadGateway = ErrorResponse{
+	ErrBadGateway = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Bad gateway",
 			StatusCode: http.StatusBadGateway,
 		},
 	}
-	ErrServiceUnavailable = ErrorResponse{
+	ErrServiceUnavailable = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Service unavailable",
 			StatusCode: http.StatusServiceUnavailable,
 		},
 	}
-	ErrGatewayTimeout = ErrorResponse{
+	ErrGatewayTimeout = HTTPErrorResponse{
 		Status: Status{
 			Message:    "Gateway timeout",
 			StatusCode: http.StatusGatewayTimeout,
 		},
 	}
-	StatusCodeToError = map[int]ErrorResponse{
+	StatusCodeToError = map[int]HTTPErrorResponse{
 		http.StatusBadRequest:           ErrBadRequest,
 		http.StatusUnauthorized:         ErrUnauthorized,
 		http.StatusForbidden:            ErrForbidden,
