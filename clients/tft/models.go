@@ -13,19 +13,19 @@ package tft
 // LeagueListDTO data object.
 type LeagueListV1DTO struct {
 	LeagueID string            `json:"leagueId,omitempty"`
-	Entries  []LeagueItemV1DTO `json:"entries,omitempty"`
 	Tier     Tier              `json:"tier,omitempty"`
 	Name     string            `json:"name,omitempty"`
 	Queue    QueueType         `json:"queue,omitempty"`
+	Entries  []LeagueItemV1DTO `json:"entries,omitempty"`
 }
 
 // LeagueItemDTO data object.
 type LeagueItemV1DTO struct {
-	MiniSeries   MiniSeriesV1DTO `json:"miniSeries,omitempty"`
-	SummonerName string          `json:"summonerName,omitempty"`
-	Rank         Division        `json:"rank,omitempty"`
+	SummonerName string   `json:"summonerName,omitempty"`
+	Rank         Division `json:"rank,omitempty"`
 	// Player's encrypted summonerId.
-	SummonerID string `json:"summonerId,omitempty"`
+	SummonerID string          `json:"summonerId,omitempty"`
+	MiniSeries MiniSeriesV1DTO `json:"miniSeries,omitempty"`
 	// First placement.
 	Wins         int32 `json:"wins,omitempty"`
 	LeaguePoints int32 `json:"leaguePoints,omitempty"`
@@ -39,8 +39,8 @@ type LeagueItemV1DTO struct {
 
 // MiniSeriesDTO data object.
 type MiniSeriesV1DTO struct {
-	Losses   int32  `json:"losses,omitempty"`
 	Progress string `json:"progress,omitempty"`
+	Losses   int32  `json:"losses,omitempty"`
 	Target   int32  `json:"target,omitempty"`
 	Wins     int32  `json:"wins,omitempty"`
 }
@@ -58,12 +58,14 @@ type LeagueEntryV1DTO struct {
 	// Only included for the RANKED_TFT_TURBO queueType.
 	// (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
 	RatedTier string `json:"ratedTier,omitempty"`
-	// Only included for the RANKED_TFT_TURBO queueType.
-	RatedRating int32 `json:"ratedRating,omitempty"`
 	// Not included for the RANKED_TFT_TURBO queueType.
 	Tier Tier `json:"tier,omitempty"`
 	// The player's division within a tier. Not included for the RANKED_TFT_TURBO queueType.
 	Rank Division `json:"rank,omitempty"`
+	// Not included for the RANKED_TFT_TURBO queueType.
+	MiniSeries MiniSeriesV1DTO `json:"miniSeries,omitempty"`
+	// Only included for the RANKED_TFT_TURBO queueType.
+	RatedRating int32 `json:"ratedRating,omitempty"`
 	// Not included for the RANKED_TFT_TURBO queueType.
 	LeaguePoints int32 `json:"leaguePoints,omitempty"`
 	// First placement.
@@ -78,8 +80,6 @@ type LeagueEntryV1DTO struct {
 	FreshBlood bool `json:"freshBlood,omitempty"`
 	// Not included for the RANKED_TFT_TURBO queueType.
 	Inactive bool `json:"inactive,omitempty"`
-	// Not included for the RANKED_TFT_TURBO queueType.
-	MiniSeries MiniSeriesV1DTO `json:"miniSeries,omitempty"`
 }
 
 // TopRatedLadderEntryDTO data object.
@@ -116,15 +116,15 @@ type MetadataV1DTO struct {
 type InfoV1DTO struct {
 	TftGameType    string `json:"tft_game_type,omitempty"`
 	TftSetCoreName string `json:"tft_set_core_name,omitempty"`
-	// Unix timestamp.
-	GameDatetime int64 `json:"game_datetime,omitempty"`
-	// Game length in seconds.
-	GameLength float32 `json:"game_length,omitempty"`
 	// Game variation key. Game variations documented in TFT static data.
 	GameVariation string `json:"game_variation,omitempty"`
 	// Game client version.
 	GameVersion  string             `json:"game_version,omitempty"`
 	Participants []ParticipantV1DTO `json:"participants,omitempty"`
+	// Unix timestamp.
+	GameDatetime int64 `json:"game_datetime,omitempty"`
+	// Game length in seconds.
+	GameLength float32 `json:"game_length,omitempty"`
 	// Please refer to the League of Legends documentation.
 	QueueID int32 `json:"queue_id,omitempty"`
 	// Teamfight Tactics set number.
@@ -135,12 +135,12 @@ type InfoV1DTO struct {
 type ParticipantV1DTO struct {
 	// Participant's companion.
 	Companion CompanionV1DTO `json:"companion,omitempty"`
+	PUUID     string         `json:"puuid,omitempty"`
 	Augments  []string       `json:"augments,omitempty"`
 	// A list of active units for the participant.
 	Units []UnitV1DTO `json:"units,omitempty"`
 	// A complete list of traits for the participant's active units.
 	Traits []TraitV1DTO `json:"traits,omitempty"`
-	PUUID  string       `json:"puuid,omitempty"`
 	// Participant placement upon elimination.
 	Placement int32 `json:"placement,omitempty"`
 	// Participant Little Legend level. Note: This is not the number of active units.
@@ -174,15 +174,15 @@ type TraitV1DTO struct {
 
 // UnitDTO data object.
 type UnitV1DTO struct {
-	ItemNames []string `json:"itemNames,omitempty"`
-	// A list of the unit's items. Please refer to the Teamfight Tactics documentation for item ids.
-	Items []int32 `json:"items,omitempty"`
 	// This field was introduced in patch 9.22 with data_version 2.
 	CharacterID string `json:"character_id,omitempty"`
 	// If a unit is chosen as part of the Fates set mechanic, the chosen trait will be indicated by this field. Otherwise this field is excluded from the response.
 	Chosen string `json:"chosen,omitempty"`
 	// Unit name. This field is often left blank.
-	Name string `json:"name,omitempty"`
+	Name      string   `json:"name,omitempty"`
+	ItemNames []string `json:"itemNames,omitempty"`
+	// A list of the unit's items. Please refer to the Teamfight Tactics documentation for item ids.
+	Items []int32 `json:"items,omitempty"`
 	// Unit rarity. This doesn't equate to the unit cost.
 	Rarity int32 `json:"rarity,omitempty"`
 	// Unit tier.
@@ -191,10 +191,10 @@ type UnitV1DTO struct {
 
 // CompanionDTO data object.
 type CompanionV1DTO struct {
-	ItemID    int32  `json:"item_ID,omitempty"`
-	SkinID    int32  `json:"skin_ID,omitempty"`
 	ContentID string `json:"content_ID,omitempty"`
 	Species   string `json:"species,omitempty"`
+	ItemID    int32  `json:"item_ID,omitempty"`
+	SkinID    int32  `json:"skin_ID,omitempty"`
 }
 
 // PlatformDataDTO data object.
@@ -208,18 +208,18 @@ type PlatformDataV1DTO struct {
 
 // StatusDTO data object.
 type StatusV1DTO struct {
-	ID int32 `json:"id,omitempty"`
 	// (Legal values:  scheduled,  in_progress,  complete)
 	MaintenanceStatus string `json:"maintenance_status,omitempty"`
 	// (Legal values:  info,  warning,  critical)
 	IncidentSeverity string         `json:"incident_severity,omitempty"`
-	Titles           []ContentV1DTO `json:"titles,omitempty"`
-	Updates          []UpdateV1DTO  `json:"updates,omitempty"`
 	CreatedAt        string         `json:"created_at,omitempty"`
 	ArchiveAt        string         `json:"archive_at,omitempty"`
 	UpdatedAt        string         `json:"updated_at,omitempty"`
+	Titles           []ContentV1DTO `json:"titles,omitempty"`
+	Updates          []UpdateV1DTO  `json:"updates,omitempty"`
 	// (Legal values: windows, macos, android, ios, ps4, xbone, switch)
 	Platforms []string `json:"platforms,omitempty"`
+	ID        int32    `json:"id,omitempty"`
 }
 
 // ContentDTO data object.
@@ -230,14 +230,14 @@ type ContentV1DTO struct {
 
 // UpdateDTO data object.
 type UpdateV1DTO struct {
-	ID      int32  `json:"id,omitempty"`
-	Author  string `json:"author,omitempty"`
-	Publish bool   `json:"publish,omitempty"`
+	Author    string `json:"author,omitempty"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
 	// (Legal values: riotclient, riotstatus, game)
 	PublishLocations []string       `json:"publish_locations,omitempty"`
 	Translations     []ContentV1DTO `json:"translations,omitempty"`
-	CreatedAt        string         `json:"created_at,omitempty"`
-	UpdatedAt        string         `json:"updated_at,omitempty"`
+	ID               int32          `json:"id,omitempty"`
+	Publish          bool           `json:"publish,omitempty"`
 }
 
 // SummonerDTO data object.
@@ -248,16 +248,16 @@ type UpdateV1DTO struct {
 type SummonerV1DTO struct {
 	// Encrypted account ID. Max length 56 characters.
 	AccountID string `json:"accountId,omitempty"`
-	// ID of the summoner icon associated with the summoner.
-	ProfileIconID int32 `json:"profileIconId,omitempty"`
-	// Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: summoner name change, summoner level change, or profile icon change.
-	RevisionDate int64 `json:"revisionDate,omitempty"`
 	// Summoner name.
 	Name string `json:"name,omitempty"`
 	// Encrypted summoner ID. Max length 63 characters.
 	ID string `json:"id,omitempty"`
 	// Encrypted PUUID. Exact length of 78 characters.
 	PUUID string `json:"puuid,omitempty"`
+	// Date summoner was last modified specified as epoch milliseconds. The following events will update this timestamp: summoner name change, summoner level change, or profile icon change.
+	RevisionDate int64 `json:"revisionDate,omitempty"`
 	// Summoner level associated with the summoner.
 	SummonerLevel int64 `json:"summonerLevel,omitempty"`
+	// ID of the summoner icon associated with the summoner.
+	ProfileIconID int32 `json:"profileIconId,omitempty"`
 }

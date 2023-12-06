@@ -14,98 +14,98 @@ type ChampionEndpoint struct {
 }
 
 type ChampionsData struct {
+	Data    map[string]Champion `json:"data"`
 	Type    string              `json:"type"`
 	Format  string              `json:"format"`
 	Version string              `json:"version"`
-	Data    map[string]Champion `json:"data"`
 }
 
 type Champion struct {
-	Version string `json:"version"`
-	ID      string `json:"id"`
-	Key     string `json:"key"`
-	Name    string `json:"name"`
-	Title   string `json:"title"`
-	Blurb   string `json:"blurb"`
+	Version string        `json:"version"`
+	ID      string        `json:"id"`
+	Key     string        `json:"key"`
+	Name    string        `json:"name"`
+	Title   string        `json:"title"`
+	Blurb   string        `json:"blurb"`
+	Partype string        `json:"partype"`
+	Tags    []string      `json:"tags"`
+	Image   Image         `json:"image"`
+	Stats   ChampionStats `json:"stats"`
 	Info    struct {
 		Attack     int `json:"attack"`
 		Defense    int `json:"defense"`
 		Magic      int `json:"magic"`
 		Difficulty int `json:"difficulty"`
 	} `json:"info"`
-	Image   Image         `json:"image"`
-	Tags    []string      `json:"tags"`
-	Partype string        `json:"partype"`
-	Stats   ChampionStats `json:"stats"`
 }
 
 type FullChampionData struct {
+	Data    map[string]FullChampion `json:"data"`
 	Type    string                  `json:"type"`
 	Format  string                  `json:"format"`
 	Version string                  `json:"version"`
-	Data    map[string]FullChampion `json:"data"`
 }
 
 type FullChampion struct {
-	ID    string `json:"id"`
-	Key   string `json:"key"`
-	Name  string `json:"name"`
-	Title string `json:"title"`
-	Image Image  `json:"image"`
-	Skins []struct {
+	ID      string `json:"id"`
+	Key     string `json:"key"`
+	Name    string `json:"name"`
+	Title   string `json:"title"`
+	Lore    string `json:"lore"`
+	Blurb   string `json:"blurb"`
+	Partype string `json:"partype"`
+	Skins   []struct {
 		ID      string `json:"id"`
-		Num     int    `json:"num"`
 		Name    string `json:"name"`
+		Num     int    `json:"num"`
 		Chromas bool   `json:"chromas"`
 	} `json:"skins"`
-	Lore      string   `json:"lore"`
-	Blurb     string   `json:"blurb"`
 	AllyTips  []string `json:"allytips"`
 	EnemyTips []string `json:"enemytips"`
 	Tags      []string `json:"tags"`
-	Partype   string   `json:"partype"`
-	Info      struct {
-		Attack     int `json:"attack"`
-		Defense    int `json:"defense"`
-		Magic      int `json:"magic"`
-		Difficulty int `json:"difficulty"`
-	} `json:"info"`
-	Stats  ChampionStats `json:"stats"`
-	Spells []struct {
-		ID          string `json:"id"`
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		Tooltip     string `json:"tooltip"`
-		Leveltip    struct {
+	Spells    []struct {
+		DataValues struct {
+		} `json:"datavalues"`
+		ID           string `json:"id"`
+		Name         string `json:"name"`
+		Description  string `json:"description"`
+		Tooltip      string `json:"tooltip"`
+		CooldownBurn string `json:"cooldownBurn"`
+		CostBurn     string `json:"costBurn"`
+		CostType     string `json:"costType"`
+		MaxAmmo      string `json:"maxammo"`
+		RangeBurn    string `json:"rangeBurn"`
+		Resource     string `json:"resource"`
+		Leveltip     struct {
 			Label  []string `json:"label"`
 			Effect []string `json:"effect"`
 		} `json:"leveltip"`
-		MaxRank      int       `json:"maxrank"`
-		Cooldown     []float64 `json:"cooldown"`
-		CooldownBurn string    `json:"cooldownBurn"`
-		Cost         []float64 `json:"cost"`
-		CostBurn     string    `json:"costBurn"`
-		DataValues   struct {
-		} `json:"datavalues"`
+		Cooldown []float64 `json:"cooldown"`
+		Cost     []float64 `json:"cost"`
 		// Not modeled
 		Effect []any `json:"effect,omitempty"`
 		// Not modeled
 		EffectBurn []any `json:"effectBurn,omitempty"`
 		// Not modeled
-		Vars      []any  `json:"vars,omitempty"`
-		CostType  string `json:"costType"`
-		MaxAmmo   string `json:"maxammo"`
-		Range     []int  `json:"range"`
-		RangeBurn string `json:"rangeBurn"`
-		Image     Image  `json:"image"`
-		Resource  string `json:"resource"`
+		Vars    []any `json:"vars,omitempty"`
+		Range   []int `json:"range"`
+		Image   Image `json:"image"`
+		MaxRank int   `json:"maxrank"`
 	} `json:"spells"`
-	Passive struct {
+	Recommended []any `json:"recommended,omitempty"`
+	Passive     struct {
 		Name        string `json:"name"`
 		Description string `json:"description"`
 		Image       Image  `json:"image"`
 	} `json:"passive"`
-	Recommended []any `json:"recommended,omitempty"`
+	Image Image         `json:"image"`
+	Stats ChampionStats `json:"stats"`
+	Info  struct {
+		Attack     int `json:"attack"`
+		Defense    int `json:"defense"`
+		Magic      int `json:"magic"`
+		Difficulty int `json:"difficulty"`
+	} `json:"info"`
 }
 
 type ChampionStats struct {

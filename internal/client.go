@@ -21,11 +21,11 @@ import (
 )
 
 type InternalClient struct {
-	key            string
 	http           *http.Client
 	loggers        *Loggers
 	cache          *cache.Cache
 	ratelimit      *ratelimit.RateLimit
+	key            string
 	maxRetries     int
 	isCacheEnabled bool
 }

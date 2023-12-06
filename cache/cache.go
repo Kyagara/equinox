@@ -20,8 +20,8 @@ const (
 
 type Cache struct {
 	store     Store
-	TTL       time.Duration
 	StoreType CacheStoreType
+	TTL       time.Duration
 }
 
 type Store interface {

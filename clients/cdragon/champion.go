@@ -14,23 +14,22 @@ type ChampionEndpoint struct {
 }
 
 type ChampionData struct {
-	ID           int    `json:"id"`
-	Name         string `json:"name"`
-	Alias        string `json:"alias"`
-	Title        string `json:"title"`
-	ShortBio     string `json:"shortBio"`
+	Passive struct {
+		Name                  string `json:"name"`
+		AbilityIconPath       string `json:"abilityIconPath"`
+		AbilityVideoPath      string `json:"abilityVideoPath"`
+		AbilityVideoImagePath string `json:"abilityVideoImagePath"`
+		Description           string `json:"description"`
+	} `json:"passive"`
 	TacticalInfo struct {
+		DamageType string `json:"damageType"`
 		Style      int    `json:"style"`
 		Difficulty int    `json:"difficulty"`
-		DamageType string `json:"damageType"`
 	} `json:"tacticalInfo"`
-	PlaystyleInfo struct {
-		Damage       int `json:"damage"`
-		Durability   int `json:"durability"`
-		CrowdControl int `json:"crowdControl"`
-		Mobility     int `json:"mobility"`
-		Utility      int `json:"utility"`
-	} `json:"playstyleInfo"`
+	Name                    string   `json:"name"`
+	Alias                   string   `json:"alias"`
+	Title                   string   `json:"title"`
+	ShortBio                string   `json:"shortBio"`
 	SquarePortraitPath      string   `json:"squarePortraitPath"`
 	StingerSFXPath          string   `json:"stingerSfxPath"`
 	ChooseVoPath            string   `json:"chooseVoPath"`
@@ -38,8 +37,7 @@ type ChampionData struct {
 	Roles                   []string `json:"roles"`
 	RecommendedItemDefaults []any    `json:"recommendedItemDefaults,omitempty"`
 	Skins                   []struct {
-		ID                        int    `json:"id"`
-		IsBase                    bool   `json:"isBase"`
+		Emblems                   any    `json:"emblems,omitempty"`
 		Name                      string `json:"name"`
 		SplashPath                string `json:"splashPath"`
 		UncenteredSplashPath      string `json:"uncenteredSplashPath"`
@@ -47,20 +45,16 @@ type ChampionData struct {
 		LoadScreenPath            string `json:"loadScreenPath"`
 		SkinType                  string `json:"skinType"`
 		Rarity                    string `json:"rarity"`
-		IsLegacy                  bool   `json:"isLegacy"`
 		SplashVideoPath           string `json:"splashVideoPath"`
 		CollectionSplashVideoPath string `json:"collectionSplashVideoPath"`
 		FeaturesText              string `json:"featuresText"`
 		ChromaPath                string `json:"chromaPath"`
-		Emblems                   any    `json:"emblems,omitempty"`
-		RegionRarityID            int    `json:"regionRarityId"`
 		RarityGemPath             string `json:"rarityGemPath"`
+		Description               string `json:"description"`
 		SkinLines                 []struct {
 			ID int `json:"id"`
 		} `json:"skinLines"`
-		Description string `json:"description"`
-		Chromas     []struct {
-			ID           int      `json:"id"`
+		Chromas []struct {
 			Name         string   `json:"name"`
 			ChromaPath   string   `json:"chromaPath"`
 			Colors       []string `json:"colors"`
@@ -72,33 +66,24 @@ type ChampionData struct {
 				Region string `json:"region"`
 				Rarity int    `json:"rarity"`
 			} `json:"rarities"`
+			ID int `json:"id"`
 		} `json:"chromas,omitempty"`
+		ID             int  `json:"id"`
+		RegionRarityID int  `json:"regionRarityId"`
+		IsBase         bool `json:"isBase"`
+		IsLegacy       bool `json:"isLegacy"`
 	} `json:"skins"`
-	Passive struct {
+	Spells []struct {
+		SpellKey              string `json:"spellKey"`
 		Name                  string `json:"name"`
 		AbilityIconPath       string `json:"abilityIconPath"`
 		AbilityVideoPath      string `json:"abilityVideoPath"`
 		AbilityVideoImagePath string `json:"abilityVideoImagePath"`
+		Cost                  string `json:"cost"`
+		Cooldown              string `json:"cooldown"`
 		Description           string `json:"description"`
-	} `json:"passive"`
-	Spells []struct {
-		SpellKey              string    `json:"spellKey"`
-		Name                  string    `json:"name"`
-		AbilityIconPath       string    `json:"abilityIconPath"`
-		AbilityVideoPath      string    `json:"abilityVideoPath"`
-		AbilityVideoImagePath string    `json:"abilityVideoImagePath"`
-		Cost                  string    `json:"cost"`
-		Cooldown              string    `json:"cooldown"`
-		Description           string    `json:"description"`
-		DynamicDescription    string    `json:"dynamicDescription"`
-		Range                 []float64 `json:"range"`
-		CostCoefficients      []float64 `json:"costCoefficients"`
-		CooldownCoefficients  []float64 `json:"cooldownCoefficients"`
-		Coefficients          struct {
-			Coefficient1 float64 `json:"coefficient1"`
-			Coefficient2 float64 `json:"coefficient2"`
-		} `json:"coefficients"`
-		EffectAmounts struct {
+		DynamicDescription    string `json:"dynamicDescription"`
+		EffectAmounts         struct {
 			Effect1Amount  []float64 `json:"Effect1Amount"`
 			Effect2Amount  []float64 `json:"Effect2Amount"`
 			Effect3Amount  []float64 `json:"Effect3Amount"`
@@ -114,8 +99,23 @@ type ChampionData struct {
 			AmmoRechargeTime []float64 `json:"ammoRechargeTime"`
 			MaxAmmo          []int     `json:"maxAmmo"`
 		} `json:"ammo"`
+		Range                []float64 `json:"range"`
+		CostCoefficients     []float64 `json:"costCoefficients"`
+		CooldownCoefficients []float64 `json:"cooldownCoefficients"`
+		Coefficients         struct {
+			Coefficient1 float64 `json:"coefficient1"`
+			Coefficient2 float64 `json:"coefficient2"`
+		} `json:"coefficients"`
 		MaxLevel int `json:"maxLevel"`
 	} `json:"spells"`
+	PlaystyleInfo struct {
+		Damage       int `json:"damage"`
+		Durability   int `json:"durability"`
+		CrowdControl int `json:"crowdControl"`
+		Mobility     int `json:"mobility"`
+		Utility      int `json:"utility"`
+	} `json:"playstyleInfo"`
+	ID int `json:"id"`
 }
 
 // Retrieves more information about a champion, includes skins, spells and tips.

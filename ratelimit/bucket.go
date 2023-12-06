@@ -8,15 +8,15 @@ import (
 )
 
 type Bucket struct {
+	// Next reset
+	next time.Time
 	// Current number of tokens, starts at limit
 	tokens int
 	// Maximum number of tokens
 	limit int
 	// Time interval in seconds
 	interval time.Duration
-	// Next reset
-	next  time.Time
-	mutex sync.Mutex
+	mutex    sync.Mutex
 }
 
 func (b *Bucket) MarshalZerologObject(encoder *zerolog.Event) {

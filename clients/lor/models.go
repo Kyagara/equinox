@@ -66,8 +66,8 @@ type PlayerV1DTO struct {
 	DeckID string `json:"deck_id,omitempty"`
 	// Code for the deck played. Refer to LOR documentation for details on deck codes.
 	DeckCode    string   `json:"deck_code,omitempty"`
-	Factions    []string `json:"factions,omitempty"`
 	GameOutcome string   `json:"game_outcome,omitempty"`
+	Factions    []string `json:"factions,omitempty"`
 	// The order in which the players took turns.
 	OrderOfPlay int32 `json:"order_of_play,omitempty"`
 }
@@ -97,18 +97,18 @@ type PlatformDataV1DTO struct {
 
 // StatusDTO data object.
 type StatusV1DTO struct {
-	ID int32 `json:"id,omitempty"`
 	// (Legal values:  scheduled,  in_progress,  complete)
 	MaintenanceStatus string `json:"maintenance_status,omitempty"`
 	// (Legal values:  info,  warning,  critical)
 	IncidentSeverity string         `json:"incident_severity,omitempty"`
-	Titles           []ContentV1DTO `json:"titles,omitempty"`
-	Updates          []UpdateV1DTO  `json:"updates,omitempty"`
 	CreatedAt        string         `json:"created_at,omitempty"`
 	ArchiveAt        string         `json:"archive_at,omitempty"`
 	UpdatedAt        string         `json:"updated_at,omitempty"`
+	Titles           []ContentV1DTO `json:"titles,omitempty"`
+	Updates          []UpdateV1DTO  `json:"updates,omitempty"`
 	// (Legal values: windows, macos, android, ios, ps4, xbone, switch)
 	Platforms []string `json:"platforms,omitempty"`
+	ID        int32    `json:"id,omitempty"`
 }
 
 // ContentDTO data object.
@@ -119,12 +119,12 @@ type ContentV1DTO struct {
 
 // UpdateDTO data object.
 type UpdateV1DTO struct {
-	ID      int32  `json:"id,omitempty"`
-	Author  string `json:"author,omitempty"`
-	Publish bool   `json:"publish,omitempty"`
+	Author    string `json:"author,omitempty"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
 	// (Legal values: riotclient, riotstatus, game)
 	PublishLocations []string       `json:"publish_locations,omitempty"`
 	Translations     []ContentV1DTO `json:"translations,omitempty"`
-	CreatedAt        string         `json:"created_at,omitempty"`
-	UpdatedAt        string         `json:"updated_at,omitempty"`
+	ID               int32          `json:"id,omitempty"`
+	Publish          bool           `json:"publish,omitempty"`
 }

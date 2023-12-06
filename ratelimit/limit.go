@@ -11,8 +11,8 @@ import (
 
 // Limit represents a collection of buckets and the type of limit (application or method).
 type Limit struct {
-	buckets    []*Bucket
 	limitType  string
+	buckets    []*Bucket
 	retryAfter time.Duration
 	mutex      sync.Mutex
 }

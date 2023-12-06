@@ -36,7 +36,7 @@ func TestNewEquinoxClient(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			client, err := equinox.NewClient(test.key)
-			require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
+			require.Equal(t, test.wantErr, err)
 			require.NotEmpty(t, client, "expecting non-nil Client")
 			require.NotEmpty(t, client.Cache, "expecting non-nil Client")
 			require.NotEmpty(t, client.LOL, "expecting nil Client")
@@ -80,7 +80,7 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			client, err := equinox.NewClientWithConfig(test.config)
-			require.Equal(t, test.wantErr, err, fmt.Sprintf("want err %v, got %v", test.wantErr, err))
+			require.Equal(t, test.wantErr, err)
 
 			if test.wantErr == nil {
 				require.NotEmpty(t, client, "expecting non-nil client")
@@ -117,12 +117,12 @@ func TestRateLimitWithMock(t *testing.T) {
 	config.Retries = 3
 
 	client, err := equinox.NewClientWithConfig(config)
-	require.Nil(t, err)
+	require.NoError(t, err)
 
 	for i := 1; i <= 4; i++ {
 		ctx := context.Background()
 		_, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-		require.Nil(t, err)
+		require.NoError(t, err)
 	}
 
 	// One request left, it should be blocked as it would exceed the rate limit
@@ -138,5 +138,5 @@ func TestRateLimitWithMock(t *testing.T) {
 	// This last request (5) should block until rate limit is reset, this test should take around 3 seconds
 	ctx = context.Background()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-	require.Nil(t, err)
+	require.NoError(t, err)
 }

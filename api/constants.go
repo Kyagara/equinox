@@ -19,15 +19,15 @@ import (
 // EquinoxRequest represents a request to the Riot API and CDNs, its a struct that contains all information about a request.
 type EquinoxRequest struct {
 	Logger   zerolog.Logger
-	MethodID string
 	Route    any
+	Body     any
+	Request  *http.Request
+	MethodID string
 	BaseURL  string
 	Method   string
 	Path     string
-	Body     any
-	IsCDN    bool
-	Request  *http.Request
 	Retries  int
+	IsCDN    bool
 }
 
 // Base API URLs formats.

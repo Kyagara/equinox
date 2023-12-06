@@ -22,7 +22,7 @@ func TestNewLimits(t *testing.T) {
 
 func TestRateLimitCheck(t *testing.T) {
 	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.Nil(t, err, "expecting nil error")
+	require.NoError(t, err)
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",
 		MethodID: "method",
@@ -36,7 +36,7 @@ func TestRateLimitCheck(t *testing.T) {
 		require.Nil(t, r.Region[equinoxReq.Route])
 		ctx := context.Background()
 		err := r.Take(ctx, equinoxReq)
-		require.Nil(t, err)
+		require.NoError(t, err)
 		require.NotNil(t, r.Region[equinoxReq.Route].Methods)
 		require.NotNil(t, r.Region[equinoxReq.Route].Methods[equinoxReq.MethodID])
 	})
@@ -51,10 +51,10 @@ func TestRateLimitCheck(t *testing.T) {
 		}
 		ctx := context.Background()
 		err := r.Take(ctx, equinoxReq)
-		require.Nil(t, err)
+		require.NoError(t, err)
 		r.Update(equinoxReq, &headers)
 		err = r.Take(ctx, equinoxReq)
-		require.Nil(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("method rate limited", func(t *testing.T) {
@@ -65,10 +65,10 @@ func TestRateLimitCheck(t *testing.T) {
 		}
 		ctx := context.Background()
 		err := r.Take(ctx, equinoxReq)
-		require.Nil(t, err)
+		require.NoError(t, err)
 		r.Update(equinoxReq, &headers)
 		err = r.Take(ctx, equinoxReq)
-		require.Nil(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("waiting bucket to reset", func(t *testing.T) {
@@ -79,16 +79,16 @@ func TestRateLimitCheck(t *testing.T) {
 		}
 		ctx := context.Background()
 		err = r.Take(ctx, equinoxReq)
-		require.Nil(t, err)
+		require.NoError(t, err)
 		r.Update(equinoxReq, &headers)
 		err := r.Take(ctx, equinoxReq)
-		require.Nil(t, err)
+		require.NoError(t, err)
 	})
 }
 
 func TestLimitsDontMatch(t *testing.T) {
 	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.Nil(t, err, "expecting nil error")
+	require.NoError(t, err)
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",
 		MethodID: "method",
@@ -104,10 +104,10 @@ func TestLimitsDontMatch(t *testing.T) {
 	ctx, c := context.WithTimeout(context.Background(), 1*time.Second)
 	defer c()
 	err = r.Take(ctx, equinoxReq)
-	require.Nil(t, err)
+	require.NoError(t, err)
 	r.Update(equinoxReq, &headers)
 	err = r.Take(ctx, equinoxReq)
-	require.Nil(t, err)
+	require.NoError(t, err)
 
 	headers = http.Header{
 		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"1:2"},
@@ -143,6 +143,6 @@ func TestCheckRetryAfter(t *testing.T) {
 
 	headers.Set(ratelimit.RETRY_AFTER_HEADER, "10")
 	delay, err := r.CheckRetryAfter(equinoxReq, &headers)
-	require.Nil(t, err)
+	require.NoError(t, err)
 	require.Equal(t, 10*time.Second, delay)
 }

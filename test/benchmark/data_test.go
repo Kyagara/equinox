@@ -32,7 +32,7 @@ func BenchmarkMatchByID(b *testing.B) {
 
 	var res lol.MatchV5DTO
 	err := util.ReadFile("../data/match.json", &res)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
 		Get(fmt.Sprintf("/lol/match/v5/matches/%v", "BR1_2744215970")).
@@ -45,12 +45,12 @@ func BenchmarkMatchByID(b *testing.B) {
 	config.Retries = 3
 
 	client, err := equinox.NewClientWithConfig(config)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "BR1_2744215970")
-		require.Nil(b, err)
+		require.NoError(b, err)
 		require.Equal(b, res.Info.GameCreation, data.Info.GameCreation)
 	}
 }
@@ -71,7 +71,7 @@ func BenchmarkMatchTimeline(b *testing.B) {
 
 	var res lol.MatchTimelineV5DTO
 	err := util.ReadFile("../data/match.timeline.json", &res)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS)).
 		Get(fmt.Sprintf("/lol/match/v5/matches/%v/timeline", "BR1_2744215970")).
@@ -84,12 +84,12 @@ func BenchmarkMatchTimeline(b *testing.B) {
 	config.Retries = 3
 
 	client, err := equinox.NewClientWithConfig(config)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.MatchV5.Timeline(ctx, api.AMERICAS, "BR1_2744215970")
-		require.Nil(b, err)
+		require.NoError(b, err)
 		require.Equal(b, res.Info.GameID, data.Info.GameID)
 	}
 }
@@ -110,7 +110,7 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 
 	var data ddragon.ChampionsData
 	err := util.ReadFile("../data/champions.json", &data)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "")).
 		Get(fmt.Sprintf(ddragon.ChampionsURL, "13.22.1", ddragon.EnUS)).
@@ -123,12 +123,12 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 	config.Retries = 3
 
 	client, err := equinox.NewClientWithConfig(config)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.DDragon.Champion.AllChampions(ctx, "13.22.1", ddragon.EnUS)
-		require.Nil(b, err)
+		require.NoError(b, err)
 		require.Equal(b, "Ahri", data["Ahri"].Name)
 	}
 }
@@ -150,7 +150,7 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 
 	var res val.ContentV1DTO
 	err := util.ReadFile("../data/val.content.all_locales.json", &res)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, val.BR)).
 		Get("/val/content/v1/contents").
@@ -163,12 +163,12 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 	config.Retries = 3
 
 	client, err := equinox.NewClientWithConfig(config)
-	require.Nil(b, err)
+	require.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.VAL.ContentV1.Content(ctx, val.BR, "")
-		require.Nil(b, err)
+		require.NoError(b, err)
 		require.Equal(b, res.Version, data.Version)
 	}
 }
