@@ -29,7 +29,7 @@ package lol
 import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
-type LOLClient struct {
+type Client struct {
 	ChampionMasteryV4 *ChampionMasteryV4
 	ChampionV3        *ChampionV3
 	ClashV1           *ClashV1
@@ -45,9 +45,9 @@ type LOLClient struct {
 	TournamentV5      *TournamentV5
 }
 
-// Creates a new LOLClient using the internal.Client provided.
-func NewLOLClient(client *internal.Client) *LOLClient {
-	return &LOLClient{
+// Creates a new LOL Client using the internal.Client provided.
+func NewLOLClient(client *internal.Client) *Client {
+	return &Client{
 		ChampionMasteryV4: &ChampionMasteryV4{internal: client},
 		ChampionV3:        &ChampionV3{internal: client},
 		ClashV1:           &ClashV1{internal: client},

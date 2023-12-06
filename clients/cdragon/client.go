@@ -11,14 +11,14 @@ const (
 	ChampionURL = "/%s/champion/%v/data"
 )
 
-type CDragonClient struct {
+type Client struct {
 	Version  *VersionEndpoint
 	Champion *ChampionEndpoint
 }
 
-// Returns a new CDragonClient using the internal.Client provided.
-func NewCDragonClient(client *internal.Client) *CDragonClient {
-	return &CDragonClient{
+// Returns a new CDragon Client using the internal.Client provided.
+func NewCDragonClient(client *internal.Client) *Client {
+	return &Client{
 		Version:  &VersionEndpoint{client},
 		Champion: &ChampionEndpoint{client},
 	}

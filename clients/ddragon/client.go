@@ -13,15 +13,15 @@ const (
 	ChampionsURL = "/cdn/%s/data/%s/champion.json"
 )
 
-type DDragonClient struct {
+type Client struct {
 	Version  *VersionEndpoint
 	Realm    *RealmEndpoint
 	Champion *ChampionEndpoint
 }
 
-// Returns a new DDragonClient using the internal.Client provided.
-func NewDDragonClient(client *internal.Client) *DDragonClient {
-	return &DDragonClient{
+// Returns a new DDragon Client using the internal.Client provided.
+func NewDDragonClient(client *internal.Client) *Client {
+	return &Client{
 		Version:  &VersionEndpoint{client},
 		Realm:    &RealmEndpoint{client},
 		Champion: &ChampionEndpoint{client},

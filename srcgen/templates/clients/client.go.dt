@@ -16,16 +16,16 @@
 import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
-type {{= clientNormalizedName }}Client struct {
+type Client struct {
 {{~ Object.keys(endpointGroups) :endpoint }}
 {{ endpoint = dotUtils.removeClientName(dotUtils.changeCase.pascalCase(endpoint)); }}
 	{{= endpoint }}  *{{= endpoint }}
 {{~}}
 }
 
-// Creates a new {{= clientNormalizedName }}Client using the internal.Client provided.
-func New{{= clientNormalizedName}}Client(client *internal.Client) *{{= clientNormalizedName }}Client {
-	return &{{= clientNormalizedName }}Client{
+// Creates a new {{= clientNormalizedName }} Client using the internal.Client provided.
+func New{{= clientNormalizedName}}Client(client *internal.Client) *Client {
+	return &Client{
 {{~ Object.keys(endpointGroups) :endpoint }}
 {{ endpoint = dotUtils.removeClientName(dotUtils.changeCase.pascalCase(endpoint)); }}
         {{= endpoint }}: &{{= endpoint }}{internal: client},

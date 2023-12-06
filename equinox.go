@@ -21,13 +21,13 @@ import (
 
 type Equinox struct {
 	Cache   *cache.Cache
-	DDragon *ddragon.DDragonClient
-	CDragon *cdragon.CDragonClient
-	Riot    *riot.RiotClient
-	LOL     *lol.LOLClient
-	TFT     *tft.TFTClient
-	VAL     *val.VALClient
-	LOR     *lor.LORClient
+	DDragon *ddragon.Client
+	CDragon *cdragon.Client
+	Riot    *riot.Client
+	LOL     *lol.Client
+	TFT     *tft.Client
+	VAL     *val.Client
+	LOR     *lor.Client
 }
 
 // Creates a new Equinox client with the default configuration
