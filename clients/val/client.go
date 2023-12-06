@@ -27,8 +27,8 @@ type VALClient struct {
 	StatusV1  *StatusV1
 }
 
-// Creates a new VALClient using the InternalClient provided.
-func NewVALClient(client *internal.InternalClient) *VALClient {
+// Creates a new VALClient using the internal.Client provided.
+func NewVALClient(client *internal.Client) *VALClient {
 	return &VALClient{
 		ContentV1: &ContentV1{internal: client},
 		MatchV1:   &MatchV1{internal: client},

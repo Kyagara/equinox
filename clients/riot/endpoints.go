@@ -27,7 +27,7 @@ import (
 //
 // [account-v1]: https://developer.riotgames.com/apis#account-v1
 type AccountV1 struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 // Get account by puuid

@@ -83,16 +83,13 @@ type QueueType string
 
 const (
 	// Ranked Teamfight Tactics games
-	//
 	RANKED_TFT QueueType = "RANKED_TFT"
 	// Ranked Teamfight Tactics (Hyper Roll) games
-	//
 	RANKED_TFT_TURBO QueueType = "RANKED_TFT_TURBO"
 	// Ranked Teamfight Tactics (Double Up Workshop) games
 	//
-	// Deprecated in patch 12.11 in favor of queueId 1160
+	// Deprecated: Deprecated in patch 12.11 in favor of queueId 1160
 	RANKED_TFT_PAIRS QueueType = "RANKED_TFT_PAIRS"
 	// Ranked Teamfight Tactics (Double Up Workshop) games
-	//
 	RANKED_TFT_DOUBLE_UP QueueType = "RANKED_TFT_DOUBLE_UP"
 )

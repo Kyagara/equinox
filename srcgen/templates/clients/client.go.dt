@@ -23,8 +23,8 @@ type {{= clientNormalizedName }}Client struct {
 {{~}}
 }
 
-// Creates a new {{= clientNormalizedName }}Client using the InternalClient provided.
-func New{{= clientNormalizedName}}Client(client *internal.InternalClient) *{{= clientNormalizedName }}Client {
+// Creates a new {{= clientNormalizedName }}Client using the internal.Client provided.
+func New{{= clientNormalizedName}}Client(client *internal.Client) *{{= clientNormalizedName }}Client {
 	return &{{= clientNormalizedName }}Client{
 {{~ Object.keys(endpointGroups) :endpoint }}
 {{ endpoint = dotUtils.removeClientName(dotUtils.changeCase.pascalCase(endpoint)); }}

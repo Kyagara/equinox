@@ -10,7 +10,7 @@ import (
 )
 
 type RealmEndpoint struct {
-	internal *internal.InternalClient
+	internal *internal.Client
 }
 
 type RealmData struct {

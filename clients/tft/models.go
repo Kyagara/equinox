@@ -137,25 +137,25 @@ type ParticipantV1DTO struct {
 	Companion CompanionV1DTO `json:"companion,omitempty"`
 	PUUID     string         `json:"puuid,omitempty"`
 	Augments  []string       `json:"augments,omitempty"`
-	// A list of active units for the participant.
-	Units []UnitV1DTO `json:"units,omitempty"`
 	// A complete list of traits for the participant's active units.
 	Traits []TraitV1DTO `json:"traits,omitempty"`
-	// Participant placement upon elimination.
-	Placement int32 `json:"placement,omitempty"`
-	// Participant Little Legend level. Note: This is not the number of active units.
-	Level int32 `json:"level,omitempty"`
-	// Number of players the participant eliminated.
-	PlayersEliminated int32 `json:"players_eliminated,omitempty"`
+	// A list of active units for the participant.
+	Units          []UnitV1DTO `json:"units,omitempty"`
+	PartnerGroupID int32       `json:"partner_group_id,omitempty"`
+	// Gold left after participant was eliminated.
+	GoldLeft int32 `json:"gold_left,omitempty"`
 	// The round the participant was eliminated in. Note: If the player was eliminated in stage 2-1 their last_round would be 5.
 	LastRound int32 `json:"last_round,omitempty"`
+	// Participant Little Legend level. Note: This is not the number of active units.
+	Level int32 `json:"level,omitempty"`
+	// Participant placement upon elimination.
+	Placement int32 `json:"placement,omitempty"`
+	// Number of players the participant eliminated.
+	PlayersEliminated int32 `json:"players_eliminated,omitempty"`
 	// The number of seconds before the participant was eliminated.
 	TimeEliminated float32 `json:"time_eliminated,omitempty"`
 	// Damage the participant dealt to other players.
 	TotalDamageToPlayers int32 `json:"total_damage_to_players,omitempty"`
-	// Gold left after participant was eliminated.
-	GoldLeft       int32 `json:"gold_left,omitempty"`
-	PartnerGroupID int32 `json:"partner_group_id,omitempty"`
 }
 
 // TraitDTO data object.

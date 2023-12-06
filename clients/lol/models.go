@@ -375,27 +375,27 @@ type MetadataV5DTO struct {
 
 // InfoDTO data object.
 type InfoV5DTO struct {
+	// Refer to the Game Constants documentation.
+	GameMode GameMode `json:"gameMode,omitempty"`
+	GameName string   `json:"gameName,omitempty"`
+	GameType GameType `json:"gameType,omitempty"`
 	// The first two parts can be used to determine the patch a game was played on.
 	GameVersion string `json:"gameVersion,omitempty"`
-	// Tournament code used to generate the match. This field was added to match-v5 in patch 11.13 on June 23rd, 2021.
-	TournamentCode string `json:"tournamentCode,omitempty"`
 	// Platform where the match was played.
 	PlatformID string `json:"platformId,omitempty"`
-	// Refer to the Game Constants documentation.
-	GameMode     GameMode           `json:"gameMode,omitempty"`
-	GameName     string             `json:"gameName,omitempty"`
-	GameType     GameType           `json:"gameType,omitempty"`
-	Teams        []TeamV5DTO        `json:"teams,omitempty"`
-	Participants []ParticipantV5DTO `json:"participants,omitempty"`
-	// Unix timestamp for when match starts on the game server.
-	GameStartTimestamp int64 `json:"gameStartTimestamp,omitempty"`
+	// Tournament code used to generate the match. This field was added to match-v5 in patch 11.13 on June 23rd, 2021.
+	TournamentCode string             `json:"tournamentCode,omitempty"`
+	Participants   []ParticipantV5DTO `json:"participants,omitempty"`
+	Teams          []TeamV5DTO        `json:"teams,omitempty"`
 	// Unix timestamp for when the game is created on the game server (i.e., the loading screen).
 	GameCreation int64 `json:"gameCreation,omitempty"`
-	GameID       int64 `json:"gameId,omitempty"`
-	// Unix timestamp for when match ends on the game server. This timestamp can occasionally be significantly longer than when the match "ends". The most reliable way of determining the timestamp for the end of the match would be to add the max time played of any participant to the gameStartTimestamp. This field was added to match-v5 in patch 11.20 on Oct 5th, 2021.
-	GameEndTimestamp int64 `json:"gameEndTimestamp,omitempty"`
 	// Prior to patch 11.20, this field returns the game length in milliseconds calculated from gameEndTimestamp - gameStartTimestamp. Post patch 11.20, this field returns the max timePlayed of any participant in the game in seconds, which makes the behavior of this field consistent with that of match-v4. The best way to handling the change in this field is to treat the value as milliseconds if the gameEndTimestamp field isn't in the response and to treat the value as seconds if gameEndTimestamp is in the response.
 	GameDuration int64 `json:"gameDuration,omitempty"`
+	// Unix timestamp for when match ends on the game server. This timestamp can occasionally be significantly longer than when the match "ends". The most reliable way of determining the timestamp for the end of the match would be to add the max time played of any participant to the gameStartTimestamp. This field was added to match-v5 in patch 11.20 on Oct 5th, 2021.
+	GameEndTimestamp int64 `json:"gameEndTimestamp,omitempty"`
+	GameID           int64 `json:"gameId,omitempty"`
+	// Unix timestamp for when match starts on the game server.
+	GameStartTimestamp int64 `json:"gameStartTimestamp,omitempty"`
 	// Refer to the Game Constants documentation.
 	MapID int32 `json:"mapId,omitempty"`
 	// Refer to the Game Constants documentation.
@@ -773,44 +773,44 @@ type ParticipantMissionsV5DTO struct {
 
 // MatchTimelineInfoFrameEventDTO data object.
 type MatchTimelineInfoFrameEventV5DTO struct {
-	WardType    string `json:"wardType,omitempty"`
-	Name        string `json:"name,omitempty"`
-	LevelUpType string `json:"levelUpType,omitempty"`
-	LaneType    string `json:"laneType,omitempty"`
-	TowerType   string `json:"towerType,omitempty"`
-	KillType    string `json:"killType,omitempty"`
 	// Timeline event type.
 	// (Known legal values: ASCENDED_EVENT, BUILDING_KILL, CAPTURE_POINT, CHAMPION_KILL, CHAMPION_SPECIAL_KILL, CHAMPION_TRANSFORM, DRAGON_SOUL_GIVEN, ELITE_MONSTER_KILL, GAME_END, ITEM_DESTROYED, ITEM_PURCHASED, ITEM_SOLD, ITEM_UNDO, LEVEL_UP, PAUSE_END, PAUSE_START, SKILL_LEVEL_UP, TURRET_PLATE_DESTROYED, WARD_KILL, WARD_PLACED)
 	Type                    string                                              `json:"type,omitempty"`
-	TransformType           string                                              `json:"transformType,omitempty"`
-	BuildingType            string                                              `json:"buildingType,omitempty"`
-	MonsterSubType          string                                              `json:"monsterSubType,omitempty"`
+	LevelUpType             string                                              `json:"levelUpType,omitempty"`
+	WardType                string                                              `json:"wardType,omitempty"`
+	KillType                string                                              `json:"killType,omitempty"`
+	LaneType                string                                              `json:"laneType,omitempty"`
 	MonsterType             string                                              `json:"monsterType,omitempty"`
+	MonsterSubType          string                                              `json:"monsterSubType,omitempty"`
+	BuildingType            string                                              `json:"buildingType,omitempty"`
+	TowerType               string                                              `json:"towerType,omitempty"`
+	TransformType           string                                              `json:"transformType,omitempty"`
+	Name                    string                                              `json:"name,omitempty"`
 	AssistingParticipantIDs []int32                                             `json:"assistingParticipantIds,omitempty"`
-	VictimDamageReceived    []MatchTimelineInfoFrameEventVictimDamageDealtV5DTO `json:"victimDamageReceived,omitempty"`
 	VictimDamageDealt       []MatchTimelineInfoFrameEventVictimDamageDealtV5DTO `json:"victimDamageDealt,omitempty"`
+	VictimDamageReceived    []MatchTimelineInfoFrameEventVictimDamageDealtV5DTO `json:"victimDamageReceived,omitempty"`
 	RealTimestamp           int64                                               `json:"realTimestamp,omitempty"`
-	ActualStartTime         int64                                               `json:"actualStartTime,omitempty"`
 	GameID                  int64                                               `json:"gameId,omitempty"`
+	ActualStartTime         int64                                               `json:"actualStartTime,omitempty"`
 	Position                MatchTimelinePositionV5DTO                          `json:"position,omitempty"`
+	Timestamp               int32                                               `json:"timestamp,omitempty"`
+	ItemID                  int32                                               `json:"itemId,omitempty"`
+	ParticipantID           int32                                               `json:"participantId,omitempty"`
+	SkillSlot               int32                                               `json:"skillSlot,omitempty"`
+	CreatorID               int32                                               `json:"creatorId,omitempty"`
 	Level                   int32                                               `json:"level,omitempty"`
+	Bounty                  int32                                               `json:"bounty,omitempty"`
+	KillStreakLength        int32                                               `json:"killStreakLength,omitempty"`
+	KillerID                int32                                               `json:"killerId,omitempty"`
 	VictimID                int32                                               `json:"victimId,omitempty"`
 	TeamID                  int32                                               `json:"teamId,omitempty"`
 	MultiKillLength         int32                                               `json:"multiKillLength,omitempty"`
 	KillerTeamID            int32                                               `json:"killerTeamId,omitempty"`
-	KillerID                int32                                               `json:"killerId,omitempty"`
-	KillStreakLength        int32                                               `json:"killStreakLength,omitempty"`
-	Bounty                  int32                                               `json:"bounty,omitempty"`
-	CreatorID               int32                                               `json:"creatorId,omitempty"`
 	AfterID                 int32                                               `json:"afterId,omitempty"`
 	BeforeID                int32                                               `json:"beforeId,omitempty"`
 	GoldGain                int32                                               `json:"goldGain,omitempty"`
-	SkillSlot               int32                                               `json:"skillSlot,omitempty"`
 	WinningTeam             int32                                               `json:"winningTeam,omitempty"`
-	ParticipantID           int32                                               `json:"participantId,omitempty"`
-	ItemID                  int32                                               `json:"itemId,omitempty"`
 	ShutdownBounty          int32                                               `json:"shutdownBounty,omitempty"`
-	Timestamp               int32                                               `json:"timestamp,omitempty"`
 }
 
 // MatchTimelineInfoFrameParticipantFrameChampionStatsDTO data object.
