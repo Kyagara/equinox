@@ -32,7 +32,9 @@ type Client struct {
 
 var (
 	ErrConfigurationNotProvided = errors.New("configuration not provided")
+)
 
+var (
 	errContextIsNil   = errors.New("context must be non-nil")
 	errKeyNotProvided = errors.New("api key not provided")
 	errServerError    = errors.New("server error")
@@ -54,7 +56,6 @@ func NewInternalClient(config *api.EquinoxConfig) (*Client, error) {
 	if config == nil {
 		return nil, ErrConfigurationNotProvided
 	}
-	logger := NewLogger(config)
 	if config.Cache == nil {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
@@ -65,7 +66,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*Client, error) {
 		key:  config.Key,
 		http: config.HTTPClient,
 		loggers: &Loggers{
-			main:    logger,
+			main:    NewLogger(config),
 			methods: make(map[string]zerolog.Logger),
 			mutex:   sync.Mutex{},
 		},
@@ -110,17 +111,17 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 	if err != nil {
 		return nil, err
 	}
-	equinoxReq.Request = request
 	equinoxReq.IsCDN = slices.Contains(cdns, request.URL.Host)
 
 	if equinoxReq.IsCDN {
-		request.Header = cdnHeaders
+		request.Header = cdnHeaders.Clone()
 	} else {
 		if c.key == "" {
 			return nil, errKeyNotProvided
 		}
-		request.Header = apiHeaders
+		request.Header = apiHeaders.Clone()
 	}
+	equinoxReq.Request = request
 	return equinoxReq, nil
 }
 
