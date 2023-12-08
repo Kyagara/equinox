@@ -73,6 +73,8 @@ matches, err := client.VAL.MatchV1.Recent(val.BR, "competitive")
 
 ## Example
 
+> For a slightly more advanced example, check out [lol-match-crawler](https://github.com/Kyagara/lol-match-crawler).
+
 ```go
 package main
 

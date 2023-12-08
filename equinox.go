@@ -45,9 +45,6 @@ func NewClientWithConfig(config *api.EquinoxConfig) (*Equinox, error) {
 	if err != nil {
 		return nil, err
 	}
-	if config.Cache == nil {
-		config.Cache = &cache.Cache{TTL: 0}
-	}
 	equinox := &Equinox{
 		Cache:   config.Cache,
 		DDragon: ddragon.NewDDragonClient(client),
