@@ -180,16 +180,6 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			code:    415,
 		},
 		{
-			name:    "rate limited",
-			wantErr: api.ErrTooManyRequests,
-			code:    429,
-		},
-		{
-			name:    "rate limited but no retry-after header found",
-			wantErr: ratelimit.Err429ButNoRetryAfterHeader,
-			code:    429,
-		},
-		{
 			name:    "internal server error",
 			wantErr: api.ErrInternalServer,
 			code:    500,
@@ -224,6 +214,44 @@ func TestInternalClientErrorResponses(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			config := util.NewTestEquinoxConfig()
+
+			gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, "tests", "")).
+				Get("/").
+				Reply(test.code)
+
+			internal, err := internal.NewInternalClient(config)
+			require.NoError(t, err)
+			l := internal.Logger("client_endpoint_method")
+			ctx := context.Background()
+			equinoxReq, err := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", "", nil)
+			require.NoError(t, err)
+			var gotData interface{}
+			gotErr := internal.Execute(ctx, equinoxReq, gotData)
+			require.Equal(t, test.wantErr, gotErr)
+		})
+	}
+
+	tests = []struct {
+		name    string
+		wantErr error
+		code    int
+	}{
+		{
+			name:    "rate limited",
+			wantErr: api.ErrTooManyRequests,
+			code:    429,
+		},
+		{
+			name:    "rate limited but no retry-after header found",
+			wantErr: ratelimit.Err429ButNoRetryAfterHeader,
+			code:    429,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			config := util.NewTestEquinoxConfig()
+			config.RateLimit = ratelimit.NewInternalRateLimit()
 			if test.name == "rate limited" {
 				config.Retries = 0
 			} else if test.name == "rate limited but no retry-after header found" {
@@ -250,6 +278,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 func TestInternalClientRetries(t *testing.T) {
 	config := util.NewTestEquinoxConfig()
 	config.Retries = 3
+	config.RateLimit = ratelimit.NewInternalRateLimit()
 	internal, err := internal.NewInternalClient(config)
 	require.NoError(t, err)
 

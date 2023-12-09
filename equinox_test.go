@@ -108,6 +108,7 @@ func TestRateLimitWithMock(t *testing.T) {
 	}
 
 	config := util.NewTestEquinoxConfig()
+	config.RateLimit = ratelimit.NewInternalRateLimit()
 	config.LogLevel = zerolog.WarnLevel
 	config.Retries = 3
 

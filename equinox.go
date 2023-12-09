@@ -15,6 +15,7 @@ import (
 	"github.com/Kyagara/equinox/clients/tft"
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/allegro/bigcache/v3"
 	"github.com/rs/zerolog"
 )
@@ -77,8 +78,9 @@ func DefaultConfig(key string) (api.EquinoxConfig, error) {
 		HTTPClient: &http.Client{
 			Timeout: 15 * time.Second,
 		},
-		Retries: 3,
-		Cache:   cache,
+		Retries:   3,
+		Cache:     cache,
+		RateLimit: ratelimit.NewInternalRateLimit(),
 	}
 	return config, nil
 }
