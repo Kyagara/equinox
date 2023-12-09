@@ -17,7 +17,7 @@ import (
 //   - `HTTPClient` : http.Client{}
 //   - `Retry`      : 0
 //   - `Cache`      : &cache.Cache{TTL: 0}
-//   - `RateLimit`  : &ratelimit.RateLimit{Enabled: false}
+//   - `RateLimit`  : Internal rate limit
 func NewTestEquinoxConfig() api.EquinoxConfig {
 	return api.EquinoxConfig{
 		Key:        "RGAPI-TEST",
@@ -25,7 +25,7 @@ func NewTestEquinoxConfig() api.EquinoxConfig {
 		HTTPClient: &http.Client{},
 		Retries:    0,
 		Cache:      &cache.Cache{},
-		RateLimit:  &ratelimit.RateLimit{},
+		RateLimit:  ratelimit.NewInternalRateLimit(),
 	}
 }
 
