@@ -9,7 +9,6 @@ import (
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/h2non/gock"
@@ -38,15 +37,15 @@ func TestNewEquinoxClient(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			client, err := equinox.NewClient(test.key)
 			require.Equal(t, test.wantErr, err)
-			require.NotEmpty(t, client, "expecting non-nil Client")
-			require.NotEmpty(t, client.Cache, "expecting non-nil Client")
-			require.NotEmpty(t, client.LOL, "expecting nil Client")
-			require.NotEmpty(t, client.LOR, "expecting nil Client")
-			require.NotEmpty(t, client.TFT, "expecting nil Client")
-			require.NotEmpty(t, client.VAL, "expecting nil Client")
-			require.NotEmpty(t, client.Riot, "expecting nil Client")
-			require.NotEmpty(t, client.CDragon, "expecting non-nil Client")
-			require.NotEmpty(t, client.DDragon, "expecting non-nil Client")
+			require.NotEmpty(t, client)
+			require.NotEmpty(t, client.Cache)
+			require.NotEmpty(t, client.LOL)
+			require.NotEmpty(t, client.LOR)
+			require.NotEmpty(t, client.TFT)
+			require.NotEmpty(t, client.VAL)
+			require.NotEmpty(t, client.Riot)
+			require.NotEmpty(t, client.CDragon)
+			require.NotEmpty(t, client.DDragon)
 		})
 	}
 }
@@ -58,17 +57,12 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 		name    string
 		want    *equinox.Equinox
 		wantErr error
-		config  *api.EquinoxConfig
+		config  api.EquinoxConfig
 	}{
 		{
 			name:   "success",
 			want:   &equinox.Equinox{},
 			config: util.NewTestEquinoxConfig(),
-		},
-		{
-			name:    "nil config",
-			wantErr: internal.ErrConfigurationNotProvided,
-			config:  nil,
 		},
 		{
 			name:    "no cache",
@@ -84,11 +78,11 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 			require.Equal(t, test.wantErr, err)
 
 			if test.wantErr == nil {
-				require.NotEmpty(t, client, "expecting non-nil client")
+				require.NotEmpty(t, client)
 			}
 
 			if test.name == "no cache" {
-				require.Equal(t, client.Cache.TTL, time.Duration(0), "expecting cache disabled")
+				require.Equal(t, client.Cache.TTL, time.Duration(0))
 			}
 		})
 	}

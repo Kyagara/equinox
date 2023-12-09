@@ -43,7 +43,7 @@ func init() {
 		fmt.Println(err)
 		return
 	}
-	config := &api.EquinoxConfig{
+	config := api.EquinoxConfig{
 		Key:      key,
 		LogLevel: zerolog.DebugLevel,
 		HTTPClient: &http.Client{

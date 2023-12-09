@@ -15,7 +15,7 @@ func TestNewBigCache(t *testing.T) {
 	config := bigcache.DefaultConfig(5 * time.Minute)
 	c, err := cache.NewBigCache(ctx, config)
 	require.NoError(t, err)
-	require.NotEmpty(t, c, "expecting non nil cache")
+	require.NotEmpty(t, c)
 	invalidConfig := bigcache.Config{LifeWindow: -1 * time.Minute}
 	c, err = cache.NewBigCache(ctx, invalidConfig)
 	require.NotEmpty(t, err)
@@ -26,7 +26,7 @@ func TestBigCacheMethods(t *testing.T) {
 	ctx := context.Background()
 	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
 	require.NoError(t, err)
-	require.NotEmpty(t, cache, "expecting non-nil BigCache")
+	require.NotEmpty(t, cache)
 
 	bytes := []byte("data")
 	err = cache.Set("test", bytes)

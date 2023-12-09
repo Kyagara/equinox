@@ -20,8 +20,8 @@ import (
 )
 
 func TestNewInternalClient(t *testing.T) {
-	_, err := internal.NewInternalClient(nil)
-	require.NotEmpty(t, err, "expecting non-nil error")
+	_, err := internal.NewInternalClient(api.EquinoxConfig{})
+	require.Empty(t, err)
 
 	internalClient, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NoError(t, err)
@@ -29,14 +29,14 @@ func TestNewInternalClient(t *testing.T) {
 		require.ErrorContains(t, err, "error initializing logger")
 	}
 
-	require.NotEmpty(t, internalClient, "expecting non-nil InternalClient")
+	require.NotEmpty(t, internalClient)
 
 	config := util.NewTestEquinoxConfig()
 	config.Cache.TTL = 1
 
 	internalClient, err = internal.NewInternalClient(config)
 	require.NoError(t, err)
-	require.NotEmpty(t, internalClient, "expecting non-nil InternalClient")
+	require.NotEmpty(t, internalClient)
 }
 
 func TestInternalClientNewRequest(t *testing.T) {
@@ -265,13 +265,21 @@ func TestInternalClientRetries(t *testing.T) {
 
 	res := lol.PlatformDataV4DTO{}
 	l := internal.Logger("client_endpoint_method")
+
+	//lint:ignore SA1012 Testing if ctx is nil
+	equinoxReq, err := internal.Request(nil, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	require.Error(t, err)
+	//lint:ignore SA1012 Testing if ctx is nil
+	err = internal.Execute(nil, equinoxReq, &res)
+	require.Error(t, err)
+
 	// This will take 1 second
 	ctx := context.Background()
-	equinoxReq, err := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	equinoxReq, err = internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
 	require.NoError(t, err)
 	err = internal.Execute(ctx, equinoxReq, &res)
 	require.NoError(t, err)
-	require.NotNil(t, res, "expecting non-nil response")
+	require.NotNil(t, res)
 }
 
 func TestGetDDragonLOLVersions(t *testing.T) {
@@ -286,5 +294,5 @@ func TestGetDDragonLOLVersions(t *testing.T) {
 	ctx := context.Background()
 	versions, err := internal.GetDDragonLOLVersions(ctx, "client_endpoint_method")
 	require.NoError(t, err)
-	require.Equal(t, "1.0", versions[0], "expecting nil error")
+	require.Equal(t, "1.0", versions[0])
 }

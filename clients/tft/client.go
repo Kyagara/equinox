@@ -21,18 +21,18 @@ import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
 type Client struct {
-	LeagueV1   *LeagueV1
-	MatchV1    *MatchV1
-	StatusV1   *StatusV1
-	SummonerV1 *SummonerV1
+	LeagueV1   LeagueV1
+	MatchV1    MatchV1
+	StatusV1   StatusV1
+	SummonerV1 SummonerV1
 }
 
 // Creates a new TFT Client using the internal.Client provided.
 func NewTFTClient(client *internal.Client) *Client {
 	return &Client{
-		LeagueV1:   &LeagueV1{internal: client},
-		MatchV1:    &MatchV1{internal: client},
-		StatusV1:   &StatusV1{internal: client},
-		SummonerV1: &SummonerV1{internal: client},
+		LeagueV1:   LeagueV1{internal: client},
+		MatchV1:    MatchV1{internal: client},
+		StatusV1:   StatusV1{internal: client},
+		SummonerV1: SummonerV1{internal: client},
 	}
 }

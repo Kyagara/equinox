@@ -15,9 +15,9 @@ type Loggers struct {
 	mutex   sync.Mutex
 }
 
-func NewLogger(config *api.EquinoxConfig) zerolog.Logger {
+func NewLogger(config api.EquinoxConfig) zerolog.Logger {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	if config == nil {
+	if config == (api.EquinoxConfig{}) {
 		return zerolog.Nop()
 	}
 	switch config.LogLevel {

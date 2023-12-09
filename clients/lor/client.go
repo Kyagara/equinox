@@ -22,20 +22,20 @@ import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
 type Client struct {
-	DeckV1      *DeckV1
-	InventoryV1 *InventoryV1
-	MatchV1     *MatchV1
-	RankedV1    *RankedV1
-	StatusV1    *StatusV1
+	DeckV1      DeckV1
+	InventoryV1 InventoryV1
+	MatchV1     MatchV1
+	RankedV1    RankedV1
+	StatusV1    StatusV1
 }
 
 // Creates a new LOR Client using the internal.Client provided.
 func NewLORClient(client *internal.Client) *Client {
 	return &Client{
-		DeckV1:      &DeckV1{internal: client},
-		InventoryV1: &InventoryV1{internal: client},
-		MatchV1:     &MatchV1{internal: client},
-		RankedV1:    &RankedV1{internal: client},
-		StatusV1:    &StatusV1{internal: client},
+		DeckV1:      DeckV1{internal: client},
+		InventoryV1: InventoryV1{internal: client},
+		MatchV1:     MatchV1{internal: client},
+		RankedV1:    RankedV1{internal: client},
+		StatusV1:    StatusV1{internal: client},
 	}
 }
