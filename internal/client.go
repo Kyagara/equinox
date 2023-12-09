@@ -21,13 +21,14 @@ import (
 )
 
 type Client struct {
-	http           *http.Client
-	loggers        Loggers
-	cache          *cache.Cache
-	ratelimit      *ratelimit.RateLimit
-	key            string
-	maxRetries     int
-	isCacheEnabled bool
+	http               *http.Client
+	loggers            Loggers
+	cache              *cache.Cache
+	ratelimit          *ratelimit.RateLimit
+	key                string
+	maxRetries         int
+	isCacheEnabled     bool
+	isRateLimitEnabled bool
 }
 
 var (
@@ -49,11 +50,14 @@ var (
 )
 
 func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
-	if config.Cache == nil {
-		config.Cache = &cache.Cache{TTL: 0}
-	}
 	if config.HTTPClient == nil {
 		config.HTTPClient = &http.Client{Timeout: 15 * time.Second}
+	}
+	if config.Cache == nil {
+		config.Cache = &cache.Cache{}
+	}
+	if config.RateLimit == nil {
+		config.RateLimit = &ratelimit.RateLimit{}
 	}
 	client := &Client{
 		key:  config.Key,
@@ -63,10 +67,11 @@ func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 			methods: make(map[string]zerolog.Logger),
 			mutex:   sync.Mutex{},
 		},
-		cache:          config.Cache,
-		ratelimit:      &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)},
-		maxRetries:     config.Retries,
-		isCacheEnabled: config.Cache.TTL > 0,
+		cache:              config.Cache,
+		ratelimit:          ratelimit.NewInternalRateLimit(),
+		maxRetries:         config.Retries,
+		isCacheEnabled:     config.Cache.TTL != 0,
+		isRateLimitEnabled: config.RateLimit.Enabled,
 	}
 	apiHeaders.Set("X-Riot-Token", config.Key)
 	return client, nil
@@ -135,7 +140,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, ta
 	}
 
 	if !equinoxReq.IsCDN {
-		err := c.ratelimit.Take(ctx, equinoxReq)
+		err := c.ratelimit.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		if err != nil {
 			return err
 		}
@@ -186,7 +191,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, ta
 
 func (c *Client) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) (time.Duration, error) {
 	if !equinoxReq.IsCDN {
-		c.ratelimit.Update(equinoxReq, &response.Header)
+		c.ratelimit.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &response.Header)
 	}
 
 	// 2xx responses
@@ -198,7 +203,7 @@ func (c *Client) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Re
 	if equinoxReq.Retries < c.maxRetries {
 		if response.StatusCode == http.StatusTooManyRequests {
 			equinoxReq.Logger.Warn().Msg("Received 429 response, checking Retry-After header")
-			return c.ratelimit.CheckRetryAfter(equinoxReq, &response.Header)
+			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, &response.Header)
 		}
 
 		if response.StatusCode >= 500 && response.StatusCode < 600 {

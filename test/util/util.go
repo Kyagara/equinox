@@ -6,6 +6,7 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
+	"github.com/Kyagara/equinox/ratelimit"
 	jsonv2 "github.com/go-json-experiment/json"
 	"github.com/rs/zerolog"
 )
@@ -16,13 +17,15 @@ import (
 //   - `HTTPClient` : http.Client{}
 //   - `Retry`      : 0
 //   - `Cache`      : &cache.Cache{TTL: 0}
+//   - `RateLimit`  : &ratelimit.RateLimit{Enabled: false}
 func NewTestEquinoxConfig() api.EquinoxConfig {
 	return api.EquinoxConfig{
 		Key:        "RGAPI-TEST",
 		LogLevel:   zerolog.DebugLevel,
 		HTTPClient: &http.Client{},
 		Retries:    0,
-		Cache:      &cache.Cache{TTL: 0},
+		Cache:      &cache.Cache{},
+		RateLimit:  &ratelimit.RateLimit{},
 	}
 }
 

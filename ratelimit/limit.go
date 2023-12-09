@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Kyagara/equinox/api"
+	"github.com/rs/zerolog"
 )
 
 // Limit represents a collection of buckets and the type of limit (application or method).
@@ -27,7 +27,7 @@ func NewLimit(limitType string) *Limit {
 }
 
 // Checks if any of the buckets provided are rate limited, and if so, blocks until the next reset.
-func (l *Limit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
+func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route any, methodID string) error {
 	if l.retryAfter > 0 {
 		err := WaitN(ctx, time.Now().Add(l.retryAfter), l.retryAfter)
 		if err != nil {
@@ -45,9 +45,9 @@ func (l *Limit) checkBuckets(ctx context.Context, equinoxReq *api.EquinoxRequest
 
 	for i := len(limited) - 1; i >= 0; i-- {
 		bucket := limited[i]
-		equinoxReq.Logger.Warn().
-			Any("route", equinoxReq.Route).
-			Str("method_id", equinoxReq.MethodID).
+		logger.Warn().
+			Any("route", route).
+			Str("method_id", methodID).
 			Str("limit_type", l.limitType).
 			Object("bucket", bucket).
 			Msg("Rate limited")

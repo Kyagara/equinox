@@ -61,9 +61,10 @@ func NewClientWithConfig(config api.EquinoxConfig) (*Equinox, error) {
 // Returns the default Equinox config with a provided key.
 //
 //   - `LogLevel`   : zerolog.WarnLevel
-//   - `HTTPClient` : http.Client with timeout of 15 seconds
 //   - `Retries`    : Retry 3 times
+//   - `HTTPClient` : http.Client with timeout of 15 seconds
 //   - `Cache`      : BigCache with TTL of 4 minutes
+//   - `RateLimit`  : Internal rate limit
 func DefaultConfig(key string) (api.EquinoxConfig, error) {
 	ctx := context.Background()
 	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
