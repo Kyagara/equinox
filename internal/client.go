@@ -77,12 +77,12 @@ func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 	return client, nil
 }
 
-func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (*api.EquinoxRequest, error) {
+func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (api.EquinoxRequest, error) {
 	if ctx == nil {
-		return nil, errContextIsNil
+		return api.EquinoxRequest{}, errContextIsNil
 	}
 
-	equinoxReq := &api.EquinoxRequest{
+	equinoxReq := api.EquinoxRequest{
 		Logger:   logger,
 		MethodID: methodID,
 		Route:    route,
@@ -100,14 +100,14 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 	if equinoxReq.Body != nil {
 		bodyBytes, err := jsonv2.Marshal(equinoxReq.Body)
 		if err != nil {
-			return nil, err
+			return api.EquinoxRequest{}, err
 		}
 		buffer = bytes.NewReader(bodyBytes)
 	}
 
 	request, err := http.NewRequestWithContext(ctx, httpMethod, url, buffer)
 	if err != nil {
-		return nil, err
+		return api.EquinoxRequest{}, err
 	}
 	equinoxReq.IsCDN = slices.Contains(cdns, request.URL.Host)
 
@@ -115,7 +115,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 		request.Header = cdnHeaders.Clone()
 	} else {
 		if c.key == "" {
-			return nil, errKeyNotProvided
+			return api.EquinoxRequest{}, errKeyNotProvided
 		}
 		request.Header = apiHeaders.Clone()
 	}
@@ -123,7 +123,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 	return equinoxReq, nil
 }
 
-func (c *Client) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, target any) error {
+func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, target any) error {
 	if ctx == nil {
 		return errContextIsNil
 	}
@@ -189,7 +189,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, ta
 	return jsonv2.Unmarshal(body, &target)
 }
 
-func (c *Client) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) (time.Duration, error) {
+func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, error) {
 	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
 		c.ratelimit.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &response.Header)
 	}
