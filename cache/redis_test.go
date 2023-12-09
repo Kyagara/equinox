@@ -13,7 +13,7 @@ import (
 
 func TestNewRedis(t *testing.T) {
 	s := miniredis.RunT(t)
-	require.NotEmpty(t, s, "expecting non-nil miniredis instance")
+	require.NotEmpty(t, s)
 	ctx := context.Background()
 	config := &redis.Options{
 		Network: "tcp",
@@ -24,12 +24,12 @@ func TestNewRedis(t *testing.T) {
 	require.Equal(t, cache.ErrRedisOptionsNil, err)
 	cache, err := cache.NewRedis(ctx, config, 4*time.Minute)
 	require.NoError(t, err)
-	require.NotEmpty(t, cache, "expecting non-nil Redis")
+	require.NotEmpty(t, cache)
 }
 
 func TestRedisMethods(t *testing.T) {
 	s := miniredis.RunT(t)
-	require.NotEmpty(t, s, "expecting non-nil miniredis instance")
+	require.NotEmpty(t, s)
 	ctx := context.Background()
 	config := &redis.Options{
 		Network: "tcp",
@@ -38,7 +38,7 @@ func TestRedisMethods(t *testing.T) {
 
 	cache, err := cache.NewRedis(ctx, config, 4*time.Minute)
 	require.NoError(t, err)
-	require.NotEmpty(t, cache, "expecting non-nil Redis")
+	require.NotEmpty(t, cache)
 
 	bytes := []byte("data")
 	err = cache.Set("test", bytes)

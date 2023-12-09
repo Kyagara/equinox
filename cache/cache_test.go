@@ -9,7 +9,7 @@ import (
 
 func TestCacheMethods(t *testing.T) {
 	cacheStore := &cache.Cache{}
-	require.NotNil(t, cacheStore, "expecting non-nil BigCache")
+	require.NotNil(t, cacheStore)
 
 	bytes := []byte("data")
 	err := cacheStore.Set("test", bytes)

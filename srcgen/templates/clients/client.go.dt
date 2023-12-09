@@ -19,7 +19,7 @@ import "github.com/Kyagara/equinox/internal"
 type Client struct {
 {{~ Object.keys(endpointGroups) :endpoint }}
 {{ endpoint = dotUtils.removeClientName(dotUtils.changeCase.pascalCase(endpoint)); }}
-	{{= endpoint }}  *{{= endpoint }}
+	{{= endpoint }}  {{= endpoint }}
 {{~}}
 }
 
@@ -28,7 +28,7 @@ func New{{= clientNormalizedName}}Client(client *internal.Client) *Client {
 	return &Client{
 {{~ Object.keys(endpointGroups) :endpoint }}
 {{ endpoint = dotUtils.removeClientName(dotUtils.changeCase.pascalCase(endpoint)); }}
-        {{= endpoint }}: &{{= endpoint }}{internal: client},
+        {{= endpoint }}: {{= endpoint }}{internal: client},
 {{~}}
 	}
 }

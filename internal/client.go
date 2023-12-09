@@ -22,17 +22,13 @@ import (
 
 type Client struct {
 	http           *http.Client
-	loggers        *Loggers
+	loggers        Loggers
 	cache          *cache.Cache
 	ratelimit      *ratelimit.RateLimit
 	key            string
 	maxRetries     int
 	isCacheEnabled bool
 }
-
-var (
-	ErrConfigurationNotProvided = errors.New("configuration not provided")
-)
 
 var (
 	errContextIsNil   = errors.New("context must be non-nil")
@@ -52,10 +48,7 @@ var (
 	cdns = []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
 )
 
-func NewInternalClient(config *api.EquinoxConfig) (*Client, error) {
-	if config == nil {
-		return nil, ErrConfigurationNotProvided
-	}
+func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 	if config.Cache == nil {
 		config.Cache = &cache.Cache{TTL: 0}
 	}
@@ -65,7 +58,7 @@ func NewInternalClient(config *api.EquinoxConfig) (*Client, error) {
 	client := &Client{
 		key:  config.Key,
 		http: config.HTTPClient,
-		loggers: &Loggers{
+		loggers: Loggers{
 			main:    NewLogger(config),
 			methods: make(map[string]zerolog.Logger),
 			mutex:   sync.Mutex{},
@@ -156,11 +149,16 @@ func (c *Client) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, ta
 	defer response.Body.Close()
 
 	delay, err := c.checkResponse(equinoxReq, response)
-	if err != nil && !errors.Is(err, errServerError) {
+	if errors.Is(err, errServerError) {
+		equinoxReq.Retries++
+		return c.Execute(ctx, equinoxReq, target)
+	}
+
+	if err != nil {
 		return err
 	}
 
-	if delay > 0 || errors.Is(err, errServerError) {
+	if delay > 0 {
 		equinoxReq.Logger.Info().Dur("sleep", delay).Msg("Retrying request after sleep")
 		err := ratelimit.WaitN(ctx, time.Now().Add(delay), delay)
 		if err != nil {

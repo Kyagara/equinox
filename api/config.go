@@ -25,10 +25,10 @@ func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
 	if c.Retries > 0 {
 		encoder.Int("max_retries", c.Retries)
 	}
-	if c.HTTPClient.Timeout > 0 {
+	if c.HTTPClient != nil && c.HTTPClient.Timeout > 0 {
 		encoder.Dur("http_client_timeout", c.HTTPClient.Timeout)
 	}
-	if c.Cache.TTL > 0 {
+	if c.Cache != nil && c.Cache.TTL > 0 {
 		encoder.Str("cache_store", string(c.Cache.StoreType)).Dur("cache_ttl", c.Cache.TTL)
 	}
 }

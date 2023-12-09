@@ -14,16 +14,16 @@ const (
 )
 
 type Client struct {
-	Version  *VersionEndpoint
-	Realm    *RealmEndpoint
-	Champion *ChampionEndpoint
+	Version  VersionEndpoint
+	Realm    RealmEndpoint
+	Champion ChampionEndpoint
 }
 
 // Returns a new DDragon Client using the internal.Client provided.
 func NewDDragonClient(client *internal.Client) *Client {
 	return &Client{
-		Version:  &VersionEndpoint{client},
-		Realm:    &RealmEndpoint{client},
-		Champion: &ChampionEndpoint{client},
+		Version:  VersionEndpoint{client},
+		Realm:    RealmEndpoint{client},
+		Champion: ChampionEndpoint{client},
 	}
 }

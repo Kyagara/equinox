@@ -18,12 +18,12 @@ import "github.com/Kyagara/equinox/internal"
 
 // Note: this struct is automatically generated.
 type Client struct {
-	AccountV1 *AccountV1
+	AccountV1 AccountV1
 }
 
 // Creates a new Riot Client using the internal.Client provided.
 func NewRiotClient(client *internal.Client) *Client {
 	return &Client{
-		AccountV1: &AccountV1{internal: client},
+		AccountV1: AccountV1{internal: client},
 	}
 }

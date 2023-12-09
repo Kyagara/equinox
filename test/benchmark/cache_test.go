@@ -96,7 +96,7 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 	}
 	cache, err := cache.NewRedis(ctx, redisConfig, 4*time.Minute)
 	require.NoError(b, err)
-	config := &api.EquinoxConfig{
+	config := api.EquinoxConfig{
 		Key:      "RGAPI-TEST",
 		LogLevel: zerolog.WarnLevel,
 		HTTPClient: &http.Client{

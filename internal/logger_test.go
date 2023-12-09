@@ -14,34 +14,34 @@ import (
 )
 
 func TestNewLogger(t *testing.T) {
-	logger := internal.NewLogger(nil)
+	logger := internal.NewLogger(api.EquinoxConfig{})
 	require.Equal(t, zerolog.Disabled, logger.GetLevel())
 
-	config := &api.EquinoxConfig{
+	config := api.EquinoxConfig{
 		LogLevel: zerolog.Disabled, Cache: &cache.Cache{TTL: 60 * time.Second},
 		HTTPClient: &http.Client{Timeout: 15 * time.Second},
 	}
 
 	logger = internal.NewLogger(config)
-	require.NotEmpty(t, logger, "expecting non-nil logger")
+	require.NotEmpty(t, logger)
 
 	config.LogLevel = zerolog.DebugLevel
 	logger = internal.NewLogger(config)
-	require.True(t, logger.Debug().Enabled(), "expecting logger to be enabled for Debug level")
+	require.True(t, logger.Debug().Enabled())
 
 	config.LogLevel = zerolog.InfoLevel
 	logger = internal.NewLogger(config)
-	require.True(t, logger.Info().Enabled(), "expecting logger to be enabled for Debug level")
+	require.True(t, logger.Info().Enabled())
 }
 
 func TestLogger(t *testing.T) {
 	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NoError(t, err)
-	require.NotEmpty(t, internal, "expecting non-nil InternalClient")
+	require.NotEmpty(t, internal)
 	logger := internal.Logger("client_endpoint_method")
-	require.NotEmpty(t, logger, "expecting non-nil Logger")
+	require.NotEmpty(t, logger)
 	logger = internal.Logger("client_endpoint_method")
-	require.NotEmpty(t, logger, "expecting non-nil Logger")
+	require.NotEmpty(t, logger)
 	logger.Debug().Msg("Debug log")
 	logger.Info().Msg("Info log")
 	logger.Warn().Msg("Warn log")
