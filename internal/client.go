@@ -68,7 +68,7 @@ func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 			mutex:   sync.Mutex{},
 		},
 		cache:              config.Cache,
-		ratelimit:          ratelimit.NewInternalRateLimit(),
+		ratelimit:          config.RateLimit,
 		maxRetries:         config.Retries,
 		isCacheEnabled:     config.Cache.TTL != 0,
 		isRateLimitEnabled: config.RateLimit.Enabled,
@@ -139,7 +139,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, ta
 		}
 	}
 
-	if !equinoxReq.IsCDN {
+	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
 		err := c.ratelimit.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		if err != nil {
 			return err
@@ -190,7 +190,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq *api.EquinoxRequest, ta
 }
 
 func (c *Client) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Response) (time.Duration, error) {
-	if !equinoxReq.IsCDN {
+	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
 		c.ratelimit.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &response.Header)
 	}
 
@@ -201,7 +201,7 @@ func (c *Client) checkResponse(equinoxReq *api.EquinoxRequest, response *http.Re
 
 	// 4xx and 5xx responses will be retried
 	if equinoxReq.Retries < c.maxRetries {
-		if response.StatusCode == http.StatusTooManyRequests {
+		if response.StatusCode == http.StatusTooManyRequests && c.isRateLimitEnabled {
 			equinoxReq.Logger.Warn().Msg("Received 429 response, checking Retry-After header")
 			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, &response.Header)
 		}
