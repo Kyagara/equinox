@@ -267,9 +267,11 @@ func TestInternalClientRetries(t *testing.T) {
 	l := internal.Logger("client_endpoint_method")
 
 	//lint:ignore SA1012 Testing if ctx is nil
+	// nolint:staticcheck
 	equinoxReq, err := internal.Request(nil, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
+	// nolint:staticcheck
 	err = internal.Execute(nil, equinoxReq, &res)
 	require.Error(t, err)
 

@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Kyagara/equinox/api"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -32,8 +32,13 @@ var (
 )
 
 type RateLimit struct {
-	Region map[any]*Limits
-	mutex  sync.Mutex
+	Region  map[any]*Limits
+	Enabled bool
+	mutex   sync.Mutex
+}
+
+func NewInternalRateLimit() *RateLimit {
+	return &RateLimit{Region: make(map[any]*Limits), Enabled: true}
 }
 
 // Limits in a region.
@@ -52,44 +57,44 @@ func NewLimits() *Limits {
 // Take decreases tokens for the App and Method rate limit buckets in a route by one.
 //
 // If rate limited, will block until the next bucket reset.
-func (r *RateLimit) Take(ctx context.Context, equinoxReq *api.EquinoxRequest) error {
+func (r *RateLimit) Take(ctx context.Context, logger zerolog.Logger, route any, methodID string) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	limits, ok := r.Region[equinoxReq.Route]
+	limits, ok := r.Region[route]
 	if !ok {
 		limits = NewLimits()
-		r.Region[equinoxReq.Route] = limits
+		r.Region[route] = limits
 	}
-	methods, ok := limits.Methods[equinoxReq.MethodID]
+	methods, ok := limits.Methods[methodID]
 	if !ok {
 		methods = NewLimit(METHOD_RATE_LIMIT_TYPE)
-		limits.Methods[equinoxReq.MethodID] = methods
+		limits.Methods[methodID] = methods
 	}
-	if err := limits.App.checkBuckets(ctx, equinoxReq); err != nil {
+	if err := limits.App.checkBuckets(ctx, logger, route, methodID); err != nil {
 		return err
 	}
-	if err := methods.checkBuckets(ctx, equinoxReq); err != nil {
+	if err := methods.checkBuckets(ctx, logger, route, methodID); err != nil {
 		return err
 	}
 	return nil
 }
 
 // Update creates new buckets in a route with the limits provided in the response headers.
-func (r *RateLimit) Update(equinoxReq *api.EquinoxRequest, headers *http.Header) {
+func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, headers *http.Header) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	limits := r.Region[equinoxReq.Route]
+	limits := r.Region[route]
 	if limits.App.limitsDontMatch(headers.Get(APP_RATE_LIMIT_HEADER)) {
 		limits.App = parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER), APP_RATE_LIMIT_TYPE)
-		equinoxReq.Logger.Debug().Msg("New Application buckets")
+		logger.Debug().Msg("New Application buckets")
 	}
-	if limits.Methods[equinoxReq.MethodID].limitsDontMatch(headers.Get(METHOD_RATE_LIMIT_HEADER)) {
-		limits.Methods[equinoxReq.MethodID] = parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
-		equinoxReq.Logger.Debug().Msg("New Method buckets")
+	if limits.Methods[methodID].limitsDontMatch(headers.Get(METHOD_RATE_LIMIT_HEADER)) {
+		limits.Methods[methodID] = parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
+		logger.Debug().Msg("New Method buckets")
 	}
 }
 
-func (r *RateLimit) CheckRetryAfter(equinoxReq *api.EquinoxRequest, headers *http.Header) (time.Duration, error) {
+func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers *http.Header) (time.Duration, error) {
 	retryAfter := headers.Get(RETRY_AFTER_HEADER)
 	if retryAfter == "" {
 		return 0, Err429ButNoRetryAfterHeader
@@ -101,13 +106,13 @@ func (r *RateLimit) CheckRetryAfter(equinoxReq *api.EquinoxRequest, headers *htt
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
-	limits := r.Region[equinoxReq.Route]
+	limits := r.Region[route]
 	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
 
 	if limitType == APP_RATE_LIMIT_TYPE {
 		limits.App.setDelay(delay)
 	} else {
-		limits.Methods[equinoxReq.MethodID].setDelay(delay)
+		limits.Methods[methodID].setDelay(delay)
 	}
 	return delay, nil
 }

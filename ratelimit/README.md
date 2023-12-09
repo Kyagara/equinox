@@ -2,7 +2,7 @@
 
 > Warning: this is still a work in progress. Tests succeeding != production ready.
 
-Rate limiting is enabled by default. For now the only `store` available is in-memory, though I want to add Redis support in the future, maybe using a lua script.
+Rate limiting is enabled by default in a default Equinox client. For now the only `store` available is in-memory, though I want to add Redis support in the future, maybe using a lua script.
 
 Info on rate limiting:
 

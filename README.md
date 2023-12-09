@@ -45,13 +45,16 @@ A client without a configuration comes with the default options:
 
 - **Key**: The provided key.
 - **LogLevel**: `zerolog.WarnLevel`. `zerolog.Disabled` disables logging.
+- **Retries**: Retries a request n times if the API returns an error, defaults to 3.
 - **HTTPClient**: `http.Client` with a timeout of 15 seconds.
 - **Cache**: `BigCache` with an eviction time of 4 minutes.
-- **Retries**: Retries a request n times if the API returns an error, defaults to 3.
+- **RateLimit**: Internal rate limiter.
 
 > A custom Client can be created using `equinox.NewClientWithConfig()`.
 
 > A different storage can be provided to the client using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil in config.Cache disables caching.
+
+> You can disable rate limiting by passing `nil` in config.RateLimit, this can be useful if you have Equinox passing through a proxy that handles rate limiting.
 
 > See [Cache](https://github.com/Kyagara/equinox/tree/master/cache) and [Rate limit](https://github.com/Kyagara/equinox/tree/master/ratelimit) for more details.
 
