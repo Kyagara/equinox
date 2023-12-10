@@ -14,6 +14,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/Kyagara/equinox/api"
@@ -52,7 +53,7 @@ func (e *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformRoute, q
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if queue != "" {
 		values.Set("queue", queue)
 	}
@@ -122,7 +123,7 @@ func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, 
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if queue != "" {
 		values.Set("queue", queue)
 	}
@@ -161,7 +162,7 @@ func (e *LeagueV1) GrandmasterByQueue(ctx context.Context, route PlatformRoute, 
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if queue != "" {
 		values.Set("queue", queue)
 	}
@@ -228,7 +229,7 @@ func (e *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute, queue
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if queue != "" {
 		values.Set("queue", queue)
 	}
@@ -310,7 +311,7 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puui
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if start != -1 {
 		values.Set("start", strconv.FormatInt(int64(start), 10))
 	}
@@ -526,14 +527,15 @@ func (e *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, encrypted
 func (e *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, authorization string) (*SummonerV1DTO, error) {
 	logger := e.internal.Logger("TFT_SummonerV1_ByAccessToken")
 	logger.Debug().Msg("Method started execution")
+	if authorization == "" {
+		return nil, fmt.Errorf("'authorization' header is required")
+	}
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/summoner/v1/summoners/me", "tft-summoner-v1.getByAccessToken", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
+	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data SummonerV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)

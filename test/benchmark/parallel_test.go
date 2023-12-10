@@ -7,6 +7,7 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
@@ -141,6 +142,64 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 			require.NoError(b, err)
 			require.Equal(b, "Phanes", data.Name)
+		}
+	})
+}
+
+func BenchmarkParallelDDragonRealms(b *testing.B) {
+	b.ReportAllocs()
+
+	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "/realms/na.json", "")).
+		Get("").
+		Persist().
+		Reply(200).
+		BodyString(`{"n":{"item":"13.24.1","rune":"7.23.1","mastery":"7.23.1","summoner":"13.24.1","champion":"13.24.1","profileicon":"13.24.1","map":"13.24.1","language":"13.24.1","sticker":"13.24.1"},"v":"13.24.1","l":"en_US","cdn":"https://ddragon.leagueoflegends.com/cdn","dd":"13.24.1","lg":"13.24.1","css":"13.24.1","profileiconmax":28,"store":null}`)
+
+	config := util.NewTestEquinoxConfig()
+	config.LogLevel = zerolog.WarnLevel
+	config.Retries = 3
+
+	client, err := equinox.NewClientWithConfig(config)
+	require.NoError(b, err)
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			ctx := context.Background()
+			data, err := client.DDragon.Realm.ByName(ctx, ddragon.NA)
+			require.NoError(b, err)
+			require.Equal(b, "13.24.1", data.V)
+		}
+	})
+}
+
+func BenchmarkParallelMatchListByPUUID(b *testing.B) {
+	b.ReportAllocs()
+
+	list := []string{
+		"BR1_2744215970",
+		"BR1_2744215971",
+		"BR1_2744215972",
+	}
+
+	gock.New("https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/puuid/ids?count=10&queue=420&type=RANKED_SOLO_5x5").
+		Get("").
+		Persist().
+		Reply(200).
+		JSON(list)
+
+	config := util.NewTestEquinoxConfig()
+	config.LogLevel = zerolog.WarnLevel
+	config.Retries = 3
+
+	client, err := equinox.NewClientWithConfig(config)
+	require.NoError(b, err)
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			ctx := context.Background()
+			data, err := client.LOL.MatchV5.ListByPUUID(ctx, api.AMERICAS, "puuid", -1, -1, 420, string(lol.RANKED_SOLO_5X5), -1, 10)
+			require.NoError(b, err)
+			require.Equal(b, "BR1_2744215970", data[0])
 		}
 	})
 }

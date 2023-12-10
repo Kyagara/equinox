@@ -31,3 +31,8 @@ npm run update
 npm run compile
 npm run align
 ```
+
+## Todo
+
+- Add checks only for required fields (queries and headers), only returning errors if they are missing, for now only Authorization headers are required
+

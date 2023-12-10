@@ -14,6 +14,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/Kyagara/equinox/api"
@@ -116,7 +117,7 @@ func (e *ChampionMasteryV4) TopMasteriesByPUUID(ctx context.Context, route Platf
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if count != -1 {
 		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
@@ -216,7 +217,7 @@ func (e *ChampionMasteryV4) TopMasteriesBySummonerID(ctx context.Context, route 
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if count != -1 {
 		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
@@ -538,7 +539,7 @@ func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue Qu
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if page != -1 {
 		values.Set("page", strconv.FormatInt(int64(page), 10))
 	}
@@ -650,7 +651,7 @@ func (e *LeagueV4) Entries(ctx context.Context, route PlatformRoute, queue Queue
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if page != -1 {
 		values.Set("page", strconv.FormatInt(int64(page), 10))
 	}
@@ -883,7 +884,7 @@ func (e *ChallengesV1) Leaderboards(ctx context.Context, route PlatformRoute, ch
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if limit != -1 {
 		values.Set("limit", strconv.FormatInt(int64(limit), 10))
 	}
@@ -1084,7 +1085,7 @@ func (e *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRoute, puui
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if startTime != -1 {
 		values.Set("startTime", strconv.FormatInt(startTime, 10))
 	}
@@ -1399,14 +1400,15 @@ func (e *SummonerV4) ByPUUID(ctx context.Context, route PlatformRoute, encrypted
 func (e *SummonerV4) ByAccessToken(ctx context.Context, route PlatformRoute, authorization string) (*SummonerV4DTO, error) {
 	logger := e.internal.Logger("LOL_SummonerV4_ByAccessToken")
 	logger.Debug().Msg("Method started execution")
+	if authorization == "" {
+		return nil, fmt.Errorf("'authorization' header is required")
+	}
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/summoner/v4/summoners/me", "summoner-v4.getByAccessToken", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
+	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data SummonerV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
@@ -1482,7 +1484,7 @@ func (e *TournamentStubV5) CreateTournamentCode(ctx context.Context, route api.R
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if count != -1 {
 		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
@@ -1659,7 +1661,7 @@ func (e *TournamentV5) CreateTournamentCode(ctx context.Context, route api.Regio
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if tournamentId != -1 {
 		values.Set("tournamentId", strconv.FormatInt(tournamentId, 10))
 	}

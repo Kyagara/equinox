@@ -112,12 +112,12 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 	equinoxReq.IsCDN = slices.Contains(cdns, request.URL.Host)
 
 	if equinoxReq.IsCDN {
-		request.Header = cdnHeaders.Clone()
+		request.Header = cdnHeaders
 	} else {
 		if c.key == "" {
 			return api.EquinoxRequest{}, errKeyNotProvided
 		}
-		request.Header = apiHeaders.Clone()
+		request.Header = apiHeaders
 	}
 	equinoxReq.Request = request
 	return equinoxReq, nil
@@ -164,7 +164,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	}
 
 	if delay > 0 {
-		equinoxReq.Logger.Info().Dur("sleep", delay).Msg("Retrying request after sleep")
+		equinoxReq.Logger.Warn().Dur("sleep", delay).Msg("Retrying request after sleep")
 		err := ratelimit.WaitN(ctx, time.Now().Add(delay), delay)
 		if err != nil {
 			return err

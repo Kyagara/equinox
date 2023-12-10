@@ -109,14 +109,15 @@ func (e *AccountV1) ByRiotID(ctx context.Context, route api.RegionalRoute, gameN
 func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
 	logger := e.internal.Logger("Riot_AccountV1_ByAccessToken")
 	logger.Debug().Msg("Method started execution")
+	if authorization == "" {
+		return nil, fmt.Errorf("'authorization' header is required")
+	}
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/riot/account/v1/accounts/me", "account-v1.getByAccessToken", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
+	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data AccountV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
