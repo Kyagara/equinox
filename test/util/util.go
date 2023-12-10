@@ -3,12 +3,13 @@ package util
 import (
 	"net/http"
 	"os"
+	"testing"
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/ratelimit"
-	jsonv2 "github.com/go-json-experiment/json"
 	"github.com/rs/zerolog"
+	"github.com/stretchr/testify/require"
 )
 
 // Creates an EquinoxConfig for tests.
@@ -17,7 +18,7 @@ import (
 //   - `HTTPClient` : http.Client{}
 //   - `Retry`      : 0
 //   - `Cache`      : &cache.Cache{TTL: 0}
-//   - `RateLimit`  : Internal rate limit
+//   - `RateLimit`  : Disabled
 func NewTestEquinoxConfig() api.EquinoxConfig {
 	return api.EquinoxConfig{
 		Key:        "RGAPI-TEST",
@@ -25,19 +26,13 @@ func NewTestEquinoxConfig() api.EquinoxConfig {
 		HTTPClient: &http.Client{},
 		Retries:    0,
 		Cache:      &cache.Cache{},
-		RateLimit:  ratelimit.NewInternalRateLimit(),
+		RateLimit:  &ratelimit.RateLimit{},
 	}
 }
 
-// Reads a json file and unmarshalls it into the target.
-func ReadFile(filename string, target any) error {
+// Reads a json file and returns its content as []byte.
+func ReadFile(b *testing.B, filename string) []byte {
 	data, err := os.ReadFile(filename)
-	if err != nil {
-		return err
-	}
-	err = jsonv2.Unmarshal(data, target)
-	if err != nil {
-		return err
-	}
-	return nil
+	require.NoError(b, err)
+	return data
 }

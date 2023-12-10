@@ -2,16 +2,14 @@ package benchmark_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/ddragon"
-	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/test/util"
-	"github.com/h2non/gock"
+	"github.com/jarcoal/httpmock"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
@@ -29,16 +27,11 @@ BenchmarkMatchByID-16 2767 394891 ns/op 225970 B/op 199 allocs/op
 */
 func BenchmarkMatchByID(b *testing.B) {
 	b.ReportAllocs()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
 
-	var res lol.MatchV5DTO
-	err := util.ReadFile("../data/match.json", &res)
-	require.NoError(b, err)
-
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS, "")).
-		Get(fmt.Sprintf("/lol/match/v5/matches/%v", "BR1_2744215970")).
-		Persist().
-		Reply(200).
-		JSON(res)
+	httpmock.RegisterResponder("GET", "https://americas.api.riotgames.com/lol/match/v5/matches/BR1_2744215970",
+		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.json")))
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
@@ -51,7 +44,7 @@ func BenchmarkMatchByID(b *testing.B) {
 		ctx := context.Background()
 		data, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "BR1_2744215970")
 		require.NoError(b, err)
-		require.Equal(b, res.Info.GameCreation, data.Info.GameCreation)
+		require.Equal(b, int64(1686266124922), data.Info.GameCreation)
 	}
 }
 
@@ -68,16 +61,11 @@ BenchmarkMatchTimeline-16 324 3627076 ns/op 2661302 B/op 877 allocs/op
 */
 func BenchmarkMatchTimeline(b *testing.B) {
 	b.ReportAllocs()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
 
-	var res lol.MatchTimelineV5DTO
-	err := util.ReadFile("../data/match.timeline.json", &res)
-	require.NoError(b, err)
-
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, api.AMERICAS, "")).
-		Get(fmt.Sprintf("/lol/match/v5/matches/%v/timeline", "BR1_2744215970")).
-		Persist().
-		Reply(200).
-		JSON(res)
+	httpmock.RegisterResponder("GET", "https://americas.api.riotgames.com/lol/match/v5/matches/BR1_2744215970/timeline",
+		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.timeline.json")))
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
@@ -90,7 +78,7 @@ func BenchmarkMatchTimeline(b *testing.B) {
 		ctx := context.Background()
 		data, err := client.LOL.MatchV5.Timeline(ctx, api.AMERICAS, "BR1_2744215970")
 		require.NoError(b, err)
-		require.Equal(b, res.Info.GameID, data.Info.GameID)
+		require.Equal(b, int64(2744215970), data.Info.GameID)
 	}
 }
 
@@ -107,16 +95,11 @@ BenchmarkDDragonAllChampions-16 637 1906226 ns/op 834147 B/op 1528 allocs/op
 */
 func BenchmarkDDragonAllChampions(b *testing.B) {
 	b.ReportAllocs()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
 
-	var data ddragon.AllChampionsDTO
-	err := util.ReadFile("../data/champions.json", &data)
-	require.NoError(b, err)
-
-	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "", "")).
-		Get(fmt.Sprintf(ddragon.ChampionsURL, "13.22.1", ddragon.EnUS)).
-		Persist().
-		Reply(200).
-		JSON(data)
+	httpmock.RegisterResponder("GET", "https://ddragon.leagueoflegends.com/cdn/13.22.1/data/en_US/champion.json",
+		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/champions.json")))
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
@@ -147,16 +130,11 @@ BenchmarkVALContentAllLocales-16 18 55905806 ns/op 42058712 B/op 138839 allocs/o
 // Probably the largest response you can get with the Riot API.
 func BenchmarkVALContentAllLocales(b *testing.B) {
 	b.ReportAllocs()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
 
-	var res val.ContentV1DTO
-	err := util.ReadFile("../data/val.content.all_locales.json", &res)
-	require.NoError(b, err)
-
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, val.BR, "")).
-		Get("/val/content/v1/contents").
-		Persist().
-		Reply(200).
-		JSON(res)
+	httpmock.RegisterResponder("GET", "https://br.api.riotgames.com/val/content/v1/contents",
+		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/val.content.all_locales.json")))
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
@@ -169,6 +147,6 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 		ctx := context.Background()
 		data, err := client.VAL.ContentV1.Content(ctx, val.BR, "")
 		require.NoError(b, err)
-		require.Equal(b, res.Version, data.Version)
+		require.Equal(b, "release-07.10", data.Version)
 	}
 }

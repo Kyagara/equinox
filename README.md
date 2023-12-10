@@ -111,7 +111,6 @@ func main() {
 
 - Maybe create a custom BigCache config
 - More tests for the internal client and rate limit
-- Maybe implement custom HTTP traffic mocking, removing `gock`
 - Improve DDragon/CDragon support
 
 ## About
