@@ -174,12 +174,16 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	}
 
 	equinoxReq.Logger.Info().Msg("Request successful")
+	if !c.isCacheEnabled {
+		return jsonv2.UnmarshalRead(response.Body, &target)
+	}
+
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return err
 	}
 
-	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
+	if equinoxReq.Method == http.MethodGet {
 		if err := c.cache.Set(url, body); err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
 		} else {
