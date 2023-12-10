@@ -61,11 +61,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelCachedSummonerByPUUID-16 254956 4763 ns/op 2762 B/op 20 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 245898 4688 ns/op 2810 B/op 20 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 255544 4860 ns/op 2759 B/op 20 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 250755 4800 ns/op 2784 B/op 20 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 235132 5019 ns/op 2873 B/op 20 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 267324 4487 ns/op 2539 B/op 17 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 269991 4540 ns/op 2526 B/op 17 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 269116 4480 ns/op 2531 B/op 17 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 246655 4589 ns/op 2644 B/op 17 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 207062 7285 ns/op 2905 B/op 17 allocs/op
 */
 func BenchmarkParallelCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
@@ -104,11 +104,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelSummonerByPUUID-16 138342  7883 ns/op 3005 B/op 41 allocs/op
-BenchmarkParallelSummonerByPUUID-16 119114  9325 ns/op 3134 B/op 42 allocs/op
-BenchmarkParallelSummonerByPUUID-16 111822 10600 ns/op 3396 B/op 43 allocs/op
-BenchmarkParallelSummonerByPUUID-16 101041 11860 ns/op 3398 B/op 43 allocs/op
-BenchmarkParallelSummonerByPUUID-16  96073 12417 ns/op 3915 B/op 44 allocs/op
+BenchmarkParallelSummonerByPUUID-16 151017  7424 ns/op 2805 B/op 36 allocs/op
+BenchmarkParallelSummonerByPUUID-16 130140  8964 ns/op 2934 B/op 37 allocs/op
+BenchmarkParallelSummonerByPUUID-16 106862 10016 ns/op 3192 B/op 38 allocs/op
+BenchmarkParallelSummonerByPUUID-16 106148 10652 ns/op 3194 B/op 38 allocs/op
+BenchmarkParallelSummonerByPUUID-16  91861 11961 ns/op 3711 B/op 39 allocs/op
 */
 func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
@@ -146,14 +146,47 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	})
 }
 
+/*
+goos: linux - WSL2
+goarch: amd64
+pkg: github.com/Kyagara/equinox/test/benchmark
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkParallelDDragonRealms-16 121444 10430 ns/op 4006 B/op 45 allocs/op
+BenchmarkParallelDDragonRealms-16 110125 11687 ns/op 4295 B/op 46 allocs/op
+BenchmarkParallelDDragonRealms-16  97659 12349 ns/op 4322 B/op 46 allocs/op
+BenchmarkParallelDDragonRealms-16  92355 13589 ns/op 4874 B/op 47 allocs/op
+BenchmarkParallelDDragonRealms-16  82082 13934 ns/op 4907 B/op 47 allocs/op
+*/
 func BenchmarkParallelDDragonRealms(b *testing.B) {
 	b.ReportAllocs()
+
+	realms := &ddragon.RealmData{
+		N: ddragon.RealmN{
+			Item:        "13.24.1",
+			Rune:        "7.23.1",
+			Mastery:     "7.23.1",
+			Summoner:    "13.24.1",
+			Champion:    "13.24.1",
+			ProfileIcon: "13.24.1",
+			Map:         "13.24.1",
+			Language:    "13.24.1",
+			Sticker:     "13.24.1",
+		},
+		V:              "13.24.1",
+		L:              "en_US",
+		CDN:            "https://ddragon.leagueoflegends.com/cdn",
+		DD:             "13.24.1",
+		LG:             "13.24.1",
+		CSS:            "13.24.1",
+		ProfileIconMax: 28,
+		Store:          nil,
+	}
 
 	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "/realms/na.json", "")).
 		Get("").
 		Persist().
 		Reply(200).
-		BodyString(`{"n":{"item":"13.24.1","rune":"7.23.1","mastery":"7.23.1","summoner":"13.24.1","champion":"13.24.1","profileicon":"13.24.1","map":"13.24.1","language":"13.24.1","sticker":"13.24.1"},"v":"13.24.1","l":"en_US","cdn":"https://ddragon.leagueoflegends.com/cdn","dd":"13.24.1","lg":"13.24.1","css":"13.24.1","profileiconmax":28,"store":null}`)
+		JSON(realms)
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
@@ -172,6 +205,17 @@ func BenchmarkParallelDDragonRealms(b *testing.B) {
 	})
 }
 
+/*
+goos: linux
+goarch: amd64
+pkg: github.com/Kyagara/equinox/test/benchmark
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkParallelMatchListByPUUID-16 43246 26421 ns/op 12137 B/op 131 allocs/op
+BenchmarkParallelMatchListByPUUID-16 42696 27607 ns/op 12335 B/op 132 allocs/op
+BenchmarkParallelMatchListByPUUID-16 37814 28060 ns/op 12595 B/op 133 allocs/op
+BenchmarkParallelMatchListByPUUID-16 41376 28777 ns/op 12687 B/op 133 allocs/op
+BenchmarkParallelMatchListByPUUID-16 40714 29963 ns/op 13244 B/op 134 allocs/op
+*/
 func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	b.ReportAllocs()
 

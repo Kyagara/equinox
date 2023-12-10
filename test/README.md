@@ -2,6 +2,8 @@
 
 ## Benchmark
 
+> Benchmarks are currently not automated, take the results with a grain of salt.
+
 Benchmarks are separated in three files: parallel, data and cache.
 
 - parallel: Variety of benchmarks to test parallelism. Used more as a test than a benchmark.

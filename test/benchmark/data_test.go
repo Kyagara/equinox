@@ -21,11 +21,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkMatchByID-16 2730 409422 ns/op 226113 B/op 203 allocs/op
-BenchmarkMatchByID-16 2724 406036 ns/op 226282 B/op 204 allocs/op
-BenchmarkMatchByID-16 2676 408483 ns/op 226565 B/op 205 allocs/op
-BenchmarkMatchByID-16 2661 420415 ns/op 226676 B/op 206 allocs/op
-BenchmarkMatchByID-16 2768 418691 ns/op 226694 B/op 206 allocs/op
+BenchmarkMatchByID-16 2778 396701 ns/op 225703 B/op 198 allocs/op
+BenchmarkMatchByID-16 2748 399298 ns/op 225839 B/op 199 allocs/op
+BenchmarkMatchByID-16 2838 393265 ns/op 226074 B/op 200 allocs/op
+BenchmarkMatchByID-16 2846 397531 ns/op 226099 B/op 200 allocs/op
+BenchmarkMatchByID-16 2767 394891 ns/op 225970 B/op 199 allocs/op
 */
 func BenchmarkMatchByID(b *testing.B) {
 	b.ReportAllocs()
@@ -60,11 +60,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkMatchTimeline-16 303 3988132 ns/op 2666936 B/op 899 allocs/op
-BenchmarkMatchTimeline-16 306 3821935 ns/op 2665303 B/op 890 allocs/op
-BenchmarkMatchTimeline-16 310 3783340 ns/op 2664774 B/op 893 allocs/op
-BenchmarkMatchTimeline-16 313 3726846 ns/op 2663926 B/op 888 allocs/op
-BenchmarkMatchTimeline-16 316 3723217 ns/op 2663558 B/op 889 allocs/op
+BenchmarkMatchTimeline-16 307 3813587 ns/op 2666872 B/op 911 allocs/op
+BenchmarkMatchTimeline-16 309 3709283 ns/op 2663917 B/op 887 allocs/op
+BenchmarkMatchTimeline-16 314 3676451 ns/op 2663491 B/op 892 allocs/op
+BenchmarkMatchTimeline-16 321 3715784 ns/op 2661674 B/op 877 allocs/op
+BenchmarkMatchTimeline-16 324 3627076 ns/op 2661302 B/op 877 allocs/op
 */
 func BenchmarkMatchTimeline(b *testing.B) {
 	b.ReportAllocs()
@@ -99,16 +99,16 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkDDragonAllChampions-16 588 1895630 ns/op 836539 B/op 1540 allocs/op
-BenchmarkDDragonAllChampions-16 553 1912140 ns/op 836887 B/op 1542 allocs/op
-BenchmarkDDragonAllChampions-16 624 1874974 ns/op 835884 B/op 1538 allocs/op
-BenchmarkDDragonAllChampions-16 620 1875622 ns/op 836504 B/op 1545 allocs/op
-BenchmarkDDragonAllChampions-16 639 1872955 ns/op 835547 B/op 1539 allocs/op
+BenchmarkDDragonAllChampions-16 622 1848744 ns/op 835533 B/op 1536 allocs/op
+BenchmarkDDragonAllChampions-16 622 1865572 ns/op 835403 B/op 1533 allocs/op
+BenchmarkDDragonAllChampions-16 634 1874150 ns/op 836084 B/op 1540 allocs/op
+BenchmarkDDragonAllChampions-16 638 1839908 ns/op 834754 B/op 1531 allocs/op
+BenchmarkDDragonAllChampions-16 637 1906226 ns/op 834147 B/op 1528 allocs/op
 */
 func BenchmarkDDragonAllChampions(b *testing.B) {
 	b.ReportAllocs()
 
-	var data ddragon.ChampionsData
+	var data ddragon.AllChampionsDTO
 	err := util.ReadFile("../data/champions.json", &data)
 	require.NoError(b, err)
 
@@ -138,11 +138,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkVALContentAllLocales-16 19 59340126 ns/op 41893341 B/op 138466 allocs/op
-BenchmarkVALContentAllLocales-16 18 59339266 ns/op 42086452 B/op 138851 allocs/op
-BenchmarkVALContentAllLocales-16 18 58743392 ns/op 42085314 B/op 138849 allocs/op
-BenchmarkVALContentAllLocales-16 19 58060897 ns/op 41890770 B/op 138464 allocs/op
-BenchmarkVALContentAllLocales-16 19 58286993 ns/op 41891660 B/op 138467 allocs/op
+BenchmarkVALContentAllLocales-16 18 57826153 ns/op 42062045 B/op 138842 allocs/op
+BenchmarkVALContentAllLocales-16 19 56859852 ns/op 41867027 B/op 138453 allocs/op
+BenchmarkVALContentAllLocales-16 18 55964393 ns/op 42059940 B/op 138841 allocs/op
+BenchmarkVALContentAllLocales-16 19 56303605 ns/op 41865869 B/op 138453 allocs/op
+BenchmarkVALContentAllLocales-16 18 55905806 ns/op 42058712 B/op 138839 allocs/op
 */
 // Probably the largest response you can get with the Riot API.
 func BenchmarkVALContentAllLocales(b *testing.B) {
