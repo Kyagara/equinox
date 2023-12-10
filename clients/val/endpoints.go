@@ -14,6 +14,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/Kyagara/equinox/api"
@@ -52,7 +53,7 @@ func (e *ContentV1) Content(ctx context.Context, route PlatformRoute, locale str
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if locale != "" {
 		values.Set("locale", locale)
 	}
@@ -209,7 +210,7 @@ func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId s
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	values := equinoxReq.Request.URL.Query()
+	values := url.Values{}
 	if size != -1 {
 		values.Set("size", strconv.FormatInt(int64(size), 10))
 	}

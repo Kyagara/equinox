@@ -270,13 +270,21 @@ function formatAddQueryParam(param) {
   }`
 }
 
-function formatAddHeaderParam(param, nilValue) {
+function formatAddHeadersChecks(params, nilValue) {
+  const checks = []
+  for (const param of params) {
+    const name = normalizePropName(param.name)
+    checks.push(`if ${name} == "" {
+      return ${nilValue}, fmt.Errorf("'${name}' header is required")
+    }`)
+  }
+  return checks.join('\n')
+}
+
+function formatAddHeaderParam(param) {
   const name = normalizePropName(param.name)
   const letHeaderName = name.endsWith('_') ? name.slice(0, -1) : name
-  return `if ${name} == "" {
-    return ${nilValue}, fmt.Errorf("'${name}' header is required")
-  }
-  equinoxReq.Request.Header.Set("${letHeaderName}", ${name})`
+  return `equinoxReq.Request.Header.Set("${letHeaderName}", ${name})`
 }
 
 function formatRouteArgument(route, pathParams = []) {
@@ -324,6 +332,7 @@ module.exports = {
   normalizePropName,
   normalizeMethodName,
 
+  formatAddHeadersChecks,
   formatJsonProperty,
   formatAddQueryParam,
   formatAddHeaderParam,

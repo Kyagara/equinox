@@ -46,14 +46,15 @@ type DeckV1 struct {
 func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorization string) ([]DeckV1DTO, error) {
 	logger := e.internal.Logger("LOR_DeckV1_Decks")
 	logger.Debug().Msg("Method started execution")
+	if authorization == "" {
+		return nil, fmt.Errorf("'authorization' header is required")
+	}
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/deck/v1/decks/me", "lor-deck-v1.getDecks", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
+	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data []DeckV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
@@ -81,14 +82,15 @@ func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorizati
 func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *NewDeckV1DTO, authorization string) (string, error) {
 	logger := e.internal.Logger("LOR_DeckV1_CreateDeck")
 	logger.Debug().Msg("Method started execution")
+	if authorization == "" {
+		return "", fmt.Errorf("'authorization' header is required")
+	}
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lor/deck/v1/decks/me", "lor-deck-v1.createDeck", body)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return "", err
 	}
-	if authorization == "" {
-		return "", fmt.Errorf("'authorization' header is required")
-	}
+	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
@@ -127,14 +129,15 @@ type InventoryV1 struct {
 func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, authorization string) ([]CardV1DTO, error) {
 	logger := e.internal.Logger("LOR_InventoryV1_Cards")
 	logger.Debug().Msg("Method started execution")
+	if authorization == "" {
+		return nil, fmt.Errorf("'authorization' header is required")
+	}
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/inventory/v1/cards/me", "lor-inventory-v1.getCards", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
+	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
 	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data []CardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
