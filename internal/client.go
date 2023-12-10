@@ -164,7 +164,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	}
 
 	if delay > 0 {
-		equinoxReq.Logger.Warn().Dur("sleep", delay).Msg("Retrying request after sleep")
+		equinoxReq.Logger.Info().Dur("sleep", delay).Msg("Retrying request after sleep")
 		err := ratelimit.WaitN(ctx, time.Now().Add(delay), delay)
 		if err != nil {
 			return err
@@ -206,7 +206,7 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 	// 4xx and 5xx responses will be retried
 	if equinoxReq.Retries < c.maxRetries {
 		if response.StatusCode == http.StatusTooManyRequests {
-			equinoxReq.Logger.Warn().Msg("Received 429 response, checking Retry-After header")
+			equinoxReq.Logger.Warn().Msg("Received 429 response")
 			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, &response.Header)
 		}
 
