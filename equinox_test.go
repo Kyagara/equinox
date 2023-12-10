@@ -2,7 +2,6 @@ package equinox_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"time"
 
@@ -11,7 +10,7 @@ import (
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
-	"github.com/h2non/gock"
+	"github.com/jarcoal/httpmock"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
@@ -89,23 +88,18 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 }
 
 func TestRateLimitWithMock(t *testing.T) {
-	headers := map[string]string{
-		ratelimit.APP_RATE_LIMIT_HEADER:    "5:3",
-		ratelimit.METHOD_RATE_LIMIT_HEADER: "5:3",
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	headers := map[string][]string{
+		ratelimit.APP_RATE_LIMIT_HEADER:          {"5:3"},
+		ratelimit.METHOD_RATE_LIMIT_HEADER:       {"5:3"},
+		ratelimit.APP_RATE_LIMIT_COUNT_HEADER:    {"1:3"},
+		ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: {"1:3"},
 	}
 
-	// Mock 5 responses
-	// The would be 5 request should be blocked from being created since it would exceed the rate limit
-	for i := 1; i <= 5; i++ {
-		headers[ratelimit.APP_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:3", i)
-		headers[ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER] = fmt.Sprintf("%d:3", i)
-
-		gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "/lol/summoner/v4/summoners/by-puuid/puuid")).
-			Get("").
-			Reply(200).
-			SetHeaders(headers).
-			JSON(&lol.SummonerV4DTO{})
-	}
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+		httpmock.NewBytesResponder(200, []byte(`{}`)).HeaderSet(headers))
 
 	config := util.NewTestEquinoxConfig()
 	config.RateLimit = ratelimit.NewInternalRateLimit()

@@ -15,7 +15,7 @@ import (
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
 	jsonv2 "github.com/go-json-experiment/json"
-	"github.com/h2non/gock"
+	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -71,10 +71,6 @@ func TestInternalClientNewRequest(t *testing.T) {
 }
 
 func TestInternalClientRequest(t *testing.T) {
-	gock.New("https://cool.and.real.api").
-		Post("/post").
-		Reply(200)
-
 	body := map[string]any{
 		"message": "cool",
 	}
@@ -144,6 +140,9 @@ func TestInternalClientRequest(t *testing.T) {
 }
 
 func TestInternalClientErrorResponses(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
 	tests := []struct {
 		name    string
 		wantErr error
@@ -231,9 +230,8 @@ func TestInternalClientErrorResponses(t *testing.T) {
 				config.Retries = 3
 			}
 
-			gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, "tests", "")).
-				Get("/").
-				Reply(test.code)
+			httpmock.RegisterResponder("GET", "https://tests.api.riotgames.com/",
+				httpmock.NewBytesResponder(test.code, []byte(`{}`)))
 
 			internal, err := internal.NewInternalClient(config)
 			require.NoError(t, err)
@@ -246,35 +244,35 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			require.Equal(t, test.wantErr, gotErr)
 		})
 	}
-
 }
 
 func TestInternalClientRetries(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
 	config := util.NewTestEquinoxConfig()
 	config.Retries = 3
 	config.RateLimit = ratelimit.NewInternalRateLimit()
 	internal, err := internal.NewInternalClient(config)
 	require.NoError(t, err)
 
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "")).
-		Get("/lol/status/v4/platform-data").
-		Reply(429).SetHeader("Retry-After", "1").
-		JSON(&lol.PlatformDataV4DTO{})
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewBytesResponder(429, []byte(`{}`)).HeaderSet(map[string][]string{
+			"Retry-After": {"1"},
+		}))
 
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "")).
-		Get("/lol/status/v4/platform-data").
-		Reply(200).
-		JSON(&lol.PlatformDataV4DTO{})
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewBytesResponder(200, []byte(`{}`)))
 
 	res := lol.PlatformDataV4DTO{}
 	l := internal.Logger("client_endpoint_method")
 
 	//lint:ignore SA1012 Testing if ctx is nil
-	// nolint:staticcheck
+	//nolint:staticcheck
 	equinoxReq, err := internal.Request(nil, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
-	// nolint:staticcheck
+	//nolint:staticcheck
 	err = internal.Execute(nil, equinoxReq, &res)
 	require.Error(t, err)
 
@@ -288,13 +286,14 @@ func TestInternalClientRetries(t *testing.T) {
 }
 
 func TestGetDDragonLOLVersions(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
 	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NoError(t, err)
 
-	gock.New(fmt.Sprintf(api.D_DRAGON_BASE_URL_FORMAT, "", "")).
-		Get("/api/versions.json").
-		Reply(200).
-		JSON("[\"1.0\"]")
+	httpmock.RegisterResponder("GET", "https://ddragon.leagueoflegends.com/api/versions.json",
+		httpmock.NewStringResponder(200, `["1.0"]`))
 
 	ctx := context.Background()
 	versions, err := internal.GetDDragonLOLVersions(ctx, "client_endpoint_method")

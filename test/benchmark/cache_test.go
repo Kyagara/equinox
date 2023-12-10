@@ -2,7 +2,6 @@ package benchmark_test
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -12,7 +11,7 @@ import (
 	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/test/util"
-	"github.com/h2non/gock"
+	"github.com/jarcoal/httpmock"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
@@ -31,22 +30,11 @@ BenchmarkInMemoryCachedSummonerByPUUID-16 131004 7794 ns/op 3849 B/op 17 allocs/
 */
 func BenchmarkInMemoryCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
 
-	summoner := &lol.SummonerV4DTO{
-		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
-		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
-		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
-		Name:          "Phanes",
-		ProfileIconID: 1386,
-		RevisionDate:  1657211888000,
-		SummonerLevel: 68,
-	}
-
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "")).
-		Get("/lol/summoner/v4/summoners/by-puuid/puuid").
-		Persist().
-		Reply(200).
-		JSON(summoner)
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	client, err := equinox.NewClient("RGAPI-TEST")
 	require.NoError(b, err)
@@ -72,22 +60,11 @@ BenchmarkRedisCachedSummonerByPUUID-16 18590 62258 ns/op 1400 B/op 23 allocs/op
 */
 func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
 
-	summoner := &lol.SummonerV4DTO{
-		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
-		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
-		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
-		Name:          "Phanes",
-		ProfileIconID: 1386,
-		RevisionDate:  1657211888000,
-		SummonerLevel: 68,
-	}
-
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "")).
-		Get("/lol/summoner/v4/summoners/by-puuid/puuid").
-		Persist().
-		Reply(200).
-		JSON(summoner)
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	ctx := context.Background()
 	redisConfig := &redis.Options{
@@ -121,30 +98,19 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkSummonerByPUUID-16 107010 10788 ns/op 2790 B/op 36 allocs/op
-BenchmarkSummonerByPUUID-16 106564 11037 ns/op 2919 B/op 37 allocs/op
-BenchmarkSummonerByPUUID-16 105460 11294 ns/op 3176 B/op 38 allocs/op
-BenchmarkSummonerByPUUID-16 102061 11701 ns/op 3175 B/op 38 allocs/op
-BenchmarkSummonerByPUUID-16  98115 11877 ns/op 3688 B/op 39 allocs/op
+BenchmarkSummonerByPUUID-16 121406  9877 ns/op 1739 B/op 27 allocs/op
+BenchmarkSummonerByPUUID-16 115393 10082 ns/op 1740 B/op 27 allocs/op
+BenchmarkSummonerByPUUID-16 112934 10016 ns/op 1740 B/op 27 allocs/op
+BenchmarkSummonerByPUUID-16 116364 10005 ns/op 1739 B/op 27 allocs/op
+BenchmarkSummonerByPUUID-16 118736 10053 ns/op 1739 B/op 27 allocs/op
 */
 func BenchmarkSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
 
-	summoner := &lol.SummonerV4DTO{
-		ID:            "5kIdR5x9LO0pVU_v01FtNVlb-dOws-D04GZCbNOmxCrB7A",
-		AccountID:     "NkJ3FK5BQcrpKtF6Rj4PrAe9Nqodd2rwa5qJL8kJIPN_BkM",
-		PUUID:         "6WQtgEvp61ZJ6f48qDZVQea1RYL9akRy7lsYOIHH8QDPnXr4E02E-JRwtNVE6n6GoGSU1wdXdCs5EQ",
-		Name:          "Phanes",
-		ProfileIconID: 1386,
-		RevisionDate:  1657211888000,
-		SummonerLevel: 68,
-	}
-
-	gock.New(fmt.Sprintf(api.RIOT_API_BASE_URL_FORMAT, lol.BR1, "")).
-		Get("/lol/summoner/v4/summoners/by-puuid/puuid").
-		Persist().
-		Reply(200).
-		JSON(summoner)
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel

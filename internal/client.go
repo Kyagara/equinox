@@ -205,7 +205,7 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 
 	// 4xx and 5xx responses will be retried
 	if equinoxReq.Retries < c.maxRetries {
-		if response.StatusCode == http.StatusTooManyRequests && c.isRateLimitEnabled {
+		if response.StatusCode == http.StatusTooManyRequests {
 			equinoxReq.Logger.Warn().Msg("Received 429 response, checking Retry-After header")
 			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, &response.Header)
 		}
