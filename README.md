@@ -114,6 +114,7 @@ func main() {
 
 - Maybe create a custom BigCache config
 - More tests for the internal client and rate limit
+- Pass context to cache
 - Improve DDragon/CDragon support
 
 ## About
