@@ -24,10 +24,10 @@ type Cache struct {
 }
 
 type Store interface {
-	Get(key string) ([]byte, error)
-	Set(key string, value []byte) error
-	Delete(key string) error
-	Clear() error
+	Get(ctx context.Context, key string) ([]byte, error)
+	Set(ctx context.Context, key string, value []byte) error
+	Delete(ctx context.Context, key string) error
+	Clear(ctx context.Context) error
 }
 
 var (
@@ -65,7 +65,6 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 		store: &RedisStore{
 			client: redis,
 			ttl:    ttl,
-			ctx:    ctx,
 		},
 		TTL:       ttl,
 		StoreType: RedisCache,
@@ -74,33 +73,33 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 }
 
 // Returns an item from the cache. If no item is found, returns nil for the item and error.
-func (c *Cache) Get(key string) ([]byte, error) {
+func (c *Cache) Get(ctx context.Context, key string) ([]byte, error) {
 	if c.TTL == 0 {
 		return nil, ErrCacheIsDisabled
 	}
-	return c.store.Get(key)
+	return c.store.Get(ctx, key)
 }
 
 // Saves an item under the key provided.
-func (c *Cache) Set(key string, item []byte) error {
+func (c *Cache) Set(ctx context.Context, key string, item []byte) error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled
 	}
-	return c.store.Set(key, item)
+	return c.store.Set(ctx, key, item)
 }
 
 // Deletes an item from the cache.
-func (c *Cache) Delete(key string) error {
+func (c *Cache) Delete(ctx context.Context, key string) error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled
 	}
-	return c.store.Delete(key)
+	return c.store.Delete(ctx, key)
 }
 
 // Clears the entire cache.
-func (c *Cache) Clear() error {
+func (c *Cache) Clear(ctx context.Context) error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled
 	}
-	return c.store.Clear()
+	return c.store.Clear(ctx)
 }

@@ -127,7 +127,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	url := GetURLWithAuthorizationHash(equinoxReq.Request)
 
 	if c.isCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
-		if item, err := c.cache.Get(url); err != nil {
+		if item, err := c.cache.Get(ctx, url); err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
 		} else if item != nil {
 			equinoxReq.Logger.Debug().Msg("Cache hit")
@@ -180,7 +180,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	}
 
 	if equinoxReq.Request.Method == http.MethodGet {
-		if err := c.cache.Set(url, body); err != nil {
+		if err := c.cache.Set(ctx, url, body); err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
 		} else {
 			equinoxReq.Logger.Debug().Msg("Cache set")
