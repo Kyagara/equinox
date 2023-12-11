@@ -10,26 +10,6 @@ package api
 
 // Spec version = cd204d7d764a025c280943766bc498278e439a6c
 
-import (
-	"net/http"
-
-	"github.com/rs/zerolog"
-)
-
-// EquinoxRequest represents a request to the Riot API and CDNs, its a struct that contains all information about a request.
-type EquinoxRequest struct {
-	Logger   zerolog.Logger
-	Route    any
-	Body     any
-	Request  *http.Request
-	MethodID string
-	BaseURL  string
-	Method   string
-	Path     string
-	Retries  int
-	IsCDN    bool
-}
-
 // Base API URLs formats.
 const (
 	RIOT_API_BASE_URL_FORMAT = "https://%s.api.riotgames.com%s"

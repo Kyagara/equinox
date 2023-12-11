@@ -86,10 +86,6 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 		Logger:   logger,
 		MethodID: methodID,
 		Route:    route,
-		BaseURL:  baseURL,
-		Method:   httpMethod,
-		Path:     path,
-		Body:     body,
 		Request:  nil,
 		Retries:  0,
 	}
@@ -97,8 +93,8 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 	url := fmt.Sprintf(baseURL, route, path)
 
 	var buffer io.Reader
-	if equinoxReq.Body != nil {
-		bodyBytes, err := jsonv2.Marshal(equinoxReq.Body)
+	if body != nil {
+		bodyBytes, err := jsonv2.Marshal(body)
 		if err != nil {
 			return api.EquinoxRequest{}, err
 		}
@@ -130,7 +126,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 
 	url := getURLWithAuthorizationHash(equinoxReq.Request)
 
-	if c.isCacheEnabled && equinoxReq.Method == http.MethodGet {
+	if c.isCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
 		if item, err := c.cache.Get(url); err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
 		} else if item != nil {
@@ -183,7 +179,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		return err
 	}
 
-	if equinoxReq.Method == http.MethodGet {
+	if equinoxReq.Request.Method == http.MethodGet {
 		if err := c.cache.Set(url, body); err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
 		} else {
