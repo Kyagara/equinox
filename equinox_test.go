@@ -64,17 +64,15 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 			config: util.NewTestEquinoxConfig(),
 		},
 		{
-			name:    "no cache",
-			want:    &equinox.Equinox{},
-			config:  util.NewTestEquinoxConfig(),
-			wantErr: nil,
+			name:   "no cache",
+			want:   &equinox.Equinox{},
+			config: util.NewTestEquinoxConfig(),
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			client, err := equinox.NewClientWithConfig(test.config)
-			require.Equal(t, test.wantErr, err)
+			client := equinox.NewClientWithConfig(test.config)
 
 			if test.wantErr == nil {
 				require.NotEmpty(t, client)
@@ -106,8 +104,7 @@ func TestRateLimitWithMock(t *testing.T) {
 	config.LogLevel = zerolog.WarnLevel
 	config.Retries = 3
 
-	client, err := equinox.NewClientWithConfig(config)
-	require.NoError(t, err)
+	client := equinox.NewClientWithConfig(config)
 
 	for i := 1; i <= 4; i++ {
 		ctx := context.Background()
@@ -122,7 +119,7 @@ func TestRateLimitWithMock(t *testing.T) {
 	ctx := context.Background()
 	ctx, c := context.WithTimeout(ctx, 2*time.Second)
 	defer c()
-	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+	_, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 
 	// This last request (5) should block until rate limit is reset, this test should take around 3 seconds

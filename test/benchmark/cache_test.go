@@ -82,8 +82,7 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 		Retries: 3,
 		Cache:   cache,
 	}
-	client, err := equinox.NewClientWithConfig(config)
-	require.NoError(b, err)
+	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
@@ -116,8 +115,7 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 	config.LogLevel = zerolog.WarnLevel
 	config.Retries = 3
 
-	client, err := equinox.NewClientWithConfig(config)
-	require.NoError(b, err)
+	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()

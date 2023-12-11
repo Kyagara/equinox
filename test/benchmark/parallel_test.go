@@ -33,8 +33,7 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 	config.Retries = 3
 	config.RateLimit = ratelimit.NewInternalRateLimit()
 
-	client, err := equinox.NewClientWithConfig(config)
-	require.NoError(b, err)
+	client := equinox.NewClientWithConfig(config)
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -101,8 +100,7 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	config.LogLevel = zerolog.WarnLevel
 	config.Retries = 3
 
-	client, err := equinox.NewClientWithConfig(config)
-	require.NoError(b, err)
+	client := equinox.NewClientWithConfig(config)
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -137,8 +135,7 @@ func BenchmarkParallelDDragonRealms(b *testing.B) {
 	config.LogLevel = zerolog.WarnLevel
 	config.Retries = 3
 
-	client, err := equinox.NewClientWithConfig(config)
-	require.NoError(b, err)
+	client := equinox.NewClientWithConfig(config)
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -173,8 +170,7 @@ func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	config.LogLevel = zerolog.WarnLevel
 	config.Retries = 3
 
-	client, err := equinox.NewClientWithConfig(config)
-	require.NoError(b, err)
+	client := equinox.NewClientWithConfig(config)
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
