@@ -33,12 +33,11 @@ When creating a bucket, `interval` is the time in seconds between resets, `limit
 
 ```go
 func NewBucket(interval time.Duration, limit int, tokens int) *Bucket {
-	now := time.Now()
 	return &Bucket{
 		interval: interval * time.Second,
 		limit:    limit,
 		tokens:   tokens,
-		next:     now.Add(interval * time.Second),
+		next:     time.Now().Add(interval * time.Second),
 		mutex:    sync.Mutex{},
 	}
 }

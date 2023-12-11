@@ -82,16 +82,6 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 		return api.EquinoxRequest{}, errContextIsNil
 	}
 
-	equinoxReq := api.EquinoxRequest{
-		Logger:   logger,
-		MethodID: methodID,
-		Route:    route,
-		Request:  nil,
-		Retries:  0,
-	}
-
-	url := fmt.Sprintf(baseURL, route, path)
-
 	var buffer io.Reader
 	if body != nil {
 		bodyBytes, err := jsonv2.Marshal(body)
@@ -101,11 +91,21 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 		buffer = bytes.NewReader(bodyBytes)
 	}
 
+	url := fmt.Sprintf(baseURL, route, path)
+
 	request, err := http.NewRequestWithContext(ctx, httpMethod, url, buffer)
 	if err != nil {
 		return api.EquinoxRequest{}, err
 	}
-	equinoxReq.IsCDN = slices.Contains(cdns, request.URL.Host)
+
+	equinoxReq := api.EquinoxRequest{
+		Logger:   logger,
+		MethodID: methodID,
+		Route:    route,
+		Request:  request,
+		Retries:  0,
+		IsCDN:    slices.Contains(cdns, request.URL.Host),
+	}
 
 	if equinoxReq.IsCDN {
 		request.Header = cdnHeaders
@@ -115,7 +115,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 		}
 		request.Header = apiHeaders
 	}
-	equinoxReq.Request = request
+
 	return equinoxReq, nil
 }
 
@@ -131,7 +131,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 			equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
 		} else if item != nil {
 			equinoxReq.Logger.Debug().Msg("Cache hit")
-			return jsonv2.Unmarshal(item, &target)
+			return jsonv2.Unmarshal(item, target)
 		}
 	}
 
@@ -171,7 +171,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 
 	equinoxReq.Logger.Info().Msg("Request successful")
 	if !c.isCacheEnabled {
-		return jsonv2.UnmarshalRead(response.Body, &target)
+		return jsonv2.UnmarshalRead(response.Body, target)
 	}
 
 	body, err := io.ReadAll(response.Body)
@@ -186,7 +186,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 			equinoxReq.Logger.Debug().Msg("Cache set")
 		}
 	}
-	return jsonv2.Unmarshal(body, &target)
+	return jsonv2.Unmarshal(body, target)
 }
 
 // ExecuteRaw executes a request without checking cache and returns []byte
@@ -235,7 +235,7 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 
 func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, error) {
 	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
-		c.ratelimit.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &response.Header)
+		c.ratelimit.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, response.Header)
 	}
 
 	// 2xx responses
@@ -247,7 +247,7 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 	if equinoxReq.Retries < c.maxRetries {
 		if response.StatusCode == http.StatusTooManyRequests {
 			equinoxReq.Logger.Warn().Msg("Received 429 response")
-			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, &response.Header)
+			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, response.Header)
 		}
 
 		if response.StatusCode >= 500 && response.StatusCode < 600 {

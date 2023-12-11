@@ -66,7 +66,7 @@ func TestRateLimitCheck(t *testing.T) {
 		ctx := context.Background()
 		err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
-		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &headers)
+		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
 		err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 	})
@@ -80,7 +80,7 @@ func TestRateLimitCheck(t *testing.T) {
 		ctx := context.Background()
 		err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
-		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &headers)
+		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
 		err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 	})
@@ -94,7 +94,7 @@ func TestRateLimitCheck(t *testing.T) {
 		ctx := context.Background()
 		err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
-		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &headers)
+		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
 		err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 	})
@@ -118,7 +118,7 @@ func TestLimitsDontMatch(t *testing.T) {
 	defer c()
 	err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.NoError(t, err)
-	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &headers)
+	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
 	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.NoError(t, err)
 
@@ -126,7 +126,7 @@ func TestLimitsDontMatch(t *testing.T) {
 		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"1:2"},
 		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},
 	}
-	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &headers)
+	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
 	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	// The buckets should've been updated, so this request should be rate limited now
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
@@ -151,11 +151,11 @@ func TestCheckRetryAfter(t *testing.T) {
 	}
 
 	headers.Set(ratelimit.RETRY_AFTER_HEADER, "")
-	_, err := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, &headers)
+	_, err := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
 	require.Equal(t, ratelimit.Err429ButNoRetryAfterHeader, err)
 
 	headers.Set(ratelimit.RETRY_AFTER_HEADER, "10")
-	delay, err := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, &headers)
+	delay, err := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
 	require.NoError(t, err)
 	require.Equal(t, 10*time.Second, delay)
 }
