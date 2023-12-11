@@ -61,11 +61,16 @@ A client without a configuration comes with the default options:
 Using different endpoints:
 
 ```go
+ctx := context.Background()
+
 // This method uses a api.RegionalRoute. Can be accessed with a Development key.
-match, err := client.LOL.MatchV5.ByID(api.AMERICAS, "match_id")
+match, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "match_id")
 
 // This method uses a val.PlatformRoute. May not be available in your policy.
-matches, err := client.VAL.MatchV1.Recent(val.BR, "competitive")
+matches, err := client.VAL.MatchV1.Recent(ctx, val.BR, "competitive")
+
+version, err := client.DDragon.Version.Latest(ctx)
+champion, err := client..CDragon.Champion.ByName(ctx, version, "Aatrox")
 
 // Creating a request and executing it with ExecuteRaw which returns []byte but skips checking cache.
 l := client.Internal.Logger("LOL_StatusV4_Platform")
@@ -74,7 +79,7 @@ data, err :=client.Internal.ExecuteRaw(ctx, req)
 
 // You can also interact with the cache.
 data, err := client.Cache.Get("https://...")
-err := client.Cache.Set("https://...", []byte("data"))
+err := client.Cache.Set("https://...", data)
 ```
 
 ## Example
