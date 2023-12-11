@@ -124,7 +124,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		return errContextIsNil
 	}
 
-	url := getURLWithAuthorizationHash(equinoxReq.Request)
+	url := GetURLWithAuthorizationHash(equinoxReq.Request)
 
 	if c.isCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
 		if item, err := c.cache.Get(url); err != nil {
@@ -242,11 +242,11 @@ func (c *Client) GetDDragonLOLVersions(ctx context.Context, id string) ([]string
 }
 
 // Generates an URL with the Authorization header if it exists. Don't want to store the Authorization header as key in plaintext.
-func getURLWithAuthorizationHash(req *http.Request) string {
+func GetURLWithAuthorizationHash(req *http.Request) string {
 	url := req.URL.String()
 	auth := req.Header.Get("Authorization")
 	if auth == "" {
 		return url
 	}
-	return fmt.Sprintf("%s%x", url, sha256.Sum256([]byte(auth)))
+	return fmt.Sprintf("%s-%x", url, sha256.Sum256([]byte(auth)))
 }

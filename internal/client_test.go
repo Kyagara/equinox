@@ -300,3 +300,21 @@ func TestGetDDragonLOLVersions(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "1.0", versions[0])
 }
+
+func TestGetURLWithAuthorizationHash(t *testing.T) {
+	req := &http.Request{
+		URL: &url.URL{
+			Scheme: "http",
+			Host:   "example.com",
+			Path:   "/path",
+		},
+		Header: http.Header{},
+	}
+
+	hash := internal.GetURLWithAuthorizationHash(req)
+	require.Equal(t, "http://example.com/path", hash)
+
+	req.Header.Set("Authorization", "7267ee00-5696-47b8-9cae-8db3d49c8c33")
+	hash = internal.GetURLWithAuthorizationHash(req)
+	require.Equal(t, "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d", hash)
+}
