@@ -80,7 +80,7 @@ func (r *RateLimit) Take(ctx context.Context, logger zerolog.Logger, route any, 
 }
 
 // Update creates new buckets in a route with the limits provided in the response headers.
-func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, headers *http.Header) {
+func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, headers http.Header) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 	limits := r.Region[route]
@@ -94,7 +94,7 @@ func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, he
 	}
 }
 
-func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers *http.Header) (time.Duration, error) {
+func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers http.Header) (time.Duration, error) {
 	retryAfter := headers.Get(RETRY_AFTER_HEADER)
 	if retryAfter == "" {
 		return 0, Err429ButNoRetryAfterHeader

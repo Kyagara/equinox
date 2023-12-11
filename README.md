@@ -41,7 +41,7 @@ Create a new instance of the Equinox client:
 client, err := equinox.NewClient("RIOT_API_KEY")
 ```
 
-A client without a configuration comes with the default options:
+A default equinox client comes with the default options:
 
 - **Key**: The provided key.
 - **LogLevel**: `zerolog.WarnLevel`. `zerolog.Disabled` disables logging.
@@ -75,7 +75,7 @@ champion, err := client..CDragon.Champion.ByName(ctx, version, "Aatrox")
 // Creating a request and executing it with ExecuteRaw which returns []byte but skips checking cache.
 l := client.Internal.Logger("LOL_StatusV4_Platform")
 req, err := client.Internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
-data, err :=client.Internal.ExecuteRaw(ctx, req)
+data, err := client.Internal.ExecuteRaw(ctx, req)
 
 // You can also interact with the cache.
 data, err := client.Cache.Get("https://...")
