@@ -35,8 +35,7 @@ func TestNewLogger(t *testing.T) {
 }
 
 func TestLogger(t *testing.T) {
-	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
+	internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NotEmpty(t, internal)
 	logger := internal.Logger("client_endpoint_method")
 	require.NotEmpty(t, logger)

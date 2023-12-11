@@ -21,14 +21,15 @@ import (
 )
 
 type Equinox struct {
-	Cache   *cache.Cache
-	DDragon *ddragon.Client
-	CDragon *cdragon.Client
-	Riot    *riot.Client
-	LOL     *lol.Client
-	TFT     *tft.Client
-	VAL     *val.Client
-	LOR     *lor.Client
+	Internal *internal.Client
+	Cache    *cache.Cache
+	DDragon  *ddragon.Client
+	CDragon  *cdragon.Client
+	Riot     *riot.Client
+	LOL      *lol.Client
+	TFT      *tft.Client
+	VAL      *val.Client
+	LOR      *lor.Client
 }
 
 // Creates a new Equinox client with the default configuration
@@ -37,26 +38,24 @@ func NewClient(key string) (*Equinox, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewClientWithConfig(config)
+	return NewClientWithConfig(config), nil
 }
 
 // Creates a new Equinox client using a custom configuration.
-func NewClientWithConfig(config api.EquinoxConfig) (*Equinox, error) {
-	client, err := internal.NewInternalClient(config)
-	if err != nil {
-		return nil, err
-	}
+func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
+	client := internal.NewInternalClient(config)
 	equinox := &Equinox{
-		Cache:   config.Cache,
-		DDragon: ddragon.NewDDragonClient(client),
-		CDragon: cdragon.NewCDragonClient(client),
-		Riot:    riot.NewRiotClient(client),
-		LOL:     lol.NewLOLClient(client),
-		TFT:     tft.NewTFTClient(client),
-		VAL:     val.NewVALClient(client),
-		LOR:     lor.NewLORClient(client),
+		Internal: client,
+		Cache:    config.Cache,
+		DDragon:  ddragon.NewDDragonClient(client),
+		CDragon:  cdragon.NewCDragonClient(client),
+		Riot:     riot.NewRiotClient(client),
+		LOL:      lol.NewLOLClient(client),
+		TFT:      tft.NewTFTClient(client),
+		VAL:      val.NewVALClient(client),
+		LOR:      lor.NewLORClient(client),
 	}
-	return equinox, nil
+	return equinox
 }
 
 // Returns the default Equinox config with a provided key.

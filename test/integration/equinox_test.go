@@ -52,10 +52,6 @@ func init() {
 		Retries: 0,
 		Cache:   cache,
 	}
-	c, err := equinox.NewClientWithConfig(config)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	client = c
+
+	client = equinox.NewClientWithConfig(config)
 }

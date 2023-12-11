@@ -10,6 +10,7 @@ import (
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,9 +21,21 @@ func TestNewLimits(t *testing.T) {
 	require.NotNil(t, limits.Methods)
 }
 
+func TestNewInternalRateLimit(t *testing.T) {
+	rateLimit := ratelimit.NewInternalRateLimit()
+	require.NotNil(t, rateLimit)
+	require.Empty(t, rateLimit.Region)
+	require.True(t, rateLimit.Enabled)
+	require.Nil(t, rateLimit.Region["route"])
+	rateLimit.Take(context.Background(), zerolog.Nop(), "route", "method")
+	require.NotNil(t, rateLimit.Region["route"].App)
+	require.NotEmpty(t, rateLimit.Region["route"])
+	require.NotNil(t, rateLimit.Region["route"].Methods)
+	require.NotEmpty(t, rateLimit.Region["route"].Methods["method"])
+}
+
 func TestRateLimitCheck(t *testing.T) {
-	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
+	client := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",
 		MethodID: "method",
@@ -78,17 +91,16 @@ func TestRateLimitCheck(t *testing.T) {
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"20:2"},
 		}
 		ctx := context.Background()
-		err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &headers)
-		err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 	})
 }
 
 func TestLimitsDontMatch(t *testing.T) {
-	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
+	client := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",
 		MethodID: "method",
@@ -103,7 +115,7 @@ func TestLimitsDontMatch(t *testing.T) {
 
 	ctx, c := context.WithTimeout(context.Background(), 1*time.Second)
 	defer c()
-	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+	err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.NoError(t, err)
 	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, &headers)
 	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)

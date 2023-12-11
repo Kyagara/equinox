@@ -20,28 +20,18 @@ import (
 )
 
 func TestNewInternalClient(t *testing.T) {
-	_, err := internal.NewInternalClient(api.EquinoxConfig{})
-	require.Empty(t, err)
-
-	internalClient, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
-	if err != nil {
-		require.ErrorContains(t, err, "error initializing logger")
-	}
-
+	internalClient := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NotEmpty(t, internalClient)
 
 	config := util.NewTestEquinoxConfig()
 	config.Cache.TTL = 1
 
-	internalClient, err = internal.NewInternalClient(config)
-	require.NoError(t, err)
+	internalClient = internal.NewInternalClient(config)
 	require.NotEmpty(t, internalClient)
 }
 
 func TestInternalClientNewRequest(t *testing.T) {
-	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
+	internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	l := internal.Logger("client_endpoint_method")
 	tests := []struct {
 		name    string
@@ -75,8 +65,7 @@ func TestInternalClientRequest(t *testing.T) {
 		"message": "cool",
 	}
 	config := util.NewTestEquinoxConfig()
-	client, err := internal.NewInternalClient(config)
-	require.NoError(t, err)
+	client := internal.NewInternalClient(config)
 
 	url := "https://cool.and.real.api/post"
 
@@ -233,8 +222,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			httpmock.RegisterResponder("GET", "https://tests.api.riotgames.com/",
 				httpmock.NewBytesResponder(test.code, []byte(`{}`)))
 
-			internal, err := internal.NewInternalClient(config)
-			require.NoError(t, err)
+			internal := internal.NewInternalClient(config)
 			l := internal.Logger("client_endpoint_method")
 			ctx := context.Background()
 			equinoxReq, err := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", "", nil)
@@ -253,8 +241,7 @@ func TestInternalClientRetries(t *testing.T) {
 	config := util.NewTestEquinoxConfig()
 	config.Retries = 3
 	config.RateLimit = ratelimit.NewInternalRateLimit()
-	internal, err := internal.NewInternalClient(config)
-	require.NoError(t, err)
+	internal := internal.NewInternalClient(config)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
 		httpmock.NewBytesResponder(429, []byte(`{}`)).HeaderSet(map[string][]string{
@@ -289,8 +276,7 @@ func TestGetDDragonLOLVersions(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
+	internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
 
 	httpmock.RegisterResponder("GET", "https://ddragon.leagueoflegends.com/api/versions.json",
 		httpmock.NewStringResponder(200, `["1.0"]`))
@@ -317,4 +303,27 @@ func TestGetURLWithAuthorizationHash(t *testing.T) {
 	req.Header.Set("Authorization", "7267ee00-5696-47b8-9cae-8db3d49c8c33")
 	hash = internal.GetURLWithAuthorizationHash(req)
 	require.Equal(t, "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d", hash)
+}
+
+func TestInternalClientExecutes(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewStringResponder(200, `"response"`))
+
+	internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
+
+	ctx := context.Background()
+	equinoxReq, err := internal.Request(ctx, internal.Logger("client_endpoint_method"), api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	require.NoError(t, err)
+
+	data, err := internal.ExecuteRaw(ctx, equinoxReq)
+	require.NoError(t, err)
+	require.Equal(t, []byte(`"response"`), data)
+
+	var res string
+	err = internal.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+	require.Equal(t, `response`, res)
 }

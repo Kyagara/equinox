@@ -49,7 +49,7 @@ var (
 	cdns = []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
 )
 
-func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
+func NewInternalClient(config api.EquinoxConfig) *Client {
 	if config.HTTPClient == nil {
 		config.HTTPClient = &http.Client{Timeout: 15 * time.Second}
 	}
@@ -57,7 +57,7 @@ func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 		config.Cache = &cache.Cache{}
 	}
 	if config.RateLimit == nil {
-		config.RateLimit = &ratelimit.RateLimit{}
+		config.RateLimit = &ratelimit.RateLimit{Enabled: false}
 	}
 	client := &Client{
 		key:  config.Key,
@@ -74,7 +74,7 @@ func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 		isRateLimitEnabled: config.RateLimit.Enabled,
 	}
 	apiHeaders.Set("X-Riot-Token", config.Key)
-	return client, nil
+	return client
 }
 
 func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (api.EquinoxRequest, error) {
@@ -187,6 +187,50 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		}
 	}
 	return jsonv2.Unmarshal(body, &target)
+}
+
+// ExecuteRaw executes a request without checking cache and returns []byte
+func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) ([]byte, error) {
+	if ctx == nil {
+		return nil, errContextIsNil
+	}
+
+	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
+		err := c.ratelimit.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	equinoxReq.Logger.Info().Msg("Sending request")
+	response, err := c.http.Do(equinoxReq.Request)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	delay, err := c.checkResponse(equinoxReq, response)
+	if errors.Is(err, errServerError) {
+		equinoxReq.Retries++
+		return c.ExecuteRaw(ctx, equinoxReq)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if delay > 0 {
+		equinoxReq.Logger.Info().Dur("sleep", delay).Msg("Retrying request after sleep")
+		err := ratelimit.WaitN(ctx, time.Now().Add(delay), delay)
+		if err != nil {
+			return nil, err
+		}
+		equinoxReq.Retries++
+		return c.ExecuteRaw(ctx, equinoxReq)
+	}
+
+	equinoxReq.Logger.Info().Msg("Request successful")
+	return io.ReadAll(response.Body)
 }
 
 func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, error) {
