@@ -17,26 +17,25 @@ type RedisClient interface {
 
 type RedisStore struct {
 	client RedisClient
-	ctx    context.Context
 	ttl    time.Duration
 }
 
-func (s *RedisStore) Get(key string) ([]byte, error) {
-	item := s.client.Get(s.ctx, key)
+func (s *RedisStore) Get(ctx context.Context, key string) ([]byte, error) {
+	item := s.client.Get(ctx, key)
 	if errors.Is(item.Err(), redis.Nil) {
 		return nil, nil
 	}
 	return item.Bytes()
 }
 
-func (s *RedisStore) Set(key string, value []byte) error {
-	return s.client.Set(s.ctx, key, value, s.ttl).Err()
+func (s *RedisStore) Set(ctx context.Context, key string, value []byte) error {
+	return s.client.Set(ctx, key, value, s.ttl).Err()
 }
 
-func (s *RedisStore) Delete(key string) error {
-	return s.client.Del(s.ctx, key).Err()
+func (s *RedisStore) Delete(ctx context.Context, key string) error {
+	return s.client.Del(ctx, key).Err()
 }
 
-func (s *RedisStore) Clear() error {
-	return s.client.FlushAll(s.ctx).Err()
+func (s *RedisStore) Clear(ctx context.Context) error {
+	return s.client.FlushAll(ctx).Err()
 }
