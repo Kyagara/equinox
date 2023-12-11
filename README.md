@@ -119,6 +119,7 @@ func main() {
 
 - Maybe create a custom BigCache config
 - More tests for the internal client and rate limit
+- Maybe the context usage throughout the project could be improved
 - Improve DDragon/CDragon support
 
 ## About
