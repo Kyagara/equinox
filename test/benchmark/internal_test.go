@@ -18,11 +18,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkInternals-16 172642 6568 ns/op 1563 B/op 23 allocs/op
-BenchmarkInternals-16 168538 6525 ns/op 1563 B/op 23 allocs/op
-BenchmarkInternals-16 177874 6557 ns/op 1563 B/op 23 allocs/op
-BenchmarkInternals-16 171096 6530 ns/op 1563 B/op 23 allocs/op
-BenchmarkInternals-16 175952 6556 ns/op 1563 B/op 23 allocs/op
+BenchmarkInternals-16 208984 5425 ns/op 1419 B/op 18 allocs/op
+BenchmarkInternals-16 216291 5445 ns/op 1419 B/op 18 allocs/op
+BenchmarkInternals-16 208576 5400 ns/op 1419 B/op 18 allocs/op
+BenchmarkInternals-16 206632 5434 ns/op 1419 B/op 18 allocs/op
+BenchmarkInternals-16 186727 5425 ns/op 1419 B/op 18 allocs/op
 */
 func BenchmarkInternals(b *testing.B) {
 	b.ReportAllocs()
@@ -81,11 +81,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkExecute-16 198393 5695 ns/op 1033 B/op 19 allocs/op
-BenchmarkExecute-16 207664 5727 ns/op 1033 B/op 19 allocs/op
-BenchmarkExecute-16 185822 5696 ns/op 1033 B/op 19 allocs/op
-BenchmarkExecute-16 201276 5737 ns/op 1033 B/op 19 allocs/op
-BenchmarkExecute-16 195450 5684 ns/op 1033 B/op 19 allocs/op
+BenchmarkExecute-16 239575 4656 ns/op 889 B/op 14 allocs/op
+BenchmarkExecute-16 252027 4611 ns/op 889 B/op 14 allocs/op
+BenchmarkExecute-16 230380 4605 ns/op 889 B/op 14 allocs/op
+BenchmarkExecute-16 242892 4669 ns/op 889 B/op 14 allocs/op
+BenchmarkExecute-16 248352 4640 ns/op 889 B/op 14 allocs/op
 */
 func BenchmarkExecute(b *testing.B) {
 	b.ReportAllocs()
