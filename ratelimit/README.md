@@ -9,7 +9,19 @@ Info on rate limiting:
 - [Hextechdocs](https://hextechdocs.dev/rate-limiting/)
 - [Riot developer portal](https://developer.riotgames.com/docs/portal#web-apis_rate-limiting)
 
-## How does it work
+You can create an InternalRateLimit with `NewInternalRateLimit()`. RateLimit includes the following:
+
+```go
+type RateLimit struct {
+	Region  	map[any]*Limits
+	Enabled 	bool
+	// Decreases all limits by this amount.
+	LimitOffset int
+	// Delay to add in seconds before retrying.
+	Delay       float64
+	mutex       sync.Mutex
+}
+```
 
 ### Bucket
 

@@ -22,7 +22,7 @@ func TestNewLimits(t *testing.T) {
 }
 
 func TestNewInternalRateLimit(t *testing.T) {
-	rateLimit := ratelimit.NewInternalRateLimit()
+	rateLimit := ratelimit.NewInternalRateLimit(0, 0.5)
 	require.NotNil(t, rateLimit)
 	require.Empty(t, rateLimit.Region)
 	require.True(t, rateLimit.Enabled)

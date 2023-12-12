@@ -34,11 +34,15 @@ var (
 type RateLimit struct {
 	Region  map[any]*Limits
 	Enabled bool
-	mutex   sync.Mutex
+	// Decreases all limits by this amount.
+	LimitOffset int
+	// Delay to add in seconds before retrying.
+	Delay float64
+	mutex sync.Mutex
 }
 
-func NewInternalRateLimit() *RateLimit {
-	return &RateLimit{Region: make(map[any]*Limits), Enabled: true}
+func NewInternalRateLimit(limitOffset int, delay float64) *RateLimit {
+	return &RateLimit{Region: make(map[any]*Limits), LimitOffset: limitOffset, Delay: delay, Enabled: true}
 }
 
 // Limits in a region.
@@ -85,11 +89,11 @@ func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, he
 	defer r.mutex.Unlock()
 	limits := r.Region[route]
 	if limits.App.limitsDontMatch(headers.Get(APP_RATE_LIMIT_HEADER)) {
-		limits.App = parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER), APP_RATE_LIMIT_TYPE)
+		limits.App = r.parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER), APP_RATE_LIMIT_TYPE)
 		logger.Debug().Msg("New Application buckets")
 	}
 	if limits.Methods[methodID].limitsDontMatch(headers.Get(METHOD_RATE_LIMIT_HEADER)) {
-		limits.Methods[methodID] = parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
+		limits.Methods[methodID] = r.parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
 		logger.Debug().Msg("New Method buckets")
 	}
 }
@@ -101,7 +105,7 @@ func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers http.Hea
 	}
 
 	delayF, _ := strconv.ParseFloat(retryAfter, 32)
-	delay := time.Duration(delayF+0.5) * time.Second
+	delay := time.Duration(delayF+r.Delay) * time.Second
 
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
@@ -131,7 +135,7 @@ func WaitN(ctx context.Context, estimated time.Time, duration time.Duration) err
 	return nil
 }
 
-func parseHeaders(limitHeader string, countHeader string, limitType string) *Limit {
+func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitType string) *Limit {
 	if limitHeader == "" || countHeader == "" {
 		return NewLimit(limitType)
 	}
@@ -142,7 +146,7 @@ func parseHeaders(limitHeader string, countHeader string, limitType string) *Lim
 	for i := range limits {
 		limit, seconds := getNumbersFromPair(limits[i])
 		count, _ := getNumbersFromPair(counts[i])
-		rates[i] = NewBucket(time.Duration(seconds), limit, limit-count)
+		rates[i] = NewBucket(time.Duration(seconds), limit-r.LimitOffset, limit-count)
 	}
 	limit.buckets = rates
 	return limit

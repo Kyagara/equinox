@@ -100,7 +100,7 @@ func TestRateLimitWithMock(t *testing.T) {
 		httpmock.NewBytesResponder(200, []byte(`{}`)).HeaderSet(headers))
 
 	config := util.NewTestEquinoxConfig()
-	config.RateLimit = ratelimit.NewInternalRateLimit()
+	config.RateLimit = ratelimit.NewInternalRateLimit(0, 0.5)
 	config.LogLevel = zerolog.WarnLevel
 	config.Retries = 3
 
