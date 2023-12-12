@@ -48,7 +48,7 @@ A default equinox client comes with the default options:
 - **Retries**: Retries a request n times if the API returns an error, defaults to 3.
 - **HTTPClient**: `http.Client` with a timeout of 15 seconds.
 - **Cache**: `BigCache` with an eviction time of 4 minutes.
-- **RateLimit**: Internal rate limiter.
+- **RateLimit**: Internal rate limiter without limit offset and a delay of 0.5.
 
 > A custom Client can be created using `equinox.NewClientWithConfig()`.
 

@@ -44,7 +44,7 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
 	config.Retries = 3
-	config.RateLimit = ratelimit.NewInternalRateLimit()
+	config.RateLimit = ratelimit.NewInternalRateLimit(0, 0.5)
 
 	client := equinox.NewClientWithConfig(config)
 

@@ -212,7 +212,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			config := util.NewTestEquinoxConfig()
-			config.RateLimit = ratelimit.NewInternalRateLimit()
+			config.RateLimit = ratelimit.NewInternalRateLimit(0, 0.5)
 			if test.name == "rate limited" {
 				config.Retries = 0
 			} else if test.name == "rate limited but no retry-after header found" {
@@ -240,7 +240,7 @@ func TestInternalClientRetries(t *testing.T) {
 
 	config := util.NewTestEquinoxConfig()
 	config.Retries = 3
-	config.RateLimit = ratelimit.NewInternalRateLimit()
+	config.RateLimit = ratelimit.NewInternalRateLimit(0, 0.5)
 	internal := internal.NewInternalClient(config)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
