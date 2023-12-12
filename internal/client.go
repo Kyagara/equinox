@@ -102,6 +102,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 		Logger:   logger,
 		MethodID: methodID,
 		Route:    route,
+		URL:      url,
 		Request:  request,
 		Retries:  0,
 		IsCDN:    slices.Contains(cdns, request.URL.Host),
@@ -124,7 +125,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		return errContextIsNil
 	}
 
-	url := GetURLWithAuthorizationHash(equinoxReq.Request)
+	url := GetURLWithAuthorizationHash(equinoxReq)
 
 	if c.isCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
 		if item, err := c.cache.Get(ctx, url); err != nil {
@@ -286,11 +287,15 @@ func (c *Client) GetDDragonLOLVersions(ctx context.Context, id string) ([]string
 }
 
 // Generates an URL with the Authorization header if it exists. Don't want to store the Authorization header as key in plaintext.
-func GetURLWithAuthorizationHash(req *http.Request) string {
-	url := req.URL.String()
-	auth := req.Header.Get("Authorization")
+func GetURLWithAuthorizationHash(req api.EquinoxRequest) string {
+	auth := req.Request.Header.Get("Authorization")
 	if auth == "" {
-		return url
+		return req.URL
 	}
-	return fmt.Sprintf("%s-%x", url, sha256.Sum256([]byte(auth)))
+
+	hash := sha256.New()
+	hash.Write([]byte(auth))
+	hashedAuth := hash.Sum(nil)
+
+	return fmt.Sprintf("%s-%x", req.URL, hashedAuth)
 }

@@ -12,6 +12,7 @@ type EquinoxRequest struct {
 	Logger   zerolog.Logger
 	Route    any
 	Request  *http.Request
+	URL      string
 	MethodID string
 	Retries  int
 	IsCDN    bool
