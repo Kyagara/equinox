@@ -122,6 +122,7 @@ func main() {
 - Maybe the context usage throughout the project could be improved
 - Maybe more options to customize the rate limiter
 - Maybe allow for custom logger
+- Improve error handling
 - Exponential backoff for retries
 - Improve DDragon/CDragon support
 
