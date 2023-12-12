@@ -17,6 +17,19 @@ import (
 )
 
 // This revealed problems with multiple limits in a bucket, only the first bucket was being respected.
+//
+// The only thing that really matters here is B/op and allocs/op.
+/*
+goos: linux - WSL2
+goarch: amd64
+pkg: github.com/Kyagara/equinox/test/benchmark
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkParallelRateLimit-16 100 60013967 ns/op 3216 B/op 35 allocs/op
+BenchmarkParallelRateLimit-16 100 50023944 ns/op 3048 B/op 34 allocs/op
+BenchmarkParallelRateLimit-16 100 50022594 ns/op 3112 B/op 34 allocs/op
+BenchmarkParallelRateLimit-16 100 60005112 ns/op 3092 B/op 34 allocs/op
+BenchmarkParallelRateLimit-16 100 60008024 ns/op 2788 B/op 33 allocs/op
+*/
 func BenchmarkParallelRateLimit(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
@@ -50,11 +63,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelCachedSummonerByPUUID-16 261210 4524 ns/op 2568 B/op 17 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 260030 4563 ns/op 2574 B/op 17 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 263236 4537 ns/op 2558 B/op 17 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 264544 4840 ns/op 2552 B/op 17 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 256568 4907 ns/op 2591 B/op 17 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 264927 4124 ns/op 2406 B/op 12 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 248793 4197 ns/op 2489 B/op 12 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 232384 4440 ns/op 2584 B/op 12 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 291516 4244 ns/op 2290 B/op 12 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 290792 4308 ns/op 2293 B/op 12 allocs/op
 */
 func BenchmarkParallelCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
@@ -82,11 +95,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelSummonerByPUUID-16 208351 5293 ns/op 1770 B/op 27 allocs/op
-BenchmarkParallelSummonerByPUUID-16 195762 5755 ns/op 1772 B/op 27 allocs/op
-BenchmarkParallelSummonerByPUUID-16 206599 5323 ns/op 1772 B/op 27 allocs/op
-BenchmarkParallelSummonerByPUUID-16 195020 5432 ns/op 1773 B/op 27 allocs/op
-BenchmarkParallelSummonerByPUUID-16 208340 5557 ns/op 1771 B/op 27 allocs/op
+BenchmarkParallelSummonerByPUUID-16 276248 4852 ns/op 1608 B/op 22 allocs/op
+BenchmarkParallelSummonerByPUUID-16 266298 4773 ns/op 1608 B/op 22 allocs/op
+BenchmarkParallelSummonerByPUUID-16 278318 4361 ns/op 1608 B/op 22 allocs/op
+BenchmarkParallelSummonerByPUUID-16 267100 4356 ns/op 1608 B/op 22 allocs/op
+BenchmarkParallelSummonerByPUUID-16 286087 4565 ns/op 1608 B/op 22 allocs/op
 */
 func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
@@ -117,11 +130,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelDDragonRealms-16 216250 5642 ns/op 1935 B/op 26 allocs/op
-BenchmarkParallelDDragonRealms-16 215046 5630 ns/op 1935 B/op 26 allocs/op
-BenchmarkParallelDDragonRealms-16 212302 5614 ns/op 1935 B/op 26 allocs/op
-BenchmarkParallelDDragonRealms-16 193950 6363 ns/op 1936 B/op 26 allocs/op
-BenchmarkParallelDDragonRealms-16 198546 5908 ns/op 1935 B/op 26 allocs/op
+BenchmarkParallelDDragonRealms-16 256857 4534 ns/op 1736 B/op 21 allocs/op
+BenchmarkParallelDDragonRealms-16 260287 4796 ns/op 1736 B/op 21 allocs/op
+BenchmarkParallelDDragonRealms-16 250515 4585 ns/op 1736 B/op 21 allocs/op
+BenchmarkParallelDDragonRealms-16 247935 4640 ns/op 1736 B/op 21 allocs/op
+BenchmarkParallelDDragonRealms-16 255441 4639 ns/op 1736 B/op 21 allocs/op
 */
 func BenchmarkParallelDDragonRealms(b *testing.B) {
 	b.ReportAllocs()
@@ -152,11 +165,11 @@ goos: linux
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelMatchListByPUUID-16 187948 6462 ns/op 3235 B/op 44 allocs/op
-BenchmarkParallelMatchListByPUUID-16 170966 6547 ns/op 3240 B/op 44 allocs/op
-BenchmarkParallelMatchListByPUUID-16 186074 6534 ns/op 3238 B/op 44 allocs/op
-BenchmarkParallelMatchListByPUUID-16 176089 6524 ns/op 3239 B/op 44 allocs/op
-BenchmarkParallelMatchListByPUUID-16 160318 6569 ns/op 3243 B/op 44 allocs/op
+BenchmarkParallelMatchListByPUUID-16 240942 5311 ns/op 2888 B/op 38 allocs/op
+BenchmarkParallelMatchListByPUUID-16 243670 4943 ns/op 2888 B/op 38 allocs/op
+BenchmarkParallelMatchListByPUUID-16 237004 4918 ns/op 2888 B/op 38 allocs/op
+BenchmarkParallelMatchListByPUUID-16 249390 4986 ns/op 2888 B/op 38 allocs/op
+BenchmarkParallelMatchListByPUUID-16 224121 4900 ns/op 2888 B/op 38 allocs/op
 */
 func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	b.ReportAllocs()
