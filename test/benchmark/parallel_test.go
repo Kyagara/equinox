@@ -18,17 +18,17 @@ import (
 
 // This revealed problems with multiple limits in a bucket, only the first bucket was being respected.
 //
-// The only thing that really matters here is B/op and allocs/op.
+// The only thing that really matters here for benchmark purposes is B/op and allocs/op.
 /*
 goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelRateLimit-16 100 60013967 ns/op 3216 B/op 35 allocs/op
-BenchmarkParallelRateLimit-16 100 50023944 ns/op 3048 B/op 34 allocs/op
-BenchmarkParallelRateLimit-16 100 50022594 ns/op 3112 B/op 34 allocs/op
-BenchmarkParallelRateLimit-16 100 60005112 ns/op 3092 B/op 34 allocs/op
-BenchmarkParallelRateLimit-16 100 60008024 ns/op 2788 B/op 33 allocs/op
+BenchmarkParallelRateLimit-16 100 90047134 ns/op 3209 B/op 38 allocs/op
+BenchmarkParallelRateLimit-16 100 90036735 ns/op 2983 B/op 37 allocs/op
+BenchmarkParallelRateLimit-16 100 90033642 ns/op 3161 B/op 37 allocs/op
+BenchmarkParallelRateLimit-16 100 90035373 ns/op 3055 B/op 37 allocs/op
+BenchmarkParallelRateLimit-16 100 90035765 ns/op 3156 B/op 37 allocs/op
 */
 func BenchmarkParallelRateLimit(b *testing.B) {
 	b.ReportAllocs()
@@ -37,14 +37,16 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")).HeaderSet(http.Header{
-			ratelimit.APP_RATE_LIMIT_HEADER:       {"20:1,50:3,80:5"},
-			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: {"1:1,1:3,1:5"},
+			ratelimit.APP_RATE_LIMIT_HEADER:          {"20:1,40:4"},
+			ratelimit.APP_RATE_LIMIT_COUNT_HEADER:    {"1:1,1:4"},
+			ratelimit.METHOD_RATE_LIMIT_HEADER:       {"1300:60"},
+			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: {"1:60"},
 		}))
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
 	config.Retries = 3
-	config.RateLimit = ratelimit.NewInternalRateLimit(0, 0.5)
+	config.RateLimit = ratelimit.NewInternalRateLimit(1, 0.5)
 
 	client := equinox.NewClientWithConfig(config)
 

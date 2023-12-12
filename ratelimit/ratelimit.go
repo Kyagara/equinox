@@ -88,11 +88,11 @@ func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, he
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 	limits := r.Region[route]
-	if limits.App.limitsDontMatch(headers.Get(APP_RATE_LIMIT_HEADER)) {
+	if limits.App.limitsDontMatch(headers.Get(APP_RATE_LIMIT_HEADER), r.LimitOffset) {
 		limits.App = r.parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER), APP_RATE_LIMIT_TYPE)
 		logger.Debug().Msg("New Application buckets")
 	}
-	if limits.Methods[methodID].limitsDontMatch(headers.Get(METHOD_RATE_LIMIT_HEADER)) {
+	if limits.Methods[methodID].limitsDontMatch(headers.Get(METHOD_RATE_LIMIT_HEADER), r.LimitOffset) {
 		limits.Methods[methodID] = r.parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
 		logger.Debug().Msg("New Method buckets")
 	}
