@@ -104,11 +104,11 @@ func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers http.Hea
 		return 0, Err429ButNoRetryAfterHeader
 	}
 
-	delayF, _ := strconv.ParseFloat(retryAfter, 32)
-	delay := time.Duration(delayF+r.Delay) * time.Second
-
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
+
+	delayF, _ := strconv.ParseFloat(retryAfter, 32)
+	delay := time.Duration(delayF+r.Delay) * time.Second
 
 	limits := r.Region[route]
 	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
