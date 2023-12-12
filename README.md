@@ -120,17 +120,26 @@ func main() {
 - Maybe create a custom BigCache config
 - More tests for the internal client and rate limit
 - Maybe the context usage throughout the project could be improved
+- Maybe more options to customize the rate limiter
+- Exponential backoff for retries
 - Improve DDragon/CDragon support
 
 ## About
 
-This is my first time developing and publishing an API client, I am constantly changing the project as I test and learn new things, please, check the commits for any breaking changes, this will change coming 1.0.0.
+This is my first time developing and publishing an API client, any feedback is appreciated.
 
-These projects helped me learn a lot:
+equinox started as a way for me to learn go, many projects helped me to understand the inner workings of an API client and go itself, here are some of them, check them out.
 
 - [go-github](https://github.com/google/go-github)
 - [golio](https://github.com/KnutZuidema/golio)
+
+Projects not written in go:
+
 - [Riven](https://github.com/MingweiSamuel/Riven)
+- [riot-api](https://github.com/fightmegg/riot-api) and [riot-rate-limiter](https://github.com/fightmegg/riot-rate-limiter)
+- [galeforce](https://github.com/bcho04/galeforce)
+
+Riven's [code generation](https://github.com/MingweiSamuel/Riven/tree/v/2.x.x/riven/srcgen) is used in [equinox](https://github.com/Kyagara/equinox/tree/master/srcgen).
 
 ## Disclaimer
 

@@ -61,8 +61,7 @@ const (
     // Deprecated
     V   Division = "V"
 )
-{{?}}
-{{? clientName === "tft" || clientName === "lol"}}
+
 // Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
 type PlatformRoute string
 
