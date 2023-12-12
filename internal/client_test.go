@@ -297,11 +297,14 @@ func TestGetURLWithAuthorizationHash(t *testing.T) {
 		Header: http.Header{},
 	}
 
-	hash := internal.GetURLWithAuthorizationHash(req)
+	equinoxReq := api.EquinoxRequest{Request: req}
+	equinoxReq.URL = req.URL.String()
+
+	hash := internal.GetURLWithAuthorizationHash(equinoxReq)
 	require.Equal(t, "http://example.com/path", hash)
 
 	req.Header.Set("Authorization", "7267ee00-5696-47b8-9cae-8db3d49c8c33")
-	hash = internal.GetURLWithAuthorizationHash(req)
+	hash = internal.GetURLWithAuthorizationHash(equinoxReq)
 	require.Equal(t, "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d", hash)
 }
 
