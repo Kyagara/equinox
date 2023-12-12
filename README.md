@@ -121,6 +121,7 @@ func main() {
 - More tests for the internal client and rate limit
 - Maybe the context usage throughout the project could be improved
 - Maybe more options to customize the rate limiter
+- Maybe allow for custom logger
 - Exponential backoff for retries
 - Improve DDragon/CDragon support
 
