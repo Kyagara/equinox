@@ -70,7 +70,7 @@ match, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "match_id")
 matches, err := client.VAL.MatchV1.Recent(ctx, val.BR, "competitive")
 
 version, err := client.DDragon.Version.Latest(ctx)
-champion, err := client..CDragon.Champion.ByName(ctx, version, "Aatrox")
+champion, err := client.CDragon.Champion.ByName(ctx, version, "Aatrox")
 
 // Creating a request and executing it with ExecuteRaw which returns []byte but skips checking cache.
 l := client.Internal.Logger("LOL_StatusV4_Platform")
@@ -120,7 +120,7 @@ func main() {
 - Maybe create a custom BigCache config
 - More tests for the internal client and rate limit
 - Maybe the context usage throughout the project could be improved
-- Maybe more options to customize the rate limiter
+- Maybe more options to customize the rate limiter, use percentages instead of flat numbers
 - Maybe allow for custom logger
 - Improve error handling
 - Exponential backoff for retries
