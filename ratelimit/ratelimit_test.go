@@ -151,11 +151,10 @@ func TestCheckRetryAfter(t *testing.T) {
 	}
 
 	headers.Set(ratelimit.RETRY_AFTER_HEADER, "")
-	_, err := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
-	require.Equal(t, ratelimit.Err429ButNoRetryAfterHeader, err)
+	delay := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
+	require.Equal(t, 5*time.Second, delay)
 
 	headers.Set(ratelimit.RETRY_AFTER_HEADER, "10")
-	delay, err := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
-	require.NoError(t, err)
+	delay = r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
 	require.Equal(t, 10*time.Second, delay)
 }
