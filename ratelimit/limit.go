@@ -28,6 +28,8 @@ func NewLimit(limitType string) *Limit {
 
 // Checks if any of the buckets provided are rate limited, and if so, blocks until the next reset.
 func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route any, methodID string) error {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
 	if l.retryAfter > 0 {
 		err := WaitN(ctx, time.Now().Add(l.retryAfter), l.retryAfter)
 		if err != nil {

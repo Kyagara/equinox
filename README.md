@@ -32,7 +32,7 @@
 Get the library:
 
 ```bash
-go get github.com/Kyagara/equinox # or: go get github.com/Kyagara/equinox@master
+go get github.com/Kyagara/equinox # or: go get github.com/Kyagara/equinox@main
 ```
 
 Create a new instance of the Equinox client:
@@ -56,7 +56,7 @@ A default equinox client comes with the default options:
 
 > You can disable rate limiting by passing `nil` in config.RateLimit, this can be useful if you have Equinox passing through a proxy that handles rate limiting.
 
-> See [Cache](https://github.com/Kyagara/equinox/tree/master/cache) and [Rate limit](https://github.com/Kyagara/equinox/tree/master/ratelimit) for more details.
+> See [Cache](https://github.com/Kyagara/equinox/tree/main/cache) and [Rate limit](https://github.com/Kyagara/equinox/tree/main/ratelimit) for more details.
 
 Using different endpoints:
 
@@ -141,7 +141,7 @@ Projects not written in go:
 - [riot-api](https://github.com/fightmegg/riot-api) and [riot-rate-limiter](https://github.com/fightmegg/riot-rate-limiter)
 - [galeforce](https://github.com/bcho04/galeforce)
 
-Riven's [code generation](https://github.com/MingweiSamuel/Riven/tree/v/2.x.x/riven/srcgen) is used in [equinox](https://github.com/Kyagara/equinox/tree/master/srcgen).
+Riven's [code generation](https://github.com/MingweiSamuel/Riven/tree/v/2.x.x/riven/srcgen) is used in [equinox](https://github.com/Kyagara/equinox/tree/main/srcgen).
 
 ## Disclaimer
 

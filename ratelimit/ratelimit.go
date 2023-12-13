@@ -27,8 +27,7 @@ const (
 )
 
 var (
-	Err429ButNoRetryAfterHeader = errors.New("received 429 but no Retry-After header was found")
-	ErrContextDeadlineExceeded  = errors.New("waiting would exceed context deadline")
+	ErrContextDeadlineExceeded = errors.New("waiting would exceed context deadline")
 )
 
 type RateLimit struct {
@@ -64,22 +63,26 @@ func NewLimits() *Limits {
 func (r *RateLimit) Take(ctx context.Context, logger zerolog.Logger, route any, methodID string) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
+
 	limits, ok := r.Region[route]
 	if !ok {
 		limits = NewLimits()
 		r.Region[route] = limits
 	}
+
 	methods, ok := limits.Methods[methodID]
 	if !ok {
 		methods = NewLimit(METHOD_RATE_LIMIT_TYPE)
 		limits.Methods[methodID] = methods
 	}
+
 	if err := limits.App.checkBuckets(ctx, logger, route, methodID); err != nil {
 		return err
 	}
 	if err := methods.checkBuckets(ctx, logger, route, methodID); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -98,10 +101,11 @@ func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, he
 	}
 }
 
-func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers http.Header) (time.Duration, error) {
+// CheckRetryAfter returns the number of seconds to wait before retrying from the Retry-After header, or 5 seconds if not found.
+func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers http.Header) time.Duration {
 	retryAfter := headers.Get(RETRY_AFTER_HEADER)
 	if retryAfter == "" {
-		return 0, Err429ButNoRetryAfterHeader
+		return 5 * time.Second
 	}
 
 	r.mutex.Lock()
@@ -118,7 +122,8 @@ func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers http.Hea
 	} else {
 		limits.Methods[methodID].setDelay(delay)
 	}
-	return delay, nil
+
+	return delay
 }
 
 // WaitN waits for the given duration after checking if the context deadline will be exceeded.

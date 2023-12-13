@@ -174,7 +174,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 		},
 		{
 			name:    "rate limited but no retry-after header found",
-			wantErr: ratelimit.Err429ButNoRetryAfterHeader,
+			wantErr: api.ErrTooManyRequests,
 			code:    429,
 		},
 		{
@@ -216,7 +216,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			if test.name == "rate limited" {
 				config.Retries = 0
 			} else if test.name == "rate limited but no retry-after header found" {
-				config.Retries = 3
+				config.Retries = 1
 			}
 
 			httpmock.RegisterResponder("GET", "https://tests.api.riotgames.com/",
