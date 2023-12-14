@@ -109,7 +109,7 @@ func BenchmarkExecute(b *testing.B) {
 		var data string
 		err = client.Execute(ctx, equinoxReq, &data)
 		require.NoError(b, err)
-		require.Equal(b, `response`, data)
+		require.Equal(b, "response", data)
 	}
 }
 
@@ -145,6 +145,7 @@ func BenchmarkExecuteRaw(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		data, err := client.ExecuteRaw(ctx, equinoxReq)
 		require.NoError(b, err)
+		// string(data) causes an allocation
 		require.Equal(b, `"response"`, string(data))
 	}
 }

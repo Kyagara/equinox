@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// Configuration for the Equinox client.
+// Configuration for the equinox client.
 type EquinoxConfig struct {
 	// http.Client used internally.
 	HTTPClient *http.Client

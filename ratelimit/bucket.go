@@ -47,8 +47,6 @@ func (b *Bucket) check() {
 }
 
 func (b *Bucket) isRateLimited() bool {
-	b.mutex.Lock()
-	defer b.mutex.Unlock()
 	b.check()
 	if b.limit == 0 {
 		return false

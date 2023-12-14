@@ -32,7 +32,7 @@ type Equinox struct {
 	LOR      *lor.Client
 }
 
-// Creates a new Equinox client with the default configuration
+// Creates a new equinox client with the default configuration
 func NewClient(key string) (*Equinox, error) {
 	config, err := DefaultConfig(key)
 	if err != nil {
@@ -41,7 +41,7 @@ func NewClient(key string) (*Equinox, error) {
 	return NewClientWithConfig(config), nil
 }
 
-// Creates a new Equinox client using a custom configuration.
+// Creates a new equinox client using a custom configuration.
 func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
 	client := internal.NewInternalClient(config)
 	equinox := &Equinox{
@@ -58,7 +58,7 @@ func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
 	return equinox
 }
 
-// Returns the default Equinox config with a provided key.
+// Returns the default equinox config with a provided key.
 //
 //   - `LogLevel`   : zerolog.WarnLevel
 //   - `Retry`      : Retry with max retries of 3 and a jitter of 500 milliseconds

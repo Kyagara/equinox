@@ -36,7 +36,7 @@ Get the library:
 go get github.com/Kyagara/equinox # or: go get github.com/Kyagara/equinox@main
 ```
 
-Create a new instance of the Equinox client:
+Create a new instance of the equinox client:
 
 ```go
 client, err := equinox.NewClient("RIOT_API_KEY")
@@ -55,7 +55,7 @@ A default equinox client comes with the default options:
 
 > A different storage can be provided to the client using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil in config.Cache disables caching.
 
-> You can disable rate limiting by passing `nil` in config.RateLimit, this can be useful if you have Equinox passing through a proxy that handles rate limiting.
+> You can disable rate limiting by passing `nil` in config.RateLimit, this can be useful if you have equinox passing through a proxy that handles rate limiting.
 
 > See [Cache](https://github.com/Kyagara/equinox/tree/main/cache) and [Rate limit](https://github.com/Kyagara/equinox/tree/main/ratelimit) for more details.
 
