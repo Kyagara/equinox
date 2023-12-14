@@ -10,7 +10,7 @@ Benchmarks are separated in three files: parallel, data and cache.
 - cache: Cache benchmarks for both BigCache and Redis.
 - data: Benchmarks that use data from the live Riot Games API, located in the `data` folder.
 
-Benchmarks should be using a configuration closest to the one used in production, with cache disabled when possible and loglevel set to warn.
+Benchmarks should be using a configuration closest to the one used in production, with cache disabled when possible and log level set to warn.
 
 ## Integration
 
