@@ -15,6 +15,7 @@ import (
 )
 
 func TestNewLimits(t *testing.T) {
+	t.Parallel()
 	limits := ratelimit.NewLimits()
 	require.NotNil(t, limits)
 	require.NotEmpty(t, limits.App)
@@ -22,6 +23,7 @@ func TestNewLimits(t *testing.T) {
 }
 
 func TestNewInternalRateLimit(t *testing.T) {
+	t.Parallel()
 	rateLimit := ratelimit.NewInternalRateLimit(0, 0.5)
 	require.NotNil(t, rateLimit)
 	require.Empty(t, rateLimit.Region)
@@ -44,6 +46,7 @@ func TestRateLimitCheck(t *testing.T) {
 	}
 
 	t.Run("buckets not created", func(t *testing.T) {
+		t.Parallel()
 		r := &ratelimit.RateLimit{
 			Region: make(map[any]*ratelimit.Limits),
 		}
@@ -58,6 +61,7 @@ func TestRateLimitCheck(t *testing.T) {
 	// These tests should take around 2 seconds each
 
 	t.Run("app rate limited", func(t *testing.T) {
+		t.Parallel()
 		r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
@@ -72,6 +76,7 @@ func TestRateLimitCheck(t *testing.T) {
 	})
 
 	t.Run("method rate limited", func(t *testing.T) {
+		t.Parallel()
 		r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"100:2,200:2"},
@@ -86,6 +91,7 @@ func TestRateLimitCheck(t *testing.T) {
 	})
 
 	t.Run("waiting bucket to reset", func(t *testing.T) {
+		t.Parallel()
 		r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
@@ -101,6 +107,7 @@ func TestRateLimitCheck(t *testing.T) {
 }
 
 func TestLimitsDontMatch(t *testing.T) {
+	t.Parallel()
 	client := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",
@@ -133,6 +140,7 @@ func TestLimitsDontMatch(t *testing.T) {
 }
 
 func TestCheckRetryAfter(t *testing.T) {
+	t.Parallel()
 	r := &ratelimit.RateLimit{
 		Region: map[any]*ratelimit.Limits{
 			"route": {
@@ -152,7 +160,7 @@ func TestCheckRetryAfter(t *testing.T) {
 
 	headers.Set(ratelimit.RETRY_AFTER_HEADER, "")
 	delay := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
-	require.Equal(t, 5*time.Second, delay)
+	require.Equal(t, 2*time.Second, delay)
 
 	headers.Set(ratelimit.RETRY_AFTER_HEADER, "10")
 	delay = r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)

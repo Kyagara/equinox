@@ -24,7 +24,7 @@ func NewTestEquinoxConfig() api.EquinoxConfig {
 		Key:        "RGAPI-TEST",
 		LogLevel:   zerolog.DebugLevel,
 		HTTPClient: &http.Client{},
-		Retries:    0,
+		Retry:      api.Retry{},
 		Cache:      &cache.Cache{},
 		RateLimit:  &ratelimit.RateLimit{},
 	}
@@ -32,6 +32,7 @@ func NewTestEquinoxConfig() api.EquinoxConfig {
 
 // Reads a json file and returns its content as []byte.
 func ReadFile(b *testing.B, filename string) []byte {
+	b.Helper()
 	data, err := os.ReadFile(filename)
 	require.NoError(b, err)
 	return data

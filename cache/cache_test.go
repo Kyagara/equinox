@@ -9,6 +9,7 @@ import (
 )
 
 func TestCacheMethods(t *testing.T) {
+	t.Parallel()
 	cacheStore := &cache.Cache{}
 	require.NotNil(t, cacheStore)
 

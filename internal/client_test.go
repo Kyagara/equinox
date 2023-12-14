@@ -20,6 +20,7 @@ import (
 )
 
 func TestNewInternalClient(t *testing.T) {
+	t.Parallel()
 	internalClient := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NotEmpty(t, internalClient)
 
@@ -173,7 +174,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			code:    429,
 		},
 		{
-			name:    "rate limited but no retry-after header found",
+			name:    "rate limited, retry and retry-after header not found",
 			wantErr: api.ErrTooManyRequests,
 			code:    429,
 		},
@@ -198,31 +199,18 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			code:    504,
 		},
 		{
-			name: "unknown error",
-			wantErr: api.HTTPErrorResponse{
-				Status: api.Status{
-					Message:    "Unknown error",
-					StatusCode: 418,
-				},
-			},
-			code: 418,
+			name:    "unknown error",
+			wantErr: fmt.Errorf("unexpected status code: %d", 418),
+			code:    418,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			config := util.NewTestEquinoxConfig()
-			config.RateLimit = ratelimit.NewInternalRateLimit(0, 0.5)
-			if test.name == "rate limited" {
-				config.Retries = 0
-			} else if test.name == "rate limited but no retry-after header found" {
-				config.Retries = 1
-			}
-
 			httpmock.RegisterResponder("GET", "https://tests.api.riotgames.com/",
 				httpmock.NewBytesResponder(test.code, []byte(`{}`)))
 
-			internal := internal.NewInternalClient(config)
+			internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
 			l := internal.Logger("client_endpoint_method")
 			ctx := context.Background()
 			equinoxReq, err := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", "", nil)
@@ -234,42 +222,39 @@ func TestInternalClientErrorResponses(t *testing.T) {
 	}
 }
 
-func TestInternalClientRetries(t *testing.T) {
+func TestInternalClientRetryableErrors(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
 	config := util.NewTestEquinoxConfig()
-	config.Retries = 3
+	config.Retry = api.Retry{MaxRetries: 1, Jitter: 500}
 	config.RateLimit = ratelimit.NewInternalRateLimit(0, 0.5)
-	internal := internal.NewInternalClient(config)
+	i := internal.NewInternalClient(config)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
 		httpmock.NewBytesResponder(429, []byte(`{}`)).HeaderSet(map[string][]string{
 			"Retry-After": {"1"},
-		}))
-
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
-		httpmock.NewBytesResponder(200, []byte(`{}`)))
+		}).Times(4)) // 1 initial request + 3 retries
 
 	res := lol.PlatformDataV4DTO{}
-	l := internal.Logger("client_endpoint_method")
+	l := i.Logger("client_endpoint_method")
 
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	equinoxReq, err := internal.Request(nil, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	equinoxReq, err := i.Request(nil, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	err = internal.Execute(nil, equinoxReq, &res)
+	err = i.Execute(nil, equinoxReq, &res)
 	require.Error(t, err)
 
-	// This will take 1 second
 	ctx := context.Background()
-	equinoxReq, err = internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	equinoxReq, err = i.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
 	require.NoError(t, err)
-	err = internal.Execute(ctx, equinoxReq, &res)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+
+	// This will take 2.5 seconds
+	err = i.Execute(ctx, equinoxReq, &res)
+	require.Equal(t, internal.ErrMaxRetries, err)
 }
 
 func TestGetDDragonLOLVersions(t *testing.T) {
@@ -288,6 +273,7 @@ func TestGetDDragonLOLVersions(t *testing.T) {
 }
 
 func TestGetURLWithAuthorizationHash(t *testing.T) {
+	t.Parallel()
 	req := &http.Request{
 		URL: &url.URL{
 			Scheme: "http",

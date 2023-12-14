@@ -11,6 +11,7 @@ import (
 )
 
 func TestNewBigCache(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	config := bigcache.DefaultConfig(5 * time.Minute)
 	c, err := cache.NewBigCache(ctx, config)
@@ -23,6 +24,7 @@ func TestNewBigCache(t *testing.T) {
 }
 
 func TestBigCacheMethods(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
 	require.NoError(t, err)
