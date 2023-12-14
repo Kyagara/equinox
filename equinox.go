@@ -61,7 +61,7 @@ func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
 // Returns the default Equinox config with a provided key.
 //
 //   - `LogLevel`   : zerolog.WarnLevel
-//   - `Retry`      : Retry with max retries of 3 and a jitter of 500
+//   - `Retry`      : Retry with max retries of 3 and a jitter of 500 milliseconds
 //   - `HTTPClient` : http.Client with timeout of 15 seconds
 //   - `Cache`      : BigCache with TTL of 4 minutes
 //   - `RateLimit`  : Internal rate limit without limit offset and a delay of 0.5
