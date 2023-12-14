@@ -21,9 +21,10 @@
   - Valorant
   - Legends of Runeterra
 - Data Dragon and Community Dragon (Incomplete)
-- Rate limit (WIP)
-- Caching
-- Retry `n` times
+- Rate limit (internal, WIP)
+- Caching (in-memory or Redis)
+- Logging
+- Exponential backoff
 
 > equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json) package, read more about it [here](https://github.com/golang/go/discussions/63397).
 
@@ -69,17 +70,18 @@ match, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "match_id")
 // This method uses a val.PlatformRoute. May not be available in your policy.
 matches, err := client.VAL.MatchV1.Recent(ctx, val.BR, "competitive")
 
+// Interacting with DDragon.
 version, err := client.DDragon.Version.Latest(ctx)
 champion, err := client.CDragon.Champion.ByName(ctx, version, "Aatrox")
 
-// Creating a request and executing it with ExecuteRaw which returns []byte but skips checking cache.
+// Interacting with the cache.
+data, err := client.Cache.Get("https://...")
+err := client.Cache.Set("https://...", data)
+
+// Using ExecuteRaw which returns []byte but skips checking cache.
 l := client.Internal.Logger("LOL_StatusV4_Platform")
 req, err := client.Internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
 data, err := client.Internal.ExecuteRaw(ctx, req)
-
-// You can also interact with the cache.
-data, err := client.Cache.Get("https://...")
-err := client.Cache.Set("https://...", data)
 ```
 
 ## Example
@@ -122,7 +124,7 @@ func main() {
 - Maybe the context usage throughout the project could be improved
 - Maybe more options to customize the rate limiter, use percentages instead of flat numbers
 - Maybe allow for custom logger
-- Improve error handling
+- Improve error handling, add wrapped errors
 - Improve DDragon/CDragon support
 
 ## About
