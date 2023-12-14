@@ -89,6 +89,8 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 }
 
 func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (api.EquinoxRequest, error) {
+	logger.Debug().Msg("Creating request")
+
 	if ctx == nil {
 		return api.EquinoxRequest{}, errContextIsNil
 	}
@@ -134,6 +136,8 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	if ctx == nil {
 		return errContextIsNil
 	}
+
+	equinoxReq.Logger.Debug().Msg("Execute")
 
 	url := GetURLWithAuthorizationHash(equinoxReq)
 
@@ -187,6 +191,8 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 	if ctx == nil {
 		return nil, errContextIsNil
 	}
+
+	equinoxReq.Logger.Debug().Msg("ExecuteRaw")
 
 	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
 		err := c.ratelimit.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
