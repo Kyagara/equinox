@@ -24,7 +24,7 @@ func TestNewLimits(t *testing.T) {
 
 func TestNewInternalRateLimit(t *testing.T) {
 	t.Parallel()
-	rateLimit := ratelimit.NewInternalRateLimit(0, 0.5)
+	rateLimit := ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
 	require.NotNil(t, rateLimit)
 	require.Empty(t, rateLimit.Region)
 	require.True(t, rateLimit.Enabled)
@@ -108,34 +108,52 @@ func TestRateLimitCheck(t *testing.T) {
 
 func TestLimitsDontMatch(t *testing.T) {
 	t.Parallel()
-	client := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	config := util.NewTestEquinoxConfig()
+	config.RateLimit = ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
+	client := internal.NewInternalClient(config)
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",
 		MethodID: "method",
 		Logger:   client.Logger("client_endpoint_method"),
 	}
 
-	r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
+	r := config.RateLimit
 	headers := http.Header{
-		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
-		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},
+		ratelimit.APP_RATE_LIMIT_HEADER:          []string{"20:2"},
+		ratelimit.APP_RATE_LIMIT_COUNT_HEADER:    []string{"1:2"},
+		ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"20:2"},
+		ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},
 	}
 
-	ctx, c := context.WithTimeout(context.Background(), 1*time.Second)
-	defer c()
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(1*time.Second))
+	defer cancel()
+
+	// Used here just to populate the Limits
 	err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.NoError(t, err)
+
 	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
+
+	// Both requests shouldn't be rate limited or block
+	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+	require.NoError(t, err)
 	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.NoError(t, err)
 
 	headers = http.Header{
-		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"1:2"},
+		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"3:2"},
 		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},
 	}
+	// Updating limits
 	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
+
+	// Should have no issue
 	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-	// The buckets should've been updated, so this request should be rate limited now
+	require.NoError(t, err)
+
+	// The buckets should've been updated, so this request should be rate limited and block
+	// Since we have a deadline, this should return a DeadlineExceeded error
+	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
@@ -46,7 +47,7 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
 	config.Retry = api.Retry{MaxRetries: 3}
-	config.RateLimit = ratelimit.NewInternalRateLimit(1, 0.5)
+	config.RateLimit = ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
 
 	client := equinox.NewClientWithConfig(config)
 

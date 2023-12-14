@@ -68,7 +68,7 @@ func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route a
 }
 
 // Checks if the limits given in the header match the current buckets.
-func (l *Limit) limitsDontMatch(limitHeader string, limitOffset int) bool {
+func (l *Limit) limitsDontMatch(limitHeader string) bool {
 	if limitHeader == "" {
 		return false
 	}
@@ -81,7 +81,7 @@ func (l *Limit) limitsDontMatch(limitHeader string, limitOffset int) bool {
 			return true
 		}
 		limit, interval := getNumbersFromPair(pair)
-		if l.buckets[i].limit != limit-limitOffset || l.buckets[i].interval != time.Duration(interval)*time.Second {
+		if l.buckets[i].baseLimit != limit || l.buckets[i].interval != interval {
 			return true
 		}
 	}

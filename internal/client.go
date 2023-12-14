@@ -77,7 +77,7 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 		ratelimit:          config.RateLimit,
 		maxRetries:         config.Retry.MaxRetries,
 		isRetryEnabled:     config.Retry.MaxRetries > 0,
-		jitter:             time.Duration(config.Retry.Jitter) * time.Millisecond,
+		jitter:             config.Retry.Jitter,
 		isCacheEnabled:     config.Cache.TTL != 0,
 		isRateLimitEnabled: config.RateLimit.Enabled,
 	}
@@ -163,20 +163,23 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		return jsonv2.UnmarshalRead(response.Body, target)
 	}
 
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return err
-	}
-
 	if equinoxReq.Request.Method == http.MethodGet {
-		if err := c.cache.Set(ctx, url, body); err != nil {
+		body, err := io.ReadAll(response.Body)
+		if err != nil {
+			return err
+		}
+
+		err = c.cache.Set(ctx, url, body)
+		if err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
 		} else {
 			equinoxReq.Logger.Debug().Msg("Cache set")
 		}
+
+		return jsonv2.Unmarshal(body, target)
 	}
 
-	return jsonv2.Unmarshal(body, target)
+	return jsonv2.UnmarshalRead(response.Body, target)
 }
 
 // ExecuteRaw executes a request without checking cache and returns []byte

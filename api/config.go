@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/ratelimit"
@@ -28,7 +29,7 @@ type Retry struct {
 	// 0 disables retries
 	MaxRetries int
 	// In milliseconds
-	Jitter int
+	Jitter time.Duration
 }
 
 func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
@@ -48,6 +49,6 @@ func (r Retry) MarshalZerologObject(encoder *zerolog.Event) {
 		encoder.Int("max_retries", r.MaxRetries)
 	}
 	if r.Jitter > 0 {
-		encoder.Int("jitter", r.Jitter)
+		encoder.Dur("jitter", r.Jitter)
 	}
 }

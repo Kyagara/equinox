@@ -64,7 +64,7 @@ func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
 //   - `Retry`      : Retry with max retries of 3 and a jitter of 500 milliseconds
 //   - `HTTPClient` : http.Client with timeout of 15 seconds
 //   - `Cache`      : BigCache with TTL of 4 minutes
-//   - `RateLimit`  : Internal rate limit without limit offset and a delay of 0.5
+//   - `RateLimit`  : Internal rate limiter with a limit factor of 1.0 and interval overhead of 1 second
 func DefaultConfig(key string) (api.EquinoxConfig, error) {
 	ctx := context.Background()
 	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
@@ -77,9 +77,9 @@ func DefaultConfig(key string) (api.EquinoxConfig, error) {
 		HTTPClient: &http.Client{
 			Timeout: 15 * time.Second,
 		},
-		Retry:     api.Retry{MaxRetries: 3, Jitter: 500},
+		Retry:     api.Retry{MaxRetries: 3, Jitter: 500 * time.Millisecond},
 		Cache:     cache,
-		RateLimit: ratelimit.NewInternalRateLimit(0, 0.5),
+		RateLimit: ratelimit.NewInternalRateLimit(1.0, 1*time.Second),
 	}
 	return config, nil
 }

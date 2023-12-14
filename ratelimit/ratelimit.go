@@ -3,6 +3,7 @@ package ratelimit
 import (
 	"context"
 	"errors"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -34,15 +35,21 @@ type RateLimit struct {
 	// 'any' is used here because routes can be PlatformRoute, RegionalRoute...
 	Region  map[any]*Limits
 	Enabled bool
-	// Decreases all limits by this amount.
-	LimitOffset int
-	// Delay to add in seconds before retrying.
-	Delay float64
-	mutex sync.Mutex
+	// Factor to be applied to the limit. E.g. if set to 0.5, the limit will be reduced by 50%.
+	LimitUsageFactor float32
+	// Delay in milliseconds to be add to reset intervals.
+	IntervalOverhead time.Duration
+	mutex            sync.Mutex
 }
 
-func NewInternalRateLimit(limitOffset int, delay float64) *RateLimit {
-	return &RateLimit{Region: make(map[any]*Limits), LimitOffset: limitOffset, Delay: delay, Enabled: true}
+func NewInternalRateLimit(limitUsageFactor float32, intervalOverhead time.Duration) *RateLimit {
+	if limitUsageFactor < 0.0 || limitUsageFactor > 1.0 {
+		limitUsageFactor = 1.0
+	}
+	if intervalOverhead < 0 {
+		intervalOverhead = 1 * time.Second
+	}
+	return &RateLimit{Region: make(map[any]*Limits), LimitUsageFactor: limitUsageFactor, IntervalOverhead: intervalOverhead, Enabled: true}
 }
 
 // Limits in a region.
@@ -93,12 +100,12 @@ func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, he
 	defer r.mutex.Unlock()
 
 	limits := r.Region[route]
-	if limits.App.limitsDontMatch(headers.Get(APP_RATE_LIMIT_HEADER), r.LimitOffset) {
+	if limits.App.limitsDontMatch(headers.Get(APP_RATE_LIMIT_HEADER)) {
 		limits.App = r.parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER), APP_RATE_LIMIT_TYPE)
 		logger.Debug().Msg("New Application buckets")
 	}
 
-	if limits.Methods[methodID].limitsDontMatch(headers.Get(METHOD_RATE_LIMIT_HEADER), r.LimitOffset) {
+	if limits.Methods[methodID].limitsDontMatch(headers.Get(METHOD_RATE_LIMIT_HEADER)) {
 		limits.Methods[methodID] = r.parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
 		logger.Debug().Msg("New Method buckets")
 	}
@@ -115,7 +122,7 @@ func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers http.Hea
 	defer r.mutex.Unlock()
 
 	delayF, _ := strconv.ParseFloat(retryAfter, 32)
-	delay := time.Duration(delayF+r.Delay) * time.Second
+	delay := time.Duration(delayF+0.5) * time.Second
 
 	limits := r.Region[route]
 	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
@@ -157,18 +164,19 @@ func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitTy
 	rates := make([]*Bucket, len(limits))
 
 	for i := range limits {
-		limit, seconds := getNumbersFromPair(limits[i])
+		baseLimit, interval := getNumbersFromPair(limits[i])
 		count, _ := getNumbersFromPair(counts[i])
-		rates[i] = NewBucket(time.Duration(seconds), limit-r.LimitOffset, limit-count)
+		limit := int(math.Floor(math.Max(1, float64(baseLimit)*float64(r.LimitUsageFactor))))
+		rates[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, limit, limit-count)
 	}
 
 	limit.buckets = rates
 	return limit
 }
 
-func getNumbersFromPair(pair string) (int, int) {
+func getNumbersFromPair(pair string) (int, time.Duration) {
 	numbers := strings.Split(pair, ":")
 	interval, _ := strconv.Atoi(numbers[1])
 	limitOrCount, _ := strconv.Atoi(numbers[0])
-	return limitOrCount, interval
+	return limitOrCount, time.Duration(interval) * time.Second
 }

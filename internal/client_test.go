@@ -2,6 +2,7 @@ package internal_test
 
 import (
 	"context"
+	"time"
 
 	"fmt"
 	"io"
@@ -215,9 +216,11 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			ctx := context.Background()
 			equinoxReq, err := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", "", nil)
 			require.NoError(t, err)
-			var gotData interface{}
-			gotErr := internal.Execute(ctx, equinoxReq, gotData)
-			require.Equal(t, test.wantErr, gotErr)
+			var data interface{}
+			err = internal.Execute(ctx, equinoxReq, data)
+			require.Equal(t, test.wantErr, err)
+			_, err = internal.ExecuteRaw(ctx, equinoxReq)
+			require.Equal(t, test.wantErr, err)
 		})
 	}
 }
@@ -227,8 +230,8 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 
 	config := util.NewTestEquinoxConfig()
-	config.Retry = api.Retry{MaxRetries: 1, Jitter: 500}
-	config.RateLimit = ratelimit.NewInternalRateLimit(0, 0.5)
+	config.Retry = api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond}
+	config.RateLimit = ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
 	i := internal.NewInternalClient(config)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
@@ -246,6 +249,10 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
 	err = i.Execute(nil, equinoxReq, &res)
+	require.Error(t, err)
+	//lint:ignore SA1012 Testing if ctx is nil
+	//nolint:staticcheck
+	_, err = i.ExecuteRaw(nil, equinoxReq)
 	require.Error(t, err)
 
 	ctx := context.Background()
