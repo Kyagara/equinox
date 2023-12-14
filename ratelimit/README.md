@@ -13,13 +13,14 @@ You can create an InternalRateLimit with `NewInternalRateLimit()`. RateLimit inc
 
 ```go
 type RateLimit struct {
-	Region  	map[any]*Limits
-	Enabled 	bool
-	// Decreases all limits by this amount.
-	LimitOffset int
-	// Delay to add in seconds before retrying.
-	Delay       float64
-	mutex       sync.Mutex
+	// 'any' is used here because routes can be PlatformRoute, RegionalRoute...
+	Region  map[any]*Limits
+	Enabled bool
+	// Factor to be applied to the limit. E.g. if set to 0.5, the limit will be reduced by 50%.
+	LimitUsageFactor float32
+	// Delay in milliseconds to be add to reset intervals.
+	IntervalOverhead time.Duration
+	mutex            sync.Mutex
 }
 ```
 
@@ -41,16 +42,18 @@ type Bucket struct {
 }
 ```
 
-When creating a bucket, `interval` is the time in seconds between resets, `limit` is the maximum number of tokens, and `tokens` is the current number of tokens.
+When creating a bucket, `interval` is the time in seconds between resets, `limit` is the maximum number of tokens taking into account the 'LimitUsageFactor', and `tokens` is the current number of tokens.
 
 ```go
-func NewBucket(interval time.Duration, limit int, tokens int) *Bucket {
+func NewBucket(interval time.Duration, intervalOverhead time.Duration, baseLimit int, limit int, tokens int) *Bucket {
 	return &Bucket{
-		interval: interval * time.Second,
-		limit:    limit,
-		tokens:   tokens,
-		next:     time.Now().Add(interval * time.Second),
-		mutex:    sync.Mutex{},
+		interval:         interval,
+		intervalOverhead: intervalOverhead,
+		baseLimit:        baseLimit,
+		limit:            limit,
+		tokens:           tokens,
+		next:             time.Now().Add(interval + intervalOverhead),
+		mutex:            sync.Mutex{},
 	}
 }
 ```
@@ -60,17 +63,24 @@ When initializing a bucket, the current amount of tokens will be the same as the
 ```go
 func parseHeaders(limitHeader string, countHeader string) []*Bucket {
 	if limitHeader == "" || countHeader == "" {
-		return []*Bucket{}
+		return NewLimit(limitType)
 	}
+
+	limit := NewLimit(limitType)
+
 	limits := strings.Split(limitHeader, ",")
 	counts := strings.Split(countHeader, ",")
 	rates := make([]*Bucket, len(limits))
+
 	for i := range limits {
-		limit, seconds := getNumbersFromPair(limits[i])
+		baseLimit, interval := getNumbersFromPair(limits[i])
 		count, _ := getNumbersFromPair(counts[i])
-		rates[i] = NewBucket(time.Duration(seconds), limit, limit-count)
+		limit := int(math.Floor(math.Max(1, float64(baseLimit)*float64(r.LimitUsageFactor))))
+		rates[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, limit, limit-count)
 	}
-	return rates
+
+	limit.buckets = rates
+	return limit
 }
 ```
 

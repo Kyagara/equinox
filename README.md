@@ -49,7 +49,7 @@ A default equinox client comes with the default options:
 - **Retry**: Retry object with a limit of 3 and jitter of 500 milliseconds.
 - **HTTPClient**: `http.Client` with a timeout of 15 seconds.
 - **Cache**: `BigCache` with an eviction time of 4 minutes.
-- **RateLimit**: Internal rate limiter without limit offset and a delay of 0.5.
+- **RateLimit**: Internal rate limiter with a limit factor of 1.0 and interval overhead of 1 second.
 
 > A custom Client can be created using `equinox.NewClientWithConfig()`.
 
@@ -122,7 +122,7 @@ func main() {
 - Maybe create a custom BigCache config
 - More tests for the internal client and rate limit
 - Maybe the context usage throughout the project could be improved
-- Maybe more options to customize the rate limiter, use percentages instead of flat numbers
+- Maybe more options to customize the rate limiter
 - Maybe allow for custom logger
 - Improve error handling, add wrapped errors
 - Improve DDragon/CDragon support
