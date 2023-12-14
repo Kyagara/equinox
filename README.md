@@ -45,7 +45,7 @@ A default equinox client comes with the default options:
 
 - **Key**: The provided key.
 - **LogLevel**: `zerolog.WarnLevel`. `zerolog.Disabled` disables logging.
-- **Retries**: Retries a request n times if the API returns an error, defaults to 3.
+- **Retry**: Retry object with a limit of 3 and jitter of 500 milliseconds.
 - **HTTPClient**: `http.Client` with a timeout of 15 seconds.
 - **Cache**: `BigCache` with an eviction time of 4 minutes.
 - **RateLimit**: Internal rate limiter without limit offset and a delay of 0.5.
@@ -123,7 +123,6 @@ func main() {
 - Maybe more options to customize the rate limiter, use percentages instead of flat numbers
 - Maybe allow for custom logger
 - Improve error handling
-- Exponential backoff for retries
 - Improve DDragon/CDragon support
 
 ## About
