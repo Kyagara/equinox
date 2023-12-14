@@ -102,7 +102,7 @@ func TestRateLimitWithMock(t *testing.T) {
 	config := util.NewTestEquinoxConfig()
 	config.RateLimit = ratelimit.NewInternalRateLimit(0, 0.5)
 	config.LogLevel = zerolog.WarnLevel
-	config.Retries = 3
+	config.Retry = api.Retry{MaxRetries: 3}
 
 	client := equinox.NewClientWithConfig(config)
 

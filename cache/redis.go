@@ -2,7 +2,6 @@ package cache
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -21,11 +20,11 @@ type RedisStore struct {
 }
 
 func (s *RedisStore) Get(ctx context.Context, key string) ([]byte, error) {
-	item := s.client.Get(ctx, key)
-	if errors.Is(item.Err(), redis.Nil) {
+	item, err := s.client.Get(ctx, key).Bytes()
+	if err == redis.Nil {
 		return nil, nil
 	}
-	return item.Bytes()
+	return item, err
 }
 
 func (s *RedisStore) Set(ctx context.Context, key string, value []byte) error {

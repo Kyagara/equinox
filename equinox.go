@@ -77,7 +77,7 @@ func DefaultConfig(key string) (api.EquinoxConfig, error) {
 		HTTPClient: &http.Client{
 			Timeout: 15 * time.Second,
 		},
-		Retries:   3,
+		Retry:     api.Retry{MaxRetries: 3, Jitter: 500},
 		Cache:     cache,
 		RateLimit: ratelimit.NewInternalRateLimit(0, 0.5),
 	}

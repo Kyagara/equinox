@@ -14,9 +14,9 @@ import (
 func TestRiotAccountByID(t *testing.T) {
 	checkIfOnlyDataDragon(t)
 	ctx := context.Background()
-	account, err := client.Riot.AccountV1.ByRiotID(ctx, api.AMERICAS, "Loveable Senpai", "SUN")
+	account, err := client.Riot.AccountV1.ByRiotID(ctx, api.AMERICAS, "Kevin", "FFXIV")
 	require.NoError(t, err)
 	require.NotEmpty(t, account, "expecting non-nil account")
-	require.Equal(t, "Loveable Senpai", account.GameName, "expecting gameName to be equal to Loveable Senpai")
-	require.Equal(t, "SUN", account.TagLine, "expecting tagLine to be equal to SUN")
+	require.Equal(t, "Kevin", account.GameName, "expecting gameName to be equal to Kevin")
+	require.Equal(t, "FFXIV", account.TagLine, "expecting tagLine to be equal to FFXIV")
 }

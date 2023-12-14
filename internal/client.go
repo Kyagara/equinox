@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"slices"
 	"sync"
@@ -27,14 +28,19 @@ type Client struct {
 	ratelimit          *ratelimit.RateLimit
 	key                string
 	maxRetries         int
+	jitter             time.Duration
 	isCacheEnabled     bool
 	isRateLimitEnabled bool
+	isRetryEnabled     bool
 }
+
+var (
+	ErrMaxRetries = errors.New("max retries reached")
+)
 
 var (
 	errContextIsNil   = errors.New("context must be non-nil")
 	errKeyNotProvided = errors.New("api key not provided")
-	errServerError    = errors.New("server error")
 
 	cdnHeaders = http.Header{
 		"Accept":     {"application/json"},
@@ -69,9 +75,14 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 		},
 		cache:              config.Cache,
 		ratelimit:          config.RateLimit,
-		maxRetries:         config.Retries,
+		maxRetries:         config.Retry.MaxRetries,
+		isRetryEnabled:     config.Retry.MaxRetries > 0,
+		jitter:             time.Duration(config.Retry.Jitter) * time.Millisecond,
 		isCacheEnabled:     config.Cache.TTL != 0,
 		isRateLimitEnabled: config.RateLimit.Enabled,
+	}
+	if config.Retry.MaxRetries == 0 {
+		config.Retry.MaxRetries = 1
 	}
 	apiHeaders.Set("X-Riot-Token", config.Key)
 	return client
@@ -104,7 +115,6 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 		Route:    route,
 		URL:      url,
 		Request:  request,
-		Retries:  0,
 		IsCDN:    slices.Contains(cdns, request.URL.Host),
 	}
 
@@ -143,34 +153,12 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		}
 	}
 
-	equinoxReq.Logger.Info().Msg("Sending request")
-	response, err := c.http.Do(equinoxReq.Request)
+	response, err := c.Do(ctx, equinoxReq)
 	if err != nil {
 		return err
 	}
 	defer response.Body.Close()
 
-	delay, err := c.checkResponse(equinoxReq, response)
-	if errors.Is(err, errServerError) {
-		equinoxReq.Retries++
-		return c.Execute(ctx, equinoxReq, target)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	if delay > 0 {
-		equinoxReq.Logger.Info().Dur("sleep", delay).Msg("Retrying request after sleep")
-		err := ratelimit.WaitN(ctx, time.Now().Add(delay), delay)
-		if err != nil {
-			return err
-		}
-		equinoxReq.Retries++
-		return c.Execute(ctx, equinoxReq, target)
-	}
-
-	equinoxReq.Logger.Info().Msg("Request successful")
 	if !c.isCacheEnabled {
 		return jsonv2.UnmarshalRead(response.Body, target)
 	}
@@ -187,6 +175,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 			equinoxReq.Logger.Debug().Msg("Cache set")
 		}
 	}
+
 	return jsonv2.Unmarshal(body, target)
 }
 
@@ -203,70 +192,72 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 		}
 	}
 
-	equinoxReq.Logger.Info().Msg("Sending request")
-	response, err := c.http.Do(equinoxReq.Request)
+	response, err := c.Do(ctx, equinoxReq)
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
 
-	delay, err := c.checkResponse(equinoxReq, response)
-	if errors.Is(err, errServerError) {
-		equinoxReq.Retries++
-		return c.ExecuteRaw(ctx, equinoxReq)
-	}
-
-	if err != nil {
-		return nil, err
-	}
-
-	if delay > 0 {
-		equinoxReq.Logger.Info().Dur("sleep", delay).Msg("Retrying request after sleep")
-		err := ratelimit.WaitN(ctx, time.Now().Add(delay), delay)
-		if err != nil {
-			return nil, err
-		}
-		equinoxReq.Retries++
-		return c.ExecuteRaw(ctx, equinoxReq)
-	}
-
-	equinoxReq.Logger.Info().Msg("Request successful")
 	return io.ReadAll(response.Body)
 }
 
-func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, error) {
+// Do sends the request n times from c.maxRetries and returns the response
+//
+// The loop will always run at least once
+func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.Response, error) {
+	equinoxReq.Logger.Info().Msg("Sending request")
+	for i := 0; i < c.maxRetries+1; i++ {
+		response, err := c.http.Do(equinoxReq.Request)
+		if err != nil {
+			return nil, err
+		}
+
+		delay, retryable, err := c.checkResponse(equinoxReq, response)
+		if err == nil && delay == 0 {
+			equinoxReq.Logger.Info().Msg("Request successful")
+			return response, nil
+		}
+
+		if !c.isRetryEnabled || !retryable {
+			equinoxReq.Logger.Error().Err(err).Msg("Request failed")
+			return nil, err
+		}
+
+		if i < c.maxRetries {
+			sleep := delay*time.Duration(math.Pow(2, float64(i+1))) + c.jitter
+			equinoxReq.Logger.Warn().Str("status_code", response.Status).Dur("sleep", sleep).Msg("Retrying request")
+			err := ratelimit.WaitN(ctx, time.Now().Add(sleep), sleep)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	equinoxReq.Logger.Error().Err(ErrMaxRetries).Msg("Request failed")
+	return nil, ErrMaxRetries
+}
+
+func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, bool, error) {
 	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
 		c.ratelimit.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, response.Header)
 	}
 
 	// 2xx responses
 	if response.StatusCode >= 200 && response.StatusCode < 300 {
-		return 0, nil
+		return 0, false, nil
 	}
 
-	// 4xx and 5xx responses will be retried
-	if equinoxReq.Retries < c.maxRetries {
-		if response.StatusCode == http.StatusTooManyRequests {
-			equinoxReq.Logger.Warn().Msg("Received 429 response")
-			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, response.Header), nil
+	err, ok := api.StatusCodeToError[response.StatusCode]
+	if ok {
+		// 4xx and 5xx responses will be retried
+		if response.StatusCode == http.StatusTooManyRequests || (response.StatusCode >= 500 && response.StatusCode < 600) {
+			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, response.Header), true, err
 		}
 
-		if response.StatusCode >= 500 && response.StatusCode < 600 {
-			equinoxReq.Logger.Warn().Str("status_code", response.Status).Msg("Retrying request")
-			return 0, errServerError
-		}
+		return 0, false, err
 	}
 
-	if err, ok := api.StatusCodeToError[response.StatusCode]; ok {
-		return 0, err
-	}
-
-	return 0, api.HTTPErrorResponse{
-		Status: api.Status{
-			Message:    "Unknown error",
-			StatusCode: response.StatusCode,
-		},
-	}
+	return 0, false, fmt.Errorf("unexpected status code: %d", response.StatusCode)
 }
 
 func (c *Client) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {

@@ -2,7 +2,6 @@ package cache
 
 import (
 	"context"
-	"errors"
 
 	"github.com/allegro/bigcache/v3"
 )
@@ -20,7 +19,7 @@ type BigCacheStore struct {
 
 func (s *BigCacheStore) Get(_ctx context.Context, key string) ([]byte, error) {
 	item, err := s.client.Get(key)
-	if errors.Is(err, bigcache.ErrEntryNotFound) {
+	if err == bigcache.ErrEntryNotFound {
 		return nil, nil
 	}
 	return item, err

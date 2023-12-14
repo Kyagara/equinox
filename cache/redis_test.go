@@ -12,6 +12,7 @@ import (
 )
 
 func TestNewRedis(t *testing.T) {
+	t.Parallel()
 	s := miniredis.RunT(t)
 	require.NotEmpty(t, s)
 	ctx := context.Background()
@@ -28,6 +29,7 @@ func TestNewRedis(t *testing.T) {
 }
 
 func TestRedisMethods(t *testing.T) {
+	t.Parallel()
 	s := miniredis.RunT(t)
 	require.NotEmpty(t, s)
 	ctx := context.Background()

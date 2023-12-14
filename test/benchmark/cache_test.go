@@ -79,8 +79,8 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 		HTTPClient: &http.Client{
 			Timeout: 15 * time.Second,
 		},
-		Retries: 3,
-		Cache:   cache,
+		Retry: api.Retry{MaxRetries: 3},
+		Cache: cache,
 	}
 	client := equinox.NewClientWithConfig(config)
 
@@ -113,7 +113,7 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 
 	config := util.NewTestEquinoxConfig()
 	config.LogLevel = zerolog.WarnLevel
-	config.Retries = 3
+	config.Retry = api.Retry{MaxRetries: 3}
 
 	client := equinox.NewClientWithConfig(config)
 

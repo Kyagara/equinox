@@ -104,11 +104,11 @@ func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, he
 	}
 }
 
-// CheckRetryAfter returns the number of seconds to wait before retrying from the Retry-After header, or 5 seconds if not found.
+// CheckRetryAfter returns the number of seconds to wait before retrying from the Retry-After header, or 2 seconds if not found.
 func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers http.Header) time.Duration {
 	retryAfter := headers.Get(RETRY_AFTER_HEADER)
 	if retryAfter == "" {
-		return 5 * time.Second
+		return 2 * time.Second
 	}
 
 	r.mutex.Lock()
