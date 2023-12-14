@@ -38,54 +38,50 @@ func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route a
 		l.retryAfter = 0
 	}
 
-	var limited []*Bucket
-	for _, bucket := range l.buckets {
-		if bucket.isRateLimited() {
-			limited = append(limited, bucket)
-		}
-	}
-
-	for i := len(limited) - 1; i >= 0; i-- {
-		bucket := limited[i]
-		logger.Warn().
-			Any("route", route).
-			Str("method_id", methodID).
-			Str("limit_type", l.limitType).
-			Object("bucket", bucket).
-			Msg("Rate limited")
+	for i := len(l.buckets) - 1; i >= 0; i-- {
+		bucket := l.buckets[i]
 		bucket.mutex.Lock()
-		defer bucket.mutex.Unlock()
-		bucket.check()
-		err := WaitN(ctx, bucket.next, time.Until(bucket.next))
-		if err != nil {
-			return err
+		if bucket.isRateLimited() {
+			logger.Warn().
+				Any("route", route).
+				Str("method_id", methodID).
+				Str("limit_type", l.limitType).
+				Object("bucket", bucket).
+				Msg("Rate limited")
+			err := WaitN(ctx, bucket.next, time.Until(bucket.next))
+			if err != nil {
+				bucket.mutex.Unlock()
+				return err
+			}
+			bucket.check()
+			bucket.tokens--
 		}
-		bucket.check()
-		bucket.tokens--
+		bucket.mutex.Unlock()
 	}
 
 	return nil
 }
 
 // Checks if the limits given in the header match the current buckets.
-func (l *Limit) limitsDontMatch(limitHeader string) bool {
+func (l *Limit) limitsMatch(limitHeader string) bool {
 	if limitHeader == "" {
 		return false
 	}
 	limits := strings.Split(limitHeader, ",")
 	if len(l.buckets) != len(limits) {
-		return true
+		return false
 	}
 	for i, pair := range limits {
-		if l.buckets[i] == nil {
-			return true
+		bucket := l.buckets[i]
+		if bucket == nil {
+			return false
 		}
 		limit, interval := getNumbersFromPair(pair)
-		if l.buckets[i].baseLimit != limit || l.buckets[i].interval != interval {
-			return true
+		if bucket.baseLimit != limit || bucket.interval != interval {
+			return false
 		}
 	}
-	return false
+	return true
 }
 
 func (l *Limit) setDelay(delay time.Duration) {

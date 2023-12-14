@@ -87,11 +87,8 @@ func (r *RateLimit) Take(ctx context.Context, logger zerolog.Logger, route any, 
 	if err := limits.App.checkBuckets(ctx, logger, route, methodID); err != nil {
 		return err
 	}
-	if err := methods.checkBuckets(ctx, logger, route, methodID); err != nil {
-		return err
-	}
 
-	return nil
+	return methods.checkBuckets(ctx, logger, route, methodID)
 }
 
 // Update creates new buckets in a route with the limits provided in the response headers.
@@ -100,13 +97,19 @@ func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, he
 	defer r.mutex.Unlock()
 
 	limits := r.Region[route]
-	if limits.App.limitsDontMatch(headers.Get(APP_RATE_LIMIT_HEADER)) {
-		limits.App = r.parseHeaders(headers.Get(APP_RATE_LIMIT_HEADER), headers.Get(APP_RATE_LIMIT_COUNT_HEADER), APP_RATE_LIMIT_TYPE)
+
+	appRateLimitHeader := headers.Get(APP_RATE_LIMIT_HEADER)
+	appRateLimitCountHeader := headers.Get(APP_RATE_LIMIT_COUNT_HEADER)
+	methodRateLimitHeader := headers.Get(METHOD_RATE_LIMIT_HEADER)
+	methodRateLimitCountHeader := headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER)
+
+	if !limits.App.limitsMatch(appRateLimitHeader) {
+		limits.App = r.parseHeaders(appRateLimitHeader, appRateLimitCountHeader, APP_RATE_LIMIT_TYPE)
 		logger.Debug().Msg("New Application buckets")
 	}
 
-	if limits.Methods[methodID].limitsDontMatch(headers.Get(METHOD_RATE_LIMIT_HEADER)) {
-		limits.Methods[methodID] = r.parseHeaders(headers.Get(METHOD_RATE_LIMIT_HEADER), headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER), METHOD_RATE_LIMIT_TYPE)
+	if !limits.Methods[methodID].limitsMatch(methodRateLimitHeader) {
+		limits.Methods[methodID] = r.parseHeaders(methodRateLimitHeader, methodRateLimitCountHeader, METHOD_RATE_LIMIT_TYPE)
 		logger.Debug().Msg("New Method buckets")
 	}
 }
