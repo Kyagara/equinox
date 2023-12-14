@@ -34,9 +34,14 @@ func BenchmarkMatchByID(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
 	config.Retry = api.Retry{MaxRetries: 3}
-
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {
@@ -67,9 +72,14 @@ func BenchmarkMatchTimeline(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.timeline.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
 	config.Retry = api.Retry{MaxRetries: 3}
-
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {
@@ -100,9 +110,14 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/champions.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
 	config.Retry = api.Retry{MaxRetries: 3}
-
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {
@@ -134,9 +149,14 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/val.content.all_locales.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
 	config.Retry = api.Retry{MaxRetries: 3}
-
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {

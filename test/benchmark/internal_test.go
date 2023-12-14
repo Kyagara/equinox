@@ -33,7 +33,14 @@ func BenchmarkInternals(b *testing.B) {
 		httpmock.NewStringResponder(200, `"response"`))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
+	config.Retry = api.Retry{MaxRetries: 3}
 	client := internal.NewInternalClient(config)
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
@@ -63,7 +70,14 @@ func BenchmarkRequest(b *testing.B) {
 	b.ReportAllocs()
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
+	config.Retry = api.Retry{MaxRetries: 3}
 	client := internal.NewInternalClient(config)
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
@@ -96,7 +110,14 @@ func BenchmarkExecute(b *testing.B) {
 		httpmock.NewStringResponder(200, `"response"`))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
+	config.Retry = api.Retry{MaxRetries: 3}
 	client := internal.NewInternalClient(config)
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
@@ -133,7 +154,14 @@ func BenchmarkExecuteRaw(b *testing.B) {
 		httpmock.NewStringResponder(200, `"response"`))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
+	config.Retry = api.Retry{MaxRetries: 3}
 	client := internal.NewInternalClient(config)
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")

@@ -141,7 +141,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		if item, err := c.cache.Get(ctx, url); err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
 		} else if item != nil {
-			equinoxReq.Logger.Debug().Msg("Cache hit")
+			equinoxReq.Logger.Trace().Msg("Cache hit")
 			return jsonv2.Unmarshal(item, target)
 		}
 	}
@@ -173,7 +173,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		if err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
 		} else {
-			equinoxReq.Logger.Debug().Msg("Cache set")
+			equinoxReq.Logger.Trace().Msg("Cache set")
 		}
 
 		return jsonv2.Unmarshal(body, target)
@@ -208,7 +208,7 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 //
 // The loop will always run at least once
 func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.Response, error) {
-	equinoxReq.Logger.Info().Msg("Sending request")
+	equinoxReq.Logger.Debug().Msg("Sending request")
 	for i := 0; i < c.maxRetries+1; i++ {
 		response, err := c.http.Do(equinoxReq.Request)
 		if err != nil {
@@ -217,7 +217,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 
 		delay, retryable, err := c.checkResponse(equinoxReq, response)
 		if err == nil && delay == 0 {
-			equinoxReq.Logger.Info().Msg("Request successful")
+			equinoxReq.Logger.Debug().Msg("Request successful")
 			return response, nil
 		}
 
@@ -265,7 +265,7 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 
 func (c *Client) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {
 	logger := c.Logger(id)
-	logger.Debug().Msg("Method started execution")
+	logger.Trace().Msg("Method started execution")
 	equinoxReq, err := c.Request(ctx, logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "/api/versions.json", "", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")

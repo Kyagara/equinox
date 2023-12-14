@@ -144,7 +144,7 @@ type {{= normalizedStructName }} struct {
 // [{{= operationId }}]: {{= operation.externalDocs.url }}
 func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}) {{= !hasReturn ? "error" : `(${isPrimitiveType ? "" : "*"}${returnValue}, error)` }} {
   logger := e.internal.Logger("{{= clientNormalizedName + "_" + normalizedStructName + "_" + method }}")
-  logger.Debug().Msg("Method started execution")
+  logger.Trace().Msg("Method started execution")
 {{
   if (headerParams.length > 0) {
 }}
@@ -198,7 +198,6 @@ func (e *{{= normalizedStructName }}) {{= method }}({{= argBuilder.join(', ') }}
     logger.Error().Err(err).Msg("Error executing request")
     return {{= isPrimitiveType ? `${nilValue}` : "nil"}}{{? hasReturn }}, err{{?}}
   }
-  logger.Debug().Msg("Method executed successfully")
   return {{? hasReturn }}{{= isPrimitiveType ? "data" : "&data" }}, nil{{?? true }}{{= isPrimitiveType ? `${nilValue}` : "nil" }}
 {{?}}
 }

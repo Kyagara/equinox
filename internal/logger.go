@@ -16,18 +16,31 @@ type Loggers struct {
 }
 
 func NewLogger(config api.EquinoxConfig) zerolog.Logger {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	if config == (api.EquinoxConfig{}) {
+	if config == (api.EquinoxConfig{}) || config.Logger.Level == zerolog.Disabled {
 		return zerolog.Nop()
 	}
-	switch config.LogLevel {
-	case zerolog.Disabled:
-		return zerolog.Nop()
-	case zerolog.DebugLevel:
-		return zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Object("equinox", config).Timestamp().Logger()
-	default:
-		return zerolog.New(os.Stderr).Level(config.LogLevel).With().Object("equinox", config).Timestamp().Logger()
+
+	if config.Logger.TimeFieldFormat != "" {
+		zerolog.TimeFieldFormat = config.Logger.TimeFieldFormat
 	}
+
+	var logger zerolog.Logger
+
+	if config.Logger.Pretty {
+		logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).Level(config.Logger.Level)
+	} else {
+		logger = zerolog.New(os.Stderr).Level(config.Logger.Level)
+	}
+
+	if config.Logger.EnableTimestamp {
+		logger = logger.With().Timestamp().Logger()
+	}
+
+	if config.Logger.EnableConfigLogging {
+		logger = logger.With().Object("equinox", config).Logger()
+	}
+
+	return logger
 }
 
 // Used to access the internal logger, this is used to log events from other clients (RiotClient, LOLClient...).

@@ -14,7 +14,7 @@ import (
 
 // Creates an EquinoxConfig for tests.
 //
-//   - `LogLevel`   : zerolog.DebugLevel
+//   - `Logger`     : zerolog.TraceLevel
 //   - `HTTPClient` : http.Client{}
 //   - `Retry`      : 0
 //   - `Cache`      : &cache.Cache{TTL: 0}
@@ -22,11 +22,16 @@ import (
 func NewTestEquinoxConfig() api.EquinoxConfig {
 	return api.EquinoxConfig{
 		Key:        "RGAPI-TEST",
-		LogLevel:   zerolog.DebugLevel,
 		HTTPClient: &http.Client{},
 		Retry:      api.Retry{},
 		Cache:      &cache.Cache{},
 		RateLimit:  &ratelimit.RateLimit{},
+		Logger: api.Logger{
+			Level:               zerolog.TraceLevel,
+			EnableTimestamp:     true,
+			Pretty:              true,
+			EnableConfigLogging: true,
+		},
 	}
 }
 

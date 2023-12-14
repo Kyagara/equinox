@@ -45,7 +45,7 @@ type AccountV1 struct {
 // [account-v1.getByPuuid]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByPuuid
 func (e *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute, puuid string) (*AccountV1DTO, error) {
 	logger := e.internal.Logger("Riot_AccountV1_ByPUUID")
-	logger.Debug().Msg("Method started execution")
+	logger.Trace().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-puuid/%v", puuid), "account-v1.getByPuuid", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
@@ -57,7 +57,6 @@ func (e *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute, puuid 
 		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -77,7 +76,7 @@ func (e *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute, puuid 
 // [account-v1.getByRiotId]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByRiotId
 func (e *AccountV1) ByRiotID(ctx context.Context, route api.RegionalRoute, gameName string, tagLine string) (*AccountV1DTO, error) {
 	logger := e.internal.Logger("Riot_AccountV1_ByRiotID")
-	logger.Debug().Msg("Method started execution")
+	logger.Trace().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/accounts/by-riot-id/%v/%v", gameName, tagLine), "account-v1.getByRiotId", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
@@ -89,7 +88,6 @@ func (e *AccountV1) ByRiotID(ctx context.Context, route api.RegionalRoute, gameN
 		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -108,7 +106,7 @@ func (e *AccountV1) ByRiotID(ctx context.Context, route api.RegionalRoute, gameN
 // [account-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByAccessToken
 func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
 	logger := e.internal.Logger("Riot_AccountV1_ByAccessToken")
-	logger.Debug().Msg("Method started execution")
+	logger.Trace().Msg("Method started execution")
 	if authorization == "" {
 		return nil, fmt.Errorf("'authorization' header is required")
 	}
@@ -125,7 +123,6 @@ func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, 
 		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }
 
@@ -145,7 +142,7 @@ func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, 
 // [account-v1.getActiveShard]: https://developer.riotgames.com/api-methods/#account-v1/GET_getActiveShard
 func (e *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRoute, game string, puuid string) (*ActiveShardV1DTO, error) {
 	logger := e.internal.Logger("Riot_AccountV1_ActiveShard")
-	logger.Debug().Msg("Method started execution")
+	logger.Trace().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), "account-v1.getActiveShard", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
@@ -157,6 +154,5 @@ func (e *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRoute, ga
 		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
-	logger.Debug().Msg("Method executed successfully")
 	return &data, nil
 }

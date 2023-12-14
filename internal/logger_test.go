@@ -18,18 +18,22 @@ func TestNewLogger(t *testing.T) {
 	require.Equal(t, zerolog.Disabled, logger.GetLevel())
 
 	config := api.EquinoxConfig{
-		LogLevel: zerolog.Disabled, Cache: &cache.Cache{TTL: 60 * time.Second},
+		Logger: api.Logger{
+			Level: zerolog.Disabled,
+		},
+		Cache:      &cache.Cache{TTL: 60 * time.Second},
 		HTTPClient: &http.Client{Timeout: 15 * time.Second},
 	}
 
 	logger = internal.NewLogger(config)
 	require.NotEmpty(t, logger)
 
-	config.LogLevel = zerolog.DebugLevel
+	config.Logger.Level = zerolog.TraceLevel
 	logger = internal.NewLogger(config)
-	require.True(t, logger.Debug().Enabled())
+	require.True(t, logger.Trace().Enabled())
 
-	config.LogLevel = zerolog.InfoLevel
+	config.Logger.Level = zerolog.InfoLevel
+	config.Logger.TimeFieldFormat = zerolog.TimeFormatUnix
 	logger = internal.NewLogger(config)
 	require.True(t, logger.Info().Enabled())
 }
@@ -41,6 +45,7 @@ func TestLogger(t *testing.T) {
 	require.NotEmpty(t, logger)
 	logger = internal.Logger("client_endpoint_method")
 	require.NotEmpty(t, logger)
+	logger.Trace().Msg("Trace log")
 	logger.Debug().Msg("Debug log")
 	logger.Info().Msg("Info log")
 	logger.Warn().Msg("Warn log")

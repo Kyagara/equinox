@@ -45,7 +45,7 @@ client, err := equinox.NewClient("RIOT_API_KEY")
 A default equinox client comes with the default options:
 
 - **Key**: The provided key.
-- **LogLevel**: `zerolog.WarnLevel`. `zerolog.Disabled` disables logging.
+- **Logger**: Log with `zerolog.WarnLevel`.
 - **Retry**: Retry object with a limit of 3 and jitter of 500 milliseconds.
 - **HTTPClient**: `http.Client` with a timeout of 15 seconds.
 - **Cache**: `BigCache` with an eviction time of 4 minutes.
@@ -119,11 +119,9 @@ func main() {
 
 ## Todo
 
-- Maybe create a custom BigCache config
 - More tests for the internal client and rate limit
 - Maybe the context usage throughout the project could be improved
 - Maybe more options to customize the rate limiter
-- Maybe allow for custom logger
 - Improve error handling, add wrapped errors
 - Improve DDragon/CDragon support
 

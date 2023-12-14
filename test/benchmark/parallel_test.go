@@ -45,10 +45,15 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 		}))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
 	config.Retry = api.Retry{MaxRetries: 3}
 	config.RateLimit = ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
-
 	client := equinox.NewClientWithConfig(config)
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -113,9 +118,14 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
 	config.Retry = api.Retry{MaxRetries: 3}
-
 	client := equinox.NewClientWithConfig(config)
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -148,9 +158,14 @@ func BenchmarkParallelDDragonRealms(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/realm.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
 	config.Retry = api.Retry{MaxRetries: 3}
-
 	client := equinox.NewClientWithConfig(config)
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -183,9 +198,14 @@ func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.list.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
 	config.Retry = api.Retry{MaxRetries: 3}
-
 	client := equinox.NewClientWithConfig(config)
 
 	b.RunParallel(func(pb *testing.PB) {

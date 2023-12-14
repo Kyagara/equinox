@@ -11,7 +11,6 @@ import (
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -101,7 +100,6 @@ func TestRateLimitWithMock(t *testing.T) {
 
 	config := util.NewTestEquinoxConfig()
 	config.RateLimit = ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
-	config.LogLevel = zerolog.WarnLevel
 	config.Retry = api.Retry{MaxRetries: 3}
 
 	client := equinox.NewClientWithConfig(config)
