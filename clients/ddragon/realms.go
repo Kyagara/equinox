@@ -15,7 +15,7 @@ type RealmEndpoint struct {
 
 func (e *RealmEndpoint) ByName(ctx context.Context, realm Realm) (*RealmData, error) {
 	logger := e.internal.Logger("DDragon_Realm_ByName")
-	logger.Debug().Msg("Method started execution")
+	logger.Trace().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(RealmURL, realm), "", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")

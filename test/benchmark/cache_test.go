@@ -2,7 +2,6 @@ package benchmark_test
 
 import (
 	"context"
-	"net/http"
 	"testing"
 	"time"
 
@@ -73,15 +72,17 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 	}
 	cache, err := cache.NewRedis(ctx, redisConfig, 4*time.Minute)
 	require.NoError(b, err)
-	config := api.EquinoxConfig{
-		Key:      "RGAPI-TEST",
-		LogLevel: zerolog.WarnLevel,
-		HTTPClient: &http.Client{
-			Timeout: 15 * time.Second,
-		},
-		Retry: api.Retry{MaxRetries: 3},
-		Cache: cache,
+
+	config := util.NewTestEquinoxConfig()
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
 	}
+	config.Retry = api.Retry{MaxRetries: 3}
+	config.Cache = cache
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {
@@ -112,9 +113,14 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.LogLevel = zerolog.WarnLevel
+	config.Logger = api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
 	config.Retry = api.Retry{MaxRetries: 3}
-
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {

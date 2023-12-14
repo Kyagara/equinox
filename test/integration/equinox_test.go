@@ -12,10 +12,9 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox"
-	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
+	"github.com/Kyagara/equinox/test/util"
 	"github.com/allegro/bigcache/v3"
-	"github.com/rs/zerolog"
 )
 
 var (
@@ -43,15 +42,14 @@ func init() {
 		fmt.Println(err)
 		return
 	}
-	config := api.EquinoxConfig{
-		Key:      key,
-		LogLevel: zerolog.DebugLevel,
-		HTTPClient: &http.Client{
-			Timeout: 15 * time.Second,
-		},
-		Retry: api.Retry{MaxRetries: 1},
-		Cache: cache,
+
+	config := util.NewTestEquinoxConfig()
+	config.Key = key
+	config.HTTPClient = &http.Client{
+		Timeout: 15 * time.Second,
 	}
+	config.Retry.MaxRetries = 1
+	config.Cache = cache
 
 	client = equinox.NewClientWithConfig(config)
 }

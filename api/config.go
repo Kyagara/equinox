@@ -19,25 +19,35 @@ type EquinoxConfig struct {
 	RateLimit *ratelimit.RateLimit
 	// Riot API Key.
 	Key string
+	// Configuration for the logger.
+	Logger Logger
 	// Configuration for retries.
 	Retry Retry
-	// Zerolog log level.
-	LogLevel zerolog.Level
 }
 
+// Retry configuration.
 type Retry struct {
-	// 0 disables retries
+	// Retries are exponential, 0 disables retries
 	MaxRetries int
 	// In milliseconds
 	Jitter time.Duration
 }
 
+// Logger configuration.
+type Logger struct {
+	TimeFieldFormat string
+	Level           zerolog.Level
+	// Enables prettified logging
+	Pretty bool
+	// Prints the timestamp
+	EnableTimestamp bool
+	// Adds the equinox configuration to logs
+	EnableConfigLogging bool
+}
+
 func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
 	if c.Retry.MaxRetries > 0 {
 		encoder.Object("retry", c.Retry)
-	}
-	if c.HTTPClient.Timeout > 0 {
-		encoder.Dur("http_client_timeout", c.HTTPClient.Timeout)
 	}
 	if c.Cache.TTL != 0 {
 		encoder.Str("cache_store", string(c.Cache.StoreType)).Dur("cache_ttl", c.Cache.TTL)
