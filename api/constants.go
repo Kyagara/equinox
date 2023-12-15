@@ -10,13 +10,6 @@ package api
 
 // Spec version = cd204d7d764a025c280943766bc498278e439a6c
 
-// Base API URLs formats.
-const (
-	RIOT_API_BASE_URL_FORMAT = "https://%s.api.riotgames.com%s"
-	D_DRAGON_BASE_URL_FORMAT = "https://ddragon.leagueoflegends.com%s%s"
-	C_DRAGON_BASE_URL_FORMAT = "https://cdn.communitydragon.org%s%s"
-)
-
 // Regional routes, used in tournament services, Legends of Runeterra (LoR), and some other endpoints.
 type RegionalRoute string
 

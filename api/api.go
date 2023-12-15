@@ -8,6 +8,13 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// Base API URLs formats.
+const (
+	RIOT_API_BASE_URL_FORMAT = "https://%s.api.riotgames.com%s"
+	D_DRAGON_BASE_URL_FORMAT = "https://ddragon.leagueoflegends.com%s%s"
+	C_DRAGON_BASE_URL_FORMAT = "https://cdn.communitydragon.org%s%s"
+)
+
 // EquinoxRequest represents a request to the Riot API and CDNs, its a struct that contains all information about a request.
 type EquinoxRequest struct {
 	Logger   zerolog.Logger
