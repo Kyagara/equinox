@@ -52,19 +52,6 @@ func NewInternalRateLimit(limitUsageFactor float32, intervalOverhead time.Durati
 	return &RateLimit{Region: make(map[any]*Limits), LimitUsageFactor: limitUsageFactor, IntervalOverhead: intervalOverhead, Enabled: true}
 }
 
-// Limits in a region.
-type Limits struct {
-	App     *Limit
-	Methods map[string]*Limit
-}
-
-func NewLimits() *Limits {
-	return &Limits{
-		App:     NewLimit(APP_RATE_LIMIT_TYPE),
-		Methods: make(map[string]*Limit),
-	}
-}
-
 // Take decreases tokens for the App and Method rate limit buckets in a route by one.
 //
 // If rate limited, will block until the next bucket reset.
@@ -139,22 +126,6 @@ func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers http.Hea
 	return delay
 }
 
-// WaitN waits for the given duration after checking if the context deadline will be exceeded.
-func WaitN(ctx context.Context, estimated time.Time, duration time.Duration) error {
-	deadline, ok := ctx.Deadline()
-	if ok && deadline.Before(estimated) {
-		return ErrContextDeadlineExceeded
-	}
-
-	select {
-	case <-time.After(duration):
-	case <-ctx.Done():
-		return ctx.Err()
-	}
-
-	return nil
-}
-
 func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitType string) *Limit {
 	if limitHeader == "" || countHeader == "" {
 		return NewLimit(limitType)
@@ -175,11 +146,4 @@ func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitTy
 
 	limit.buckets = rates
 	return limit
-}
-
-func getNumbersFromPair(pair string) (int, time.Duration) {
-	numbers := strings.Split(pair, ":")
-	interval, _ := strconv.Atoi(numbers[1])
-	limitOrCount, _ := strconv.Atoi(numbers[0])
-	return limitOrCount, time.Duration(interval) * time.Second
 }
