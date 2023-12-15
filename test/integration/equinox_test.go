@@ -12,7 +12,9 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox"
+	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
+	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/allegro/bigcache/v3"
 )
@@ -36,6 +38,7 @@ func init() {
 		onlyDataDragon = true
 		key = "RGAPI-TEST"
 	}
+
 	ctx := context.Background()
 	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
 	if err != nil {
@@ -43,13 +46,16 @@ func init() {
 		return
 	}
 
-	config := util.NewTestEquinoxConfig()
-	config.Key = key
-	config.HTTPClient = &http.Client{
-		Timeout: 15 * time.Second,
+	config := api.EquinoxConfig{
+		Key: key,
+		HTTPClient: &http.Client{
+			Timeout: 15 * time.Second,
+		},
+		Cache:     cache,
+		RateLimit: ratelimit.NewInternalRateLimit(1.0, 1*time.Second),
+		Retry:     api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond},
+		Logger:    util.TestLogger(),
 	}
-	config.Retry.MaxRetries = 1
-	config.Cache = cache
 
 	client = equinox.NewClientWithConfig(config)
 }

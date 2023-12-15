@@ -14,7 +14,7 @@ import (
 func TestVALContent(t *testing.T) {
 	checkIfOnlyDataDragon(t)
 	ctx := context.Background()
-	content, err := client.VAL.ContentV1.Content(ctx, val.BR, "pt-BR")
+	content, err := client.VAL.ContentV1.Content(ctx, val.NA, "en-US")
 	require.NoError(t, err)
 	require.NotEmpty(t, content, "expecting non-nil content")
 	require.NotEmpty(t, content.Version, "expecting non-nil version")

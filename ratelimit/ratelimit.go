@@ -92,12 +92,12 @@ func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, he
 
 	if !limits.App.limitsMatch(appRateLimitHeader) {
 		limits.App = r.parseHeaders(appRateLimitHeader, appRateLimitCountHeader, APP_RATE_LIMIT_TYPE)
-		logger.Debug().Msg("New Application buckets")
+		logger.Debug().Any("route", route).Msg("New Application buckets")
 	}
 
 	if !limits.Methods[methodID].limitsMatch(methodRateLimitHeader) {
 		limits.Methods[methodID] = r.parseHeaders(methodRateLimitHeader, methodRateLimitCountHeader, METHOD_RATE_LIMIT_TYPE)
-		logger.Debug().Msg("New Method buckets")
+		logger.Debug().Any("route", route).Str("method", methodID).Msg("New Method buckets")
 	}
 }
 

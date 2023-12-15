@@ -15,7 +15,7 @@ import (
 func TestLOLChampionRotation(t *testing.T) {
 	checkIfOnlyDataDragon(t)
 	ctx := context.Background()
-	rotations, err := client.LOL.ChampionV3.Rotation(ctx, lol.BR1)
+	rotations, err := client.LOL.ChampionV3.Rotation(ctx, lol.JP1)
 	require.NoError(t, err)
 	require.NotEmpty(t, rotations, "expecting non-nil rotations")
 }
