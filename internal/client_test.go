@@ -179,12 +179,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			code:    415,
 		},
 		{
-			name:    "rate limited",
-			wantErr: api.ErrTooManyRequests,
-			code:    429,
-		},
-		{
-			name:    "rate limited, retry and retry-after header not found",
+			name:    "too many requests",
 			wantErr: api.ErrTooManyRequests,
 			code:    429,
 		},

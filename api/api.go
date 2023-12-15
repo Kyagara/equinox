@@ -25,7 +25,7 @@ var (
 	ErrNotFound             = errors.New("not found")
 	ErrMethodNotAllowed     = errors.New("method not allowed")
 	ErrUnsupportedMediaType = errors.New("unsupported media type")
-	ErrTooManyRequests      = errors.New("rate limited")
+	ErrTooManyRequests      = errors.New("too many requests")
 	ErrInternalServer       = errors.New("internal server error")
 	ErrBadGateway           = errors.New("bad gateway")
 	ErrServiceUnavailable   = errors.New("service unavailable")
