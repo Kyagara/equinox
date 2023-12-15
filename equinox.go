@@ -60,7 +60,7 @@ func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
 
 // Returns the default equinox config with a provided key.
 //
-//   - `Logger`   : Log with `zerolog.WarnLevel`.
+//   - `Logger`     : Log with `zerolog.WarnLevel`.
 //   - `Retry`      : Retry with max retries of 3 and a jitter of 500 milliseconds
 //   - `HTTPClient` : http.Client with timeout of 15 seconds
 //   - `Cache`      : BigCache with TTL of 4 minutes
@@ -78,14 +78,33 @@ func DefaultConfig(key string) (api.EquinoxConfig, error) {
 		},
 		Cache:     cache,
 		RateLimit: ratelimit.NewInternalRateLimit(1.0, 1*time.Second),
-		Retry:     api.Retry{MaxRetries: 3, Jitter: 500 * time.Millisecond},
-		Logger: api.Logger{
-			Level:               zerolog.WarnLevel,
-			Pretty:              false,
-			TimeFieldFormat:     zerolog.TimeFormatUnix,
-			EnableConfigLogging: true,
-			EnableTimestamp:     true,
-		},
+		Retry:     DefaultRetry(),
+		Logger:    DefaultLogger(),
 	}
 	return config, nil
+}
+
+// Returns the default retry config
+//
+//   - `MaxRetries`: 3
+//   - `Jitter`: 500 milliseconds
+func DefaultRetry() api.Retry {
+	return api.Retry{MaxRetries: 3, Jitter: 500 * time.Millisecond}
+}
+
+// Returns the default logger config
+//
+//   - `Level`: zerolog.WarnLevel
+//   - `Pretty`: false
+//   - `TimeFieldFormat`: zerolog.TimeFormatUnix
+//   - `EnableConfigLogging`: true
+//   - `EnableTimestamp`: true
+func DefaultLogger() api.Logger {
+	return api.Logger{
+		Level:               zerolog.WarnLevel,
+		Pretty:              false,
+		TimeFieldFormat:     zerolog.TimeFormatUnix,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
+	}
 }

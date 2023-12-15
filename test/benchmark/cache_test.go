@@ -6,13 +6,11 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox"
-	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
 	"github.com/redis/go-redis/v9"
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -74,14 +72,8 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 	require.NoError(b, err)
 
 	config := util.NewTestEquinoxConfig()
-	config.Logger = api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
-	}
-	config.Retry = api.Retry{MaxRetries: 3}
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
 	config.Cache = cache
 	client := equinox.NewClientWithConfig(config)
 
@@ -113,14 +105,8 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.Logger = api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
-	}
-	config.Retry = api.Retry{MaxRetries: 3}
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {

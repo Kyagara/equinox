@@ -26,12 +26,16 @@ func NewTestEquinoxConfig() api.EquinoxConfig {
 		Retry:      api.Retry{},
 		Cache:      &cache.Cache{},
 		RateLimit:  &ratelimit.RateLimit{},
-		Logger: api.Logger{
-			Level:               zerolog.TraceLevel,
-			EnableTimestamp:     true,
-			Pretty:              true,
-			EnableConfigLogging: true,
-		},
+		Logger:     TestLogger(),
+	}
+}
+
+func TestLogger() api.Logger {
+	return api.Logger{
+		Level:               zerolog.TraceLevel,
+		Pretty:              true,
+		EnableConfigLogging: true,
+		EnableTimestamp:     true,
 	}
 }
 

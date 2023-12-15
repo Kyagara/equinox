@@ -40,34 +40,32 @@ Create a new instance of the equinox client:
 
 ```go
 client, err := equinox.NewClient("RIOT_API_KEY")
+// Or:
+client, err := equinox.NewClientWithConfig(api.EquinoxConfig{})
 ```
+
+> Cache and Rate Limit can be disabled by passing `nil`, disabling rate limit can be useful if you have equinox passing through a proxy that handles rate limiting. See [Cache](https://github.com/Kyagara/equinox/tree/main/cache) and [Rate limit](https://github.com/Kyagara/equinox/tree/main/ratelimit) for more details.
 
 A default equinox client comes with the default options:
 
-- **Key**: The provided key.
-- **Logger**: Log with `zerolog.WarnLevel`.
-- **Retry**: Retry object with a limit of 3 and jitter of 500 milliseconds.
+- **Key**: The provided Riot API key.
 - **HTTPClient**: `http.Client` with a timeout of 15 seconds.
 - **Cache**: `BigCache` with an eviction time of 4 minutes.
-- **RateLimit**: Internal rate limiter with a limit factor of 1.0 and interval overhead of 1 second.
-
-> A custom Client can be created using `equinox.NewClientWithConfig()`.
-
-> A different storage can be provided to the client using `cache.NewRedis()` or `cache.NewBigCache()`, passing nil in config.Cache disables caching.
-
-> You can disable rate limiting by passing `nil` in config.RateLimit, this can be useful if you have equinox passing through a proxy that handles rate limiting.
-
-> See [Cache](https://github.com/Kyagara/equinox/tree/main/cache) and [Rate limit](https://github.com/Kyagara/equinox/tree/main/ratelimit) for more details.
+- **RateLimit**: Internal rate limiter with a limit usage factor of 1.0 and interval overhead of 1 second.
+- **Logger**: Log object with `zerolog.WarnLevel`.
+- **Retry**: Retry object with a limit of 3 and jitter of 500 milliseconds.
 
 Using different endpoints:
 
 ```go
+// Contexts without a deadline will block if rate limited, waiting for buckets to reset.
+// If a deadline is set, there will be checks before any block to see if waiting would exceed it.
 ctx := context.Background()
 
-// This method uses a api.RegionalRoute. Can be accessed with a Development key.
-match, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "match_id")
+// This method uses an api.RegionalRoute. Can be accessed with a Development key.
+match, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "BR1_2...")
 
-// This method uses a val.PlatformRoute. May not be available in your policy.
+// This method uses an val.PlatformRoute. May not be available in your policy.
 matches, err := client.VAL.MatchV1.Recent(ctx, val.BR, "competitive")
 
 // Interacting with DDragon.
@@ -122,7 +120,7 @@ func main() {
 - More tests for the internal client and rate limit
 - Maybe the context usage throughout the project could be improved
 - Maybe more options to customize the rate limiter
-- Improve error handling, add wrapped errors
+- Maybe add wrapped errors to improve error handling
 - Improve DDragon/CDragon support
 
 ## About

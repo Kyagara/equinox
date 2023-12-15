@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,14 +33,8 @@ func BenchmarkInternals(b *testing.B) {
 		httpmock.NewStringResponder(200, `"response"`))
 
 	config := util.NewTestEquinoxConfig()
-	config.Logger = api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
-	}
-	config.Retry = api.Retry{MaxRetries: 3}
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
 	client := internal.NewInternalClient(config)
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
@@ -70,14 +64,8 @@ func BenchmarkRequest(b *testing.B) {
 	b.ReportAllocs()
 
 	config := util.NewTestEquinoxConfig()
-	config.Logger = api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
-	}
-	config.Retry = api.Retry{MaxRetries: 3}
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
 	client := internal.NewInternalClient(config)
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
@@ -110,14 +98,8 @@ func BenchmarkExecute(b *testing.B) {
 		httpmock.NewStringResponder(200, `"response"`))
 
 	config := util.NewTestEquinoxConfig()
-	config.Logger = api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
-	}
-	config.Retry = api.Retry{MaxRetries: 3}
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
 	client := internal.NewInternalClient(config)
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
@@ -154,14 +136,8 @@ func BenchmarkExecuteRaw(b *testing.B) {
 		httpmock.NewStringResponder(200, `"response"`))
 
 	config := util.NewTestEquinoxConfig()
-	config.Logger = api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
-	}
-	config.Retry = api.Retry{MaxRetries: 3}
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
 	client := internal.NewInternalClient(config)
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
