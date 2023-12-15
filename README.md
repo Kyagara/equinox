@@ -52,8 +52,8 @@ A default equinox client comes with the default options:
 - **HTTPClient**: `http.Client` with a timeout of 15 seconds.
 - **Cache**: `BigCache` with an eviction time of 4 minutes.
 - **RateLimit**: Internal rate limiter with a limit usage factor of 1.0 and interval overhead of 1 second.
-- **Logger**: Log object with `zerolog.WarnLevel`.
-- **Retry**: Retry object with a limit of 3 and jitter of 500 milliseconds.
+- **Logger**: api.Logger object with `zerolog.WarnLevel`.
+- **Retry**: api.Retry object with a limit of 3 and jitter of 500 milliseconds.
 
 Using different endpoints:
 
@@ -119,7 +119,7 @@ func main() {
 
 - More tests for the internal client and rate limit
 - Maybe the context usage throughout the project could be improved
-- Maybe more options to customize the rate limiter
+- Maybe add more options to customize the rate limiter
 - Maybe add wrapped errors to improve error handling
 - Maybe add presets for rate limit and cache
 - Improve DDragon/CDragon support

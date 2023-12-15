@@ -60,11 +60,12 @@ func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
 
 // Returns the default equinox config with a provided key.
 //
-//   - `Logger`     : Log with `zerolog.WarnLevel`.
-//   - `Retry`      : Retry with max retries of 3 and a jitter of 500 milliseconds
-//   - `HTTPClient` : http.Client with timeout of 15 seconds
-//   - `Cache`      : BigCache with TTL of 4 minutes
-//   - `RateLimit`  : Internal rate limiter with a limit factor of 1.0 and interval overhead of 1 second
+//   - `Key`		: The provided Riot API key.
+//   - `HTTPClient` : `http.Client` with a timeout of 15 seconds.
+//   - `Cache`		: `BigCache` with an eviction time of 4 minutes.
+//   - `RateLimit`	: Internal rate limiter with a limit usage factor of 1.0 and interval overhead of 1 second.
+//   - `Logger`		: api.Logger object with `zerolog.WarnLevel`.
+//   - `Retry`		: api.Retry object with a limit of 3 and jitter of 500 milliseconds.
 func DefaultConfig(key string) (api.EquinoxConfig, error) {
 	ctx := context.Background()
 	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
@@ -86,19 +87,19 @@ func DefaultConfig(key string) (api.EquinoxConfig, error) {
 
 // Returns the default retry config
 //
-//   - `MaxRetries`: 3
-//   - `Jitter`: 500 milliseconds
+//   - `MaxRetries` : 3
+//   - `Jitter`		: 500 milliseconds
 func DefaultRetry() api.Retry {
 	return api.Retry{MaxRetries: 3, Jitter: 500 * time.Millisecond}
 }
 
 // Returns the default logger config
 //
-//   - `Level`: zerolog.WarnLevel
-//   - `Pretty`: false
-//   - `TimeFieldFormat`: zerolog.TimeFormatUnix
-//   - `EnableConfigLogging`: true
-//   - `EnableTimestamp`: true
+//   - `Level`				 : zerolog.WarnLevel
+//   - `Pretty`				 : false
+//   - `TimeFieldFormat`	 : zerolog.TimeFormatUnix
+//   - `EnableConfigLogging` : true
+//   - `EnableTimestamp`	 : true
 func DefaultLogger() api.Logger {
 	return api.Logger{
 		Level:               zerolog.WarnLevel,
