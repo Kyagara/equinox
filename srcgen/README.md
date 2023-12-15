@@ -34,5 +34,6 @@ npm run align
 
 ## Todo
 
-- Add checks only for required fields (queries and headers), only returning errors if they are missing, for now only Authorization headers are required
+- Add checks only for required fields (queries and headers), returning errors if they are missing, for now only Authorization headers are required so it's not a big deal.
+- Generating code maybe allows for some performance improvements, maybe it could solve some issues with fmt.Sprintf escaping to heap.
 

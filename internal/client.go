@@ -133,11 +133,11 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 }
 
 func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, target any) error {
+	equinoxReq.Logger.Debug().Msg("Execute")
+
 	if ctx == nil {
 		return errContextIsNil
 	}
-
-	equinoxReq.Logger.Debug().Msg("Execute")
 
 	url := GetURLWithAuthorizationHash(equinoxReq)
 
@@ -188,11 +188,11 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 
 // ExecuteRaw executes a request without checking cache and returns []byte
 func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) ([]byte, error) {
+	equinoxReq.Logger.Debug().Msg("ExecuteRaw")
+
 	if ctx == nil {
 		return nil, errContextIsNil
 	}
-
-	equinoxReq.Logger.Debug().Msg("ExecuteRaw")
 
 	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
 		err := c.ratelimit.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
