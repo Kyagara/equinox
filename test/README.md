@@ -10,7 +10,7 @@ Benchmarks are separated in three files: parallel, data and cache.
 - cache: Cache benchmarks for both BigCache and Redis.
 - data: Benchmarks that use data from the live Riot Games API, located in the `data` folder.
 
-Benchmarks should be using a configuration closest to the one used in production, with cache disabled when possible and log level set to warn.
+Benchmarks should be using a configuration close to the one used in production. `HTTPClient` timeout is disabled as I believe the context should be used instead (the request is even created with `http.NewRequestWithContext(ctx, ...)`).
 
 ## Integration
 

@@ -10,7 +10,6 @@ import (
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -34,14 +33,8 @@ func BenchmarkMatchByID(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.Logger = api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
-	}
-	config.Retry = api.Retry{MaxRetries: 3}
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {
@@ -72,14 +65,8 @@ func BenchmarkMatchTimeline(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.timeline.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.Logger = api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
-	}
-	config.Retry = api.Retry{MaxRetries: 3}
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {
@@ -110,14 +97,8 @@ func BenchmarkDDragonAllChampions(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/champions.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.Logger = api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
-	}
-	config.Retry = api.Retry{MaxRetries: 3}
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {
@@ -149,14 +130,8 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/val.content.all_locales.json")))
 
 	config := util.NewTestEquinoxConfig()
-	config.Logger = api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
-	}
-	config.Retry = api.Retry{MaxRetries: 3}
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
 	client := equinox.NewClientWithConfig(config)
 
 	for i := 0; i < b.N; i++ {

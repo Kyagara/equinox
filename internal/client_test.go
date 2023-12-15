@@ -28,8 +28,17 @@ func TestNewInternalClient(t *testing.T) {
 	config := util.NewTestEquinoxConfig()
 	config.Cache.TTL = 1
 
+	config.Key = ""
 	internalClient = internal.NewInternalClient(config)
 	require.NotEmpty(t, internalClient)
+
+	l := internalClient.Logger("client_endpoint_method")
+	ctx := context.Background()
+	_, gotErr := internalClient.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "", "", "", nil)
+	require.Error(t, gotErr)
+
+	_, gotErr = internalClient.Request(ctx, l, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "", "", nil)
+	require.NoError(t, gotErr)
 }
 
 func TestInternalClientNewRequest(t *testing.T) {
