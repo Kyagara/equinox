@@ -9,6 +9,19 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// Limits in a region.
+type Limits struct {
+	App     *Limit
+	Methods map[string]*Limit
+}
+
+func NewLimits() *Limits {
+	return &Limits{
+		App:     NewLimit(APP_RATE_LIMIT_TYPE),
+		Methods: make(map[string]*Limit),
+	}
+}
+
 // Limit represents a collection of buckets and the type of limit (application or method).
 type Limit struct {
 	limitType  string
