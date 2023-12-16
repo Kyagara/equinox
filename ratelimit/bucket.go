@@ -51,9 +51,6 @@ func (b *Bucket) isRateLimited() bool {
 	if b.limit == 0 {
 		return false
 	}
-	if b.tokens-1 < 0 {
-		return true
-	}
 	b.tokens--
-	return false
+	return b.tokens < 0
 }

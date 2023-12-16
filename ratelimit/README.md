@@ -22,6 +22,16 @@ type RateLimit struct {
 	IntervalOverhead time.Duration
 	mutex            sync.Mutex
 }
+
+func NewInternalRateLimit(limitUsageFactor float32, intervalOverhead time.Duration) *RateLimit {
+	if limitUsageFactor < 0.0 || limitUsageFactor > 1.0 {
+		limitUsageFactor = 0.99
+	}
+	if intervalOverhead < 0 {
+		intervalOverhead = 1 * time.Second
+	}
+	return &RateLimit{Region: make(map[any]*Limits), LimitUsageFactor: limitUsageFactor, IntervalOverhead: intervalOverhead, Enabled: true}
+}
 ```
 
 ### Bucket
@@ -67,7 +77,7 @@ func NewBucket(interval time.Duration, intervalOverhead time.Duration, baseLimit
 When initializing a bucket, the current amount of tokens will be the same as the limit minus the current count provided from the `X-App-Rate-Limit-Count` or `X-Method-Rate-Limit-Count` headers.
 
 ```go
-func parseHeaders(limitHeader string, countHeader string) []*Bucket {
+func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitType string) *Limit {
 	if limitHeader == "" || countHeader == "" {
 		return NewLimit(limitType)
 	}
@@ -78,8 +88,8 @@ func parseHeaders(limitHeader string, countHeader string) []*Bucket {
 	counts := strings.Split(countHeader, ",")
 	rates := make([]*Bucket, len(limits))
 
-	for i := range limits {
-		baseLimit, interval := getNumbersFromPair(limits[i])
+	for i, limitString := range limits {
+		baseLimit, interval := getNumbersFromPair(limitString)
 		count, _ := getNumbersFromPair(counts[i])
 		limit := int(math.Floor(math.Max(1, float64(baseLimit)*float64(r.LimitUsageFactor))))
 		rates[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, limit, limit-count)
