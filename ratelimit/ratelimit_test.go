@@ -24,7 +24,7 @@ func TestNewLimits(t *testing.T) {
 
 func TestNewInternalRateLimit(t *testing.T) {
 	t.Parallel()
-	rateLimit := ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
+	rateLimit := ratelimit.NewInternalRateLimit(0.99, 1*time.Second)
 	require.NotNil(t, rateLimit)
 	require.Empty(t, rateLimit.Region)
 	require.True(t, rateLimit.Enabled)
@@ -109,7 +109,7 @@ func TestRateLimitCheck(t *testing.T) {
 func TestLimitsDontMatch(t *testing.T) {
 	t.Parallel()
 	config := util.NewTestEquinoxConfig()
-	config.RateLimit = ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
+	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, 1*time.Second)
 	client := internal.NewInternalClient(config)
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",

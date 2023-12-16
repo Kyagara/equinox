@@ -99,7 +99,7 @@ func TestRateLimitWithMock(t *testing.T) {
 		httpmock.NewBytesResponder(200, []byte(`{}`)).HeaderSet(headers))
 
 	config := util.NewTestEquinoxConfig()
-	config.RateLimit = ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
+	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, 1*time.Second)
 	config.Retry = api.Retry{MaxRetries: 3}
 
 	client := equinox.NewClientWithConfig(config)

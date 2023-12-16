@@ -235,7 +235,7 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 
 	config := util.NewTestEquinoxConfig()
 	config.Retry = api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond}
-	config.RateLimit = ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
+	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, 1*time.Second)
 	i := internal.NewInternalClient(config)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
