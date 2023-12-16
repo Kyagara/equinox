@@ -29,9 +29,9 @@ type Client struct {
 	key                string
 	maxRetries         int
 	jitter             time.Duration
-	isCacheEnabled     bool
-	isRateLimitEnabled bool
-	isRetryEnabled     bool
+	IsCacheEnabled     bool
+	IsRateLimitEnabled bool
+	IsRetryEnabled     bool
 }
 
 var (
@@ -76,10 +76,10 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 		cache:              config.Cache,
 		ratelimit:          config.RateLimit,
 		maxRetries:         config.Retry.MaxRetries,
-		isRetryEnabled:     config.Retry.MaxRetries > 0,
 		jitter:             config.Retry.Jitter,
-		isCacheEnabled:     config.Cache.TTL != 0,
-		isRateLimitEnabled: config.RateLimit.Enabled,
+		IsCacheEnabled:     config.Cache.TTL != 0,
+		IsRateLimitEnabled: config.RateLimit.Enabled,
+		IsRetryEnabled:     config.Retry.MaxRetries > 0,
 	}
 	if config.Retry.MaxRetries == 0 {
 		config.Retry.MaxRetries = 1
@@ -141,7 +141,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 
 	url := GetURLWithAuthorizationHash(equinoxReq)
 
-	if c.isCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
+	if c.IsCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
 		if item, err := c.cache.Get(ctx, url); err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
 		} else if item != nil {
@@ -150,7 +150,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		}
 	}
 
-	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
+	if c.IsRateLimitEnabled && !equinoxReq.IsCDN {
 		err := c.ratelimit.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		if err != nil {
 			return err
@@ -163,7 +163,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	}
 	defer response.Body.Close()
 
-	if !c.isCacheEnabled {
+	if !c.IsCacheEnabled {
 		return jsonv2.UnmarshalRead(response.Body, target)
 	}
 
@@ -194,7 +194,7 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 		return nil, errContextIsNil
 	}
 
-	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
+	if c.IsRateLimitEnabled && !equinoxReq.IsCDN {
 		err := c.ratelimit.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		if err != nil {
 			return nil, err
@@ -227,7 +227,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 			return response, nil
 		}
 
-		if !c.isRetryEnabled || !retryable {
+		if !c.IsRetryEnabled || !retryable {
 			equinoxReq.Logger.Error().Err(err).Msg("Request failed")
 			return nil, err
 		}
@@ -247,7 +247,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 }
 
 func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, bool, error) {
-	if c.isRateLimitEnabled && !equinoxReq.IsCDN {
+	if c.IsRateLimitEnabled && !equinoxReq.IsCDN {
 		c.ratelimit.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, response.Header)
 	}
 
@@ -258,7 +258,7 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 
 	err, ok := api.StatusCodeToError[response.StatusCode]
 	if ok {
-		// 4xx and 5xx responses will be retried
+		// 429 and 5xx responses will be retried
 		if response.StatusCode == http.StatusTooManyRequests || (response.StatusCode >= 500 && response.StatusCode < 600) {
 			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, response.Header), true, err
 		}

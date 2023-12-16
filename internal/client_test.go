@@ -11,10 +11,12 @@ import (
 	"testing"
 
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
+	"github.com/allegro/bigcache/v3"
 	jsonv2 "github.com/go-json-experiment/json"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/require"
@@ -24,13 +26,21 @@ func TestNewInternalClient(t *testing.T) {
 	t.Parallel()
 	internalClient := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NotEmpty(t, internalClient)
+	require.False(t, internalClient.IsCacheEnabled)
+	require.False(t, internalClient.IsRateLimitEnabled)
+	require.False(t, internalClient.IsRetryEnabled)
 
 	config := util.NewTestEquinoxConfig()
 	config.Cache.TTL = 1
-
+	config.Retry.MaxRetries = 1
+	config.RateLimit.Enabled = true
 	config.Key = ""
+
 	internalClient = internal.NewInternalClient(config)
 	require.NotEmpty(t, internalClient)
+	require.True(t, internalClient.IsCacheEnabled)
+	require.True(t, internalClient.IsRateLimitEnabled)
+	require.True(t, internalClient.IsRetryEnabled)
 
 	l := internalClient.Logger("client_endpoint_method")
 	ctx := context.Background()
@@ -220,6 +230,7 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			ctx := context.Background()
 			equinoxReq, err := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", "", nil)
 			require.NoError(t, err)
+			require.Equal(t, "GET", equinoxReq.Request.Method)
 			var data interface{}
 			err = internal.Execute(ctx, equinoxReq, data)
 			require.Equal(t, test.wantErr, err)
@@ -326,4 +337,50 @@ func TestInternalClientExecutes(t *testing.T) {
 	err = internal.Execute(ctx, equinoxReq, &res)
 	require.NoError(t, err)
 	require.Equal(t, `response`, res)
+}
+
+func TestExecutesWithCache(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewStringResponder(200, `"response"`))
+
+	httpmock.RegisterResponder("POST", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewStringResponder(200, `"response2"`))
+
+	ctx := context.Background()
+
+	config := util.NewTestEquinoxConfig()
+	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(5*time.Minute))
+	require.NoError(t, err)
+	config.Cache = cache
+	internalClient := internal.NewInternalClient(config)
+	require.NotEmpty(t, internalClient)
+	require.True(t, internalClient.IsCacheEnabled)
+
+	l := internalClient.Logger("client_endpoint_method")
+	equinoxReq, err := internalClient.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	require.NoError(t, err)
+	require.Equal(t, "GET", equinoxReq.Request.Method)
+
+	var res string
+	err = internalClient.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+	require.Equal(t, `response`, res)
+
+	err = internalClient.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+	require.Equal(t, `response`, res)
+
+	equinoxReq, err = internalClient.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	require.NoError(t, err)
+	require.Equal(t, "POST", equinoxReq.Request.Method)
+
+	err = internalClient.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+	require.Equal(t, `response2`, res)
+	err = internalClient.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+	require.Equal(t, `response2`, res)
 }
