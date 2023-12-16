@@ -20,7 +20,7 @@
   - Teamfight Tactics
   - Valorant
   - Legends of Runeterra
-- Data Dragon and Community Dragon (Incomplete)
+- Data Dragon and Community Dragon - (Incomplete)
 - Rate limit (internal, WIP)
 - Caching (in-memory or Redis)
 - Logging
