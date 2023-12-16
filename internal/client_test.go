@@ -31,6 +31,17 @@ func TestNewInternalClient(t *testing.T) {
 	require.False(t, internalClient.IsRetryEnabled)
 
 	config := util.NewTestEquinoxConfig()
+	config.HTTPClient = nil
+	config.Cache = nil
+	config.RateLimit = nil
+
+	internalClient = internal.NewInternalClient(config)
+	require.NotEmpty(t, internalClient)
+	require.False(t, internalClient.IsCacheEnabled)
+	require.False(t, internalClient.IsRateLimitEnabled)
+	require.False(t, internalClient.IsRetryEnabled)
+
+	config = util.NewTestEquinoxConfig()
 	config.Cache.TTL = 1
 	config.Retry.MaxRetries = 1
 	config.RateLimit.Enabled = true
@@ -248,6 +259,7 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 	config.Retry = api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond}
 	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, 1*time.Second)
 	i := internal.NewInternalClient(config)
+	require.True(t, i.IsRetryEnabled)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
 		httpmock.NewBytesResponder(429, []byte(`{}`)).HeaderSet(map[string][]string{
@@ -286,12 +298,23 @@ func TestGetDDragonLOLVersions(t *testing.T) {
 	internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
 
 	httpmock.RegisterResponder("GET", "https://ddragon.leagueoflegends.com/api/versions.json",
-		httpmock.NewStringResponder(200, `["1.0"]`))
+		httpmock.NewStringResponder(200, `["1.0"]`).Times(1))
 
 	ctx := context.Background()
 	versions, err := internal.GetDDragonLOLVersions(ctx, "client_endpoint_method")
 	require.NoError(t, err)
 	require.Equal(t, "1.0", versions[0])
+
+	versions, err = internal.GetDDragonLOLVersions(ctx, "client_endpoint_method")
+	require.Error(t, err)
+	require.Empty(t, versions)
+
+	httpmock.RegisterResponder("GET", "https://ddragon.leagueoflegends.com/api/versions.json",
+		httpmock.NewStringResponder(404, `["1.0"]`).Times(1))
+
+	versions, err = internal.GetDDragonLOLVersions(ctx, "client_endpoint_method")
+	require.Error(t, err)
+	require.Empty(t, versions)
 }
 
 func TestGetURLWithAuthorizationHash(t *testing.T) {
