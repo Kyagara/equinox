@@ -44,7 +44,7 @@ type RateLimit struct {
 
 func NewInternalRateLimit(limitUsageFactor float32, intervalOverhead time.Duration) *RateLimit {
 	if limitUsageFactor < 0.0 || limitUsageFactor > 1.0 {
-		limitUsageFactor = 1.0
+		limitUsageFactor = 0.99
 	}
 	if intervalOverhead < 0 {
 		intervalOverhead = 1 * time.Second
@@ -137,8 +137,8 @@ func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitTy
 	counts := strings.Split(countHeader, ",")
 	rates := make([]*Bucket, len(limits))
 
-	for i := range limits {
-		baseLimit, interval := getNumbersFromPair(limits[i])
+	for i, limitString := range limits {
+		baseLimit, interval := getNumbersFromPair(limitString)
 		count, _ := getNumbersFromPair(counts[i])
 		limit := int(math.Floor(math.Max(1, float64(baseLimit)*float64(r.LimitUsageFactor))))
 		rates[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, limit, limit-count)
