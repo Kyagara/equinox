@@ -89,8 +89,8 @@ func TestRateLimitWithMock(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 
 	headers := map[string][]string{
-		ratelimit.APP_RATE_LIMIT_HEADER:          {"5:3"},
-		ratelimit.METHOD_RATE_LIMIT_HEADER:       {"5:3"},
+		ratelimit.APP_RATE_LIMIT_HEADER:          {"6:3"},
+		ratelimit.METHOD_RATE_LIMIT_HEADER:       {"6:3"},
 		ratelimit.APP_RATE_LIMIT_COUNT_HEADER:    {"1:3"},
 		ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: {"1:3"},
 	}
@@ -120,7 +120,7 @@ func TestRateLimitWithMock(t *testing.T) {
 	_, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 
-	// This last request (5) should block until rate limit is reset, this test should take around 3 seconds
+	// This last request should block until rate limit is reset, this test should take around 3 seconds
 	ctx = context.Background()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.NoError(t, err)

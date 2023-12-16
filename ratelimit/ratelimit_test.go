@@ -141,7 +141,7 @@ func TestLimitsDontMatch(t *testing.T) {
 	require.NoError(t, err)
 
 	headers = http.Header{
-		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"3:2"},
+		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"4:2"},
 		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},
 	}
 	// Updating limits
