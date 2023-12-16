@@ -20,9 +20,7 @@ func NewLogger(config api.EquinoxConfig) zerolog.Logger {
 		return zerolog.Nop()
 	}
 
-	if config.Logger.TimeFieldFormat != "" {
-		zerolog.TimeFieldFormat = config.Logger.TimeFieldFormat
-	}
+	zerolog.TimeFieldFormat = config.Logger.TimeFieldFormat
 
 	var logger zerolog.Logger
 

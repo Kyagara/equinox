@@ -46,7 +46,7 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	config.RateLimit = ratelimit.NewInternalRateLimit(1.0, 1*time.Second)
+	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, 1*time.Second)
 	client := equinox.NewClientWithConfig(config)
 
 	b.RunParallel(func(pb *testing.PB) {

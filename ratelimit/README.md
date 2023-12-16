@@ -26,23 +26,26 @@ type RateLimit struct {
 
 ### Bucket
 
-A limit for the App or Method is a bucket of tokens:
+A `Limit` for the App/Method is a `Bucket`:
 
 ```go
 type Bucket struct {
-	// Time interval in seconds
-	interval time.Duration
-	// Maximum number of tokens
-	limit int
+	// Next reset
+	next time.Time
 	// Current number of tokens, starts at limit
 	tokens int
-	// Next reset
-	next  time.Time
-	mutex sync.Mutex
+	// The limit given in the header without any modification
+	baseLimit int
+	// Maximum number of tokens
+	limit int
+	// Time interval in seconds
+	interval         time.Duration
+	intervalOverhead time.Duration
+	mutex            sync.Mutex
 }
 ```
 
-When creating a bucket, `interval` is the time in seconds between resets, `limit` is the maximum number of tokens taking into account the 'LimitUsageFactor', and `tokens` is the current number of tokens.
+When creating a bucket, `interval` is the time in seconds between resets, `limit` is the maximum number of tokens taking into account the `LimitUsageFactor` from the `RateLimit`, and `tokens` is the current number of tokens.
 
 ```go
 func NewBucket(interval time.Duration, intervalOverhead time.Duration, baseLimit int, limit int, tokens int) *Bucket {
@@ -57,6 +60,9 @@ func NewBucket(interval time.Duration, intervalOverhead time.Duration, baseLimit
 	}
 }
 ```
+
+- When a bucket is full, the amount of tokens will be the same as the limit - Not Rate limited, able to `Take()` a token from the bucket.
+- When a bucket is empty, the amount of tokens will be 0 - Rate limited, not able to `Take()` a token without waiting.
 
 When initializing a bucket, the current amount of tokens will be the same as the limit minus the current count provided from the `X-App-Rate-Limit-Count` or `X-Method-Rate-Limit-Count` headers.
 
@@ -84,19 +90,16 @@ func parseHeaders(limitHeader string, countHeader string) []*Bucket {
 }
 ```
 
-- When a bucket is full, the amount of tokens will be the same as the limit - Not Rate limited, able to `Take()` a token from the bucket.
-- When a bucket is empty, the amount of tokens will be 0 - Rate limited, not able to `Take()` a token without waiting.
-
 ### Take
 
 After creating a request and checking if it was cached, the client will use `Take()`, initializing the App and Method buckets in a **route** AND the **MethodID** if not initialized.
 
-If rate limited, `Take()` will block until the next bucket reset. A `context` can be passed, allowing for cancellation and checking if the deadline will be exceeded, cancelling the block if it will.
+If rate limited, `Take()` will block until the next bucket reset. A `context` can be passed, allowing for cancellation, a check will be done to see if waiting would exceed the deadline set in a context, returning an error if it would.
 
-`Take()` will then decrease tokens for the App and Method in the buckets by one.
+`Take()` will then decrease tokens for the App and Method in the buckets involved by one.
 
 ### Update
 
 After receiving a response, `Update()` will verify that the current buckets in-memory match the ones received by the Riot API, if they don't, it will force an update in all buckets.
 
-> By 'matching', I mean that the current **limit** and **interval** in these buckets match the ones received by the Riot API.
+> By 'matching', I mean that the current **baseLimit** and **interval** in the buckets already in memory match the ones received by the Riot API.

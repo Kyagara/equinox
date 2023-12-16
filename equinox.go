@@ -78,7 +78,7 @@ func DefaultConfig(key string) (api.EquinoxConfig, error) {
 			Timeout: 15 * time.Second,
 		},
 		Cache:     cache,
-		RateLimit: ratelimit.NewInternalRateLimit(1.0, 1*time.Second),
+		RateLimit: ratelimit.NewInternalRateLimit(0.99, 1*time.Second),
 		Retry:     DefaultRetry(),
 		Logger:    DefaultLogger(),
 	}
