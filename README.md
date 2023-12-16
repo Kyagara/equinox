@@ -121,7 +121,6 @@ func main() {
 - Maybe the context usage throughout the project could be improved
 - Maybe add more options to customize the rate limiter
 - Maybe add wrapped errors to improve error handling
-- Maybe add presets for rate limit and cache
 - Improve DDragon/CDragon support
 
 ## About

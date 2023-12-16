@@ -68,7 +68,9 @@ func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
 //   - `Retry`		: api.Retry object with a limit of 3 and jitter of 500 milliseconds.
 func DefaultConfig(key string) (api.EquinoxConfig, error) {
 	ctx := context.Background()
-	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
+	cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
+	cacheConfig.Verbose = false
+	cache, err := cache.NewBigCache(ctx, cacheConfig)
 	if err != nil {
 		return api.EquinoxConfig{}, err
 	}
