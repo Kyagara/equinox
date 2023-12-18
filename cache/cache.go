@@ -8,6 +8,7 @@ import (
 
 	"github.com/allegro/bigcache/v3"
 	"github.com/redis/go-redis/v9"
+	"github.com/rs/zerolog"
 )
 
 type StoreType string
@@ -21,6 +22,13 @@ type Cache struct {
 	store     Store
 	StoreType StoreType
 	TTL       time.Duration
+	Enabled   bool
+}
+
+func (c Cache) MarshalZerologObject(encoder *zerolog.Event) {
+	if c.Enabled {
+		encoder.Str("store", string(c.StoreType)).Dur("ttl", c.TTL)
+	}
 }
 
 type Store interface {
@@ -47,6 +55,7 @@ func NewBigCache(ctx context.Context, config bigcache.Config) (*Cache, error) {
 		store:     &BigCacheStore{client: bigcache},
 		TTL:       config.LifeWindow,
 		StoreType: BigCache,
+		Enabled:   true,
 	}
 	return cache, nil
 }
@@ -68,6 +77,7 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 		},
 		TTL:       ttl,
 		StoreType: RedisCache,
+		Enabled:   true,
 	}
 	return cache, nil
 }
