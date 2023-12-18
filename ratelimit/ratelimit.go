@@ -42,6 +42,12 @@ type RateLimit struct {
 	mutex            sync.Mutex
 }
 
+func (r *RateLimit) MarshalZerologObject(encoder *zerolog.Event) {
+	if r.Enabled {
+		encoder.Float32("limit_usage_factor", r.LimitUsageFactor).Dur("interval_overhead", r.IntervalOverhead)
+	}
+}
+
 func NewInternalRateLimit(limitUsageFactor float32, intervalOverhead time.Duration) *RateLimit {
 	if limitUsageFactor < 0.0 || limitUsageFactor > 1.0 {
 		limitUsageFactor = 0.99

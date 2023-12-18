@@ -49,8 +49,11 @@ func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
 	if c.Retry.MaxRetries > 0 {
 		encoder.Object("retry", c.Retry)
 	}
-	if c.Cache.TTL != 0 {
-		encoder.Str("cache_store", string(c.Cache.StoreType)).Dur("cache_ttl", c.Cache.TTL)
+	if c.Cache.Enabled {
+		encoder.Object("cache", c.Cache)
+	}
+	if c.RateLimit.Enabled {
+		encoder.Object("ratelimit", c.RateLimit)
 	}
 }
 
