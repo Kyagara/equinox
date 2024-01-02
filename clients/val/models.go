@@ -309,10 +309,10 @@ type StatusV1DTO struct {
 	MaintenanceStatus string `json:"maintenance_status,omitempty"`
 	UpdatedAt         string `json:"updated_at,omitempty"`
 	// (Legal values: windows, macos, android, ios, ps4, xbone, switch)
-	Platforms []string       `json:"platforms,omitempty"`
-	Titles    []ContentV1DTO `json:"titles,omitempty"`
-	Updates   []UpdateV1DTO  `json:"updates,omitempty"`
-	ID        int32          `json:"id,omitempty"`
+	Platforms []string             `json:"platforms,omitempty"`
+	Titles    []StatusContentV1DTO `json:"titles,omitempty"`
+	Updates   []UpdateV1DTO        `json:"updates,omitempty"`
+	ID        int32                `json:"id,omitempty"`
 }
 
 // TeamDto data object.
@@ -339,8 +339,8 @@ type UpdateV1DTO struct {
 	CreatedAt string `json:"created_at,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
 	// (Legal values: riotclient, riotstatus, game)
-	PublishLocations []string       `json:"publish_locations,omitempty"`
-	Translations     []ContentV1DTO `json:"translations,omitempty"`
-	ID               int32          `json:"id,omitempty"`
-	Publish          bool           `json:"publish,omitempty"`
+	PublishLocations []string             `json:"publish_locations,omitempty"`
+	Translations     []StatusContentV1DTO `json:"translations,omitempty"`
+	ID               int32                `json:"id,omitempty"`
+	Publish          bool                 `json:"publish,omitempty"`
 }

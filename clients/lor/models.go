@@ -46,14 +46,14 @@ type InfoV1DTO struct {
 type LeaderboardPlayerV1DTO struct {
 	Name string `json:"name,omitempty"`
 	// League points.
-	Lp   int32 `json:"lp,omitempty"`
+	LP   int32 `json:"lp,omitempty"`
 	Rank int32 `json:"rank,omitempty"`
 }
 
 // LeaderboardDto data object.
 type LeaderboardV1DTO struct {
 	// A list of players in Master tier.
-	Players []PlayerV1DTO `json:"players,omitempty"`
+	Players []LeaderboardPlayerV1DTO `json:"players,omitempty"`
 }
 
 // MatchDto data object.

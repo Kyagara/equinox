@@ -8,42 +8,40 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"sync"
 
 	"github.com/flosch/pongo2/v6"
 	"github.com/tidwall/gjson"
 )
 
-func DownloadAndSaveSpecs(spec []string, wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func DownloadAndSaveSpecs(spec []string) error {
 	url, filePath := spec[0], spec[1]
 	response, err := http.Get(url)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to download '%s'. Error: '%s'\n", url, err))
+		return fmt.Errorf("failed to download '%s'. Error: '%s'", url, err)
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusOK {
 		err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
 		if err != nil {
-			panic(fmt.Sprintf("Error creating directory: %s\n", err))
+			return fmt.Errorf("error creating directory: %s", err)
 		}
 
 		body, err := io.ReadAll(response.Body)
 		if err != nil {
-			panic(fmt.Sprintf("Error reading response body: %s\n", err))
+			return fmt.Errorf("error reading response body: %s", err)
 		}
 
 		err = os.WriteFile(filePath, body, 0644)
 		if err != nil {
-			panic(fmt.Sprintf("Error writing to file: %s\n", err))
+			return fmt.Errorf("error writing to file: %s", err)
 		}
 
 		fmt.Printf("Saving '%s'\n", filePath)
-	} else {
-		panic(fmt.Sprintf("Failed to download '%s'. Status code: '%d'\n", url, response.StatusCode))
+		return nil
 	}
+
+	return fmt.Errorf("failed to download '%s'. Status code: '%d'", url, response.StatusCode)
 }
 
 func Compile() error {

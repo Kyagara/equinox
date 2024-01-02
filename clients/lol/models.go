@@ -1016,7 +1016,7 @@ type StubLobbyEventV5DTO struct {
 
 // LobbyEventV5DTOWrapper data object.
 type StubLobbyEventWrapperV5DTO struct {
-	EventList []LobbyEventV5DTO `json:"eventList,omitempty"`
+	EventList []StubLobbyEventV5DTO `json:"eventList,omitempty"`
 }
 
 // ProviderRegistrationParametersV5 data object.

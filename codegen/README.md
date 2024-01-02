@@ -12,6 +12,8 @@ In addition, the specs that are downloaded and used are from [riotapi-schema](ht
 
 Changes had to be made to translate the Rust output to Golang (I miss Option<>), mainly with how the clients are organized (I miss impl).
 
+Changes includes all libraries used, such as pongo2 for templating, strcase for case conversion and gjson for JSON.
+
 ### Todo
 
 - Add checks for required fields (queries and headers), returning errors if they are missing, for now only Authorization headers are required so it's not a big deal.
