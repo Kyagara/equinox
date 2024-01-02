@@ -1,0 +1,26 @@
+// This package is used to interact with all {{ NormalizedClientName }} endpoints.
+{%- for Endpoint in EndpointGroupKeys sorted %}
+//   - {{ FormatEndpointName(Endpoint) }}
+{%- endfor %}
+//
+// Note: this package is automatically generated.
+{{ Preamble }}
+
+import "github.com/Kyagara/equinox/internal"
+
+type Client struct {
+{%- for Endpoint in EndpointGroups sorted %}
+{%- set EndpointName = FormatEndpointName(Endpoint) %}
+    {{ EndpointName }}  {{ EndpointName }}
+{%- endfor %}
+}
+
+// Creates a new {{ NormalizedClientName }} Client using the internal.Client provided.
+func New{{ NormalizedClientName }}Client(client *internal.Client) *Client {
+	return &Client{
+{%- for Endpoint in EndpointGroupKeys sorted %}
+{%- set EndpointName = FormatEndpointName(Endpoint) %}
+        {{ EndpointName }}: {{ EndpointName }}{internal: client},
+{%- endfor %}
+	}
+}

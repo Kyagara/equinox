@@ -1,4 +1,4 @@
-// This package is used to interact with all VALORANT endpoints.
+// This package is used to interact with all VAL endpoints.
 //   - ContentV1
 //   - MatchV1
 //   - RankedV1
@@ -19,7 +19,6 @@ package val
 
 import "github.com/Kyagara/equinox/internal"
 
-// Note: this struct is automatically generated.
 type Client struct {
 	ContentV1 ContentV1
 	MatchV1   MatchV1

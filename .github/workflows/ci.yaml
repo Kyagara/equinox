@@ -43,16 +43,8 @@ jobs:
       - name: Install betteralign
         run: go install github.com/dkorunic/betteralign/cmd/betteralign@latest
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install node dependencies
-        run: npm ci --prefix srcgen
-
       - name: Code generation
-        run: cd srcgen && npm run update && node index.js
+        run: UPDATE_SPECS=1 go generate ./...
 
   test:
     runs-on: ubuntu-latest

@@ -25,8 +25,6 @@ import (
 //
 // [val-content-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [val-content-v1]: https://developer.riotgames.com/apis#val-content-v1
 type ContentV1 struct {
 	internal *internal.Client
@@ -36,13 +34,11 @@ type ContentV1 struct {
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `locale` (optional, in query)
+//   - `locale` (optional)
 //
 // # Riot API Reference
 //
 // [val-content-v1.getContent]
-//
-// Note: this method is automatically generated.
 //
 // [val-content-v1.getContent]: https://developer.riotgames.com/api-methods/#val-content-v1/GET_getContent
 func (e *ContentV1) Content(ctx context.Context, route PlatformRoute, locale string) (*ContentV1DTO, error) {
@@ -71,8 +67,6 @@ func (e *ContentV1) Content(ctx context.Context, route PlatformRoute, locale str
 //
 // [val-match-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [val-match-v1]: https://developer.riotgames.com/apis#val-match-v1
 type MatchV1 struct {
 	internal *internal.Client
@@ -82,13 +76,11 @@ type MatchV1 struct {
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `matchId` (required, in path)
+//   - `matchId`
 //
 // # Riot API Reference
 //
 // [val-match-v1.getMatch]
-//
-// Note: this method is automatically generated.
 //
 // [val-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatch
 func (e *MatchV1) ByID(ctx context.Context, route PlatformRoute, matchId string) (*MatchV1DTO, error) {
@@ -112,13 +104,11 @@ func (e *MatchV1) ByID(ctx context.Context, route PlatformRoute, matchId string)
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `puuid` (required, in path)
+//   - `puuid`
 //
 // # Riot API Reference
 //
 // [val-match-v1.getMatchlist]
-//
-// Note: this method is automatically generated.
 //
 // [val-match-v1.getMatchlist]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatchlist
 func (e *MatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, puuid string) (*MatchlistV1DTO, error) {
@@ -146,13 +136,11 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, puuid st
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `queue` (required, in path)
+//   - `queue`
 //
 // # Riot API Reference
 //
 // [val-match-v1.getRecent]
-//
-// Note: this method is automatically generated.
 //
 // [val-match-v1.getRecent]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getRecent
 func (e *MatchV1) Recent(ctx context.Context, route PlatformRoute, queue string) (*RecentMatchesV1DTO, error) {
@@ -176,8 +164,6 @@ func (e *MatchV1) Recent(ctx context.Context, route PlatformRoute, queue string)
 //
 // [val-ranked-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [val-ranked-v1]: https://developer.riotgames.com/apis#val-ranked-v1
 type RankedV1 struct {
 	internal *internal.Client
@@ -187,15 +173,13 @@ type RankedV1 struct {
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `actId` (required, in path) - Act ids can be found using the val-content API.
-//   - `size` (optional, in query) - Defaults to 200. Valid values: 1 to 200.
-//   - `startIndex` (optional, in query) - Defaults to 0.
+//   - `actId` - Act ids can be found using the val-content API.
+//   - `size` (optional) - Defaults to 200. Valid values: 1 to 200.
+//   - `startIndex` (optional) - Defaults to 0.
 //
 // # Riot API Reference
 //
 // [val-ranked-v1.getLeaderboard]
-//
-// Note: this method is automatically generated.
 //
 // [val-ranked-v1.getLeaderboard]: https://developer.riotgames.com/api-methods/#val-ranked-v1/GET_getLeaderboard
 func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, size int32, startIndex int32) (*LeaderboardV1DTO, error) {
@@ -227,8 +211,6 @@ func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId s
 //
 // [val-status-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [val-status-v1]: https://developer.riotgames.com/apis#val-status-v1
 type StatusV1 struct {
 	internal *internal.Client
@@ -242,8 +224,6 @@ type StatusV1 struct {
 // # Riot API Reference
 //
 // [val-status-v1.getPlatformData]
-//
-// Note: this method is automatically generated.
 //
 // [val-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#val-status-v1/GET_getPlatformData
 func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV1DTO, error) {

@@ -1,4 +1,4 @@
-// This package is used to interact with all Riot Games endpoints.
+// This package is used to interact with all Riot endpoints.
 //   - AccountV1
 //
 // Note: this package is automatically generated.
@@ -16,7 +16,6 @@ package riot
 
 import "github.com/Kyagara/equinox/internal"
 
-// Note: this struct is automatically generated.
 type Client struct {
 	AccountV1 AccountV1
 }

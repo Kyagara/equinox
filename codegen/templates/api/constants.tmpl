@@ -1,0 +1,15 @@
+{{ Preamble }}
+
+// Regional routes, used in tournament services, Legends of Runeterra (LoR), and some other endpoints.
+type RegionalRoute string
+
+const (
+{%- for Name, Details in RegionalRoutes sorted %}
+    // {{ Details.Description|safe }}
+{%- if Details.Deprecated %}
+    //
+    // Deprecated
+{%- endif %}
+    {{ Name|upper }} RegionalRoute = "{{ Name }}"
+{%- endfor %}
+)

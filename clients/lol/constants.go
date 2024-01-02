@@ -60,6 +60,8 @@ const (
 	NA1 PlatformRoute = "na1"
 	// Oceana.
 	OC1 PlatformRoute = "oc1"
+	// Public Beta Environment, special beta testing platform. Located in North America.
+	PBE1 PlatformRoute = "pbe1"
 	// Philippines
 	PH2 PlatformRoute = "ph2"
 	// Russia
@@ -74,8 +76,6 @@ const (
 	TW2 PlatformRoute = "tw2"
 	// Vietnam
 	VN2 PlatformRoute = "vn2"
-	// Public Beta Environment, special beta testing platform. Located in North America.
-	PBE1 PlatformRoute = "pbe1"
 )
 
 // Tournament regions for League of Legends (LoL).
@@ -98,10 +98,10 @@ const (
 	NA TournamentRegion = "na1"
 	// Oceana.
 	OCE TournamentRegion = "oc1"
-	// Turkey
-	TR TournamentRegion = "tr1"
 	// Public Beta Environment, special beta testing platform. Located in North America.
 	PBE TournamentRegion = "pbe1"
+	// Turkey
+	TR TournamentRegion = "tr1"
 )
 
 // League of Legends game type: matched game, custom game, or tutorial game.
@@ -177,12 +177,12 @@ const (
 type QueueType string
 
 const (
-	// 5v5 Ranked Solo games
-	RANKED_SOLO_5X5 QueueType = "RANKED_SOLO_5x5"
 	// 5v5 Ranked Flex games
 	RANKED_FLEX_SR QueueType = "RANKED_FLEX_SR"
 	// 3v3 Ranked Flex games
 	//
-	// Deprecated: Deprecated in patch 9.23
+	// Deprecated
 	RANKED_FLEX_TT QueueType = "RANKED_FLEX_TT"
+	// 5v5 Ranked Solo games
+	RANKED_SOLO_5X5 QueueType = "RANKED_SOLO_5x5"
 )

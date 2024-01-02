@@ -1,4 +1,4 @@
-// This package is used to interact with all Legends of Runeterra endpoints.
+// This package is used to interact with all LOR endpoints.
 //   - DeckV1
 //   - InventoryV1
 //   - MatchV1
@@ -20,7 +20,6 @@ package lor
 
 import "github.com/Kyagara/equinox/internal"
 
-// Note: this struct is automatically generated.
 type Client struct {
 	DeckV1      DeckV1
 	InventoryV1 InventoryV1

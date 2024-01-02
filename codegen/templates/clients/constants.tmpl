@@ -1,0 +1,125 @@
+{{ Preamble }}
+
+{%- macro NewConstants(TypeName, Table) %}
+{%- for Name, Details in Table sorted %}
+    // {{ Details.Description|safe }}
+{%- if Details.Deprecated %}
+    //
+    // Deprecated
+{%- endif %}
+    {{ Name|upper }} {{ TypeName }} = "{{ Name }}"
+{%- endfor %}
+{%- endmacro %}
+
+{% if ClientName == "val" %}
+// Platform routes for Valorant.
+type PlatformRoute string
+
+const (
+{{- NewConstants("PlatformRoute", VALRoutes) }}
+)
+{%- endif %}
+
+{% if ClientName == "lol" or ClientName == "tft" %}
+// LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
+type Tier string
+
+const (
+	IRON        Tier = "IRON"
+	BRONZE      Tier = "BRONZE"
+	SILVER      Tier = "SILVER"
+	GOLD        Tier = "GOLD"
+	PLATINUM    Tier = "PLATINUM"
+    EMERALD     Tier = "EMERALD"
+	DIAMOND     Tier = "DIAMOND"
+	MASTER      Tier = "MASTER"
+	GRANDMASTER Tier = "GRANDMASTER"
+	CHALLENGER  Tier = "CHALLENGER"
+)
+
+// LoL and TFT rank divisions, I, II, III, IV, and (deprecated) V.
+type Division string
+
+const (
+	I   Division = "I"
+	II  Division = "II"
+	III Division = "III"
+	IV  Division = "IV"
+    // Deprecated
+    V   Division = "V"
+)
+
+// Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
+type PlatformRoute string
+
+const (
+{{- NewConstants("PlatformRoute", LOL_TFT_Routes) }}
+)
+{%- endif %}
+
+{% if ClientName == "lol" %}
+// Tournament regions for League of Legends (LoL).
+type TournamentRegion string
+
+const (
+{%- for Name, Details in LOL_TFT_Routes sorted %}
+{%- if Details.TournamentRegion %}
+    // {{ Details.Description|safe }}
+{%- if Details.Deprecated %}
+    //
+    // Deprecated
+{%- endif %}
+    {{ Details.TournamentRegion|upper }} TournamentRegion = "{{ Name }}"
+{%- endif %}
+{%- endfor %}
+)
+
+// League of Legends game type: matched game, custom game, or tutorial game.
+type GameType string
+
+const (
+{{- NewConstants("GameType", GameTypes) }}
+)
+
+// League of Legends game mode, such as Classic,
+// ARAM, URF, One For All, Ascension, etc.
+type GameMode string
+
+const (
+{{- NewConstants("GameMode", GameModes) }}
+)
+
+// LoL ranked queue types.
+type QueueType string
+
+const (
+{%- for ID, Details in QueueTypes sorted %}
+{%- if not ("TFT" in ID) %}
+    // {{ Details.Description|safe }}
+{%- if Details.Deprecated %}
+    //
+    // Deprecated
+{%- endif %}
+    {{ Details.Name|upper }} QueueType = "{{ ID }}"
+{%- endif %}
+{%- endfor %}
+)
+{%- endif %}
+ 
+{% if ClientName == "tft" %}
+// TFT ranked queue types.
+type QueueType string
+
+const (
+{%- for ID, Details in QueueTypes sorted %}
+{%- if "TFT" in ID %}
+    // {{ Details.Description }}
+{%- if Details.Deprecated|safe %}
+    //
+    // Deprecated
+{%- endif %}
+    {{ Details.Name|upper }} QueueType = "{{ ID }}"
+{%- endif %}
+{%- endfor %}
+)
+{%- endif %}

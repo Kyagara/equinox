@@ -10,7 +10,7 @@ package riot
 
 // Spec version = cd204d7d764a025c280943766bc498278e439a6c
 
-// AccountDTO data object.
+// AccountDto data object.
 type AccountV1DTO struct {
 	PUUID string `json:"puuid,omitempty"`
 	// This field may be excluded from the response if the account doesn't have a gameName.
@@ -19,9 +19,9 @@ type AccountV1DTO struct {
 	TagLine string `json:"tagLine,omitempty"`
 }
 
-// ActiveShardDTO data object.
+// ActiveShardDto data object.
 type ActiveShardV1DTO struct {
-	PUUID       string `json:"puuid,omitempty"`
 	Game        string `json:"game,omitempty"`
 	ActiveShard string `json:"activeShard,omitempty"`
+	PUUID       string `json:"puuid,omitempty"`
 }

@@ -16,16 +16,16 @@ type RegionalRoute string
 const (
 	// North and South America.
 	AMERICAS RegionalRoute = "americas"
-	// Asia, used for LoL matches (`match-v5`) and TFT matches (`tft-match-v1`).
-	ASIA RegionalRoute = "asia"
-	// Europe.
-	EUROPE RegionalRoute = "europe"
-	// South East Asia, used for LoR, LoL matches (`match-v5`), and TFT matches (`tft-match-v1`).
-	SEA RegionalRoute = "sea"
 	// Asia-Pacific, deprecated, for some old matches in `lor-match-v1`.
 	//
 	// Deprecated
 	APAC RegionalRoute = "apac"
+	// Asia, used for LoL matches (`match-v5`) and TFT matches (`tft-match-v1`).
+	ASIA RegionalRoute = "asia"
 	// Special esports platform for `account-v1`. Do not confuse with the `esports` Valorant platform route.
 	ESPORTS RegionalRoute = "esports"
+	// Europe.
+	EUROPE RegionalRoute = "europe"
+	// South East Asia, used for LoR, LoL matches (`match-v5`), and TFT matches (`tft-match-v1`).
+	SEA RegionalRoute = "sea"
 )

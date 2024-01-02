@@ -10,44 +10,26 @@ package lor
 
 // Spec version = cd204d7d764a025c280943766bc498278e439a6c
 
-// DeckDTO data object.
-type DeckV1DTO struct {
-	ID   string `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
-	Code string `json:"code,omitempty"`
-}
-
-// NewDeckDTO data object.
-type NewDeckV1DTO struct {
-	Name string `json:"name,omitempty"`
-	Code string `json:"code,omitempty"`
-}
-
-// CardDTO data object.
+// CardDto data object.
 type CardV1DTO struct {
 	Code  string `json:"code,omitempty"`
 	Count string `json:"count,omitempty"`
 }
 
-// MatchDTO data object.
-type MatchV1DTO struct {
-	// Match metadata.
-	Metadata MetadataV1DTO `json:"metadata,omitempty"`
-	// Match info.
-	Info InfoV1DTO `json:"info,omitempty"`
+// ContentDto data object.
+type ContentV1DTO struct {
+	Locale  string `json:"locale,omitempty"`
+	Content string `json:"content,omitempty"`
 }
 
-// MetadataDTO data object.
-type MetadataV1DTO struct {
-	// Match data version.
-	DataVersion string `json:"data_version,omitempty"`
-	// Match id.
-	MatchID string `json:"match_id,omitempty"`
-	// A list of participant PUUIDs.
-	Participants []string `json:"participants,omitempty"`
+// DeckDto data object.
+type DeckV1DTO struct {
+	Name string `json:"name,omitempty"`
+	Code string `json:"code,omitempty"`
+	ID   string `json:"id,omitempty"`
 }
 
-// InfoDTO data object.
+// InfoDto data object.
 type InfoV1DTO struct {
 	// (Legal values:  Constructed,  Expeditions,  Tutorial)
 	GameMode string `json:"game_mode,omitempty"`
@@ -60,25 +42,7 @@ type InfoV1DTO struct {
 	TotalTurnCount int32 `json:"total_turn_count,omitempty"`
 }
 
-// PlayerDTO data object.
-type PlayerV1DTO struct {
-	PUUID  string `json:"puuid,omitempty"`
-	DeckID string `json:"deck_id,omitempty"`
-	// Code for the deck played. Refer to LOR documentation for details on deck codes.
-	DeckCode    string   `json:"deck_code,omitempty"`
-	GameOutcome string   `json:"game_outcome,omitempty"`
-	Factions    []string `json:"factions,omitempty"`
-	// The order in which the players took turns.
-	OrderOfPlay int32 `json:"order_of_play,omitempty"`
-}
-
-// LeaderboardDTO data object.
-type LeaderboardV1DTO struct {
-	// A list of players in Master tier.
-	Players []PlayerV1DTO `json:"players,omitempty"`
-}
-
-// PlayerDTO data object.
+// PlayerDto data object.
 type LeaderboardPlayerV1DTO struct {
 	Name string `json:"name,omitempty"`
 	Rank int32  `json:"rank,omitempty"`
@@ -86,7 +50,37 @@ type LeaderboardPlayerV1DTO struct {
 	Lp int32 `json:"lp,omitempty"`
 }
 
-// PlatformDataDTO data object.
+// LeaderboardDto data object.
+type LeaderboardV1DTO struct {
+	// A list of players in Master tier.
+	Players []PlayerV1DTO `json:"players,omitempty"`
+}
+
+// MatchDto data object.
+type MatchV1DTO struct {
+	// Match metadata.
+	Metadata MetadataV1DTO `json:"metadata,omitempty"`
+	// Match info.
+	Info InfoV1DTO `json:"info,omitempty"`
+}
+
+// MetadataDto data object.
+type MetadataV1DTO struct {
+	// Match id.
+	MatchID string `json:"match_id,omitempty"`
+	// Match data version.
+	DataVersion string `json:"data_version,omitempty"`
+	// A list of participant PUUIDs.
+	Participants []string `json:"participants,omitempty"`
+}
+
+// NewDeckDto data object.
+type NewDeckV1DTO struct {
+	Name string `json:"name,omitempty"`
+	Code string `json:"code,omitempty"`
+}
+
+// PlatformDataDto data object.
 type PlatformDataV1DTO struct {
 	ID           string        `json:"id,omitempty"`
 	Name         string        `json:"name,omitempty"`
@@ -95,29 +89,35 @@ type PlatformDataV1DTO struct {
 	Incidents    []StatusV1DTO `json:"incidents,omitempty"`
 }
 
-// StatusDTO data object.
+// PlayerDto data object.
+type PlayerV1DTO struct {
+	GameOutcome string `json:"game_outcome,omitempty"`
+	PUUID       string `json:"puuid,omitempty"`
+	DeckID      string `json:"deck_id,omitempty"`
+	// Code for the deck played. Refer to LOR documentation for details on deck codes.
+	DeckCode string   `json:"deck_code,omitempty"`
+	Factions []string `json:"factions,omitempty"`
+	// The order in which the players took turns.
+	OrderOfPlay int32 `json:"order_of_play,omitempty"`
+}
+
+// StatusDto data object.
 type StatusV1DTO struct {
+	// (Legal values:  info,  warning,  critical)
+	IncidentSeverity string `json:"incident_severity,omitempty"`
+	CreatedAt        string `json:"created_at,omitempty"`
+	ArchiveAt        string `json:"archive_at,omitempty"`
+	UpdatedAt        string `json:"updated_at,omitempty"`
 	// (Legal values:  scheduled,  in_progress,  complete)
 	MaintenanceStatus string `json:"maintenance_status,omitempty"`
-	// (Legal values:  info,  warning,  critical)
-	IncidentSeverity string         `json:"incident_severity,omitempty"`
-	CreatedAt        string         `json:"created_at,omitempty"`
-	ArchiveAt        string         `json:"archive_at,omitempty"`
-	UpdatedAt        string         `json:"updated_at,omitempty"`
-	Titles           []ContentV1DTO `json:"titles,omitempty"`
-	Updates          []UpdateV1DTO  `json:"updates,omitempty"`
 	// (Legal values: windows, macos, android, ios, ps4, xbone, switch)
-	Platforms []string `json:"platforms,omitempty"`
-	ID        int32    `json:"id,omitempty"`
+	Platforms []string       `json:"platforms,omitempty"`
+	Titles    []ContentV1DTO `json:"titles,omitempty"`
+	Updates   []UpdateV1DTO  `json:"updates,omitempty"`
+	ID        int32          `json:"id,omitempty"`
 }
 
-// ContentDTO data object.
-type ContentV1DTO struct {
-	Locale  string `json:"locale,omitempty"`
-	Content string `json:"content,omitempty"`
-}
-
-// UpdateDTO data object.
+// UpdateDto data object.
 type UpdateV1DTO struct {
 	Author    string `json:"author,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`

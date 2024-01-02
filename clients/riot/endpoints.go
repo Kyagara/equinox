@@ -23,24 +23,82 @@ import (
 //
 // [account-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [account-v1]: https://developer.riotgames.com/apis#account-v1
 type AccountV1 struct {
 	internal *internal.Client
+}
+
+// Get active shard for a player
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `game`
+//   - `puuid`
+//
+// # Riot API Reference
+//
+// [account-v1.getActiveShard]
+//
+// [account-v1.getActiveShard]: https://developer.riotgames.com/api-methods/#account-v1/GET_getActiveShard
+func (e *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRoute, game string, puuid string) (*ActiveShardV1DTO, error) {
+	logger := e.internal.Logger("Riot_AccountV1_ActiveShard")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), "account-v1.getActiveShard", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data ActiveShardV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Get account by access token
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `Authorization`
+//
+// # Riot API Reference
+//
+// [account-v1.getByAccessToken]
+//
+// [account-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByAccessToken
+func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
+	logger := e.internal.Logger("Riot_AccountV1_ByAccessToken")
+	logger.Trace().Msg("Method started execution")
+	if authorization == "" {
+		return nil, fmt.Errorf("'authorization' header is required")
+	}
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/riot/account/v1/accounts/me", "account-v1.getByAccessToken", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
+	equinoxReq.Request.Header.Set("Authorization", authorization)
+	var data AccountV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
 }
 
 // Get account by puuid
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `puuid` (required, in path)
+//   - `puuid`
 //
 // # Riot API Reference
 //
 // [account-v1.getByPuuid]
-//
-// Note: this method is automatically generated.
 //
 // [account-v1.getByPuuid]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByPuuid
 func (e *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute, puuid string) (*AccountV1DTO, error) {
@@ -64,14 +122,12 @@ func (e *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute, puuid 
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `tagLine` (required, in path) - When querying for a player by their riot id, the gameName and tagLine query params are required.
-//   - `gameName` (required, in path) - When querying for a player by their riot id, the gameName and tagLine query params are required.
+//   - `tagLine` - When querying for a player by their riot id, the gameName and tagLine query params are required.
+//   - `gameName` - When querying for a player by their riot id, the gameName and tagLine query params are required.
 //
 // # Riot API Reference
 //
 // [account-v1.getByRiotId]
-//
-// Note: this method is automatically generated.
 //
 // [account-v1.getByRiotId]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByRiotId
 func (e *AccountV1) ByRiotID(ctx context.Context, route api.RegionalRoute, gameName string, tagLine string) (*AccountV1DTO, error) {
@@ -83,72 +139,6 @@ func (e *AccountV1) ByRiotID(ctx context.Context, route api.RegionalRoute, gameN
 		return nil, err
 	}
 	var data AccountV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Get account by access token
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `authorization` (required, in header)
-//
-// # Riot API Reference
-//
-// [account-v1.getByAccessToken]
-//
-// Note: this method is automatically generated.
-//
-// [account-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByAccessToken
-func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
-	logger := e.internal.Logger("Riot_AccountV1_ByAccessToken")
-	logger.Trace().Msg("Method started execution")
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/riot/account/v1/accounts/me", "account-v1.getByAccessToken", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
-	equinoxReq.Request.Header.Set("authorization", authorization)
-	var data AccountV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Get active shard for a player
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `game` (required, in path)
-//   - `puuid` (required, in path)
-//
-// # Riot API Reference
-//
-// [account-v1.getActiveShard]
-//
-// Note: this method is automatically generated.
-//
-// [account-v1.getActiveShard]: https://developer.riotgames.com/api-methods/#account-v1/GET_getActiveShard
-func (e *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRoute, game string, puuid string) (*ActiveShardV1DTO, error) {
-	logger := e.internal.Logger("Riot_AccountV1_ActiveShard")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/riot/account/v1/active-shards/by-game/%v/by-puuid/%v", game, puuid), "account-v1.getActiveShard", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data ActiveShardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
