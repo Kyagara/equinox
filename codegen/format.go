@@ -127,7 +127,7 @@ func normalizeDTOName(dto string, version string, endpoint string) (string, stri
 		temp = "Exp" + temp
 	}
 	if strings.HasPrefix(endpoint, "val-ranked") && strings.HasPrefix(temp, "Player") {
-		temp = "Match" + temp
+		temp = strings.Replace(temp, "Player", "LeaderboardPlayer", 1)
 	}
 	if strings.HasPrefix(endpoint, "lor-ranked") && strings.HasPrefix(temp, "Player") {
 		temp = "Leaderboard" + temp

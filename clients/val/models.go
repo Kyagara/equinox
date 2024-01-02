@@ -117,6 +117,20 @@ type KillV1DTO struct {
 	TimeSinceRoundStartMillis int32                  `json:"timeSinceRoundStartMillis,omitempty"`
 }
 
+// PlayerDto data object.
+type LeaderboardPlayerV1DTO struct {
+	// This field may be omitted if the player has been anonymized.
+	GameName string `json:"gameName,omitempty"`
+	// This field may be omitted if the player has been anonymized.
+	PUUID string `json:"puuid,omitempty"`
+	// This field may be omitted if the player has been anonymized.
+	TagLine         string `json:"tagLine,omitempty"`
+	CompetitiveTier int64  `json:"competitiveTier,omitempty"`
+	LeaderboardRank int64  `json:"leaderboardRank,omitempty"`
+	NumberOfWins    int64  `json:"numberOfWins,omitempty"`
+	RankedRating    int64  `json:"rankedRating,omitempty"`
+}
+
 // LeaderboardDto data object.
 type LeaderboardV1DTO struct {
 	TierDetails map[int64]TierDetailV1DTO `json:"tierDetails,omitempty"`
@@ -124,12 +138,12 @@ type LeaderboardV1DTO struct {
 	ActID string `json:"actId,omitempty"`
 	Query string `json:"query,omitempty"`
 	// The shard for the given leaderboard.
-	Shard                 string        `json:"shard,omitempty"`
-	Players               []PlayerV1DTO `json:"players,omitempty"`
-	ImmortalStartingIndex int64         `json:"immortalStartingIndex,omitempty"`
-	ImmortalStartingPage  int64         `json:"immortalStartingPage,omitempty"`
-	StartIndex            int64         `json:"startIndex,omitempty"`
-	TopTierRrthreshold    int64         `json:"topTierRRThreshold,omitempty"`
+	Shard                 string                   `json:"shard,omitempty"`
+	Players               []LeaderboardPlayerV1DTO `json:"players,omitempty"`
+	ImmortalStartingIndex int64                    `json:"immortalStartingIndex,omitempty"`
+	ImmortalStartingPage  int64                    `json:"immortalStartingPage,omitempty"`
+	StartIndex            int64                    `json:"startIndex,omitempty"`
+	TopTierRrthreshold    int64                    `json:"topTierRRThreshold,omitempty"`
 	// The total number of players in the leaderboard.
 	TotalPlayers int64 `json:"totalPlayers,omitempty"`
 }
@@ -176,20 +190,6 @@ type MatchInfoV1DTO struct {
 	GameLengthMillis   int32  `json:"gameLengthMillis,omitempty"`
 	IsCompleted        bool   `json:"isCompleted,omitempty"`
 	IsRanked           bool   `json:"isRanked,omitempty"`
-}
-
-// PlayerDto data object.
-type MatchPlayerV1DTO struct {
-	// This field may be omitted if the player has been anonymized.
-	GameName string `json:"gameName,omitempty"`
-	// This field may be omitted if the player has been anonymized.
-	PUUID string `json:"puuid,omitempty"`
-	// This field may be omitted if the player has been anonymized.
-	TagLine         string `json:"tagLine,omitempty"`
-	CompetitiveTier int64  `json:"competitiveTier,omitempty"`
-	LeaderboardRank int64  `json:"leaderboardRank,omitempty"`
-	NumberOfWins    int64  `json:"numberOfWins,omitempty"`
-	RankedRating    int64  `json:"rankedRating,omitempty"`
 }
 
 // MatchDto data object.

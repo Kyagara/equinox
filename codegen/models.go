@@ -132,11 +132,14 @@ func getModelField(prop gjson.Result, propKey string, version string, endpoint s
 	if strings.Contains(endpoint, "tournament-stub") && strings.Contains(propType, "[]LobbyEvent") {
 		propType = strings.Replace(propType, "LobbyEvent", "StubLobbyEvent", 1)
 	}
+	if strings.HasPrefix(endpoint, "val-ranked") && strings.Contains(propType, "Player"+version+"DTO") {
+		propType = strings.Replace(propType, "[]Player", "[]LeaderboardPlayer", 1)
+	}
 	if strings.HasPrefix(endpoint, "val-status") && strings.Contains(propType, "Content"+version+"DTO") {
-		propType = strings.Replace(propType, "Content"+version+"DTO", "StatusContent"+version+"DTO", 1)
+		propType = strings.Replace(propType, "Content", "StatusContent", 1)
 	}
 	if strings.HasPrefix(endpoint, "lor-ranked") && strings.Contains(propType, "Player"+version+"DTO") {
-		propType = strings.Replace(propType, "Player"+version+"DTO", "LeaderboardPlayer"+version+"DTO", 1)
+		propType = strings.Replace(propType, "Player", "LeaderboardPlayer", 1)
 	}
 
 	return name, propType
