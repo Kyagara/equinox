@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/iancoleman/strcase"
@@ -45,6 +46,10 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 					JSONField:   fmt.Sprintf("`json:\"%s,omitempty\"`", propKey),
 				})
 			}
+
+			sort.Slice(props, func(i, j int) bool {
+				return props[i].Name < props[j].Name
+			})
 
 			apiModels[dto] = Model{
 				Description: schemaDescription,

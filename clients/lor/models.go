@@ -18,26 +18,26 @@ type CardV1DTO struct {
 
 // ContentDto data object.
 type ContentV1DTO struct {
-	Locale  string `json:"locale,omitempty"`
 	Content string `json:"content,omitempty"`
+	Locale  string `json:"locale,omitempty"`
 }
 
 // DeckDto data object.
 type DeckV1DTO struct {
-	Name string `json:"name,omitempty"`
 	Code string `json:"code,omitempty"`
 	ID   string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 // InfoDto data object.
 type InfoV1DTO struct {
 	// (Legal values:  Constructed,  Expeditions,  Tutorial)
-	GameMode string `json:"game_mode,omitempty"`
+	GameMode         string `json:"game_mode,omitempty"`
+	GameStartTimeUtc string `json:"game_start_time_utc,omitempty"`
 	// (Legal values:  Ranked,  Normal,  AI,  Tutorial,  VanillaTrial,  Singleton,  StandardGauntlet)
-	GameType         string        `json:"game_type,omitempty"`
-	GameStartTimeUtc string        `json:"game_start_time_utc,omitempty"`
-	GameVersion      string        `json:"game_version,omitempty"`
-	Players          []PlayerV1DTO `json:"players,omitempty"`
+	GameType    string        `json:"game_type,omitempty"`
+	GameVersion string        `json:"game_version,omitempty"`
+	Players     []PlayerV1DTO `json:"players,omitempty"`
 	// Total turns taken by both players.
 	TotalTurnCount int32 `json:"total_turn_count,omitempty"`
 }
@@ -45,9 +45,9 @@ type InfoV1DTO struct {
 // PlayerDto data object.
 type LeaderboardPlayerV1DTO struct {
 	Name string `json:"name,omitempty"`
-	Rank int32  `json:"rank,omitempty"`
 	// League points.
-	Lp int32 `json:"lp,omitempty"`
+	Lp   int32 `json:"lp,omitempty"`
+	Rank int32 `json:"rank,omitempty"`
 }
 
 // LeaderboardDto data object.
@@ -66,50 +66,50 @@ type MatchV1DTO struct {
 
 // MetadataDto data object.
 type MetadataV1DTO struct {
-	// Match id.
-	MatchID string `json:"match_id,omitempty"`
 	// Match data version.
 	DataVersion string `json:"data_version,omitempty"`
+	// Match id.
+	MatchID string `json:"match_id,omitempty"`
 	// A list of participant PUUIDs.
 	Participants []string `json:"participants,omitempty"`
 }
 
 // NewDeckDto data object.
 type NewDeckV1DTO struct {
-	Name string `json:"name,omitempty"`
 	Code string `json:"code,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 // PlatformDataDto data object.
 type PlatformDataV1DTO struct {
 	ID           string        `json:"id,omitempty"`
 	Name         string        `json:"name,omitempty"`
+	Incidents    []StatusV1DTO `json:"incidents,omitempty"`
 	Locales      []string      `json:"locales,omitempty"`
 	Maintenances []StatusV1DTO `json:"maintenances,omitempty"`
-	Incidents    []StatusV1DTO `json:"incidents,omitempty"`
 }
 
 // PlayerDto data object.
 type PlayerV1DTO struct {
-	GameOutcome string `json:"game_outcome,omitempty"`
-	PUUID       string `json:"puuid,omitempty"`
-	DeckID      string `json:"deck_id,omitempty"`
 	// Code for the deck played. Refer to LOR documentation for details on deck codes.
-	DeckCode string   `json:"deck_code,omitempty"`
-	Factions []string `json:"factions,omitempty"`
+	DeckCode    string   `json:"deck_code,omitempty"`
+	DeckID      string   `json:"deck_id,omitempty"`
+	GameOutcome string   `json:"game_outcome,omitempty"`
+	PUUID       string   `json:"puuid,omitempty"`
+	Factions    []string `json:"factions,omitempty"`
 	// The order in which the players took turns.
 	OrderOfPlay int32 `json:"order_of_play,omitempty"`
 }
 
 // StatusDto data object.
 type StatusV1DTO struct {
+	ArchiveAt string `json:"archive_at,omitempty"`
+	CreatedAt string `json:"created_at,omitempty"`
 	// (Legal values:  info,  warning,  critical)
 	IncidentSeverity string `json:"incident_severity,omitempty"`
-	CreatedAt        string `json:"created_at,omitempty"`
-	ArchiveAt        string `json:"archive_at,omitempty"`
-	UpdatedAt        string `json:"updated_at,omitempty"`
 	// (Legal values:  scheduled,  in_progress,  complete)
 	MaintenanceStatus string `json:"maintenance_status,omitempty"`
+	UpdatedAt         string `json:"updated_at,omitempty"`
 	// (Legal values: windows, macos, android, ios, ps4, xbone, switch)
 	Platforms []string       `json:"platforms,omitempty"`
 	Titles    []ContentV1DTO `json:"titles,omitempty"`
