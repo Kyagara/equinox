@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"sync"
 )
 
 var (
@@ -30,12 +29,12 @@ func init() { flag.Parse() }
 func main() {
 	if *updateFlag || os.Getenv("UPDATE_SPECS") == "1" {
 		fmt.Printf("Downloading specs...\n")
-		var wg sync.WaitGroup
 		for _, spec := range SPECS_URLS {
-			wg.Add(1)
-			go DownloadAndSaveSpecs(spec, &wg)
+			err := DownloadAndSaveSpecs(spec)
+			if err != nil {
+				panic(err)
+			}
 		}
-		wg.Wait()
 	}
 
 	err := Compile()

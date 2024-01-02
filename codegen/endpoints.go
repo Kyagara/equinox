@@ -276,7 +276,7 @@ func formatRouteArgument(pathParams []gjson.Result, route string) string {
 }
 
 func formatAddHeadersChecks(params []gjson.Result, nilValue string) []string {
-	var checks []string
+	checks := make([]string, 0, len(params))
 	for _, param := range params {
 		name := normalizePropName(param.Get("name").String())
 		checks = append(checks, fmt.Sprintf(
@@ -288,7 +288,7 @@ func formatAddHeadersChecks(params []gjson.Result, nilValue string) []string {
 }
 
 func formatAddHeaderParam(params []gjson.Result) []string {
-	var headers []string
+	headers := make([]string, 0, len(params))
 	for _, param := range params {
 		name := normalizePropName(param.Get("name").String())
 		headerName := name
@@ -301,7 +301,7 @@ func formatAddHeaderParam(params []gjson.Result) []string {
 }
 
 func formatAddQueryParam(params []gjson.Result) []string {
-	var queries []string
+	queries := make([]string, 0, len(params))
 	for _, param := range params {
 		name := normalizePropName(param.Get("name").String())
 		prop := param.Get("schema")
@@ -317,7 +317,7 @@ func formatAddQueryParam(params []gjson.Result) []string {
 		} else if propType == "integer" {
 			condition = fmt.Sprintf(`%s != -1`, name)
 		} else {
-			condition = fmt.Sprintf(`%s not supported`, prop.Get("type").String())
+			panic(fmt.Errorf("unknown prop type: %s", propType))
 		}
 
 		conversion := ""
@@ -367,6 +367,11 @@ func getReturnType(resp200 gjson.Result, version string, endpointID string) stri
 		version,
 		endpointID,
 	)
+
+	if strings.HasPrefix(endpointID, "league-exp") && strings.Contains(returnType, "LeagueEntry") {
+		returnType = strings.Replace(returnType, "LeagueEntry", "ExpLeagueEntry", -1)
+	}
+
 	return cleanIfPrimitiveType(jsonInfo, version, endpointID, returnType)
 }
 
@@ -435,7 +440,6 @@ func getMethodName(operationID string) string {
 	method := strcase.ToCamel(operationID[dotIndex+1:])
 	temp := regexp.MustCompile("^Get").ReplaceAllString(method, "")
 	temp = regexp.MustCompile("League").ReplaceAllString(temp, "")
-	//temp = regexp.MustCompile("Challenge(?!r)").ReplaceAllString(temp, "")
 	temp = regexp.MustCompile("Id$").ReplaceAllString(temp, "ID")
 	temp = regexp.MustCompile("Puuid$").ReplaceAllString(temp, "PUUID")
 	temp = regexp.MustCompile("Rsopuuid$").ReplaceAllString(temp, "RSOPUUID")

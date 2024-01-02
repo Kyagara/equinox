@@ -67,10 +67,12 @@ func normalizeDescription(desc string) string {
 		return ""
 	}
 	lines := strings.Split(desc, "\n")
-	var trimmedLines []string
+
+	trimmedLines := make([]string, 0, len(lines))
 	for _, line := range lines {
 		trimmedLines = append(trimmedLines, strings.TrimSpace(line))
 	}
+
 	return strings.Join(trimmedLines, "\r\n    //\n    // ")
 }
 
@@ -112,6 +114,8 @@ func getModelField(prop gjson.Result, propKey string, version string, endpoint s
 		return "XP", propType
 	case "Id":
 		return "ID", propType
+	case "Lp":
+		return "LP", propType
 	case "Url":
 		return "URL", propType
 	}
@@ -124,5 +128,16 @@ func getModelField(prop gjson.Result, propKey string, version string, endpoint s
 	}
 
 	name = strings.Replace(name, "Ids", "IDs", 1)
+
+	if strings.Contains(endpoint, "tournament-stub") && strings.Contains(propType, "[]LobbyEvent") {
+		propType = strings.Replace(propType, "LobbyEvent", "StubLobbyEvent", 1)
+	}
+	if strings.HasPrefix(endpoint, "val-status") && strings.Contains(propType, "Content"+version+"DTO") {
+		propType = strings.Replace(propType, "Content"+version+"DTO", "StatusContent"+version+"DTO", 1)
+	}
+	if strings.HasPrefix(endpoint, "lor-ranked") && strings.Contains(propType, "Player"+version+"DTO") {
+		propType = strings.Replace(propType, "Player"+version+"DTO", "LeaderboardPlayer"+version+"DTO", 1)
+	}
+
 	return name, propType
 }

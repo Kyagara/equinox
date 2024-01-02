@@ -10,26 +10,20 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-var digitRegex = regexp.MustCompile(`^\d`)
-var versionRegex = regexp.MustCompile(`v.*\d`)
-var clientRegex2 = regexp.MustCompile(`(Lor|Riot|Val|Lol|Tft)`)
-var clientRegex = regexp.MustCompile("(lor|riot|val|lol|tft)")
+var (
+	goTypes = []string{
+		"bool",
+		"string",
+		"int32",
+		"int64",
+		"float32",
+		"float64",
+	}
 
-var goTypes = []string{
-	"bool",
-	"string",
-	"int32",
-	"int64",
-	"float32",
-	"float64",
-	"[]string",
-	"[]int32",
-	"[]int64",
-	"[]float32",
-	"[]float64",
-	"map[string]map[",
-	"map[string]float",
-}
+	digitRegex   = regexp.MustCompile(`^\d`)
+	versionRegex = regexp.MustCompile(`v.*\d`)
+	clientRegex  = regexp.MustCompile("(?i)(lor|riot|val|lol|tft)")
+)
 
 func preamble(packageName string, version string) string {
 	return fmt.Sprintf(`package %s
@@ -48,7 +42,8 @@ func preamble(packageName string, version string) string {
 func getEndpointGroup(clientName string, spec gjson.Result) map[string][]EndpointGroup {
 	endpoints := make(map[string][]EndpointGroup)
 
-	for path, endpoint := range spec.Get("paths").Map() {
+	paths := spec.Get("paths").Map()
+	for path, endpoint := range paths {
 		parts := strings.Split(path, "/")
 		if parts[1] == clientName || (parts[1] == "fulfillment" && clientName == "lol") {
 			endpointName := endpoint.Get("x-endpoint").String()
@@ -83,7 +78,7 @@ func filterEndpointGroup(endpointGroup map[string][]EndpointGroup, schemas gjson
 }
 
 func removeGameName(str string) string {
-	return clientRegex2.ReplaceAllString(str, "")
+	return clientRegex.ReplaceAllString(str, "")
 }
 
 func getNormalizedClientName(clientName string) string {

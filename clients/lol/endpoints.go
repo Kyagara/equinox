@@ -661,7 +661,7 @@ type LeagueExpV4 struct {
 // [league-exp-v4.getLeagueEntries]
 //
 // [league-exp-v4.getLeagueEntries]: https://developer.riotgames.com/api-methods/#league-exp-v4/GET_getLeagueEntries
-func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue QueueType, tier Tier, division Division, page int32) ([]LeagueEntryV4DTO, error) {
+func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue QueueType, tier Tier, division Division, page int32) ([]ExpLeagueEntryV4DTO, error) {
 	logger := e.internal.Logger("LOL_LeagueExpV4_Entries")
 	logger.Trace().Msg("Method started execution")
 	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league-exp/v4/entries/%v/%v/%v", queue, tier, division), "league-exp-v4.getLeagueEntries", nil)
@@ -674,7 +674,7 @@ func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue Qu
 		values.Set("page", strconv.FormatInt(int64(page), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
-	var data []LeagueEntryV4DTO
+	var data []ExpLeagueEntryV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
