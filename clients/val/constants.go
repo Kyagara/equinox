@@ -18,6 +18,8 @@ const (
 	AP PlatformRoute = "ap"
 	// Brazil.
 	BR PlatformRoute = "br"
+	// Special esports platform.
+	ESPORTS PlatformRoute = "esports"
 	// Europe.
 	EU PlatformRoute = "eu"
 	// Korea.
@@ -26,6 +28,4 @@ const (
 	LATAM PlatformRoute = "latam"
 	// North America.
 	NA PlatformRoute = "na"
-	// Special esports platform.
-	ESPORTS PlatformRoute = "esports"
 )

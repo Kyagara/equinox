@@ -1,0 +1,70 @@
+{{ Preamble }}
+
+import (
+    "fmt"
+    "net/http"
+    "net/url"
+    "context"
+    "strconv"
+
+    "github.com/Kyagara/equinox/api"
+    "github.com/Kyagara/equinox/internal"
+)
+
+{% for Endpoint, Methods in Endpoints sorted %}
+{% set EndpointName = Split(Endpoint, '|')[0] %}
+{% set EndpointID = Split(Endpoint, '|')[1] %}
+{% set StructName = RemoveGameName(EndpointName) %}
+// # Riot API Reference
+//
+// [{{ EndpointID }}]
+//
+// [{{ EndpointID }}]: https://developer.riotgames.com/apis#{{ EndpointID }}
+type {{ StructName }} struct {
+    internal *internal.Client
+}
+
+{% for Method in Methods sorted %}
+{%- for Description in Method.Description %}
+// {{ Description|safe }}
+{%- endfor %}
+func (e *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ Method.MethodReturnTuple }} {
+    logger := e.internal.Logger("{{ NormalizedClientName + "_" + StructName + "_" + Method.Name }}")
+    logger.Trace().Msg("Method started execution")
+{%- if Method.Headers|length > 0 %}
+    {%- for HeaderCheck in Method.HeaderChecks sorted %}
+    {{ HeaderCheck|safe }}
+    {%- endfor %}
+{%- endif %}
+    equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.Method{{ Method.HTTPMethod }}, route, {{ Method.URLPath|safe }}, "{{ Method.OperationID }}", {{ Method.Body }})
+    if err != nil {
+        logger.Error().Err(err).Msg("Error creating request")
+        return {{ Method.ErrorReturn|safe }}
+    }
+{%- if Method.Queries|length > 0 %}
+    values := url.Values{}
+{%- endif %}
+{%- for QueryParam in Method.Queries sorted %}
+    {{ QueryParam|safe }}
+{%- endfor %}
+{%- if Method.Queries|length > 0 %}
+    equinoxReq.Request.URL.RawQuery = values.Encode()
+{%- endif %}
+{%- if Method.Headers|length > 0 %}
+    equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
+{%- endif %}
+{%- for HeaderParam in Method.Headers sorted %}
+    {{ HeaderParam|safe }}
+{%- endfor %}
+{%- if Method.HasReturn %}
+    var data {{ Method.ReturnType }}
+{%- endif %}
+    err = e.internal.Execute(ctx, equinoxReq, {% if Method.HasReturn %}&data{% else %}nil{% endif %})
+    if err != nil {
+        logger.Error().Err(err).Msg("Error executing request")
+        return {{ Method.ErrorReturn|safe }}
+    }
+    return {{ Method.ValueReturn|safe }}
+}
+{% endfor %}
+{% endfor %}

@@ -25,24 +25,48 @@ import (
 //
 // [tft-league-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [tft-league-v1]: https://developer.riotgames.com/apis#tft-league-v1
 type LeagueV1 struct {
 	internal *internal.Client
+}
+
+// Get league with given ID, including inactive entries.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `leagueId` - The UUID of the league.
+//
+// # Riot API Reference
+//
+// [tft-league-v1.getLeagueById]
+//
+// [tft-league-v1.getLeagueById]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueById
+func (e *LeagueV1) ByID(ctx context.Context, route PlatformRoute, leagueId string) (*LeagueListV1DTO, error) {
+	logger := e.internal.Logger("TFT_LeagueV1_ByID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/leagues/%v", leagueId), "tft-league-v1.getLeagueById", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data LeagueListV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
 }
 
 // Get the challenger league.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `queue` (optional, in query) - Defaults to RANKED_TFT.
+//   - `queue` (optional) - Defaults to RANKED_TFT.
 //
 // # Riot API Reference
 //
 // [tft-league-v1.getChallengerLeague]
-//
-// Note: this method is automatically generated.
 //
 // [tft-league-v1.getChallengerLeague]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getChallengerLeague
 func (e *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
@@ -67,50 +91,18 @@ func (e *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformRoute, q
 	return &data, nil
 }
 
-// Get league entries for a given summoner ID.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `summonerId` (required, in path)
-//
-// # Riot API Reference
-//
-// [tft-league-v1.getLeagueEntriesForSummoner]
-//
-// Note: this method is automatically generated.
-//
-// [tft-league-v1.getLeagueEntriesForSummoner]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueEntriesForSummoner
-func (e *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, summonerId string) ([]LeagueEntryV1DTO, error) {
-	logger := e.internal.Logger("TFT_LeagueV1_SummonerEntries")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/entries/by-summoner/%v", summonerId), "tft-league-v1.getLeagueEntriesForSummoner", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data []LeagueEntryV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
-}
-
 // Get all the league entries.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `tier` (required, in path)
-//   - `division` (required, in path)
-//   - `queue` (optional, in query) - Defaults to RANKED_TFT.
-//   - `page` (optional, in query) - Defaults to 1. Starts with page 1.
+//   - `tier`
+//   - `division`
+//   - `queue` (optional) - Defaults to RANKED_TFT.
+//   - `page` (optional) - Defaults to 1. Starts with page 1.
 //
 // # Riot API Reference
 //
 // [tft-league-v1.getLeagueEntries]
-//
-// Note: this method is automatically generated.
 //
 // [tft-league-v1.getLeagueEntries]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueEntries
 func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, division string, queue string, page int32) ([]LeagueEntryV1DTO, error) {
@@ -122,11 +114,11 @@ func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, 
 		return nil, err
 	}
 	values := url.Values{}
-	if queue != "" {
-		values.Set("queue", queue)
-	}
 	if page != -1 {
 		values.Set("page", strconv.FormatInt(int64(page), 10))
+	}
+	if queue != "" {
+		values.Set("queue", queue)
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []LeagueEntryV1DTO
@@ -142,13 +134,11 @@ func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, 
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `queue` (optional, in query) - Defaults to RANKED_TFT.
+//   - `queue` (optional) - Defaults to RANKED_TFT.
 //
 // # Riot API Reference
 //
 // [tft-league-v1.getGrandmasterLeague]
-//
-// Note: this method is automatically generated.
 //
 // [tft-league-v1.getGrandmasterLeague]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getGrandmasterLeague
 func (e *LeagueV1) GrandmasterByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
@@ -173,47 +163,15 @@ func (e *LeagueV1) GrandmasterByQueue(ctx context.Context, route PlatformRoute, 
 	return &data, nil
 }
 
-// Get league with given ID, including inactive entries.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `leagueId` (required, in path) - The UUID of the league.
-//
-// # Riot API Reference
-//
-// [tft-league-v1.getLeagueById]
-//
-// Note: this method is automatically generated.
-//
-// [tft-league-v1.getLeagueById]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueById
-func (e *LeagueV1) ByID(ctx context.Context, route PlatformRoute, leagueId string) (*LeagueListV1DTO, error) {
-	logger := e.internal.Logger("TFT_LeagueV1_ByID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/leagues/%v", leagueId), "tft-league-v1.getLeagueById", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data LeagueListV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
 // Get the master league.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `queue` (optional, in query) - Defaults to RANKED_TFT.
+//   - `queue` (optional) - Defaults to RANKED_TFT.
 //
 // # Riot API Reference
 //
 // [tft-league-v1.getMasterLeague]
-//
-// Note: this method is automatically generated.
 //
 // [tft-league-v1.getMasterLeague]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getMasterLeague
 func (e *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
@@ -238,17 +196,43 @@ func (e *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute, queue
 	return &data, nil
 }
 
+// Get league entries for a given summoner ID.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `summonerId`
+//
+// # Riot API Reference
+//
+// [tft-league-v1.getLeagueEntriesForSummoner]
+//
+// [tft-league-v1.getLeagueEntriesForSummoner]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueEntriesForSummoner
+func (e *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, summonerId string) ([]LeagueEntryV1DTO, error) {
+	logger := e.internal.Logger("TFT_LeagueV1_SummonerEntries")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/entries/by-summoner/%v", summonerId), "tft-league-v1.getLeagueEntriesForSummoner", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data []LeagueEntryV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return data, nil
+}
+
 // Get the top rated ladder for given queue
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `queue` (required, in path)
+//   - `queue`
 //
 // # Riot API Reference
 //
 // [tft-league-v1.getTopRatedLadder]
-//
-// Note: this method is automatically generated.
 //
 // [tft-league-v1.getTopRatedLadder]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getTopRatedLadder
 func (e *LeagueV1) TopRatedLadder(ctx context.Context, route PlatformRoute, queue QueueType) ([]TopRatedLadderEntryV1DTO, error) {
@@ -272,72 +256,20 @@ func (e *LeagueV1) TopRatedLadder(ctx context.Context, route PlatformRoute, queu
 //
 // [tft-match-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [tft-match-v1]: https://developer.riotgames.com/apis#tft-match-v1
 type MatchV1 struct {
 	internal *internal.Client
-}
-
-// Get a list of match ids by PUUID
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `puuid` (required, in path)
-//   - `start` (optional, in query) - Defaults to 0. Start index.
-//   - `endTime` (optional, in query) - Epoch timestamp in seconds.
-//   - `startTime` (optional, in query) - Epoch timestamp in seconds. The matchlist started storing timestamps on June 16th, 2021. Any matches played before June 16th, 2021 won't be included in the results if the startTime filter is set.
-//   - `count` (optional, in query) - Defaults to 20. Number of match ids to return.
-//
-// # Riot API Reference
-//
-// [tft-match-v1.getMatchIdsByPUUID]
-//
-// Note: this method is automatically generated.
-//
-// [tft-match-v1.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#tft-match-v1/GET_getMatchIdsByPUUID
-func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, start int32, endTime int64, startTime int64, count int32) ([]string, error) {
-	logger := e.internal.Logger("TFT_MatchV1_ListByPUUID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/match/v1/matches/by-puuid/%v/ids", puuid), "tft-match-v1.getMatchIdsByPUUID", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	values := url.Values{}
-	if start != -1 {
-		values.Set("start", strconv.FormatInt(int64(start), 10))
-	}
-	if endTime != -1 {
-		values.Set("endTime", strconv.FormatInt(endTime, 10))
-	}
-	if startTime != -1 {
-		values.Set("startTime", strconv.FormatInt(startTime, 10))
-	}
-	if count != -1 {
-		values.Set("count", strconv.FormatInt(int64(count), 10))
-	}
-	equinoxReq.Request.URL.RawQuery = values.Encode()
-	var data []string
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
 }
 
 // Get a match by match id
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `matchId` (required, in path)
+//   - `matchId`
 //
 // # Riot API Reference
 //
 // [tft-match-v1.getMatch]
-//
-// Note: this method is automatically generated.
 //
 // [tft-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#tft-match-v1/GET_getMatch
 func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId string) (*MatchV1DTO, error) {
@@ -357,11 +289,55 @@ func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId str
 	return &data, nil
 }
 
+// Get a list of match ids by PUUID
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `puuid`
+//   - `start` (optional) - Defaults to 0. Start index.
+//   - `endTime` (optional) - Epoch timestamp in seconds.
+//   - `startTime` (optional) - Epoch timestamp in seconds. The matchlist started storing timestamps on June 16th, 2021. Any matches played before June 16th, 2021 won't be included in the results if the startTime filter is set.
+//   - `count` (optional) - Defaults to 20. Number of match ids to return.
+//
+// # Riot API Reference
+//
+// [tft-match-v1.getMatchIdsByPUUID]
+//
+// [tft-match-v1.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#tft-match-v1/GET_getMatchIdsByPUUID
+func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, start int32, endTime int64, startTime int64, count int32) ([]string, error) {
+	logger := e.internal.Logger("TFT_MatchV1_ListByPUUID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/match/v1/matches/by-puuid/%v/ids", puuid), "tft-match-v1.getMatchIdsByPUUID", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	values := url.Values{}
+	if count != -1 {
+		values.Set("count", strconv.FormatInt(int64(count), 10))
+	}
+	if endTime != -1 {
+		values.Set("endTime", strconv.FormatInt(endTime, 10))
+	}
+	if start != -1 {
+		values.Set("start", strconv.FormatInt(int64(start), 10))
+	}
+	if startTime != -1 {
+		values.Set("startTime", strconv.FormatInt(startTime, 10))
+	}
+	equinoxReq.Request.URL.RawQuery = values.Encode()
+	var data []string
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return data, nil
+}
+
 // # Riot API Reference
 //
 // [tft-status-v1]
-//
-// Note: this struct is automatically generated.
 //
 // [tft-status-v1]: https://developer.riotgames.com/apis#tft-status-v1
 type StatusV1 struct {
@@ -376,8 +352,6 @@ type StatusV1 struct {
 // # Riot API Reference
 //
 // [tft-status-v1.getPlatformData]
-//
-// Note: this method is automatically generated.
 //
 // [tft-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#tft-status-v1/GET_getPlatformData
 func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV1DTO, error) {
@@ -401,24 +375,53 @@ func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*Platform
 //
 // [tft-summoner-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [tft-summoner-v1]: https://developer.riotgames.com/apis#tft-summoner-v1
 type SummonerV1 struct {
 	internal *internal.Client
+}
+
+// Get a summoner by access token.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `Authorization` (optional) - Bearer token.
+//
+// # Riot API Reference
+//
+// [tft-summoner-v1.getByAccessToken]
+//
+// [tft-summoner-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByAccessToken
+func (e *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, authorization string) (*SummonerV1DTO, error) {
+	logger := e.internal.Logger("TFT_SummonerV1_ByAccessToken")
+	logger.Trace().Msg("Method started execution")
+	if authorization == "" {
+		return nil, fmt.Errorf("'authorization' header is required")
+	}
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/summoner/v1/summoners/me", "tft-summoner-v1.getByAccessToken", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
+	equinoxReq.Request.Header.Set("Authorization", authorization)
+	var data SummonerV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
 }
 
 // Get a summoner by account ID.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedAccountId` (required, in path)
+//   - `encryptedAccountId`
 //
 // # Riot API Reference
 //
 // [tft-summoner-v1.getByAccountId]
-//
-// Note: this method is automatically generated.
 //
 // [tft-summoner-v1.getByAccountId]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByAccountId
 func (e *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute, encryptedAccountId string) (*SummonerV1DTO, error) {
@@ -442,13 +445,11 @@ func (e *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute, encry
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `summonerName` (required, in path) - Summoner Name
+//   - `summonerName` - Summoner Name
 //
 // # Riot API Reference
 //
 // [tft-summoner-v1.getBySummonerName]
-//
-// Note: this method is automatically generated.
 //
 // [tft-summoner-v1.getBySummonerName]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getBySummonerName
 func (e *SummonerV1) ByName(ctx context.Context, route PlatformRoute, summonerName string) (*SummonerV1DTO, error) {
@@ -472,13 +473,11 @@ func (e *SummonerV1) ByName(ctx context.Context, route PlatformRoute, summonerNa
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedPUUID` (required, in path) - Summoner ID
+//   - `encryptedPUUID` - Summoner ID
 //
 // # Riot API Reference
 //
 // [tft-summoner-v1.getByPUUID]
-//
-// Note: this method is automatically generated.
 //
 // [tft-summoner-v1.getByPUUID]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByPUUID
 func (e *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (*SummonerV1DTO, error) {
@@ -498,52 +497,15 @@ func (e *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, encrypted
 	return &data, nil
 }
 
-// Get a summoner by access token.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `authorization` (optional, in header) - Bearer token.
-//
-// # Riot API Reference
-//
-// [tft-summoner-v1.getByAccessToken]
-//
-// Note: this method is automatically generated.
-//
-// [tft-summoner-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByAccessToken
-func (e *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, authorization string) (*SummonerV1DTO, error) {
-	logger := e.internal.Logger("TFT_SummonerV1_ByAccessToken")
-	logger.Trace().Msg("Method started execution")
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/summoner/v1/summoners/me", "tft-summoner-v1.getByAccessToken", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
-	equinoxReq.Request.Header.Set("authorization", authorization)
-	var data SummonerV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
 // Get a summoner by summoner ID.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedSummonerId` (required, in path) - Summoner ID
+//   - `encryptedSummonerId` - Summoner ID
 //
 // # Riot API Reference
 //
 // [tft-summoner-v1.getBySummonerId]
-//
-// Note: this method is automatically generated.
 //
 // [tft-summoner-v1.getBySummonerId]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getBySummonerId
 func (e *SummonerV1) BySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*SummonerV1DTO, error) {

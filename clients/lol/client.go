@@ -1,4 +1,4 @@
-// This package is used to interact with all League of Legends endpoints.
+// This package is used to interact with all LOL endpoints.
 //   - ChampionMasteryV4
 //   - ChampionV3
 //   - ClashV1
@@ -28,7 +28,6 @@ package lol
 
 import "github.com/Kyagara/equinox/internal"
 
-// Note: this struct is automatically generated.
 type Client struct {
 	ChampionMasteryV4 ChampionMasteryV4
 	ChampionV3        ChampionV3

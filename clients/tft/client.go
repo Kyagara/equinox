@@ -1,4 +1,4 @@
-// This package is used to interact with all Teamfight Tactics endpoints.
+// This package is used to interact with all TFT endpoints.
 //   - LeagueV1
 //   - MatchV1
 //   - StatusV1
@@ -19,7 +19,6 @@ package tft
 
 import "github.com/Kyagara/equinox/internal"
 
-// Note: this struct is automatically generated.
 type Client struct {
 	LeagueV1   LeagueV1
 	MatchV1    MatchV1

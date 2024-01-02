@@ -20,5 +20,4 @@
 # Go workspace file
 go.work*
 
-node_modules
 specs

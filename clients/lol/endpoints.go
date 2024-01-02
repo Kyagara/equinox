@@ -23,9 +23,189 @@ import (
 
 // # Riot API Reference
 //
-// [champion-mastery-v4]
+// [lol-challenges-v1]
 //
-// Note: this struct is automatically generated.
+// [lol-challenges-v1]: https://developer.riotgames.com/apis#lol-challenges-v1
+type ChallengesV1 struct {
+	internal *internal.Client
+}
+
+// List of all basic challenge configuration information (includes all translations for names and descriptions)
+//
+// # Parameters
+//   - `route` - Route to query.
+//
+// # Riot API Reference
+//
+// [lol-challenges-v1.getAllChallengeConfigs]
+//
+// [lol-challenges-v1.getAllChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getAllChallengeConfigs
+func (e *ChallengesV1) AllChallengeConfigs(ctx context.Context, route PlatformRoute) ([]ChallengeConfigInfoV1DTO, error) {
+	logger := e.internal.Logger("LOL_ChallengesV1_AllChallengeConfigs")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/challenges/v1/challenges/config", "lol-challenges-v1.getAllChallengeConfigs", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data []ChallengeConfigInfoV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return data, nil
+}
+
+// Map of level to percentile of players who have achieved it - keys: ChallengeId -> Season -> Level -> percentile of players who achieved it
+//
+// # Parameters
+//   - `route` - Route to query.
+//
+// # Riot API Reference
+//
+// [lol-challenges-v1.getAllChallengePercentiles]
+//
+// [lol-challenges-v1.getAllChallengePercentiles]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getAllChallengePercentiles
+func (e *ChallengesV1) AllChallengePercentiles(ctx context.Context, route PlatformRoute) (map[int64]map[Tier]float64, error) {
+	logger := e.internal.Logger("LOL_ChallengesV1_AllChallengePercentiles")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/challenges/v1/challenges/percentiles", "lol-challenges-v1.getAllChallengePercentiles", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data map[int64]map[Tier]float64
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return data, nil
+}
+
+// Returns player information with list of all progressed challenges (REST)
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `puuid`
+//
+// # Riot API Reference
+//
+// [lol-challenges-v1.getPlayerData]
+//
+// [lol-challenges-v1.getPlayerData]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getPlayerData
+func (e *ChallengesV1) ByPUUID(ctx context.Context, route PlatformRoute, puuid string) (*PlayerInfoV1DTO, error) {
+	logger := e.internal.Logger("LOL_ChallengesV1_ByPUUID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/player-data/%v", puuid), "lol-challenges-v1.getPlayerData", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data PlayerInfoV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Get challenge configuration (REST)
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `challengeId`
+//
+// # Riot API Reference
+//
+// [lol-challenges-v1.getChallengeConfigs]
+//
+// [lol-challenges-v1.getChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeConfigs
+func (e *ChallengesV1) ChallengeConfigs(ctx context.Context, route PlatformRoute, challengeId int64) (*ChallengeConfigInfoV1DTO, error) {
+	logger := e.internal.Logger("LOL_ChallengesV1_ChallengeConfigs")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/config", challengeId), "lol-challenges-v1.getChallengeConfigs", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data ChallengeConfigInfoV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Return top players for each level. Level must be MASTER, GRANDMASTER or CHALLENGER.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `level`
+//   - `challengeId`
+//   - `limit` (optional)
+//
+// # Riot API Reference
+//
+// [lol-challenges-v1.getChallengeLeaderboards]
+//
+// [lol-challenges-v1.getChallengeLeaderboards]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeLeaderboards
+func (e *ChallengesV1) ChallengeLeaderboards(ctx context.Context, route PlatformRoute, challengeId int64, level Tier, limit int32) ([]ApexPlayerInfoV1DTO, error) {
+	logger := e.internal.Logger("LOL_ChallengesV1_ChallengeLeaderboards")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/leaderboards/by-level/%v", challengeId, level), "lol-challenges-v1.getChallengeLeaderboards", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	values := url.Values{}
+	if limit != -1 {
+		values.Set("limit", strconv.FormatInt(int64(limit), 10))
+	}
+	equinoxReq.Request.URL.RawQuery = values.Encode()
+	var data []ApexPlayerInfoV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return data, nil
+}
+
+// Map of level to percentile of players who have achieved it
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `challengeId`
+//
+// # Riot API Reference
+//
+// [lol-challenges-v1.getChallengePercentiles]
+//
+// [lol-challenges-v1.getChallengePercentiles]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengePercentiles
+func (e *ChallengesV1) ChallengePercentiles(ctx context.Context, route PlatformRoute, challengeId int64) (map[Tier]float64, error) {
+	logger := e.internal.Logger("LOL_ChallengesV1_ChallengePercentiles")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/percentiles", challengeId), "lol-challenges-v1.getChallengePercentiles", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data map[Tier]float64
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return data, nil
+}
+
+// # Riot API Reference
+//
+// [champion-mastery-v4]
 //
 // [champion-mastery-v4]: https://developer.riotgames.com/apis#champion-mastery-v4
 type ChampionMasteryV4 struct {
@@ -36,13 +216,11 @@ type ChampionMasteryV4 struct {
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedPUUID` (required, in path)
+//   - `encryptedPUUID`
 //
 // # Riot API Reference
 //
 // [champion-mastery-v4.getAllChampionMasteriesByPUUID]
-//
-// Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getAllChampionMasteriesByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getAllChampionMasteriesByPUUID
 func (e *ChampionMasteryV4) AllMasteriesByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) ([]ChampionMasteryV4DTO, error) {
@@ -62,18 +240,44 @@ func (e *ChampionMasteryV4) AllMasteriesByPUUID(ctx context.Context, route Platf
 	return data, nil
 }
 
+// Get all champion mastery entries sorted by number of champion points descending,
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `encryptedSummonerId` - Summoner ID associated with the player
+//
+// # Riot API Reference
+//
+// [champion-mastery-v4.getAllChampionMasteries]
+//
+// [champion-mastery-v4.getAllChampionMasteries]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getAllChampionMasteries
+func (e *ChampionMasteryV4) AllMasteriesBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) ([]ChampionMasteryV4DTO, error) {
+	logger := e.internal.Logger("LOL_ChampionMasteryV4_AllMasteriesBySummonerID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v", encryptedSummonerId), "champion-mastery-v4.getAllChampionMasteries", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data []ChampionMasteryV4DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return data, nil
+}
+
 // Get a champion mastery by puuid and champion ID.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedPUUID` (required, in path)
-//   - `championId` (required, in path) - Champion ID to retrieve Champion Mastery.
+//   - `encryptedPUUID`
+//   - `championId` - Champion ID to retrieve Champion Mastery.
 //
 // # Riot API Reference
 //
 // [champion-mastery-v4.getChampionMasteryByPUUID]
-//
-// Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getChampionMasteryByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryByPUUID
 func (e *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string, championId int64) (*ChampionMasteryV4DTO, error) {
@@ -93,18 +297,101 @@ func (e *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route PlatformRo
 	return &data, nil
 }
 
+// Get a champion mastery by player ID and champion ID.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `championId` - Champion ID to retrieve Champion Mastery for
+//   - `encryptedSummonerId` - Summoner ID associated with the player
+//
+// # Riot API Reference
+//
+// [champion-mastery-v4.getChampionMastery]
+//
+// [champion-mastery-v4.getChampionMastery]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMastery
+func (e *ChampionMasteryV4) MasteryBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string, championId int64) (*ChampionMasteryV4DTO, error) {
+	logger := e.internal.Logger("LOL_ChampionMasteryV4_MasteryBySummonerID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v/by-champion/%v", encryptedSummonerId, championId), "champion-mastery-v4.getChampionMastery", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data ChampionMasteryV4DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `encryptedPUUID`
+//
+// # Riot API Reference
+//
+// [champion-mastery-v4.getChampionMasteryScoreByPUUID]
+//
+// [champion-mastery-v4.getChampionMasteryScoreByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScoreByPUUID
+func (e *ChampionMasteryV4) MasteryScoreByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (int32, error) {
+	logger := e.internal.Logger("LOL_ChampionMasteryV4_MasteryScoreByPUUID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-puuid/%v", encryptedPUUID), "champion-mastery-v4.getChampionMasteryScoreByPUUID", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return 0, err
+	}
+	var data int32
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return 0, err
+	}
+	return data, nil
+}
+
+// Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `encryptedSummonerId` - Summoner ID associated with the player
+//
+// # Riot API Reference
+//
+// [champion-mastery-v4.getChampionMasteryScore]
+//
+// [champion-mastery-v4.getChampionMasteryScore]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScore
+func (e *ChampionMasteryV4) ScoreBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (int32, error) {
+	logger := e.internal.Logger("LOL_ChampionMasteryV4_ScoreBySummonerID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-summoner/%v", encryptedSummonerId), "champion-mastery-v4.getChampionMasteryScore", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return 0, err
+	}
+	var data int32
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return 0, err
+	}
+	return data, nil
+}
+
 // Get specified number of top champion mastery entries sorted by number of champion points descending.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedPUUID` (required, in path)
-//   - `count` (optional, in query) - Number of entries to retrieve, defaults to 3.
+//   - `encryptedPUUID`
+//   - `count` (optional) - Number of entries to retrieve, defaults to 3.
 //
 // # Riot API Reference
 //
 // [champion-mastery-v4.getTopChampionMasteriesByPUUID]
-//
-// Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getTopChampionMasteriesByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getTopChampionMasteriesByPUUID
 func (e *ChampionMasteryV4) TopMasteriesByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string, count int32) ([]ChampionMasteryV4DTO, error) {
@@ -129,79 +416,16 @@ func (e *ChampionMasteryV4) TopMasteriesByPUUID(ctx context.Context, route Platf
 	return data, nil
 }
 
-// Get all champion mastery entries sorted by number of champion points descending,
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `encryptedSummonerId` (required, in path) - Summoner ID associated with the player
-//
-// # Riot API Reference
-//
-// [champion-mastery-v4.getAllChampionMasteries]
-//
-// Note: this method is automatically generated.
-//
-// [champion-mastery-v4.getAllChampionMasteries]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getAllChampionMasteries
-func (e *ChampionMasteryV4) AllMasteriesBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) ([]ChampionMasteryV4DTO, error) {
-	logger := e.internal.Logger("LOL_ChampionMasteryV4_AllMasteriesBySummonerID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v", encryptedSummonerId), "champion-mastery-v4.getAllChampionMasteries", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data []ChampionMasteryV4DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
-}
-
-// Get a champion mastery by player ID and champion ID.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `championId` (required, in path) - Champion ID to retrieve Champion Mastery for
-//   - `encryptedSummonerId` (required, in path) - Summoner ID associated with the player
-//
-// # Riot API Reference
-//
-// [champion-mastery-v4.getChampionMastery]
-//
-// Note: this method is automatically generated.
-//
-// [champion-mastery-v4.getChampionMastery]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMastery
-func (e *ChampionMasteryV4) MasteryBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string, championId int64) (*ChampionMasteryV4DTO, error) {
-	logger := e.internal.Logger("LOL_ChampionMasteryV4_MasteryBySummonerID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/champion-masteries/by-summoner/%v/by-champion/%v", encryptedSummonerId, championId), "champion-mastery-v4.getChampionMastery", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data ChampionMasteryV4DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
 // Get specified number of top champion mastery entries sorted by number of champion points descending.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedSummonerId` (required, in path) - Summoner ID associated with the player
-//   - `count` (optional, in query) - Number of entries to retrieve, defaults to 3
+//   - `encryptedSummonerId` - Summoner ID associated with the player
+//   - `count` (optional) - Number of entries to retrieve, defaults to 3
 //
 // # Riot API Reference
 //
 // [champion-mastery-v4.getTopChampionMasteries]
-//
-// Note: this method is automatically generated.
 //
 // [champion-mastery-v4.getTopChampionMasteries]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getTopChampionMasteries
 func (e *ChampionMasteryV4) TopMasteriesBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string, count int32) ([]ChampionMasteryV4DTO, error) {
@@ -226,71 +450,9 @@ func (e *ChampionMasteryV4) TopMasteriesBySummonerID(ctx context.Context, route 
 	return data, nil
 }
 
-// Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `encryptedPUUID` (required, in path)
-//
-// # Riot API Reference
-//
-// [champion-mastery-v4.getChampionMasteryScoreByPUUID]
-//
-// Note: this method is automatically generated.
-//
-// [champion-mastery-v4.getChampionMasteryScoreByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScoreByPUUID
-func (e *ChampionMasteryV4) MasteryScoreByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (int32, error) {
-	logger := e.internal.Logger("LOL_ChampionMasteryV4_MasteryScoreByPUUID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-puuid/%v", encryptedPUUID), "champion-mastery-v4.getChampionMasteryScoreByPUUID", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return 0, err
-	}
-	var data int32
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return 0, err
-	}
-	return data, nil
-}
-
-// Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `encryptedSummonerId` (required, in path) - Summoner ID associated with the player
-//
-// # Riot API Reference
-//
-// [champion-mastery-v4.getChampionMasteryScore]
-//
-// Note: this method is automatically generated.
-//
-// [champion-mastery-v4.getChampionMasteryScore]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScore
-func (e *ChampionMasteryV4) ScoreBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (int32, error) {
-	logger := e.internal.Logger("LOL_ChampionMasteryV4_ScoreBySummonerID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/champion-mastery/v4/scores/by-summoner/%v", encryptedSummonerId), "champion-mastery-v4.getChampionMasteryScore", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return 0, err
-	}
-	var data int32
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return 0, err
-	}
-	return data, nil
-}
-
 // # Riot API Reference
 //
 // [champion-v3]
-//
-// Note: this struct is automatically generated.
 //
 // [champion-v3]: https://developer.riotgames.com/apis#champion-v3
 type ChampionV3 struct {
@@ -305,8 +467,6 @@ type ChampionV3 struct {
 // # Riot API Reference
 //
 // [champion-v3.getChampionInfo]
-//
-// Note: this method is automatically generated.
 //
 // [champion-v3.getChampionInfo]: https://developer.riotgames.com/api-methods/#champion-v3/GET_getChampionInfo
 func (e *ChampionV3) Rotation(ctx context.Context, route PlatformRoute) (*ChampionRotationV3DTO, error) {
@@ -330,11 +490,65 @@ func (e *ChampionV3) Rotation(ctx context.Context, route PlatformRoute) (*Champi
 //
 // [clash-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [clash-v1]: https://developer.riotgames.com/apis#clash-v1
 type ClashV1 struct {
 	internal *internal.Client
+}
+
+// Get tournament by ID.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `tournamentId`
+//
+// # Riot API Reference
+//
+// [clash-v1.getTournamentById]
+//
+// [clash-v1.getTournamentById]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentById
+func (e *ClashV1) ByID(ctx context.Context, route PlatformRoute, tournamentId int32) (*TournamentV1DTO, error) {
+	logger := e.internal.Logger("LOL_ClashV1_ByID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/tournaments/%v", tournamentId), "clash-v1.getTournamentById", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data TournamentV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Get tournament by team ID.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `teamId`
+//
+// # Riot API Reference
+//
+// [clash-v1.getTournamentByTeam]
+//
+// [clash-v1.getTournamentByTeam]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentByTeam
+func (e *ClashV1) ByTeamID(ctx context.Context, route PlatformRoute, teamId string) (*TournamentV1DTO, error) {
+	logger := e.internal.Logger("LOL_ClashV1_ByTeamID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/tournaments/by-team/%v", teamId), "clash-v1.getTournamentByTeam", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data TournamentV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
 }
 
 // Get players by summoner ID.
@@ -345,13 +559,11 @@ type ClashV1 struct {
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `summonerId` (required, in path)
+//   - `summonerId`
 //
 // # Riot API Reference
 //
 // [clash-v1.getPlayersBySummoner]
-//
-// Note: this method is automatically generated.
 //
 // [clash-v1.getPlayersBySummoner]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getPlayersBySummoner
 func (e *ClashV1) SummonerEntriesBySummonerID(ctx context.Context, route PlatformRoute, summonerId string) ([]PlayerV1DTO, error) {
@@ -375,13 +587,11 @@ func (e *ClashV1) SummonerEntriesBySummonerID(ctx context.Context, route Platfor
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `teamId` (required, in path)
+//   - `teamId`
 //
 // # Riot API Reference
 //
 // [clash-v1.getTeamById]
-//
-// Note: this method is automatically generated.
 //
 // [clash-v1.getTeamById]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTeamById
 func (e *ClashV1) TeamByTeamID(ctx context.Context, route PlatformRoute, teamId string) (*TeamV1DTO, error) {
@@ -410,8 +620,6 @@ func (e *ClashV1) TeamByTeamID(ctx context.Context, route PlatformRoute, teamId 
 //
 // [clash-v1.getTournaments]
 //
-// Note: this method is automatically generated.
-//
 // [clash-v1.getTournaments]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournaments
 func (e *ClashV1) Tournaments(ctx context.Context, route PlatformRoute) ([]TournamentV1DTO, error) {
 	logger := e.internal.Logger("LOL_ClashV1_Tournaments")
@@ -430,71 +638,9 @@ func (e *ClashV1) Tournaments(ctx context.Context, route PlatformRoute) ([]Tourn
 	return data, nil
 }
 
-// Get tournament by team ID.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `teamId` (required, in path)
-//
-// # Riot API Reference
-//
-// [clash-v1.getTournamentByTeam]
-//
-// Note: this method is automatically generated.
-//
-// [clash-v1.getTournamentByTeam]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentByTeam
-func (e *ClashV1) ByTeamID(ctx context.Context, route PlatformRoute, teamId string) (*TournamentV1DTO, error) {
-	logger := e.internal.Logger("LOL_ClashV1_ByTeamID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/tournaments/by-team/%v", teamId), "clash-v1.getTournamentByTeam", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data TournamentV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Get tournament by ID.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `tournamentId` (required, in path)
-//
-// # Riot API Reference
-//
-// [clash-v1.getTournamentById]
-//
-// Note: this method is automatically generated.
-//
-// [clash-v1.getTournamentById]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentById
-func (e *ClashV1) ByID(ctx context.Context, route PlatformRoute, tournamentId int32) (*TournamentV1DTO, error) {
-	logger := e.internal.Logger("LOL_ClashV1_ByID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/clash/v1/tournaments/%v", tournamentId), "clash-v1.getTournamentById", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data TournamentV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
 // # Riot API Reference
 //
 // [league-exp-v4]
-//
-// Note: this struct is automatically generated.
 //
 // [league-exp-v4]: https://developer.riotgames.com/apis#league-exp-v4
 type LeagueExpV4 struct {
@@ -505,16 +651,14 @@ type LeagueExpV4 struct {
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `queue` (required, in path) - Note that the queue value must be a valid ranked queue.
-//   - `tier` (required, in path)
-//   - `division` (required, in path)
-//   - `page` (optional, in query) - Defaults to 1. Starts with page 1.
+//   - `queue` - Note that the queue value must be a valid ranked queue.
+//   - `tier`
+//   - `division`
+//   - `page` (optional) - Defaults to 1. Starts with page 1.
 //
 // # Riot API Reference
 //
 // [league-exp-v4.getLeagueEntries]
-//
-// Note: this method is automatically generated.
 //
 // [league-exp-v4.getLeagueEntries]: https://developer.riotgames.com/api-methods/#league-exp-v4/GET_getLeagueEntries
 func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue QueueType, tier Tier, division Division, page int32) ([]LeagueEntryV4DTO, error) {
@@ -543,24 +687,48 @@ func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue Qu
 //
 // [league-v4]
 //
-// Note: this struct is automatically generated.
-//
 // [league-v4]: https://developer.riotgames.com/apis#league-v4
 type LeagueV4 struct {
 	internal *internal.Client
+}
+
+// Get league with given ID, including inactive entries.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `leagueId` - The UUID of the league.
+//
+// # Riot API Reference
+//
+// [league-v4.getLeagueById]
+//
+// [league-v4.getLeagueById]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueById
+func (e *LeagueV4) ByID(ctx context.Context, route PlatformRoute, leagueId string) (*LeagueListV4DTO, error) {
+	logger := e.internal.Logger("LOL_LeagueV4_ByID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/leagues/%v", leagueId), "league-v4.getLeagueById", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data LeagueListV4DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
 }
 
 // Get the challenger league for given queue.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `queue` (required, in path)
+//   - `queue`
 //
 // # Riot API Reference
 //
 // [league-v4.getChallengerLeague]
-//
-// Note: this method is automatically generated.
 //
 // [league-v4.getChallengerLeague]: https://developer.riotgames.com/api-methods/#league-v4/GET_getChallengerLeague
 func (e *LeagueV4) ChallengerByQueue(ctx context.Context, route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
@@ -580,50 +748,18 @@ func (e *LeagueV4) ChallengerByQueue(ctx context.Context, route PlatformRoute, q
 	return &data, nil
 }
 
-// Get league entries in all queues for a given summoner ID.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `encryptedSummonerId` (required, in path)
-//
-// # Riot API Reference
-//
-// [league-v4.getLeagueEntriesForSummoner]
-//
-// Note: this method is automatically generated.
-//
-// [league-v4.getLeagueEntriesForSummoner]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueEntriesForSummoner
-func (e *LeagueV4) SummonerEntries(ctx context.Context, route PlatformRoute, encryptedSummonerId string) ([]LeagueEntryV4DTO, error) {
-	logger := e.internal.Logger("LOL_LeagueV4_SummonerEntries")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/entries/by-summoner/%v", encryptedSummonerId), "league-v4.getLeagueEntriesForSummoner", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data []LeagueEntryV4DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
-}
-
 // Get all the league entries.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `division` (required, in path)
-//   - `tier` (required, in path)
-//   - `queue` (required, in path) - Note that the queue value must be a valid ranked queue.
-//   - `page` (optional, in query) - Defaults to 1. Starts with page 1.
+//   - `division`
+//   - `tier`
+//   - `queue` - Note that the queue value must be a valid ranked queue.
+//   - `page` (optional) - Defaults to 1. Starts with page 1.
 //
 // # Riot API Reference
 //
 // [league-v4.getLeagueEntries]
-//
-// Note: this method is automatically generated.
 //
 // [league-v4.getLeagueEntries]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueEntries
 func (e *LeagueV4) Entries(ctx context.Context, route PlatformRoute, queue QueueType, tier Tier, division Division, page int32) ([]LeagueEntryV4DTO, error) {
@@ -652,13 +788,11 @@ func (e *LeagueV4) Entries(ctx context.Context, route PlatformRoute, queue Queue
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `queue` (required, in path)
+//   - `queue`
 //
 // # Riot API Reference
 //
 // [league-v4.getGrandmasterLeague]
-//
-// Note: this method is automatically generated.
 //
 // [league-v4.getGrandmasterLeague]: https://developer.riotgames.com/api-methods/#league-v4/GET_getGrandmasterLeague
 func (e *LeagueV4) GrandmasterByQueue(ctx context.Context, route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
@@ -678,47 +812,15 @@ func (e *LeagueV4) GrandmasterByQueue(ctx context.Context, route PlatformRoute, 
 	return &data, nil
 }
 
-// Get league with given ID, including inactive entries.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `leagueId` (required, in path) - The UUID of the league.
-//
-// # Riot API Reference
-//
-// [league-v4.getLeagueById]
-//
-// Note: this method is automatically generated.
-//
-// [league-v4.getLeagueById]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueById
-func (e *LeagueV4) ByID(ctx context.Context, route PlatformRoute, leagueId string) (*LeagueListV4DTO, error) {
-	logger := e.internal.Logger("LOL_LeagueV4_ByID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/leagues/%v", leagueId), "league-v4.getLeagueById", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data LeagueListV4DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
 // Get the master league for given queue.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `queue` (required, in path)
+//   - `queue`
 //
 // # Riot API Reference
 //
 // [league-v4.getMasterLeague]
-//
-// Note: this method is automatically generated.
 //
 // [league-v4.getMasterLeague]: https://developer.riotgames.com/api-methods/#league-v4/GET_getMasterLeague
 func (e *LeagueV4) MasterByQueue(ctx context.Context, route PlatformRoute, queue QueueType) (*LeagueListV4DTO, error) {
@@ -738,364 +840,52 @@ func (e *LeagueV4) MasterByQueue(ctx context.Context, route PlatformRoute, queue
 	return &data, nil
 }
 
-// # Riot API Reference
-//
-// [lol-challenges-v1]
-//
-// Note: this struct is automatically generated.
-//
-// [lol-challenges-v1]: https://developer.riotgames.com/apis#lol-challenges-v1
-type ChallengesV1 struct {
-	internal *internal.Client
-}
-
-// List of all basic challenge configuration information (includes all translations for names and descriptions)
+// Get league entries in all queues for a given summoner ID.
 //
 // # Parameters
 //   - `route` - Route to query.
+//   - `encryptedSummonerId`
 //
 // # Riot API Reference
 //
-// [lol-challenges-v1.getAllChallengeConfigs]
+// [league-v4.getLeagueEntriesForSummoner]
 //
-// Note: this method is automatically generated.
-//
-// [lol-challenges-v1.getAllChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getAllChallengeConfigs
-func (e *ChallengesV1) AllConfigs(ctx context.Context, route PlatformRoute) ([]ChallengeConfigInfoV1DTO, error) {
-	logger := e.internal.Logger("LOL_ChallengesV1_AllConfigs")
+// [league-v4.getLeagueEntriesForSummoner]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueEntriesForSummoner
+func (e *LeagueV4) SummonerEntries(ctx context.Context, route PlatformRoute, encryptedSummonerId string) ([]LeagueEntryV4DTO, error) {
+	logger := e.internal.Logger("LOL_LeagueV4_SummonerEntries")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/challenges/v1/challenges/config", "lol-challenges-v1.getAllChallengeConfigs", nil)
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/league/v4/entries/by-summoner/%v", encryptedSummonerId), "league-v4.getLeagueEntriesForSummoner", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data []ChallengeConfigInfoV1DTO
+	var data []LeagueEntryV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return data, nil
-}
-
-// Map of level to percentile of players who have achieved it - keys: ChallengeId -> Season -> Level -> percentile of players who achieved it
-//
-// # Parameters
-//   - `route` - Route to query.
-//
-// # Riot API Reference
-//
-// [lol-challenges-v1.getAllChallengePercentiles]
-//
-// Note: this method is automatically generated.
-//
-// [lol-challenges-v1.getAllChallengePercentiles]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getAllChallengePercentiles
-func (e *ChallengesV1) AllPercentiles(ctx context.Context, route PlatformRoute) (map[int64]map[Tier]float64, error) {
-	logger := e.internal.Logger("LOL_ChallengesV1_AllPercentiles")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/challenges/v1/challenges/percentiles", "lol-challenges-v1.getAllChallengePercentiles", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data map[int64]map[Tier]float64
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
-}
-
-// Get challenge configuration (REST)
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `challengeId` (required, in path)
-//
-// # Riot API Reference
-//
-// [lol-challenges-v1.getChallengeConfigs]
-//
-// Note: this method is automatically generated.
-//
-// [lol-challenges-v1.getChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeConfigs
-func (e *ChallengesV1) ConfigByID(ctx context.Context, route PlatformRoute, challengeId int64) (*ChallengeConfigInfoV1DTO, error) {
-	logger := e.internal.Logger("LOL_ChallengesV1_ConfigByID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/config", challengeId), "lol-challenges-v1.getChallengeConfigs", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data ChallengeConfigInfoV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Return top players for each level. Level must be MASTER, GRANDMASTER or CHALLENGER.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `level` (required, in path)
-//   - `challengeId` (required, in path)
-//   - `limit` (optional, in query)
-//
-// # Riot API Reference
-//
-// [lol-challenges-v1.getChallengeLeaderboards]
-//
-// Note: this method is automatically generated.
-//
-// [lol-challenges-v1.getChallengeLeaderboards]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeLeaderboards
-func (e *ChallengesV1) Leaderboards(ctx context.Context, route PlatformRoute, challengeId int64, level Tier, limit int32) ([]ApexPlayerInfoV1DTO, error) {
-	logger := e.internal.Logger("LOL_ChallengesV1_Leaderboards")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/leaderboards/by-level/%v", challengeId, level), "lol-challenges-v1.getChallengeLeaderboards", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	values := url.Values{}
-	if limit != -1 {
-		values.Set("limit", strconv.FormatInt(int64(limit), 10))
-	}
-	equinoxReq.Request.URL.RawQuery = values.Encode()
-	var data []ApexPlayerInfoV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
-}
-
-// Map of level to percentile of players who have achieved it
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `challengeId` (required, in path)
-//
-// # Riot API Reference
-//
-// [lol-challenges-v1.getChallengePercentiles]
-//
-// Note: this method is automatically generated.
-//
-// [lol-challenges-v1.getChallengePercentiles]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengePercentiles
-func (e *ChallengesV1) Percentiles(ctx context.Context, route PlatformRoute, challengeId int64) (map[Tier]float64, error) {
-	logger := e.internal.Logger("LOL_ChallengesV1_Percentiles")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/challenges/%v/percentiles", challengeId), "lol-challenges-v1.getChallengePercentiles", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data map[Tier]float64
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
-}
-
-// Returns player information with list of all progressed challenges (REST)
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `puuid` (required, in path)
-//
-// # Riot API Reference
-//
-// [lol-challenges-v1.getPlayerData]
-//
-// Note: this method is automatically generated.
-//
-// [lol-challenges-v1.getPlayerData]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getPlayerData
-func (e *ChallengesV1) ByPUUID(ctx context.Context, route PlatformRoute, puuid string) (*PlayerInfoV1DTO, error) {
-	logger := e.internal.Logger("LOL_ChallengesV1_ByPUUID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/challenges/v1/player-data/%v", puuid), "lol-challenges-v1.getPlayerData", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data PlayerInfoV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// # Riot API Reference
-//
-// [lol-status-v3]
-//
-// Note: this struct is automatically generated.
-//
-// [lol-status-v3]: https://developer.riotgames.com/apis#lol-status-v3
-type StatusV3 struct {
-	internal *internal.Client
-}
-
-// Get League of Legends status for the given shard.
-//
-// # Rate Limit Notes
-//
-// Requests to this API are not counted against the application Rate Limits.
-//
-// # Parameters
-//   - `route` - Route to query.
-//
-// # Riot API Reference
-//
-// [lol-status-v3.getShardData]
-//
-// Note: this method is automatically generated.
-//
-// [lol-status-v3.getShardData]: https://developer.riotgames.com/api-methods/#lol-status-v3/GET_getShardData
-func (e *StatusV3) Shard(ctx context.Context, route PlatformRoute) (*ShardStatusV3DTO, error) {
-	logger := e.internal.Logger("LOL_StatusV3_Shard")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/status/v3/shard-data", "lol-status-v3.getShardData", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data ShardStatusV3DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// # Riot API Reference
-//
-// [lol-status-v4]
-//
-// Note: this struct is automatically generated.
-//
-// [lol-status-v4]: https://developer.riotgames.com/apis#lol-status-v4
-type StatusV4 struct {
-	internal *internal.Client
-}
-
-// Get League of Legends status for the given platform.
-//
-// # Parameters
-//   - `route` - Route to query.
-//
-// # Riot API Reference
-//
-// [lol-status-v4.getPlatformData]
-//
-// Note: this method is automatically generated.
-//
-// [lol-status-v4.getPlatformData]: https://developer.riotgames.com/api-methods/#lol-status-v4/GET_getPlatformData
-func (e *StatusV4) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV4DTO, error) {
-	logger := e.internal.Logger("LOL_StatusV4_Platform")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/status/v4/platform-data", "lol-status-v4.getPlatformData", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data PlatformDataV4DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
 }
 
 // # Riot API Reference
 //
 // [match-v5]
 //
-// Note: this struct is automatically generated.
-//
 // [match-v5]: https://developer.riotgames.com/apis#match-v5
 type MatchV5 struct {
 	internal *internal.Client
-}
-
-// Get a list of match ids by puuid
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `puuid` (required, in path)
-//   - `startTime` (optional, in query) - Epoch timestamp in seconds. The matchlist started storing timestamps on June 16th, 2021. Any matches played before June 16th, 2021 won't be included in the results if the startTime filter is set.
-//   - `endTime` (optional, in query) - Epoch timestamp in seconds.
-//   - `queue` (optional, in query) - Filter the list of match ids by a specific queue id. This filter is mutually inclusive of the type filter meaning any match ids returned must match both the queue and type filters.
-//   - `type` (optional, in query) - Filter the list of match ids by the type of match. This filter is mutually inclusive of the queue filter meaning any match ids returned must match both the queue and type filters.
-//   - `start` (optional, in query) - Defaults to 0. Start index.
-//   - `count` (optional, in query) - Defaults to 20. Valid values: 0 to 100. Number of match ids to return.
-//
-// # Riot API Reference
-//
-// [match-v5.getMatchIdsByPUUID]
-//
-// Note: this method is automatically generated.
-//
-// [match-v5.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#match-v5/GET_getMatchIdsByPUUID
-func (e *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, startTime int64, endTime int64, queue int32, type_ string, start int32, count int32) ([]string, error) {
-	logger := e.internal.Logger("LOL_MatchV5_ListByPUUID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/match/v5/matches/by-puuid/%v/ids", puuid), "match-v5.getMatchIdsByPUUID", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	values := url.Values{}
-	if startTime != -1 {
-		values.Set("startTime", strconv.FormatInt(startTime, 10))
-	}
-	if endTime != -1 {
-		values.Set("endTime", strconv.FormatInt(endTime, 10))
-	}
-	if queue != -1 {
-		values.Set("queue", strconv.FormatInt(int64(queue), 10))
-	}
-	if type_ != "" {
-		values.Set("type", type_)
-	}
-	if start != -1 {
-		values.Set("start", strconv.FormatInt(int64(start), 10))
-	}
-	if count != -1 {
-		values.Set("count", strconv.FormatInt(int64(count), 10))
-	}
-	equinoxReq.Request.URL.RawQuery = values.Encode()
-	var data []string
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
 }
 
 // Get a match by match id
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `matchId` (required, in path)
+//   - `matchId`
 //
 // # Riot API Reference
 //
 // [match-v5.getMatch]
-//
-// Note: this method is automatically generated.
 //
 // [match-v5.getMatch]: https://developer.riotgames.com/api-methods/#match-v5/GET_getMatch
 func (e *MatchV5) ByID(ctx context.Context, route api.RegionalRoute, matchId string) (*MatchV5DTO, error) {
@@ -1115,17 +905,69 @@ func (e *MatchV5) ByID(ctx context.Context, route api.RegionalRoute, matchId str
 	return &data, nil
 }
 
+// Get a list of match ids by puuid
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `puuid`
+//   - `startTime` (optional) - Epoch timestamp in seconds. The matchlist started storing timestamps on June 16th, 2021. Any matches played before June 16th, 2021 won't be included in the results if the startTime filter is set.
+//   - `endTime` (optional) - Epoch timestamp in seconds.
+//   - `queue` (optional) - Filter the list of match ids by a specific queue id. This filter is mutually inclusive of the type filter meaning any match ids returned must match both the queue and type filters.
+//   - `type` (optional) - Filter the list of match ids by the type of match. This filter is mutually inclusive of the queue filter meaning any match ids returned must match both the queue and type filters.
+//   - `start` (optional) - Defaults to 0. Start index.
+//   - `count` (optional) - Defaults to 20. Valid values: 0 to 100. Number of match ids to return.
+//
+// # Riot API Reference
+//
+// [match-v5.getMatchIdsByPUUID]
+//
+// [match-v5.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#match-v5/GET_getMatchIdsByPUUID
+func (e *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, startTime int64, endTime int64, queue int32, type_ string, start int32, count int32) ([]string, error) {
+	logger := e.internal.Logger("LOL_MatchV5_ListByPUUID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/match/v5/matches/by-puuid/%v/ids", puuid), "match-v5.getMatchIdsByPUUID", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	values := url.Values{}
+	if count != -1 {
+		values.Set("count", strconv.FormatInt(int64(count), 10))
+	}
+	if endTime != -1 {
+		values.Set("endTime", strconv.FormatInt(endTime, 10))
+	}
+	if queue != -1 {
+		values.Set("queue", strconv.FormatInt(int64(queue), 10))
+	}
+	if start != -1 {
+		values.Set("start", strconv.FormatInt(int64(start), 10))
+	}
+	if startTime != -1 {
+		values.Set("startTime", strconv.FormatInt(startTime, 10))
+	}
+	if type_ != "" {
+		values.Set("type", type_)
+	}
+	equinoxReq.Request.URL.RawQuery = values.Encode()
+	var data []string
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return data, nil
+}
+
 // Get a match timeline by match id
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `matchId` (required, in path)
+//   - `matchId`
 //
 // # Riot API Reference
 //
 // [match-v5.getTimeline]
-//
-// Note: this method is automatically generated.
 //
 // [match-v5.getTimeline]: https://developer.riotgames.com/api-methods/#match-v5/GET_getTimeline
 func (e *MatchV5) Timeline(ctx context.Context, route api.RegionalRoute, matchId string) (*MatchTimelineV5DTO, error) {
@@ -1149,8 +991,6 @@ func (e *MatchV5) Timeline(ctx context.Context, route api.RegionalRoute, matchId
 //
 // [spectator-v4]
 //
-// Note: this struct is automatically generated.
-//
 // [spectator-v4]: https://developer.riotgames.com/apis#spectator-v4
 type SpectatorV4 struct {
 	internal *internal.Client
@@ -1160,13 +1000,11 @@ type SpectatorV4 struct {
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedSummonerId` (required, in path) - The ID of the summoner.
+//   - `encryptedSummonerId` - The ID of the summoner.
 //
 // # Riot API Reference
 //
 // [spectator-v4.getCurrentGameInfoBySummoner]
-//
-// Note: this method is automatically generated.
 //
 // [spectator-v4.getCurrentGameInfoBySummoner]: https://developer.riotgames.com/api-methods/#spectator-v4/GET_getCurrentGameInfoBySummoner
 func (e *SpectatorV4) CurrentGameBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*CurrentGameInfoV4DTO, error) {
@@ -1195,8 +1033,6 @@ func (e *SpectatorV4) CurrentGameBySummonerID(ctx context.Context, route Platfor
 //
 // [spectator-v4.getFeaturedGames]
 //
-// Note: this method is automatically generated.
-//
 // [spectator-v4.getFeaturedGames]: https://developer.riotgames.com/api-methods/#spectator-v4/GET_getFeaturedGames
 func (e *SpectatorV4) Featured(ctx context.Context, route PlatformRoute) (*FeaturedGamesV4DTO, error) {
 	logger := e.internal.Logger("LOL_SpectatorV4_Featured")
@@ -1217,36 +1053,111 @@ func (e *SpectatorV4) Featured(ctx context.Context, route PlatformRoute) (*Featu
 
 // # Riot API Reference
 //
-// [summoner-v4]
+// [lol-status-v3]
 //
-// Note: this struct is automatically generated.
+// [lol-status-v3]: https://developer.riotgames.com/apis#lol-status-v3
+type StatusV3 struct {
+	internal *internal.Client
+}
+
+// Get League of Legends status for the given shard.
+// ## Rate Limit Notes
+// Requests to this API are not counted against the application Rate Limits.
+//
+// # Parameters
+//   - `route` - Route to query.
+//
+// # Riot API Reference
+//
+// [lol-status-v3.getShardData]
+//
+// [lol-status-v3.getShardData]: https://developer.riotgames.com/api-methods/#lol-status-v3/GET_getShardData
+func (e *StatusV3) Shard(ctx context.Context, route PlatformRoute) (*ShardStatusV3DTO, error) {
+	logger := e.internal.Logger("LOL_StatusV3_Shard")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/status/v3/shard-data", "lol-status-v3.getShardData", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data ShardStatusV3DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// # Riot API Reference
+//
+// [lol-status-v4]
+//
+// [lol-status-v4]: https://developer.riotgames.com/apis#lol-status-v4
+type StatusV4 struct {
+	internal *internal.Client
+}
+
+// Get League of Legends status for the given platform.
+//
+// # Parameters
+//   - `route` - Route to query.
+//
+// # Riot API Reference
+//
+// [lol-status-v4.getPlatformData]
+//
+// [lol-status-v4.getPlatformData]: https://developer.riotgames.com/api-methods/#lol-status-v4/GET_getPlatformData
+func (e *StatusV4) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV4DTO, error) {
+	logger := e.internal.Logger("LOL_StatusV4_Platform")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/status/v4/platform-data", "lol-status-v4.getPlatformData", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data PlatformDataV4DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// # Riot API Reference
+//
+// [summoner-v4]
 //
 // [summoner-v4]: https://developer.riotgames.com/apis#summoner-v4
 type SummonerV4 struct {
 	internal *internal.Client
 }
 
-// Get a summoner by its RSO encrypted PUUID.
+// Get a summoner by access token.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `rsoPUUID` (required, in path) - Summoner ID
+//   - `Authorization` (optional) - Bearer token
 //
 // # Riot API Reference
 //
-// [summoner-v4.getByRSOPUUID]
+// [summoner-v4.getByAccessToken]
 //
-// Note: this method is automatically generated.
-//
-// [summoner-v4.getByRSOPUUID]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByRSOPUUID
-func (e *SummonerV4) ByRSOPUUID(ctx context.Context, route PlatformRoute, rsoPUUID string) (*SummonerV4DTO, error) {
-	logger := e.internal.Logger("LOL_SummonerV4_ByRSOPUUID")
+// [summoner-v4.getByAccessToken]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByAccessToken
+func (e *SummonerV4) ByAccessToken(ctx context.Context, route PlatformRoute, authorization string) (*SummonerV4DTO, error) {
+	logger := e.internal.Logger("LOL_SummonerV4_ByAccessToken")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/fulfillment/v1/summoners/by-puuid/%v", rsoPUUID), "summoner-v4.getByRSOPUUID", nil)
+	if authorization == "" {
+		return nil, fmt.Errorf("'authorization' header is required")
+	}
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/summoner/v4/summoners/me", "summoner-v4.getByAccessToken", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
+	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
+	equinoxReq.Request.Header.Set("Authorization", authorization)
 	var data SummonerV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
@@ -1260,13 +1171,11 @@ func (e *SummonerV4) ByRSOPUUID(ctx context.Context, route PlatformRoute, rsoPUU
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedAccountId` (required, in path)
+//   - `encryptedAccountId`
 //
 // # Riot API Reference
 //
 // [summoner-v4.getByAccountId]
-//
-// Note: this method is automatically generated.
 //
 // [summoner-v4.getByAccountId]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByAccountId
 func (e *SummonerV4) ByAccountID(ctx context.Context, route PlatformRoute, encryptedAccountId string) (*SummonerV4DTO, error) {
@@ -1290,13 +1199,11 @@ func (e *SummonerV4) ByAccountID(ctx context.Context, route PlatformRoute, encry
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `summonerName` (required, in path) - Summoner Name
+//   - `summonerName` - Summoner Name
 //
 // # Riot API Reference
 //
 // [summoner-v4.getBySummonerName]
-//
-// Note: this method is automatically generated.
 //
 // [summoner-v4.getBySummonerName]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getBySummonerName
 func (e *SummonerV4) ByName(ctx context.Context, route PlatformRoute, summonerName string) (*SummonerV4DTO, error) {
@@ -1320,13 +1227,11 @@ func (e *SummonerV4) ByName(ctx context.Context, route PlatformRoute, summonerNa
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedPUUID` (required, in path) - Summoner ID
+//   - `encryptedPUUID` - Summoner ID
 //
 // # Riot API Reference
 //
 // [summoner-v4.getByPUUID]
-//
-// Note: this method is automatically generated.
 //
 // [summoner-v4.getByPUUID]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByPUUID
 func (e *SummonerV4) ByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (*SummonerV4DTO, error) {
@@ -1346,32 +1251,25 @@ func (e *SummonerV4) ByPUUID(ctx context.Context, route PlatformRoute, encrypted
 	return &data, nil
 }
 
-// Get a summoner by access token.
+// Get a summoner by its RSO encrypted PUUID.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `authorization` (optional, in header) - Bearer token
+//   - `rsoPUUID` - Summoner ID
 //
 // # Riot API Reference
 //
-// [summoner-v4.getByAccessToken]
+// [summoner-v4.getByRSOPUUID]
 //
-// Note: this method is automatically generated.
-//
-// [summoner-v4.getByAccessToken]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByAccessToken
-func (e *SummonerV4) ByAccessToken(ctx context.Context, route PlatformRoute, authorization string) (*SummonerV4DTO, error) {
-	logger := e.internal.Logger("LOL_SummonerV4_ByAccessToken")
+// [summoner-v4.getByRSOPUUID]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByRSOPUUID
+func (e *SummonerV4) ByRSOPUUID(ctx context.Context, route PlatformRoute, rsoPUUID string) (*SummonerV4DTO, error) {
+	logger := e.internal.Logger("LOL_SummonerV4_ByRSOPUUID")
 	logger.Trace().Msg("Method started execution")
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lol/summoner/v4/summoners/me", "summoner-v4.getByAccessToken", nil)
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/fulfillment/v1/summoners/by-puuid/%v", rsoPUUID), "summoner-v4.getByRSOPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
-	equinoxReq.Request.Header.Set("authorization", authorization)
 	var data SummonerV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
@@ -1385,13 +1283,11 @@ func (e *SummonerV4) ByAccessToken(ctx context.Context, route PlatformRoute, aut
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `encryptedSummonerId` (required, in path) - Summoner ID
+//   - `encryptedSummonerId` - Summoner ID
 //
 // # Riot API Reference
 //
 // [summoner-v4.getBySummonerId]
-//
-// Note: this method is automatically generated.
 //
 // [summoner-v4.getBySummonerId]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getBySummonerId
 func (e *SummonerV4) BySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*SummonerV4DTO, error) {
@@ -1415,8 +1311,6 @@ func (e *SummonerV4) BySummonerID(ctx context.Context, route PlatformRoute, encr
 //
 // [tournament-stub-v5]
 //
-// Note: this struct is automatically generated.
-//
 // [tournament-stub-v5]: https://developer.riotgames.com/apis#tournament-stub-v5
 type TournamentStubV5 struct {
 	internal *internal.Client
@@ -1426,14 +1320,12 @@ type TournamentStubV5 struct {
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `count` (optional, in query) - The number of codes to create (max 1000)
-//   - `tournamentId` (required, in query) - The tournament ID
+//   - `count` (optional) - The number of codes to create (max 1000)
+//   - `tournamentId` - The tournament ID
 //
 // # Riot API Reference
 //
 // [tournament-stub-v5.createTournamentCode]
-//
-// Note: this method is automatically generated.
 //
 // [tournament-stub-v5.createTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_createTournamentCode
 func (e *TournamentStubV5) CreateTournamentCode(ctx context.Context, route api.RegionalRoute, body *StubTournamentCodeParametersV5DTO, count int32, tournamentId int64) ([]string, error) {
@@ -1461,47 +1353,15 @@ func (e *TournamentStubV5) CreateTournamentCode(ctx context.Context, route api.R
 	return data, nil
 }
 
-// Returns the tournament code DTO associated with a tournament code string - Stub Method
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `tournamentCode` (required, in path) - The tournament code string.
-//
-// # Riot API Reference
-//
-// [tournament-stub-v5.getTournamentCode]
-//
-// Note: this method is automatically generated.
-//
-// [tournament-stub-v5.getTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/GET_getTournamentCode
-func (e *TournamentStubV5) TournamentCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*StubTournamentCodeV5DTO, error) {
-	logger := e.internal.Logger("LOL_TournamentStubV5_TournamentCode")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament-stub/v5/codes/%v", tournamentCode), "tournament-stub-v5.getTournamentCode", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data StubTournamentCodeV5DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
 // Gets a list of lobby events by tournament code - Stub method
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `tournamentCode` (required, in path) - The short code to look up lobby events for
+//   - `tournamentCode` - The short code to look up lobby events for
 //
 // # Riot API Reference
 //
 // [tournament-stub-v5.getLobbyEventsByCode]
-//
-// Note: this method is automatically generated.
 //
 // [tournament-stub-v5.getLobbyEventsByCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/GET_getLobbyEventsByCode
 func (e *TournamentStubV5) LobbyEventsByCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*StubLobbyEventWrapperV5DTO, error) {
@@ -1534,8 +1394,6 @@ func (e *TournamentStubV5) LobbyEventsByCode(ctx context.Context, route api.Regi
 //
 // [tournament-stub-v5.registerProviderData]
 //
-// Note: this method is automatically generated.
-//
 // [tournament-stub-v5.registerProviderData]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_registerProviderData
 func (e *TournamentStubV5) RegisterProviderData(ctx context.Context, route api.RegionalRoute, body *StubProviderRegistrationParametersV5DTO) (int32, error) {
 	logger := e.internal.Logger("LOL_TournamentStubV5_RegisterProviderData")
@@ -1563,8 +1421,6 @@ func (e *TournamentStubV5) RegisterProviderData(ctx context.Context, route api.R
 //
 // [tournament-stub-v5.registerTournament]
 //
-// Note: this method is automatically generated.
-//
 // [tournament-stub-v5.registerTournament]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_registerTournament
 func (e *TournamentStubV5) RegisterTournament(ctx context.Context, route api.RegionalRoute, body *StubTournamentRegistrationParametersV5DTO) (int32, error) {
 	logger := e.internal.Logger("LOL_TournamentStubV5_RegisterTournament")
@@ -1583,11 +1439,37 @@ func (e *TournamentStubV5) RegisterTournament(ctx context.Context, route api.Reg
 	return data, nil
 }
 
+// Returns the tournament code DTO associated with a tournament code string - Stub Method
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `tournamentCode` - The tournament code string.
+//
+// # Riot API Reference
+//
+// [tournament-stub-v5.getTournamentCode]
+//
+// [tournament-stub-v5.getTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/GET_getTournamentCode
+func (e *TournamentStubV5) TournamentCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*StubTournamentCodeV5DTO, error) {
+	logger := e.internal.Logger("LOL_TournamentStubV5_TournamentCode")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament-stub/v5/codes/%v", tournamentCode), "tournament-stub-v5.getTournamentCode", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data StubTournamentCodeV5DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
 // # Riot API Reference
 //
 // [tournament-v5]
-//
-// Note: this struct is automatically generated.
 //
 // [tournament-v5]: https://developer.riotgames.com/apis#tournament-v5
 type TournamentV5 struct {
@@ -1598,14 +1480,12 @@ type TournamentV5 struct {
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `tournamentId` (required, in query) - The tournament ID
-//   - `count` (optional, in query) - The number of codes to create (max 1000)
+//   - `tournamentId` - The tournament ID
+//   - `count` (optional) - The number of codes to create (max 1000)
 //
 // # Riot API Reference
 //
 // [tournament-v5.createTournamentCode]
-//
-// Note: this method is automatically generated.
 //
 // [tournament-v5.createTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-v5/POST_createTournamentCode
 func (e *TournamentV5) CreateTournamentCode(ctx context.Context, route api.RegionalRoute, body *TournamentCodeParametersV5DTO, tournamentId int64, count int32) ([]string, error) {
@@ -1617,11 +1497,11 @@ func (e *TournamentV5) CreateTournamentCode(ctx context.Context, route api.Regio
 		return nil, err
 	}
 	values := url.Values{}
-	if tournamentId != -1 {
-		values.Set("tournamentId", strconv.FormatInt(tournamentId, 10))
-	}
 	if count != -1 {
 		values.Set("count", strconv.FormatInt(int64(count), 10))
+	}
+	if tournamentId != -1 {
+		values.Set("tournamentId", strconv.FormatInt(tournamentId, 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data []string
@@ -1631,66 +1511,6 @@ func (e *TournamentV5) CreateTournamentCode(ctx context.Context, route api.Regio
 		return nil, err
 	}
 	return data, nil
-}
-
-// Returns the tournament code DTO associated with a tournament code string.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `tournamentCode` (required, in path) - The tournament code string.
-//
-// # Riot API Reference
-//
-// [tournament-v5.getTournamentCode]
-//
-// Note: this method is automatically generated.
-//
-// [tournament-v5.getTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-v5/GET_getTournamentCode
-func (e *TournamentV5) TournamentCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*TournamentCodeV5DTO, error) {
-	logger := e.internal.Logger("LOL_TournamentV5_TournamentCode")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/codes/%v", tournamentCode), "tournament-v5.getTournamentCode", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data TournamentCodeV5DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Update the pick type, map, spectator type, or allowed puuids for a code.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `tournamentCode` (required, in path) - The tournament code to update
-//
-// # Riot API Reference
-//
-// [tournament-v5.updateCode]
-//
-// Note: this method is automatically generated.
-//
-// [tournament-v5.updateCode]: https://developer.riotgames.com/api-methods/#tournament-v5/PUT_updateCode
-func (e *TournamentV5) UpdateCode(ctx context.Context, route api.RegionalRoute, body *TournamentCodeUpdateParametersV5DTO, tournamentCode string) error {
-	logger := e.internal.Logger("LOL_TournamentV5_UpdateCode")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPut, route, fmt.Sprintf("/lol/tournament/v5/codes/%v", tournamentCode), "tournament-v5.updateCode", body)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil
-	}
-
-	err = e.internal.Execute(ctx, equinoxReq, nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil
-	}
-	return nil
 }
 
 // Get games details
@@ -1705,13 +1525,11 @@ func (e *TournamentV5) UpdateCode(ctx context.Context, route api.RegionalRoute, 
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `tournamentCode` (required, in path)
+//   - `tournamentCode`
 //
 // # Riot API Reference
 //
 // [tournament-v5.getGames]
-//
-// Note: this method is automatically generated.
 //
 // [tournament-v5.getGames]: https://developer.riotgames.com/api-methods/#tournament-v5/GET_getGames
 func (e *TournamentV5) Games(ctx context.Context, route api.RegionalRoute, tournamentCode string) ([]TournamentGamesV5DTO, error) {
@@ -1735,13 +1553,11 @@ func (e *TournamentV5) Games(ctx context.Context, route api.RegionalRoute, tourn
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `tournamentCode` (required, in path) - The short code to look up lobby events for
+//   - `tournamentCode` - The short code to look up lobby events for
 //
 // # Riot API Reference
 //
 // [tournament-v5.getLobbyEventsByCode]
-//
-// Note: this method is automatically generated.
 //
 // [tournament-v5.getLobbyEventsByCode]: https://developer.riotgames.com/api-methods/#tournament-v5/GET_getLobbyEventsByCode
 func (e *TournamentV5) LobbyEventsByCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*LobbyEventWrapperV5DTO, error) {
@@ -1774,8 +1590,6 @@ func (e *TournamentV5) LobbyEventsByCode(ctx context.Context, route api.Regional
 //
 // [tournament-v5.registerProviderData]
 //
-// Note: this method is automatically generated.
-//
 // [tournament-v5.registerProviderData]: https://developer.riotgames.com/api-methods/#tournament-v5/POST_registerProviderData
 func (e *TournamentV5) RegisterProviderData(ctx context.Context, route api.RegionalRoute, body *ProviderRegistrationParametersV5DTO) (int32, error) {
 	logger := e.internal.Logger("LOL_TournamentV5_RegisterProviderData")
@@ -1803,8 +1617,6 @@ func (e *TournamentV5) RegisterProviderData(ctx context.Context, route api.Regio
 //
 // [tournament-v5.registerTournament]
 //
-// Note: this method is automatically generated.
-//
 // [tournament-v5.registerTournament]: https://developer.riotgames.com/api-methods/#tournament-v5/POST_registerTournament
 func (e *TournamentV5) RegisterTournament(ctx context.Context, route api.RegionalRoute, body *TournamentRegistrationParametersV5DTO) (int32, error) {
 	logger := e.internal.Logger("LOL_TournamentV5_RegisterTournament")
@@ -1821,4 +1633,59 @@ func (e *TournamentV5) RegisterTournament(ctx context.Context, route api.Regiona
 		return 0, err
 	}
 	return data, nil
+}
+
+// Returns the tournament code DTO associated with a tournament code string.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `tournamentCode` - The tournament code string.
+//
+// # Riot API Reference
+//
+// [tournament-v5.getTournamentCode]
+//
+// [tournament-v5.getTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-v5/GET_getTournamentCode
+func (e *TournamentV5) TournamentCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*TournamentCodeV5DTO, error) {
+	logger := e.internal.Logger("LOL_TournamentV5_TournamentCode")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lol/tournament/v5/codes/%v", tournamentCode), "tournament-v5.getTournamentCode", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data TournamentCodeV5DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Update the pick type, map, spectator type, or allowed puuids for a code.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `tournamentCode` - The tournament code to update
+//
+// # Riot API Reference
+//
+// [tournament-v5.updateCode]
+//
+// [tournament-v5.updateCode]: https://developer.riotgames.com/api-methods/#tournament-v5/PUT_updateCode
+func (e *TournamentV5) UpdateCode(ctx context.Context, route api.RegionalRoute, body *TournamentCodeUpdateParametersV5DTO, tournamentCode string) error {
+	logger := e.internal.Logger("LOL_TournamentV5_UpdateCode")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPut, route, fmt.Sprintf("/lol/tournament/v5/codes/%v", tournamentCode), "tournament-v5.updateCode", body)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return err
+	}
+	err = e.internal.Execute(ctx, equinoxReq, nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return err
+	}
+	return nil
 }

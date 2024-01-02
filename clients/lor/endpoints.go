@@ -23,59 +23,20 @@ import (
 //
 // [lor-deck-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [lor-deck-v1]: https://developer.riotgames.com/apis#lor-deck-v1
 type DeckV1 struct {
 	internal *internal.Client
-}
-
-// Get a list of the calling user's decks.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `authorization` (required, in header)
-//
-// # Riot API Reference
-//
-// [lor-deck-v1.getDecks]
-//
-// Note: this method is automatically generated.
-//
-// [lor-deck-v1.getDecks]: https://developer.riotgames.com/api-methods/#lor-deck-v1/GET_getDecks
-func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorization string) ([]DeckV1DTO, error) {
-	logger := e.internal.Logger("LOR_DeckV1_Decks")
-	logger.Trace().Msg("Method started execution")
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/deck/v1/decks/me", "lor-deck-v1.getDecks", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
-	equinoxReq.Request.Header.Set("authorization", authorization)
-	var data []DeckV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
 }
 
 // Create a new deck for the calling user.
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `authorization` (required, in header)
+//   - `Authorization`
 //
 // # Riot API Reference
 //
 // [lor-deck-v1.createDeck]
-//
-// Note: this method is automatically generated.
 //
 // [lor-deck-v1.createDeck]: https://developer.riotgames.com/api-methods/#lor-deck-v1/POST_createDeck
 func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *NewDeckV1DTO, authorization string) (string, error) {
@@ -90,7 +51,7 @@ func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *
 		return "", err
 	}
 	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
-	equinoxReq.Request.Header.Set("authorization", authorization)
+	equinoxReq.Request.Header.Set("Authorization", authorization)
 	var data string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
@@ -100,11 +61,42 @@ func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *
 	return data, nil
 }
 
+// Get a list of the calling user's decks.
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `Authorization`
+//
+// # Riot API Reference
+//
+// [lor-deck-v1.getDecks]
+//
+// [lor-deck-v1.getDecks]: https://developer.riotgames.com/api-methods/#lor-deck-v1/GET_getDecks
+func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorization string) ([]DeckV1DTO, error) {
+	logger := e.internal.Logger("LOR_DeckV1_Decks")
+	logger.Trace().Msg("Method started execution")
+	if authorization == "" {
+		return nil, fmt.Errorf("'authorization' header is required")
+	}
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/deck/v1/decks/me", "lor-deck-v1.getDecks", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
+	equinoxReq.Request.Header.Set("Authorization", authorization)
+	var data []DeckV1DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return data, nil
+}
+
 // # Riot API Reference
 //
 // [lor-inventory-v1]
-//
-// Note: this struct is automatically generated.
 //
 // [lor-inventory-v1]: https://developer.riotgames.com/apis#lor-inventory-v1
 type InventoryV1 struct {
@@ -115,13 +107,11 @@ type InventoryV1 struct {
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `authorization` (required, in header)
+//   - `Authorization`
 //
 // # Riot API Reference
 //
 // [lor-inventory-v1.getCards]
-//
-// Note: this method is automatically generated.
 //
 // [lor-inventory-v1.getCards]: https://developer.riotgames.com/api-methods/#lor-inventory-v1/GET_getCards
 func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, authorization string) ([]CardV1DTO, error) {
@@ -136,7 +126,7 @@ func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, author
 		return nil, err
 	}
 	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
-	equinoxReq.Request.Header.Set("authorization", authorization)
+	equinoxReq.Request.Header.Set("Authorization", authorization)
 	var data []CardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
@@ -150,54 +140,20 @@ func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, author
 //
 // [lor-match-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [lor-match-v1]: https://developer.riotgames.com/apis#lor-match-v1
 type MatchV1 struct {
 	internal *internal.Client
-}
-
-// Get a list of match ids by PUUID
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `puuid` (required, in path)
-//
-// # Riot API Reference
-//
-// [lor-match-v1.getMatchIdsByPUUID]
-//
-// Note: this method is automatically generated.
-//
-// [lor-match-v1.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#lor-match-v1/GET_getMatchIdsByPUUID
-func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string) ([]string, error) {
-	logger := e.internal.Logger("LOR_MatchV1_ListByPUUID")
-	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/by-puuid/%v/ids", puuid), "lor-match-v1.getMatchIdsByPUUID", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data []string
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
 }
 
 // Get match by id
 //
 // # Parameters
 //   - `route` - Route to query.
-//   - `matchId` (required, in path)
+//   - `matchId`
 //
 // # Riot API Reference
 //
 // [lor-match-v1.getMatch]
-//
-// Note: this method is automatically generated.
 //
 // [lor-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#lor-match-v1/GET_getMatch
 func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId string) (*MatchV1DTO, error) {
@@ -217,11 +173,37 @@ func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId str
 	return &data, nil
 }
 
+// Get a list of match ids by PUUID
+//
+// # Parameters
+//   - `route` - Route to query.
+//   - `puuid`
+//
+// # Riot API Reference
+//
+// [lor-match-v1.getMatchIdsByPUUID]
+//
+// [lor-match-v1.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#lor-match-v1/GET_getMatchIdsByPUUID
+func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string) ([]string, error) {
+	logger := e.internal.Logger("LOR_MatchV1_ListByPUUID")
+	logger.Trace().Msg("Method started execution")
+	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/by-puuid/%v/ids", puuid), "lor-match-v1.getMatchIdsByPUUID", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data []string
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return data, nil
+}
+
 // # Riot API Reference
 //
 // [lor-ranked-v1]
-//
-// Note: this struct is automatically generated.
 //
 // [lor-ranked-v1]: https://developer.riotgames.com/apis#lor-ranked-v1
 type RankedV1 struct {
@@ -236,8 +218,6 @@ type RankedV1 struct {
 // # Riot API Reference
 //
 // [lor-ranked-v1.getLeaderboards]
-//
-// Note: this method is automatically generated.
 //
 // [lor-ranked-v1.getLeaderboards]: https://developer.riotgames.com/api-methods/#lor-ranked-v1/GET_getLeaderboards
 func (e *RankedV1) Leaderboards(ctx context.Context, route api.RegionalRoute) (*LeaderboardV1DTO, error) {
@@ -261,8 +241,6 @@ func (e *RankedV1) Leaderboards(ctx context.Context, route api.RegionalRoute) (*
 //
 // [lor-status-v1]
 //
-// Note: this struct is automatically generated.
-//
 // [lor-status-v1]: https://developer.riotgames.com/apis#lor-status-v1
 type StatusV1 struct {
 	internal *internal.Client
@@ -276,8 +254,6 @@ type StatusV1 struct {
 // # Riot API Reference
 //
 // [lor-status-v1.getPlatformData]
-//
-// Note: this method is automatically generated.
 //
 // [lor-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#lor-status-v1/GET_getPlatformData
 func (e *StatusV1) Platform(ctx context.Context, route api.RegionalRoute) (*PlatformDataV1DTO, error) {
