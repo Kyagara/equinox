@@ -64,7 +64,7 @@ func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
 //   - `HTTPClient` : `http.Client` with a timeout of 15 seconds.
 //   - `Cache`		: `BigCache` with an eviction time of 4 minutes.
 //   - `RateLimit`	: Internal rate limiter with a limit usage factor of 1.0 and interval overhead of 1 second.
-//   - `Logger`		: api.Logger object with `zerolog.WarnLevel`.
+//   - `Logger`		: api.Logger object with `zerolog.WarnLevel`. Will log if rate limited or when retrying a request (before waiting).
 //   - `Retry`		: api.Retry object with a limit of 3 and jitter of 500 milliseconds.
 func DefaultConfig(key string) (api.EquinoxConfig, error) {
 	ctx := context.Background()
