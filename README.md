@@ -21,9 +21,9 @@
   - Valorant
   - Legends of Runeterra
 - Data Dragon and Community Dragon - (Incomplete)
-- Rate limit (internal, WIP)
-- Caching (in-memory or Redis)
-- Logging
+- Rate limit (Internal)
+- Caching with [BigCache](https://github.com/allegro/bigcache) or [Redis](https://github.com/go-redis/redis)
+- Logging with [zerolog](https://github.com/rs/zerolog)
 - Exponential backoff
 
 > equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json) package, read more about it [here](https://github.com/golang/go/discussions/63397).
@@ -58,8 +58,8 @@ A default equinox client comes with the default options:
 Using different endpoints:
 
 ```go
-// Contexts without a deadline will block if rate limited, waiting for buckets to reset.
-// If a deadline is set, there will be checks before any block to see if waiting would exceed it.
+// Contexts without a deadline will block if rate limited, waiting for the rate limited buckets to reset.
+// If a deadline is set, there will be checks done before any block to see if waiting would exceed that deadline.
 ctx := context.Background()
 
 // This method uses an api.RegionalRoute. Can be accessed with a Development key.
@@ -123,6 +123,7 @@ func main() {
 - Maybe the context usage throughout the project could be improved
 - Maybe add more options to customize the rate limiter
 - Maybe add wrapped errors to improve error handling
+- Add Redis store for rate limit
 - Improve DDragon/CDragon support
 
 ## About
@@ -142,7 +143,7 @@ Projects not written in go:
 
 A rewrite of Riven's [code generation](https://github.com/MingweiSamuel/Riven/tree/v/2.x.x/riven/srcgen) is used in [equinox](https://github.com/Kyagara/equinox/tree/main/codegen).
 
-When cloning the project, make sure to have a `go.work` file in the root of the project.
+If cloning the project, make sure to have a `go.work` file in the root of the project so you can use `go generate` from the root.
 
 ```
 go 1.21

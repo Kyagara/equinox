@@ -1,8 +1,6 @@
 # Rate Limit
 
-> Warning: this is still a work in progress. Tests succeeding != production ready.
-
-Rate limiting is enabled by default in a default equinox client. For now the only `store` available is in-memory, though I want to add Redis support in the future, maybe using a lua script.
+Rate limiting is enabled by default in a default equinox client. For now the only `store` available is internal, though I want to add Redis support in the future, maybe using a lua script.
 
 Info on rate limiting:
 
@@ -109,6 +107,6 @@ If rate limited, `Take()` will block until the next bucket reset. A `context` ca
 
 ### Update
 
-After receiving a response, `Update()` will verify that the current buckets in-memory match the ones received by the Riot API, if they don't, it will force an update in all buckets.
+After receiving a response, `Update()` will verify that the current buckets in memory match the ones received by the Riot API, if they don't, it will force an update in all buckets.
 
 > By 'matching', I mean that the current **baseLimit** and **interval** in the buckets already in memory match the ones received by the Riot API.
