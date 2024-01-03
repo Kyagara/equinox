@@ -10,6 +10,7 @@ import (
 	"math"
 	"net/http"
 	"slices"
+	"strings"
 	"sync"
 	"time"
 
@@ -88,7 +89,7 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 	return client
 }
 
-func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL string, httpMethod string, route any, path string, methodID string, body any) (api.EquinoxRequest, error) {
+func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod string, urlComponents []string, methodID string, body any) (api.EquinoxRequest, error) {
 	logger.Debug().Msg("Creating request")
 
 	if ctx == nil {
@@ -104,7 +105,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 		buffer = bytes.NewReader(bodyBytes)
 	}
 
-	url := fmt.Sprintf(baseURL, route, path)
+	url := strings.Join(urlComponents, "")
 
 	request, err := http.NewRequestWithContext(ctx, httpMethod, url, buffer)
 	if err != nil {
@@ -114,7 +115,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, baseURL str
 	equinoxReq := api.EquinoxRequest{
 		Logger:   logger,
 		MethodID: methodID,
-		Route:    route,
+		Route:    urlComponents[1],
 		URL:      url,
 		Request:  request,
 		IsCDN:    slices.Contains(cdns, request.URL.Host),
@@ -272,7 +273,8 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 func (c *Client) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {
 	logger := c.Logger(id)
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := c.Request(ctx, logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "/api/versions.json", "", nil)
+	urlComponents := []string{"https://", "", api.D_DRAGON_BASE_URL_FORMAT, "/api/versions.json"}
+	equinoxReq, err := c.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err

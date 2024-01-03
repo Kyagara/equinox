@@ -41,7 +41,8 @@ func BenchmarkInternals(b *testing.B) {
 	ctx := context.Background()
 
 	for i := 0; i < b.N; i++ {
-		equinoxReq, err := client.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "br1", "/lol/summoner/v4/summoners/by-puuid/puuid", "summoner-v4.getByPUUID", nil)
+		urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
+		equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 		require.NoError(b, err)
 		var data string
 		err = client.Execute(ctx, equinoxReq, &data)
@@ -72,7 +73,8 @@ func BenchmarkRequest(b *testing.B) {
 	ctx := context.Background()
 
 	for i := 0; i < b.N; i++ {
-		equinoxReq, err := client.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "br1", "/lol/summoner/v4/summoners/by-puuid/puuid", "summoner-v4.getByPUUID", nil)
+		urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
+		equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 		require.NoError(b, err)
 		// equinoxReq.Request.URL.String() causes 4 allocs
 		require.Equal(b, "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid", equinoxReq.Request.URL.String())
@@ -106,7 +108,8 @@ func BenchmarkExecute(b *testing.B) {
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
 	ctx := context.Background()
 
-	equinoxReq, err := client.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "br1", "/lol/summoner/v4/summoners/by-puuid/puuid", "summoner-v4.getByPUUID", nil)
+	urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
+	equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 	require.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {
@@ -144,7 +147,8 @@ func BenchmarkExecuteRaw(b *testing.B) {
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
 	ctx := context.Background()
 
-	equinoxReq, err := client.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "br1", "/lol/summoner/v4/summoners/by-puuid/puuid", "summoner-v4.getByPUUID", nil)
+	urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/", "puuid"}
+	equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 	require.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {

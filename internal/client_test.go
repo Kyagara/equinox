@@ -55,10 +55,10 @@ func TestNewInternalClient(t *testing.T) {
 
 	l := internalClient.Logger("client_endpoint_method")
 	ctx := context.Background()
-	_, gotErr := internalClient.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "", "", "", nil)
+	_, gotErr := internalClient.Request(ctx, l, http.MethodGet, []string{"https://", "", api.RIOT_API_BASE_URL_FORMAT}, "", nil)
 	require.Error(t, gotErr)
 
-	_, gotErr = internalClient.Request(ctx, l, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", "", "", nil)
+	_, gotErr = internalClient.Request(ctx, l, http.MethodGet, []string{"https://", "", api.D_DRAGON_BASE_URL_FORMAT}, "", nil)
 	require.NoError(t, gotErr)
 }
 
@@ -86,7 +86,7 @@ func TestInternalClientNewRequest(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			ctx := context.Background()
-			_, gotErr := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "----", test.url, "", nil)
+			_, gotErr := internal.Request(ctx, l, http.MethodGet, []string{"https://", "----", api.RIOT_API_BASE_URL_FORMAT, test.url}, "", nil)
 			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
 		})
 	}
@@ -106,7 +106,8 @@ func TestInternalClientRequest(t *testing.T) {
 		require.NoError(t, err)
 		logger := client.Logger("client_endpoint_method")
 		ctx := context.Background()
-		equinoxReq, err := client.Request(ctx, logger, "https://cool.and.real.api%v%v", "POST", "", "/post", "", body)
+		urlComponents := []string{"https://", "", "cool.and.real.api", "/post"}
+		equinoxReq, err := client.Request(ctx, logger, "POST", urlComponents, "", body)
 		require.NoError(t, err)
 
 		if equinoxReq.Request.URL.String() != url {
@@ -136,7 +137,8 @@ func TestInternalClientRequest(t *testing.T) {
 	t.Run("Request without body", func(t *testing.T) {
 		logger := client.Logger("client_endpoint_method")
 		ctx := context.Background()
-		equinoxReq, err := client.Request(ctx, logger, "https://cool.and.real.api%v%v", "POST", "", "/post", "", nil)
+		urlComponents := []string{"https://", "", "cool.and.real.api", "/post"}
+		equinoxReq, err := client.Request(ctx, logger, "POST", urlComponents, "", nil)
 		require.NoError(t, err)
 
 		if equinoxReq.Request.URL.String() != url {
@@ -239,7 +241,8 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
 			l := internal.Logger("client_endpoint_method")
 			ctx := context.Background()
-			equinoxReq, err := internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, "tests", "/", "", nil)
+			urlComponents := []string{"https://", "tests", api.RIOT_API_BASE_URL_FORMAT, "/"}
+			equinoxReq, err := internal.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
 			require.NoError(t, err)
 			require.Equal(t, "GET", equinoxReq.Request.Method)
 			var data interface{}
@@ -269,9 +272,11 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 	res := lol.PlatformDataV4DTO{}
 	l := i.Logger("client_endpoint_method")
 
+	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
+
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	equinoxReq, err := i.Request(nil, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	equinoxReq, err := i.Request(nil, l, http.MethodGet, urlComponents, "", nil)
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
@@ -283,7 +288,7 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 	require.Error(t, err)
 
 	ctx := context.Background()
-	equinoxReq, err = i.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	equinoxReq, err = i.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
 	// This will take 2.5 seconds
@@ -349,7 +354,9 @@ func TestInternalClientExecutes(t *testing.T) {
 	internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
 
 	ctx := context.Background()
-	equinoxReq, err := internal.Request(ctx, internal.Logger("client_endpoint_method"), api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+
+	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
+	equinoxReq, err := internal.Request(ctx, internal.Logger("client_endpoint_method"), http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
 	data, err := internal.ExecuteRaw(ctx, equinoxReq)
@@ -383,7 +390,8 @@ func TestExecutesWithCache(t *testing.T) {
 	require.True(t, internalClient.IsCacheEnabled)
 
 	l := internalClient.Logger("client_endpoint_method")
-	equinoxReq, err := internalClient.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
+	equinoxReq, err := internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 	require.Equal(t, "GET", equinoxReq.Request.Method)
 
@@ -396,7 +404,7 @@ func TestExecutesWithCache(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, `response`, res)
 
-	equinoxReq, err = internalClient.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+	equinoxReq, err = internalClient.Request(ctx, l, http.MethodPost, urlComponents, "", nil)
 	require.NoError(t, err)
 	require.Equal(t, "POST", equinoxReq.Request.Method)
 

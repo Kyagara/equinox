@@ -36,7 +36,8 @@ func (e *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ Method.M
     {{ HeaderCheck|safe }}
     {%- endfor %}
 {%- endif %}
-    equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.Method{{ Method.HTTPMethod }}, route, {{ Method.URLPath|safe }}, "{{ Method.OperationID }}", {{ Method.Body }})
+    urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, {{ Method.URLPath|safe }}}
+    equinoxReq, err := e.internal.Request(ctx, logger, http.Method{{ Method.HTTPMethod }}, urlComponents, "{{ Method.OperationID }}", {{ Method.Body }})
     if err != nil {
         logger.Error().Err(err).Msg("Error creating request")
         return {{ Method.ErrorReturn|safe }}

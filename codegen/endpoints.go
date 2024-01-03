@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/iancoleman/strcase"
@@ -271,8 +272,64 @@ func formatRouteArgument(pathParams []gjson.Result, route string) string {
 		args[i] = name
 	}
 
-	formattedRoute := regexp.MustCompile(`\{(\S+?)\}`).ReplaceAllString(route, "%v")
-	return fmt.Sprintf("fmt.Sprintf(\"%s\", %v)", formattedRoute, strings.Join(args, ", "))
+	formattedRoute := regexp.MustCompile(`\{(\S+?)\}`).ReplaceAllString(route, "ARG$")
+
+	counter := 1
+	result := regexp.MustCompile(`ARG\$`).ReplaceAllStringFunc(formattedRoute, func(match string) string {
+		if counter <= len(args) {
+			newValue := "ARG" + strconv.Itoa(counter) + "$"
+			counter++
+			return newValue
+		}
+		return match
+	})
+
+	re := regexp.MustCompile(`ARG(\d+)\$`)
+
+	counter = 0
+	result = re.ReplaceAllStringFunc(result, func(match string) string {
+		indexStr := re.FindStringSubmatch(match)[1]
+
+		index, err := strconv.Atoi(indexStr)
+		if err != nil {
+			return match
+		}
+
+		if index >= 1 && index <= len(args) {
+			newValue := args[index-1]
+			schema := pathParams[index-1].Get("schema")
+			paramType := schema.Get("type").String()
+			if newValue == "championId" {
+				counter++
+				newValue = "strconv.FormatInt(int64(championId), 10)"
+				return fmt.Sprintf("\", %s, \"", newValue)
+			}
+
+			if schema.Get("enum").Exists() && schema.Get("x-enum").Exists() {
+				counter++
+				return fmt.Sprintf("\", %s.String(), \"", newValue)
+			}
+
+			if paramType == "integer" {
+				format := schema.Get("format").String()
+				if format == "int64" {
+					newValue = fmt.Sprintf("strconv.FormatInt(%v, 10)", newValue)
+				} else {
+					newValue = fmt.Sprintf("strconv.FormatInt(int64(%v), 10)", newValue)
+				}
+			}
+
+			counter++
+			return fmt.Sprintf("\", %s, \"", newValue)
+		}
+		return match
+	})
+
+	result = fmt.Sprintf("\"%v\"", result)
+	if strings.HasSuffix(result, ", \"\"") {
+		result = result[:len(result)-3]
+	}
+	return result
 }
 
 func formatAddHeadersChecks(params []gjson.Result, nilValue string) []string {

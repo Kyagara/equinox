@@ -11,6 +11,19 @@
 {%- endfor %}
 {%- endmacro %}
 
+{%- macro ConstantStringer(VarName, TypeName, Table) %}
+func ({{ VarName }} {{ TypeName }}) String() string {
+	switch {{ VarName }} {
+    {%- for Name, Details in Table sorted %}
+    case {{ Name|upper }}:
+        return "{{ Name }}"
+    {%- endfor %}
+    default:
+        return string({{ VarName }})
+	}
+}
+{%- endmacro %}
+
 {% if ClientName == "val" %}
 // Platform routes for Valorant.
 type PlatformRoute string
@@ -18,6 +31,8 @@ type PlatformRoute string
 const (
 {{- NewConstants("PlatformRoute", VALRoutes) }}
 )
+
+{{- ConstantStringer("route", "PlatformRoute", VALRoutes) }}
 {%- endif %}
 
 {% if ClientName == "lol" or ClientName == "tft" %}
@@ -37,6 +52,33 @@ const (
 	CHALLENGER  Tier = "CHALLENGER"
 )
 
+func (tier Tier) String() string {
+	switch tier {
+    case IRON:
+        return "IRON"
+    case BRONZE:
+        return "BRONZE"
+    case SILVER:
+        return "SILVER"
+    case GOLD:
+        return "GOLD"
+    case PLATINUM:
+        return "PLATINUM"
+    case EMERALD:
+        return "EMERALD"
+    case DIAMOND:
+        return "DIAMOND"
+    case MASTER:
+        return "MASTER"
+    case GRANDMASTER:
+        return "GRANDMASTER"
+    case CHALLENGER:
+        return "CHALLENGER"
+	default:
+		return string(tier)
+	}
+}
+
 // LoL and TFT rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
@@ -49,12 +91,31 @@ const (
     V   Division = "V"
 )
 
+func (division Division) String() string {
+    switch division {
+    case I:
+        return "I"
+    case II:
+        return "II"
+    case III:
+        return "III"
+    case IV:
+        return "IV"
+    case V:
+        return "V"
+    default:
+        return string(division)
+    }
+}
+
 // Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
 type PlatformRoute string
 
 const (
 {{- NewConstants("PlatformRoute", LOL_TFT_Routes) }}
 )
+
+{{- ConstantStringer("route", "PlatformRoute", LOL_TFT_Routes) }}
 {%- endif %}
 
 {% if ClientName == "lol" %}
@@ -69,10 +130,23 @@ const (
     //
     // Deprecated
 {%- endif %}
-    {{ Details.TournamentRegion|upper }} TournamentRegion = "{{ Name }}"
+    {{ Details.TournamentRegion|upper }} TournamentRegion = "{{ Details.TournamentRegion|lower }}"
 {%- endif %}
 {%- endfor %}
 )
+
+func (route TournamentRegion) String() string {
+	switch route {
+    {%- for Name, Details in LOL_TFT_Routes sorted %}
+    {%- if Details.TournamentRegion %}
+    case {{ Details.TournamentRegion|upper }}:
+        return "{{ Details.TournamentRegion|lower }}"
+    {%- endif %}
+    {%- endfor %}
+    default:
+        return string(route)
+	}
+}
 
 // League of Legends game type: matched game, custom game, or tutorial game.
 type GameType string
@@ -81,6 +155,8 @@ const (
 {{- NewConstants("GameType", GameTypes) }}
 )
 
+{{- ConstantStringer("gameType", "GameType", GameTypes) }}
+
 // League of Legends game mode, such as Classic,
 // ARAM, URF, One For All, Ascension, etc.
 type GameMode string
@@ -88,6 +164,8 @@ type GameMode string
 const (
 {{- NewConstants("GameMode", GameModes) }}
 )
+
+{{- ConstantStringer("gameMode", "GameMode", GameModes) }}
 
 // LoL ranked queue types.
 type QueueType string
@@ -104,6 +182,21 @@ const (
 {%- endif %}
 {%- endfor %}
 )
+
+func (queue QueueType) String() string {
+	switch queue {
+    {%- for ID, Details in QueueTypes sorted %}
+    {%- if not ("TFT" in ID) %}
+    {%- if Details.Name %}
+    case {{ Details.Name|upper }}:
+        return "{{ ID }}"
+    {%- endif %}
+    {%- endif %}
+    {%- endfor %}
+    default:
+        return string(queue)
+	}
+}
 {%- endif %}
  
 {% if ClientName == "tft" %}
@@ -122,4 +215,19 @@ const (
 {%- endif %}
 {%- endfor %}
 )
+
+func (queue QueueType) String() string {
+	switch queue {
+    {%- for ID, Details in QueueTypes sorted %}
+    {%- if "TFT" in ID %}
+    {%- if Details.Name %}
+    case {{ Details.Name|upper }}:
+        return "{{ ID }}"
+    {%- endif %}
+    {%- endif %}
+    {%- endfor %}
+    default:
+        return string(queue)
+	}
+}
 {%- endif %}

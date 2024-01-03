@@ -40,7 +40,7 @@ func NewLimit(limitType string) *Limit {
 }
 
 // Checks if any of the buckets provided are rate limited, and if so, blocks until the next reset.
-func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route any, methodID string) error {
+func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route string, methodID string) error {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 	if l.retryAfter > 0 {
@@ -56,7 +56,7 @@ func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route a
 		bucket.mutex.Lock()
 		if bucket.isRateLimited() {
 			logger.Warn().
-				Any("route", route).
+				Str("route", route).
 				Str("method_id", methodID).
 				Str("limit_type", l.limitType).
 				Object("bucket", bucket).

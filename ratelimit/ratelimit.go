@@ -32,8 +32,7 @@ var (
 )
 
 type RateLimit struct {
-	// 'any' is used here because routes can be PlatformRoute, RegionalRoute...
-	Region  map[any]*Limits
+	Region  map[string]*Limits
 	Enabled bool
 	// Factor to be applied to the limit. E.g. if set to 0.5, the limit will be reduced by 50%.
 	LimitUsageFactor float32
@@ -55,13 +54,13 @@ func NewInternalRateLimit(limitUsageFactor float32, intervalOverhead time.Durati
 	if intervalOverhead < 0 {
 		intervalOverhead = 1 * time.Second
 	}
-	return &RateLimit{Region: make(map[any]*Limits), LimitUsageFactor: limitUsageFactor, IntervalOverhead: intervalOverhead, Enabled: true}
+	return &RateLimit{Region: make(map[string]*Limits), LimitUsageFactor: limitUsageFactor, IntervalOverhead: intervalOverhead, Enabled: true}
 }
 
 // Take decreases tokens for the App and Method rate limit buckets in a route by one.
 //
 // If rate limited, will block until the next bucket reset.
-func (r *RateLimit) Take(ctx context.Context, logger zerolog.Logger, route any, methodID string) error {
+func (r *RateLimit) Take(ctx context.Context, logger zerolog.Logger, route string, methodID string) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -85,7 +84,7 @@ func (r *RateLimit) Take(ctx context.Context, logger zerolog.Logger, route any, 
 }
 
 // Update creates new buckets in a route with the limits provided in the response headers.
-func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, headers http.Header) {
+func (r *RateLimit) Update(logger zerolog.Logger, route string, methodID string, headers http.Header) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -98,17 +97,17 @@ func (r *RateLimit) Update(logger zerolog.Logger, route any, methodID string, he
 
 	if !limits.App.limitsMatch(appRateLimitHeader) {
 		limits.App = r.parseHeaders(appRateLimitHeader, appRateLimitCountHeader, APP_RATE_LIMIT_TYPE)
-		logger.Debug().Any("route", route).Msg("New Application buckets")
+		logger.Debug().Str("route", route).Msg("New Application buckets")
 	}
 
 	if !limits.Methods[methodID].limitsMatch(methodRateLimitHeader) {
 		limits.Methods[methodID] = r.parseHeaders(methodRateLimitHeader, methodRateLimitCountHeader, METHOD_RATE_LIMIT_TYPE)
-		logger.Debug().Any("route", route).Str("method", methodID).Msg("New Method buckets")
+		logger.Debug().Str("route", route).Str("method", methodID).Msg("New Method buckets")
 	}
 }
 
 // CheckRetryAfter returns the number of seconds to wait before retrying from the Retry-After header, or 2 seconds if not found.
-func (r *RateLimit) CheckRetryAfter(route any, methodID string, headers http.Header) time.Duration {
+func (r *RateLimit) CheckRetryAfter(route string, methodID string, headers http.Header) time.Duration {
 	retryAfter := headers.Get(RETRY_AFTER_HEADER)
 	if retryAfter == "" {
 		return 2 * time.Second

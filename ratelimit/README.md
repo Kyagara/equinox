@@ -13,8 +13,7 @@ You can create an InternalRateLimit with `NewInternalRateLimit()`. RateLimit inc
 
 ```go
 type RateLimit struct {
-	// 'any' is used here because routes can be PlatformRoute, RegionalRoute...
-	Region  map[any]*Limits
+	Region  map[string]*Limits
 	Enabled bool
 	// Factor to be applied to the limit. E.g. if set to 0.5, the limit will be reduced by 50%.
 	LimitUsageFactor float32
@@ -30,7 +29,7 @@ func NewInternalRateLimit(limitUsageFactor float32, intervalOverhead time.Durati
 	if intervalOverhead < 0 {
 		intervalOverhead = 1 * time.Second
 	}
-	return &RateLimit{Region: make(map[any]*Limits), LimitUsageFactor: limitUsageFactor, IntervalOverhead: intervalOverhead, Enabled: true}
+	return &RateLimit{Region: make(map[string]*Limits), LimitUsageFactor: limitUsageFactor, IntervalOverhead: intervalOverhead, Enabled: true}
 }
 ```
 

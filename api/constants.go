@@ -29,3 +29,22 @@ const (
 	// South East Asia, used for LoR, LoL matches (`match-v5`), and TFT matches (`tft-match-v1`).
 	SEA RegionalRoute = "sea"
 )
+
+func (route RegionalRoute) String() string {
+	switch route {
+	case AMERICAS:
+		return "americas"
+	case APAC:
+		return "apac"
+	case ASIA:
+		return "asia"
+	case ESPORTS:
+		return "esports"
+	case EUROPE:
+		return "europe"
+	case SEA:
+		return "sea"
+	default:
+		return string(route)
+	}
+}
