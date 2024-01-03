@@ -190,7 +190,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	return jsonv2.UnmarshalRead(response.Body, target)
 }
 
-// ExecuteRaw executes a request without checking cache and returns []byte
+// ExecuteRaw executes a request without Get/Set from cache and returns []byte
 func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) ([]byte, error) {
 	equinoxReq.Logger.Debug().Msg("ExecuteRaw")
 
