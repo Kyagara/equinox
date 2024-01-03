@@ -291,7 +291,7 @@ func (e *ChampionMasteryV4) AllMasteriesBySummonerID(ctx context.Context, route 
 func (e *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string, championId int64) (*ChampionMasteryV4DTO, error) {
 	logger := e.internal.Logger("LOL_ChampionMasteryV4_MasteryByPUUID")
 	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-puuid/", encryptedPUUID, "/by-champion/", strconv.FormatInt(int64(championId), 10)}
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-puuid/", encryptedPUUID, "/by-champion/", strconv.FormatInt(championId, 10)}
 	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getChampionMasteryByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
@@ -321,7 +321,7 @@ func (e *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route PlatformRo
 func (e *ChampionMasteryV4) MasteryBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string, championId int64) (*ChampionMasteryV4DTO, error) {
 	logger := e.internal.Logger("LOL_ChampionMasteryV4_MasteryBySummonerID")
 	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-summoner/", encryptedSummonerId, "/by-champion/", strconv.FormatInt(int64(championId), 10)}
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-summoner/", encryptedSummonerId, "/by-champion/", strconv.FormatInt(championId, 10)}
 	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getChampionMastery", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")

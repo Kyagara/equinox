@@ -116,7 +116,7 @@ func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Meth
 				allParams := operation.Get("parameters")
 				var queryParams []gjson.Result
 				var headerParams []gjson.Result
-				routeArgument := ""
+				var routeArgument string
 				if allParams.Exists() {
 					pathParams := getSortedParams(allParams, "path", route)
 					queryParams = getParams(allParams, "query")
@@ -301,7 +301,7 @@ func formatRouteArgument(pathParams []gjson.Result, route string) string {
 			paramType := schema.Get("type").String()
 			if newValue == "championId" {
 				counter++
-				newValue = "strconv.FormatInt(int64(championId), 10)"
+				newValue = "strconv.FormatInt(championId, 10)"
 				return fmt.Sprintf("\", %s, \"", newValue)
 			}
 
@@ -367,7 +367,7 @@ func formatAddQueryParam(params []gjson.Result) []string {
 			letHeaderName = "type"
 		}
 
-		condition := ""
+		var condition string
 		propType := prop.Get("type").String()
 		if propType == "string" {
 			condition = fmt.Sprintf(`%s != ""`, name)
@@ -377,8 +377,8 @@ func formatAddQueryParam(params []gjson.Result) []string {
 			panic(fmt.Errorf("unknown prop type: %s", propType))
 		}
 
-		conversion := ""
-		end := ""
+		var conversion string
+		var end string
 		format := prop.Get("format").String()
 		if format == "int32" {
 			conversion = "strconv.FormatInt(int64("
@@ -426,7 +426,7 @@ func getReturnType(resp200 gjson.Result, version string, endpointID string) stri
 	)
 
 	if strings.HasPrefix(endpointID, "league-exp") && strings.Contains(returnType, "LeagueEntry") {
-		returnType = strings.Replace(returnType, "LeagueEntry", "ExpLeagueEntry", -1)
+		returnType = strings.ReplaceAll(returnType, "LeagueEntry", "ExpLeagueEntry")
 	}
 
 	return cleanIfPrimitiveType(jsonInfo, version, endpointID, returnType)
@@ -444,8 +444,8 @@ func getBodyType(operation gjson.Result, version string, endpointID string) stri
 
 func getNormalizedRoute(operation gjson.Result) string {
 	route := strcase.ToCamel(operation.Get("x-route-enum").String())
-	route = strings.Replace(route, "Regional", "api.Regional", -1)
-	return strings.Replace(route, "ValPlatform", "Platform", -1)
+	route = strings.ReplaceAll(route, "Regional", "api.Regional")
+	return strings.ReplaceAll(route, "ValPlatform", "Platform")
 }
 
 func getNilValue(returnType string) string {

@@ -17,24 +17,24 @@ func DownloadAndSaveSpecs(spec []string) error {
 	url, filePath := spec[0], spec[1]
 	response, err := http.Get(url)
 	if err != nil {
-		return fmt.Errorf("failed to download '%s'. Error: '%s'", url, err)
+		return fmt.Errorf("failed to download '%s'. Error: '%w'", url, err)
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusOK {
 		err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
 		if err != nil {
-			return fmt.Errorf("error creating directory: %s", err)
+			return fmt.Errorf("error creating directory: %w", err)
 		}
 
 		body, err := io.ReadAll(response.Body)
 		if err != nil {
-			return fmt.Errorf("error reading response body: %s", err)
+			return fmt.Errorf("error reading response body: %w", err)
 		}
 
 		err = os.WriteFile(filePath, body, 0644)
 		if err != nil {
-			return fmt.Errorf("error writing to file: %s", err)
+			return fmt.Errorf("error writing to file: %w", err)
 		}
 
 		fmt.Printf("Saving '%s'\n", filePath)
