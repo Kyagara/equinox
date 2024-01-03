@@ -43,8 +43,11 @@ jobs:
       - name: Install betteralign
         run: go install github.com/dkorunic/betteralign/cmd/betteralign@latest
 
+      - name: Init workspace
+        run: go work init && go work use . ./codegen
+
       - name: Code generation
-        run: cd codegen && UPDATE_SPECS=1 go generate
+        run: UPDATE_SPECS=1 go generate
 
   test:
     runs-on: ubuntu-latest
