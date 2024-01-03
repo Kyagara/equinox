@@ -104,7 +104,8 @@ func main() {
 		return
 	}
 	// Get this week's champion rotation.
-	rotation, err := client.LOL.ChampionV3.Rotation(lol.BR1)
+	ctx := context.Background()
+	rotation, err := client.LOL.ChampionV3.Rotation(ctx, lol.BR1)
 	if err != nil {
 		fmt.Println("error retrieving champion rotation: ", err)
 		return
@@ -140,7 +141,7 @@ Projects not written in go:
 - [riot-api](https://github.com/fightmegg/riot-api) and [riot-rate-limiter](https://github.com/fightmegg/riot-rate-limiter)
 - [galeforce](https://github.com/bcho04/galeforce)
 
-Riven's [code generation](https://github.com/MingweiSamuel/Riven/tree/v/2.x.x/riven/srcgen) is used in [equinox](https://github.com/Kyagara/equinox/tree/main/srcgen).
+Riven's [code generation](https://github.com/MingweiSamuel/Riven/tree/v/2.x.x/riven/srcgen) is used in [equinox](https://github.com/Kyagara/equinox/tree/main/codegen).
 
 ## Disclaimer
 
