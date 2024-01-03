@@ -24,9 +24,9 @@ var (
 	}
 )
 
-func init() { flag.Parse() }
-
 func main() {
+	flag.Parse()
+
 	if *updateFlag || os.Getenv("UPDATE_SPECS") == "1" {
 		fmt.Printf("Downloading specs...\n")
 		for _, spec := range SPECS_URLS {

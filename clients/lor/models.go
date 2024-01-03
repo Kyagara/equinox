@@ -44,10 +44,10 @@ type InfoV1DTO struct {
 
 // PlayerDto data object.
 type LeaderboardPlayerV1DTO struct {
-	// League points.
-	LP   int32  `json:"lp,omitempty"`
 	Name string `json:"name,omitempty"`
-	Rank int32  `json:"rank,omitempty"`
+	// League points.
+	LP   int32 `json:"lp,omitempty"`
+	Rank int32 `json:"rank,omitempty"`
 }
 
 // LeaderboardDto data object.
@@ -58,10 +58,10 @@ type LeaderboardV1DTO struct {
 
 // MatchDto data object.
 type MatchV1DTO struct {
-	// Match info.
-	Info InfoV1DTO `json:"info,omitempty"`
 	// Match metadata.
 	Metadata MetadataV1DTO `json:"metadata,omitempty"`
+	// Match info.
+	Info InfoV1DTO `json:"info,omitempty"`
 }
 
 // MetadataDto data object.
@@ -83,10 +83,10 @@ type NewDeckV1DTO struct {
 // PlatformDataDto data object.
 type PlatformDataV1DTO struct {
 	ID           string        `json:"id,omitempty"`
+	Name         string        `json:"name,omitempty"`
 	Incidents    []StatusV1DTO `json:"incidents,omitempty"`
 	Locales      []string      `json:"locales,omitempty"`
 	Maintenances []StatusV1DTO `json:"maintenances,omitempty"`
-	Name         string        `json:"name,omitempty"`
 }
 
 // PlayerDto data object.
@@ -94,37 +94,37 @@ type PlayerV1DTO struct {
 	// Code for the deck played. Refer to LOR documentation for details on deck codes.
 	DeckCode    string   `json:"deck_code,omitempty"`
 	DeckID      string   `json:"deck_id,omitempty"`
-	Factions    []string `json:"factions,omitempty"`
 	GameOutcome string   `json:"game_outcome,omitempty"`
+	PUUID       string   `json:"puuid,omitempty"`
+	Factions    []string `json:"factions,omitempty"`
 	// The order in which the players took turns.
-	OrderOfPlay int32  `json:"order_of_play,omitempty"`
-	PUUID       string `json:"puuid,omitempty"`
+	OrderOfPlay int32 `json:"order_of_play,omitempty"`
 }
 
 // StatusDto data object.
 type StatusV1DTO struct {
 	ArchiveAt string `json:"archive_at,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
-	ID        int32  `json:"id,omitempty"`
 	// (Legal values:  info,  warning,  critical)
 	IncidentSeverity string `json:"incident_severity,omitempty"`
 	// (Legal values:  scheduled,  in_progress,  complete)
 	MaintenanceStatus string `json:"maintenance_status,omitempty"`
+	UpdatedAt         string `json:"updated_at,omitempty"`
 	// (Legal values: windows, macos, android, ios, ps4, xbone, switch)
 	Platforms []string       `json:"platforms,omitempty"`
 	Titles    []ContentV1DTO `json:"titles,omitempty"`
-	UpdatedAt string         `json:"updated_at,omitempty"`
 	Updates   []UpdateV1DTO  `json:"updates,omitempty"`
+	ID        int32          `json:"id,omitempty"`
 }
 
 // UpdateDto data object.
 type UpdateV1DTO struct {
 	Author    string `json:"author,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
-	ID        int32  `json:"id,omitempty"`
-	Publish   bool   `json:"publish,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
 	// (Legal values: riotclient, riotstatus, game)
 	PublishLocations []string       `json:"publish_locations,omitempty"`
 	Translations     []ContentV1DTO `json:"translations,omitempty"`
-	UpdatedAt        string         `json:"updated_at,omitempty"`
+	ID               int32          `json:"id,omitempty"`
+	Publish          bool           `json:"publish,omitempty"`
 }
