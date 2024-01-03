@@ -4,13 +4,16 @@
 
 > Benchmarks are currently not automated, take the results with a grain of salt.
 
-Benchmarks are separated in three files: parallel, data and cache.
+Benchmarks are separated in four files: parallel, data, cache and internal.
 
 - parallel: Variety of benchmarks to test parallelism. Used more as a test than a benchmark.
 - cache: Cache benchmarks for both BigCache and Redis.
 - data: Benchmarks that use data from the live Riot Games API, located in the `data` folder.
+- internal: Focused mainly on Request and Execute/ExecuteRaw and internal client functions.
 
 Benchmarks should be using a configuration close to the one used in production. `HTTPClient` timeout is disabled as I believe the context should be used instead (the request is even created with `http.NewRequestWithContext(ctx, ...)`).
+
+Keep in mind that helpers like `httpmock` and `testify`, depending on how they are used, might make some allocations not found in production.
 
 ## Integration
 

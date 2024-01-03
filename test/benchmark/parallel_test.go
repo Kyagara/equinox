@@ -24,11 +24,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelRateLimit-16 100 90047134 ns/op 3209 B/op 38 allocs/op
-BenchmarkParallelRateLimit-16 100 90036735 ns/op 2983 B/op 37 allocs/op
-BenchmarkParallelRateLimit-16 100 90033642 ns/op 3161 B/op 37 allocs/op
-BenchmarkParallelRateLimit-16 100 90035373 ns/op 3055 B/op 37 allocs/op
-BenchmarkParallelRateLimit-16 100 90035765 ns/op 3156 B/op 37 allocs/op
+BenchmarkParallelRateLimit-16 100 100043976 ns/op 3007 B/op 33 allocs/op
+BenchmarkParallelRateLimit-16 100 100038252 ns/op 2894 B/op 32 allocs/op
+BenchmarkParallelRateLimit-16 100 100059004 ns/op 3062 B/op 33 allocs/op
+BenchmarkParallelRateLimit-16 100 100040742 ns/op 2934 B/op 32 allocs/op
+BenchmarkParallelRateLimit-16 100 100045917 ns/op 2868 B/op 32 allocs/op
 */
 func BenchmarkParallelRateLimit(b *testing.B) {
 	b.ReportAllocs()
@@ -64,11 +64,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelCachedSummonerByPUUID-16 264927 4124 ns/op 2406 B/op 12 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 248793 4197 ns/op 2489 B/op 12 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 232384 4440 ns/op 2584 B/op 12 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 291516 4244 ns/op 2290 B/op 12 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 290792 4308 ns/op 2293 B/op 12 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 278990 3961 ns/op 2246 B/op 8 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 300795 3995 ns/op 2159 B/op 8 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 284236 4077 ns/op 2224 B/op 8 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 300584 4184 ns/op 2159 B/op 8 allocs/op
+BenchmarkParallelCachedSummonerByPUUID-16 276688 4668 ns/op 2256 B/op 8 allocs/op
 */
 func BenchmarkParallelCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
@@ -96,11 +96,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelSummonerByPUUID-16 276248 4852 ns/op 1608 B/op 22 allocs/op
-BenchmarkParallelSummonerByPUUID-16 266298 4773 ns/op 1608 B/op 22 allocs/op
-BenchmarkParallelSummonerByPUUID-16 278318 4361 ns/op 1608 B/op 22 allocs/op
-BenchmarkParallelSummonerByPUUID-16 267100 4356 ns/op 1608 B/op 22 allocs/op
-BenchmarkParallelSummonerByPUUID-16 286087 4565 ns/op 1608 B/op 22 allocs/op
+BenchmarkParallelSummonerByPUUID-16 232520 4927 ns/op 1525 B/op 18 allocs/op
+BenchmarkParallelSummonerByPUUID-16 243302 4908 ns/op 1525 B/op 18 allocs/op
+BenchmarkParallelSummonerByPUUID-16 224158 4896 ns/op 1525 B/op 18 allocs/op
+BenchmarkParallelSummonerByPUUID-16 231002 4952 ns/op 1526 B/op 18 allocs/op
+BenchmarkParallelSummonerByPUUID-16 230145 4934 ns/op 1527 B/op 18 allocs/op
 */
 func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
@@ -130,11 +130,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelDDragonRealms-16 256857 4534 ns/op 1736 B/op 21 allocs/op
-BenchmarkParallelDDragonRealms-16 260287 4796 ns/op 1736 B/op 21 allocs/op
-BenchmarkParallelDDragonRealms-16 250515 4585 ns/op 1736 B/op 21 allocs/op
-BenchmarkParallelDDragonRealms-16 247935 4640 ns/op 1736 B/op 21 allocs/op
-BenchmarkParallelDDragonRealms-16 255441 4639 ns/op 1736 B/op 21 allocs/op
+BenchmarkParallelDDragonRealms-16 227568 5248 ns/op 1705 B/op 18 allocs/op
+BenchmarkParallelDDragonRealms-16 229098 5130 ns/op 1705 B/op 18 allocs/op
+BenchmarkParallelDDragonRealms-16 200659 5458 ns/op 1706 B/op 18 allocs/op
+BenchmarkParallelDDragonRealms-16 221775 5168 ns/op 1705 B/op 18 allocs/op
+BenchmarkParallelDDragonRealms-16 234630 5219 ns/op 1704 B/op 18 allocs/op
 */
 func BenchmarkParallelDDragonRealms(b *testing.B) {
 	b.ReportAllocs()
@@ -164,11 +164,11 @@ goos: linux
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelMatchListByPUUID-16 240942 5311 ns/op 2888 B/op 38 allocs/op
-BenchmarkParallelMatchListByPUUID-16 243670 4943 ns/op 2888 B/op 38 allocs/op
-BenchmarkParallelMatchListByPUUID-16 237004 4918 ns/op 2888 B/op 38 allocs/op
-BenchmarkParallelMatchListByPUUID-16 249390 4986 ns/op 2888 B/op 38 allocs/op
-BenchmarkParallelMatchListByPUUID-16 224121 4900 ns/op 2888 B/op 38 allocs/op
+BenchmarkParallelMatchListByPUUID-16 177630 6101 ns/op 2823 B/op 34 allocs/op
+BenchmarkParallelMatchListByPUUID-16 193851 6562 ns/op 2823 B/op 34 allocs/op
+BenchmarkParallelMatchListByPUUID-16 168358 6158 ns/op 2822 B/op 34 allocs/op
+BenchmarkParallelMatchListByPUUID-16 190045 5902 ns/op 2823 B/op 34 allocs/op
+BenchmarkParallelMatchListByPUUID-16 182811 6005 ns/op 2825 B/op 34 allocs/op
 */
 func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	b.ReportAllocs()
