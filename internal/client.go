@@ -70,7 +70,7 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 		http: config.HTTPClient,
 		loggers: Loggers{
 			main:    NewLogger(config),
-			methods: make(map[string]zerolog.Logger),
+			methods: make(map[string]zerolog.Logger, 5),
 			mutex:   sync.Mutex{},
 		},
 		cache:              config.Cache,
