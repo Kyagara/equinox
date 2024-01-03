@@ -44,7 +44,8 @@ type LeagueV1 struct {
 func (e *LeagueV1) ByID(ctx context.Context, route PlatformRoute, leagueId string) (*LeagueListV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_ByID")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/leagues/%v", leagueId), "tft-league-v1.getLeagueById", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/leagues/", leagueId}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getLeagueById", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -72,7 +73,8 @@ func (e *LeagueV1) ByID(ctx context.Context, route PlatformRoute, leagueId strin
 func (e *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_ChallengerByQueue")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/league/v1/challenger", "tft-league-v1.getChallengerLeague", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/challenger"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getChallengerLeague", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -108,7 +110,8 @@ func (e *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformRoute, q
 func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, division string, queue string, page int32) ([]LeagueEntryV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_Entries")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/entries/%v/%v", tier, division), "tft-league-v1.getLeagueEntries", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/entries/", tier.String(), "/", division}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getLeagueEntries", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -144,7 +147,8 @@ func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, 
 func (e *LeagueV1) GrandmasterByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_GrandmasterByQueue")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/league/v1/grandmaster", "tft-league-v1.getGrandmasterLeague", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/grandmaster"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getGrandmasterLeague", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -177,7 +181,8 @@ func (e *LeagueV1) GrandmasterByQueue(ctx context.Context, route PlatformRoute, 
 func (e *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_MasterByQueue")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/league/v1/master", "tft-league-v1.getMasterLeague", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/master"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getMasterLeague", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -210,7 +215,8 @@ func (e *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute, queue
 func (e *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, summonerId string) ([]LeagueEntryV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_SummonerEntries")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/entries/by-summoner/%v", summonerId), "tft-league-v1.getLeagueEntriesForSummoner", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/entries/by-summoner/", summonerId}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getLeagueEntriesForSummoner", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -238,7 +244,8 @@ func (e *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, sum
 func (e *LeagueV1) TopRatedLadder(ctx context.Context, route PlatformRoute, queue QueueType) ([]TopRatedLadderEntryV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_TopRatedLadder")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/league/v1/rated-ladders/%v/top", queue), "tft-league-v1.getTopRatedLadder", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/rated-ladders/", queue.String(), "/top"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getTopRatedLadder", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -275,7 +282,8 @@ type MatchV1 struct {
 func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId string) (*MatchV1DTO, error) {
 	logger := e.internal.Logger("TFT_MatchV1_ByID")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/match/v1/matches/%v", matchId), "tft-match-v1.getMatch", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/match/v1/matches/", matchId}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-match-v1.getMatch", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -307,7 +315,8 @@ func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId str
 func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, start int32, endTime int64, startTime int64, count int32) ([]string, error) {
 	logger := e.internal.Logger("TFT_MatchV1_ListByPUUID")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/match/v1/matches/by-puuid/%v/ids", puuid), "tft-match-v1.getMatchIdsByPUUID", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/match/v1/matches/by-puuid/", puuid, "/ids"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-match-v1.getMatchIdsByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -357,7 +366,8 @@ type StatusV1 struct {
 func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV1DTO, error) {
 	logger := e.internal.Logger("TFT_StatusV1_Platform")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/status/v1/platform-data", "tft-status-v1.getPlatformData", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/status/v1/platform-data"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-status-v1.getPlatformData", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -397,7 +407,8 @@ func (e *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, aut
 	if authorization == "" {
 		return nil, fmt.Errorf("'authorization' header is required")
 	}
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/tft/summoner/v1/summoners/me", "tft-summoner-v1.getByAccessToken", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/me"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getByAccessToken", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -427,7 +438,8 @@ func (e *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, aut
 func (e *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute, encryptedAccountId string) (*SummonerV1DTO, error) {
 	logger := e.internal.Logger("TFT_SummonerV1_ByAccountID")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/summoner/v1/summoners/by-account/%v", encryptedAccountId), "tft-summoner-v1.getByAccountId", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/by-account/", encryptedAccountId}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getByAccountId", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -455,7 +467,8 @@ func (e *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute, encry
 func (e *SummonerV1) ByName(ctx context.Context, route PlatformRoute, summonerName string) (*SummonerV1DTO, error) {
 	logger := e.internal.Logger("TFT_SummonerV1_ByName")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/summoner/v1/summoners/by-name/%v", summonerName), "tft-summoner-v1.getBySummonerName", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/by-name/", summonerName}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getBySummonerName", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -483,7 +496,8 @@ func (e *SummonerV1) ByName(ctx context.Context, route PlatformRoute, summonerNa
 func (e *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (*SummonerV1DTO, error) {
 	logger := e.internal.Logger("TFT_SummonerV1_ByPUUID")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/summoner/v1/summoners/by-puuid/%v", encryptedPUUID), "tft-summoner-v1.getByPUUID", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/by-puuid/", encryptedPUUID}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -511,7 +525,8 @@ func (e *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, encrypted
 func (e *SummonerV1) BySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*SummonerV1DTO, error) {
 	logger := e.internal.Logger("TFT_SummonerV1_BySummonerID")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/tft/summoner/v1/summoners/%v", encryptedSummonerId), "tft-summoner-v1.getBySummonerId", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/", encryptedSummonerId}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getBySummonerId", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err

@@ -13,3 +13,14 @@ const (
     {{ Name|upper }} RegionalRoute = "{{ Name }}"
 {%- endfor %}
 )
+
+func (route RegionalRoute) String() string {
+	switch route {
+    {%- for Name, Details in RegionalRoutes sorted %}
+    case {{ Name|upper }}:
+        return "{{ Name }}"
+    {%- endfor %}
+    default:
+        return string(route)
+	}
+}

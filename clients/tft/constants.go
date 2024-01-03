@@ -26,6 +26,33 @@ const (
 	CHALLENGER  Tier = "CHALLENGER"
 )
 
+func (tier Tier) String() string {
+	switch tier {
+	case IRON:
+		return "IRON"
+	case BRONZE:
+		return "BRONZE"
+	case SILVER:
+		return "SILVER"
+	case GOLD:
+		return "GOLD"
+	case PLATINUM:
+		return "PLATINUM"
+	case EMERALD:
+		return "EMERALD"
+	case DIAMOND:
+		return "DIAMOND"
+	case MASTER:
+		return "MASTER"
+	case GRANDMASTER:
+		return "GRANDMASTER"
+	case CHALLENGER:
+		return "CHALLENGER"
+	default:
+		return string(tier)
+	}
+}
+
 // LoL and TFT rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
@@ -37,6 +64,23 @@ const (
 	// Deprecated
 	V Division = "V"
 )
+
+func (division Division) String() string {
+	switch division {
+	case I:
+		return "I"
+	case II:
+		return "II"
+	case III:
+		return "III"
+	case IV:
+		return "IV"
+	case V:
+		return "V"
+	default:
+		return string(division)
+	}
+}
 
 // Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
 type PlatformRoute string
@@ -78,6 +122,47 @@ const (
 	VN2 PlatformRoute = "vn2"
 )
 
+func (route PlatformRoute) String() string {
+	switch route {
+	case BR1:
+		return "br1"
+	case EUN1:
+		return "eun1"
+	case EUW1:
+		return "euw1"
+	case JP1:
+		return "jp1"
+	case KR:
+		return "kr"
+	case LA1:
+		return "la1"
+	case LA2:
+		return "la2"
+	case NA1:
+		return "na1"
+	case OC1:
+		return "oc1"
+	case PBE1:
+		return "pbe1"
+	case PH2:
+		return "ph2"
+	case RU:
+		return "ru"
+	case SG2:
+		return "sg2"
+	case TH2:
+		return "th2"
+	case TR1:
+		return "tr1"
+	case TW2:
+		return "tw2"
+	case VN2:
+		return "vn2"
+	default:
+		return string(route)
+	}
+}
+
 // TFT ranked queue types.
 type QueueType string
 
@@ -93,3 +178,18 @@ const (
 	// Ranked Teamfight Tactics (Hyper Roll) games
 	RANKED_TFT_TURBO QueueType = "RANKED_TFT_TURBO"
 )
+
+func (queue QueueType) String() string {
+	switch queue {
+	case RANKED_TFT:
+		return "RANKED_TFT"
+	case RANKED_TFT_DOUBLE_UP:
+		return "RANKED_TFT_DOUBLE_UP"
+	case RANKED_TFT_PAIRS:
+		return "RANKED_TFT_PAIRS"
+	case RANKED_TFT_TURBO:
+		return "RANKED_TFT_TURBO"
+	default:
+		return string(queue)
+	}
+}

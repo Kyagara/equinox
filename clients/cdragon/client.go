@@ -5,12 +5,6 @@ import (
 	"github.com/Kyagara/equinox/internal"
 )
 
-// CDragon endpoint URLs.
-const (
-	VersionsURL = "/api/versions.json"
-	ChampionURL = "/%s/champion/%v/data"
-)
-
 type Client struct {
 	Version  VersionEndpoint
 	Champion ChampionEndpoint

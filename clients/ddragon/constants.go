@@ -32,6 +32,67 @@ const (
 	ZhTW Language = "zh_TW"
 )
 
+func (l Language) String() string {
+	switch l {
+	case EnUS:
+		return "en_US"
+	case CsCZ:
+		return "cs_CZ"
+	case DeDE:
+		return "de_DE"
+	case ElGR:
+		return "el_GR"
+	case EnAU:
+		return "en_AU"
+	case EnGB:
+		return "en_GB"
+	case EnPH:
+		return "en_PH"
+	case EnSG:
+		return "en_SG"
+	case EsAR:
+		return "es_AR"
+	case EsES:
+		return "es_ES"
+	case EsMX:
+		return "es_MX"
+	case FrFR:
+		return "fr_FR"
+	case HuHU:
+		return "hu_HU"
+	case IdID:
+		return "id_ID"
+	case ItIT:
+		return "it_IT"
+	case JaJP:
+		return "ja_JP"
+	case KoKR:
+		return "ko_KR"
+	case PlPL:
+		return "pl_PL"
+	case PtBR:
+		return "pt_BR"
+	case RoRO:
+		return "ro_RO"
+	case RuRU:
+		return "ru_RU"
+	case ThTH:
+		return "th_TH"
+	case TrTR:
+		return "tr_TR"
+	case ViVN:
+		return "vi_VN"
+	case ZhCN:
+		return "zh_CN"
+	case ZhMY:
+		return "zh_MY"
+	case ZhTW:
+		return "zh_TW"
+	default:
+		return "en_US"
+	}
+}
+
 type Realm string
 
 const (
@@ -48,3 +109,34 @@ const (
 	KR   Realm = "kr"
 	PBE  Realm = "pbe"
 )
+
+func (r Realm) String() string {
+	switch r {
+	case BR:
+		return "br"
+	case NA:
+		return "na"
+	case EUNE:
+		return "eune"
+	case EUW:
+		return "euw"
+	case LAN:
+		return "lan"
+	case LAS:
+		return "las"
+	case OCE:
+		return "oce"
+	case RU:
+		return "ru"
+	case TR:
+		return "tr"
+	case JP:
+		return "jp"
+	case KR:
+		return "kr"
+	case PBE:
+		return "pbe"
+	default:
+		return ""
+	}
+}

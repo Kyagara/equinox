@@ -2,7 +2,6 @@ package ddragon
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/Kyagara/equinox/api"
@@ -17,7 +16,8 @@ type ChampionEndpoint struct {
 func (e *ChampionEndpoint) AllChampions(ctx context.Context, version string, language Language) (map[string]AllChampionsDataDTO, error) {
 	logger := e.internal.Logger("DDragon_Champion_AllChampions")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionsURL, version, language), "", nil)
+	urlComponents := []string{"https://", "", api.D_DRAGON_BASE_URL_FORMAT, "/cdn/", version, "/data/", language.String(), "/champion.json"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -35,7 +35,8 @@ func (e *ChampionEndpoint) AllChampions(ctx context.Context, version string, lan
 func (e *ChampionEndpoint) ByName(ctx context.Context, version string, language Language, champion string) (*FullChampion, error) {
 	logger := e.internal.Logger("DDragon_Champion_ByName")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.D_DRAGON_BASE_URL_FORMAT, http.MethodGet, "", fmt.Sprintf(ChampionURL, version, language, champion), "", nil)
+	urlComponents := []string{"https://", "", api.D_DRAGON_BASE_URL_FORMAT, "/cdn/", version, "/data/", language.String(), "/champion.json"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err

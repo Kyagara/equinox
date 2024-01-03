@@ -10,15 +10,15 @@ import (
 
 // Base API URLs formats.
 const (
-	RIOT_API_BASE_URL_FORMAT = "https://%s.api.riotgames.com%s"
-	D_DRAGON_BASE_URL_FORMAT = "https://ddragon.leagueoflegends.com%s%s"
-	C_DRAGON_BASE_URL_FORMAT = "https://cdn.communitydragon.org%s%s"
+	RIOT_API_BASE_URL_FORMAT = ".api.riotgames.com"
+	D_DRAGON_BASE_URL_FORMAT = "ddragon.leagueoflegends.com"
+	C_DRAGON_BASE_URL_FORMAT = "cdn.communitydragon.org"
 )
 
 // EquinoxRequest represents a request to the Riot API and CDNs, its a struct that contains all information about a request.
 type EquinoxRequest struct {
 	Logger   zerolog.Logger
-	Route    any
+	Route    string
 	Request  *http.Request
 	URL      string
 	MethodID string

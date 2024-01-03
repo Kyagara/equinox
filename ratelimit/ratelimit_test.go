@@ -51,7 +51,7 @@ func TestRateLimitCheck(t *testing.T) {
 	t.Run("buckets not created", func(t *testing.T) {
 		t.Parallel()
 		r := &ratelimit.RateLimit{
-			Region: make(map[any]*ratelimit.Limits),
+			Region: make(map[string]*ratelimit.Limits),
 		}
 		require.Nil(t, r.Region[equinoxReq.Route])
 		ctx := context.Background()
@@ -65,7 +65,7 @@ func TestRateLimitCheck(t *testing.T) {
 
 	t.Run("app rate limited", func(t *testing.T) {
 		t.Parallel()
-		r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
+		r := &ratelimit.RateLimit{Region: make(map[string]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"19:2"},
@@ -80,7 +80,7 @@ func TestRateLimitCheck(t *testing.T) {
 
 	t.Run("method rate limited", func(t *testing.T) {
 		t.Parallel()
-		r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
+		r := &ratelimit.RateLimit{Region: make(map[string]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"100:2,200:2"},
 			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:2,199:2"},
@@ -95,7 +95,7 @@ func TestRateLimitCheck(t *testing.T) {
 
 	t.Run("waiting bucket to reset", func(t *testing.T) {
 		t.Parallel()
-		r := &ratelimit.RateLimit{Region: make(map[any]*ratelimit.Limits)}
+		r := &ratelimit.RateLimit{Region: make(map[string]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"20:2"},
@@ -163,7 +163,7 @@ func TestLimitsDontMatch(t *testing.T) {
 func TestCheckRetryAfter(t *testing.T) {
 	t.Parallel()
 	r := &ratelimit.RateLimit{
-		Region: map[any]*ratelimit.Limits{
+		Region: map[string]*ratelimit.Limits{
 			"route": {
 				App: ratelimit.NewLimit(ratelimit.APP_RATE_LIMIT_TYPE),
 				Methods: map[string]*ratelimit.Limit{

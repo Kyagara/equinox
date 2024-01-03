@@ -26,6 +26,33 @@ const (
 	CHALLENGER  Tier = "CHALLENGER"
 )
 
+func (tier Tier) String() string {
+	switch tier {
+	case IRON:
+		return "IRON"
+	case BRONZE:
+		return "BRONZE"
+	case SILVER:
+		return "SILVER"
+	case GOLD:
+		return "GOLD"
+	case PLATINUM:
+		return "PLATINUM"
+	case EMERALD:
+		return "EMERALD"
+	case DIAMOND:
+		return "DIAMOND"
+	case MASTER:
+		return "MASTER"
+	case GRANDMASTER:
+		return "GRANDMASTER"
+	case CHALLENGER:
+		return "CHALLENGER"
+	default:
+		return string(tier)
+	}
+}
+
 // LoL and TFT rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
@@ -37,6 +64,23 @@ const (
 	// Deprecated
 	V Division = "V"
 )
+
+func (division Division) String() string {
+	switch division {
+	case I:
+		return "I"
+	case II:
+		return "II"
+	case III:
+		return "III"
+	case IV:
+		return "IV"
+	case V:
+		return "V"
+	default:
+		return string(division)
+	}
+}
 
 // Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
 type PlatformRoute string
@@ -78,31 +122,99 @@ const (
 	VN2 PlatformRoute = "vn2"
 )
 
+func (route PlatformRoute) String() string {
+	switch route {
+	case BR1:
+		return "br1"
+	case EUN1:
+		return "eun1"
+	case EUW1:
+		return "euw1"
+	case JP1:
+		return "jp1"
+	case KR:
+		return "kr"
+	case LA1:
+		return "la1"
+	case LA2:
+		return "la2"
+	case NA1:
+		return "na1"
+	case OC1:
+		return "oc1"
+	case PBE1:
+		return "pbe1"
+	case PH2:
+		return "ph2"
+	case RU:
+		return "ru"
+	case SG2:
+		return "sg2"
+	case TH2:
+		return "th2"
+	case TR1:
+		return "tr1"
+	case TW2:
+		return "tw2"
+	case VN2:
+		return "vn2"
+	default:
+		return string(route)
+	}
+}
+
 // Tournament regions for League of Legends (LoL).
 type TournamentRegion string
 
 const (
 	// Brazil.
-	BR TournamentRegion = "br1"
+	BR TournamentRegion = "br"
 	// Europe, Northeast.
-	EUNE TournamentRegion = "eun1"
+	EUNE TournamentRegion = "eune"
 	// Europe, West.
-	EUW TournamentRegion = "euw1"
+	EUW TournamentRegion = "euw"
 	// Japan.
-	JP TournamentRegion = "jp1"
+	JP TournamentRegion = "jp"
 	// Latin America, North.
-	LAN TournamentRegion = "la1"
+	LAN TournamentRegion = "lan"
 	// Latin America, South.
-	LAS TournamentRegion = "la2"
+	LAS TournamentRegion = "las"
 	// North America.
-	NA TournamentRegion = "na1"
+	NA TournamentRegion = "na"
 	// Oceana.
-	OCE TournamentRegion = "oc1"
+	OCE TournamentRegion = "oce"
 	// Public Beta Environment, special beta testing platform. Located in North America.
-	PBE TournamentRegion = "pbe1"
+	PBE TournamentRegion = "pbe"
 	// Turkey
-	TR TournamentRegion = "tr1"
+	TR TournamentRegion = "tr"
 )
+
+func (route TournamentRegion) String() string {
+	switch route {
+	case BR:
+		return "br"
+	case EUNE:
+		return "eune"
+	case EUW:
+		return "euw"
+	case JP:
+		return "jp"
+	case LAN:
+		return "lan"
+	case LAS:
+		return "las"
+	case NA:
+		return "na"
+	case OCE:
+		return "oce"
+	case PBE:
+		return "pbe"
+	case TR:
+		return "tr"
+	default:
+		return string(route)
+	}
+}
 
 // League of Legends game type: matched game, custom game, or tutorial game.
 type GameType string
@@ -115,6 +227,19 @@ const (
 	// Tutorial games
 	TUTORIAL_GAME GameType = "TUTORIAL_GAME"
 )
+
+func (gameType GameType) String() string {
+	switch gameType {
+	case CUSTOM_GAME:
+		return "CUSTOM_GAME"
+	case MATCHED_GAME:
+		return "MATCHED_GAME"
+	case TUTORIAL_GAME:
+		return "TUTORIAL_GAME"
+	default:
+		return string(gameType)
+	}
+}
 
 // League of Legends game mode, such as Classic,
 // ARAM, URF, One For All, Ascension, etc.
@@ -173,6 +298,63 @@ const (
 	URF GameMode = "URF"
 )
 
+func (gameMode GameMode) String() string {
+	switch gameMode {
+	case ARAM:
+		return "ARAM"
+	case ARSR:
+		return "ARSR"
+	case ASCENSION:
+		return "ASCENSION"
+	case ASSASSINATE:
+		return "ASSASSINATE"
+	case CHERRY:
+		return "CHERRY"
+	case CLASSIC:
+		return "CLASSIC"
+	case DARKSTAR:
+		return "DARKSTAR"
+	case DOOMBOTSTEEMO:
+		return "DOOMBOTSTEEMO"
+	case FIRSTBLOOD:
+		return "FIRSTBLOOD"
+	case GAMEMODEX:
+		return "GAMEMODEX"
+	case KINGPORO:
+		return "KINGPORO"
+	case NEXUSBLITZ:
+		return "NEXUSBLITZ"
+	case ODIN:
+		return "ODIN"
+	case ODYSSEY:
+		return "ODYSSEY"
+	case ONEFORALL:
+		return "ONEFORALL"
+	case PRACTICETOOL:
+		return "PRACTICETOOL"
+	case PROJECT:
+		return "PROJECT"
+	case SIEGE:
+		return "SIEGE"
+	case STARGUARDIAN:
+		return "STARGUARDIAN"
+	case TUTORIAL:
+		return "TUTORIAL"
+	case TUTORIAL_MODULE_1:
+		return "TUTORIAL_MODULE_1"
+	case TUTORIAL_MODULE_2:
+		return "TUTORIAL_MODULE_2"
+	case TUTORIAL_MODULE_3:
+		return "TUTORIAL_MODULE_3"
+	case ULTBOOK:
+		return "ULTBOOK"
+	case URF:
+		return "URF"
+	default:
+		return string(gameMode)
+	}
+}
+
 // LoL ranked queue types.
 type QueueType string
 
@@ -186,3 +368,16 @@ const (
 	// 5v5 Ranked Solo games
 	RANKED_SOLO_5X5 QueueType = "RANKED_SOLO_5x5"
 )
+
+func (queue QueueType) String() string {
+	switch queue {
+	case RANKED_FLEX_SR:
+		return "RANKED_FLEX_SR"
+	case RANKED_FLEX_TT:
+		return "RANKED_FLEX_TT"
+	case RANKED_SOLO_5X5:
+		return "RANKED_SOLO_5x5"
+	default:
+		return string(queue)
+	}
+}

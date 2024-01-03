@@ -45,7 +45,8 @@ func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *
 	if authorization == "" {
 		return "", fmt.Errorf("'authorization' header is required")
 	}
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodPost, route, "/lor/deck/v1/decks/me", "lor-deck-v1.createDeck", body)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/deck/v1/decks/me"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodPost, urlComponents, "lor-deck-v1.createDeck", body)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return "", err
@@ -78,7 +79,8 @@ func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorizati
 	if authorization == "" {
 		return nil, fmt.Errorf("'authorization' header is required")
 	}
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/deck/v1/decks/me", "lor-deck-v1.getDecks", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/deck/v1/decks/me"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lor-deck-v1.getDecks", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -120,7 +122,8 @@ func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, author
 	if authorization == "" {
 		return nil, fmt.Errorf("'authorization' header is required")
 	}
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/inventory/v1/cards/me", "lor-inventory-v1.getCards", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/inventory/v1/cards/me"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lor-inventory-v1.getCards", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -159,7 +162,8 @@ type MatchV1 struct {
 func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId string) (*MatchV1DTO, error) {
 	logger := e.internal.Logger("LOR_MatchV1_ByID")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/%v", matchId), "lor-match-v1.getMatch", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/match/v1/matches/", matchId}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lor-match-v1.getMatch", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -187,7 +191,8 @@ func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId str
 func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string) ([]string, error) {
 	logger := e.internal.Logger("LOR_MatchV1_ListByPUUID")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/lor/match/v1/matches/by-puuid/%v/ids", puuid), "lor-match-v1.getMatchIdsByPUUID", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/match/v1/matches/by-puuid/", puuid, "/ids"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lor-match-v1.getMatchIdsByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -223,7 +228,8 @@ type RankedV1 struct {
 func (e *RankedV1) Leaderboards(ctx context.Context, route api.RegionalRoute) (*LeaderboardV1DTO, error) {
 	logger := e.internal.Logger("LOR_RankedV1_Leaderboards")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/ranked/v1/leaderboards", "lor-ranked-v1.getLeaderboards", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/ranked/v1/leaderboards"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lor-ranked-v1.getLeaderboards", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -259,7 +265,8 @@ type StatusV1 struct {
 func (e *StatusV1) Platform(ctx context.Context, route api.RegionalRoute) (*PlatformDataV1DTO, error) {
 	logger := e.internal.Logger("LOR_StatusV1_Platform")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/lor/status/v1/platform-data", "lor-status-v1.getPlatformData", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/status/v1/platform-data"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lor-status-v1.getPlatformData", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err

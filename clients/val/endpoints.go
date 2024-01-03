@@ -12,7 +12,6 @@ package val
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -44,7 +43,8 @@ type ContentV1 struct {
 func (e *ContentV1) Content(ctx context.Context, route PlatformRoute, locale string) (*ContentV1DTO, error) {
 	logger := e.internal.Logger("VAL_ContentV1_Content")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/content/v1/contents", "val-content-v1.getContent", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/content/v1/contents"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-content-v1.getContent", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -86,7 +86,8 @@ type MatchV1 struct {
 func (e *MatchV1) ByID(ctx context.Context, route PlatformRoute, matchId string) (*MatchV1DTO, error) {
 	logger := e.internal.Logger("VAL_MatchV1_ByID")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matches/%v", matchId), "val-match-v1.getMatch", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/match/v1/matches/", matchId}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-match-v1.getMatch", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -114,7 +115,8 @@ func (e *MatchV1) ByID(ctx context.Context, route PlatformRoute, matchId string)
 func (e *MatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, puuid string) (*MatchlistV1DTO, error) {
 	logger := e.internal.Logger("VAL_MatchV1_ListByPUUID")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/matchlists/by-puuid/%v", puuid), "val-match-v1.getMatchlist", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/match/v1/matchlists/by-puuid/", puuid}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-match-v1.getMatchlist", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -146,7 +148,8 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, puuid st
 func (e *MatchV1) Recent(ctx context.Context, route PlatformRoute, queue string) (*RecentMatchesV1DTO, error) {
 	logger := e.internal.Logger("VAL_MatchV1_Recent")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/match/v1/recent-matches/by-queue/%v", queue), "val-match-v1.getRecent", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/match/v1/recent-matches/by-queue/", queue}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-match-v1.getRecent", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -185,7 +188,8 @@ type RankedV1 struct {
 func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, size int32, startIndex int32) (*LeaderboardV1DTO, error) {
 	logger := e.internal.Logger("VAL_RankedV1_Leaderboard")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, fmt.Sprintf("/val/ranked/v1/leaderboards/by-act/%v", actId), "val-ranked-v1.getLeaderboard", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/ranked/v1/leaderboards/by-act/", actId}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-ranked-v1.getLeaderboard", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -229,7 +233,8 @@ type StatusV1 struct {
 func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV1DTO, error) {
 	logger := e.internal.Logger("VAL_StatusV1_Platform")
 	logger.Trace().Msg("Method started execution")
-	equinoxReq, err := e.internal.Request(ctx, logger, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, route, "/val/status/v1/platform-data", "val-status-v1.getPlatformData", nil)
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/status/v1/platform-data"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-status-v1.getPlatformData", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err

@@ -29,3 +29,24 @@ const (
 	// North America.
 	NA PlatformRoute = "na"
 )
+
+func (route PlatformRoute) String() string {
+	switch route {
+	case AP:
+		return "ap"
+	case BR:
+		return "br"
+	case ESPORTS:
+		return "esports"
+	case EU:
+		return "eu"
+	case KR:
+		return "kr"
+	case LATAM:
+		return "latam"
+	case NA:
+		return "na"
+	default:
+		return string(route)
+	}
+}
