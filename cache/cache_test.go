@@ -2,9 +2,11 @@ package cache_test
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/Kyagara/equinox/cache"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -28,4 +30,10 @@ func TestCacheMethods(t *testing.T) {
 	require.Equal(t, cache.ErrCacheIsDisabled, err)
 	_, err = cacheStore.Get(ctx, "test")
 	require.Equal(t, cache.ErrCacheIsDisabled, err)
+
+	cacheStore.MarshalZerologObject(&zerolog.Event{})
+	cacheStore.Enabled = true
+	var logger zerolog.Logger
+	logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Object("cache", cacheStore).Logger()
+	logger.Info().Msg("Testing cache marshal")
 }
