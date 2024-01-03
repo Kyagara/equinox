@@ -16,7 +16,7 @@ package lor
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = cd204d7d764a025c280943766bc498278e439a6c
+// Spec version = d712d94a43004a22ad9f31b9ebfbcaa9e0820305
 
 import "github.com/Kyagara/equinox/internal"
 

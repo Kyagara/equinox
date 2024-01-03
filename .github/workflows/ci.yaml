@@ -44,7 +44,7 @@ jobs:
         run: go install github.com/dkorunic/betteralign/cmd/betteralign@latest
 
       - name: Code generation
-        run: UPDATE_SPECS=1 go generate ./...
+        run: cd codegen && UPDATE_SPECS=1 go generate
 
   test:
     runs-on: ubuntu-latest

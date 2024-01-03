@@ -123,7 +123,6 @@ func main() {
 - Maybe the context usage throughout the project could be improved
 - Maybe add more options to customize the rate limiter
 - Maybe add wrapped errors to improve error handling
-- Maybe use go workspace to separate the codegen and equinox project
 - Improve DDragon/CDragon support
 
 ## About
@@ -141,7 +140,20 @@ Projects not written in go:
 - [riot-api](https://github.com/fightmegg/riot-api) and [riot-rate-limiter](https://github.com/fightmegg/riot-rate-limiter)
 - [galeforce](https://github.com/bcho04/galeforce)
 
-Riven's [code generation](https://github.com/MingweiSamuel/Riven/tree/v/2.x.x/riven/srcgen) is used in [equinox](https://github.com/Kyagara/equinox/tree/main/codegen).
+A rewrite of Riven's [code generation](https://github.com/MingweiSamuel/Riven/tree/v/2.x.x/riven/srcgen) is used in [equinox](https://github.com/Kyagara/equinox/tree/main/codegen).
+
+When cloning the project, make sure to have a `go.work` file in the root of the project.
+
+```
+go 1.21
+
+use (
+	.
+	./codegen
+)
+```
+
+If you have any questions, feel free to [open an issue](https://github.com/Kyagara/equinox/issues) or contact me.
 
 ## Disclaimer
 

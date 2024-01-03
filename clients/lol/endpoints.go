@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = cd204d7d764a025c280943766bc498278e439a6c
+// Spec version = d712d94a43004a22ad9f31b9ebfbcaa9e0820305
 
 import (
 	"context"
@@ -247,35 +247,6 @@ func (e *ChampionMasteryV4) AllMasteriesByPUUID(ctx context.Context, route Platf
 	return data, nil
 }
 
-// Get all champion mastery entries sorted by number of champion points descending,
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `encryptedSummonerId` - Summoner ID associated with the player
-//
-// # Riot API Reference
-//
-// [champion-mastery-v4.getAllChampionMasteries]
-//
-// [champion-mastery-v4.getAllChampionMasteries]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getAllChampionMasteries
-func (e *ChampionMasteryV4) AllMasteriesBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) ([]ChampionMasteryV4DTO, error) {
-	logger := e.internal.Logger("LOL_ChampionMasteryV4_AllMasteriesBySummonerID")
-	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-summoner/", encryptedSummonerId}
-	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getAllChampionMasteries", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data []ChampionMasteryV4DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
-}
-
 // Get a champion mastery by puuid and champion ID.
 //
 // # Parameters
@@ -293,36 +264,6 @@ func (e *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route PlatformRo
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-puuid/", encryptedPUUID, "/by-champion/", strconv.FormatInt(championId, 10)}
 	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getChampionMasteryByPUUID", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data ChampionMasteryV4DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Get a champion mastery by player ID and champion ID.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `championId` - Champion ID to retrieve Champion Mastery for
-//   - `encryptedSummonerId` - Summoner ID associated with the player
-//
-// # Riot API Reference
-//
-// [champion-mastery-v4.getChampionMastery]
-//
-// [champion-mastery-v4.getChampionMastery]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMastery
-func (e *ChampionMasteryV4) MasteryBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string, championId int64) (*ChampionMasteryV4DTO, error) {
-	logger := e.internal.Logger("LOL_ChampionMasteryV4_MasteryBySummonerID")
-	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-summoner/", encryptedSummonerId, "/by-champion/", strconv.FormatInt(championId, 10)}
-	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getChampionMastery", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
@@ -365,35 +306,6 @@ func (e *ChampionMasteryV4) MasteryScoreByPUUID(ctx context.Context, route Platf
 	return data, nil
 }
 
-// Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `encryptedSummonerId` - Summoner ID associated with the player
-//
-// # Riot API Reference
-//
-// [champion-mastery-v4.getChampionMasteryScore]
-//
-// [champion-mastery-v4.getChampionMasteryScore]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScore
-func (e *ChampionMasteryV4) ScoreBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (int32, error) {
-	logger := e.internal.Logger("LOL_ChampionMasteryV4_ScoreBySummonerID")
-	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/scores/by-summoner/", encryptedSummonerId}
-	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getChampionMasteryScore", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return 0, err
-	}
-	var data int32
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return 0, err
-	}
-	return data, nil
-}
-
 // Get specified number of top champion mastery entries sorted by number of champion points descending.
 //
 // # Parameters
@@ -411,41 +323,6 @@ func (e *ChampionMasteryV4) TopMasteriesByPUUID(ctx context.Context, route Platf
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-puuid/", encryptedPUUID, "/top"}
 	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getTopChampionMasteriesByPUUID", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	values := url.Values{}
-	if count != -1 {
-		values.Set("count", strconv.FormatInt(int64(count), 10))
-	}
-	equinoxReq.Request.URL.RawQuery = values.Encode()
-	var data []ChampionMasteryV4DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
-}
-
-// Get specified number of top champion mastery entries sorted by number of champion points descending.
-//
-// # Parameters
-//   - `route` - Route to query.
-//   - `encryptedSummonerId` - Summoner ID associated with the player
-//   - `count` (optional) - Number of entries to retrieve, defaults to 3
-//
-// # Riot API Reference
-//
-// [champion-mastery-v4.getTopChampionMasteries]
-//
-// [champion-mastery-v4.getTopChampionMasteries]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getTopChampionMasteries
-func (e *ChampionMasteryV4) TopMasteriesBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string, count int32) ([]ChampionMasteryV4DTO, error) {
-	logger := e.internal.Logger("LOL_ChampionMasteryV4_TopMasteriesBySummonerID")
-	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-summoner/", encryptedSummonerId, "/top"}
-	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getTopChampionMasteries", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
