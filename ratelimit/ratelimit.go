@@ -25,6 +25,8 @@ const (
 	APP_RATE_LIMIT_TYPE     = "application"
 	METHOD_RATE_LIMIT_TYPE  = "method"
 	SERVICE_RATE_LIMIT_TYPE = "service"
+
+	DEFAULT_RETRY_AFTER = 2 * time.Second
 )
 
 var (
@@ -35,7 +37,7 @@ type RateLimit struct {
 	Region  map[string]*Limits
 	Enabled bool
 	// Factor to be applied to the limit. E.g. if set to 0.5, the limit will be reduced by 50%.
-	LimitUsageFactor float32
+	LimitUsageFactor float64
 	// Delay in milliseconds to be add to reset intervals.
 	IntervalOverhead time.Duration
 	mutex            sync.Mutex
@@ -43,18 +45,23 @@ type RateLimit struct {
 
 func (r *RateLimit) MarshalZerologObject(encoder *zerolog.Event) {
 	if r.Enabled {
-		encoder.Float32("limit_usage_factor", r.LimitUsageFactor).Dur("interval_overhead", r.IntervalOverhead)
+		encoder.Float64("limit_usage_factor", r.LimitUsageFactor).Dur("interval_overhead", r.IntervalOverhead)
 	}
 }
 
-func NewInternalRateLimit(limitUsageFactor float32, intervalOverhead time.Duration) *RateLimit {
+func NewInternalRateLimit(limitUsageFactor float64, intervalOverhead time.Duration) *RateLimit {
 	if limitUsageFactor < 0.0 || limitUsageFactor > 1.0 {
 		limitUsageFactor = 0.99
 	}
 	if intervalOverhead < 0 {
 		intervalOverhead = 1 * time.Second
 	}
-	return &RateLimit{Region: make(map[string]*Limits), LimitUsageFactor: limitUsageFactor, IntervalOverhead: intervalOverhead, Enabled: true}
+	return &RateLimit{
+		Region:           make(map[string]*Limits),
+		LimitUsageFactor: limitUsageFactor,
+		IntervalOverhead: intervalOverhead,
+		Enabled:          true,
+	}
 }
 
 // Take decreases tokens for the App and Method rate limit buckets in a route by one.
@@ -110,17 +117,16 @@ func (r *RateLimit) Update(logger zerolog.Logger, route string, methodID string,
 func (r *RateLimit) CheckRetryAfter(route string, methodID string, headers http.Header) time.Duration {
 	retryAfter := headers.Get(RETRY_AFTER_HEADER)
 	if retryAfter == "" {
-		return 2 * time.Second
+		return DEFAULT_RETRY_AFTER
 	}
-
-	r.mutex.Lock()
-	defer r.mutex.Unlock()
 
 	delayF, _ := strconv.ParseFloat(retryAfter, 32)
 	delay := time.Duration(delayF+0.5) * time.Second
 
-	limits := r.Region[route]
 	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
+
+	r.mutex.Lock()
+	limits := r.Region[route]
 
 	if limitType == APP_RATE_LIMIT_TYPE {
 		limits.App.setDelay(delay)
@@ -128,6 +134,7 @@ func (r *RateLimit) CheckRetryAfter(route string, methodID string, headers http.
 		limits.Methods[methodID].setDelay(delay)
 	}
 
+	r.mutex.Unlock()
 	return delay
 }
 
@@ -136,19 +143,27 @@ func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitTy
 		return NewLimit(limitType)
 	}
 
-	limit := NewLimit(limitType)
-
 	limits := strings.Split(limitHeader, ",")
 	counts := strings.Split(countHeader, ",")
-	rates := make([]*Bucket, len(limits))
+
+	if len(limits) == 0 {
+		return NewLimit(limitType)
+	}
+
+	limit := &Limit{
+		buckets:    make([]*Bucket, len(limits)),
+		limitType:  limitType,
+		retryAfter: 0,
+		mutex:      sync.Mutex{},
+	}
 
 	for i, limitString := range limits {
 		baseLimit, interval := getNumbersFromPair(limitString)
 		count, _ := getNumbersFromPair(counts[i])
-		limit := int(math.Floor(math.Max(1, float64(baseLimit)*float64(r.LimitUsageFactor))))
-		rates[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, limit, limit-count)
+		newLimit := int(math.Max(1, float64(baseLimit)*r.LimitUsageFactor))
+		currentTokens := newLimit - count
+		limit.buckets[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, newLimit, currentTokens)
 	}
 
-	limit.buckets = rates
 	return limit
 }

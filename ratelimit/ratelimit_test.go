@@ -36,7 +36,7 @@ func TestNewInternalRateLimit(t *testing.T) {
 	require.NotNil(t, rateLimit.Region["route"].Methods)
 	require.NotEmpty(t, rateLimit.Region["route"].Methods["method"])
 	rateLimit = ratelimit.NewInternalRateLimit(-1, -1)
-	require.Equal(t, float32(0.99), rateLimit.LimitUsageFactor)
+	require.Equal(t, float64(0.99), rateLimit.LimitUsageFactor)
 	require.Equal(t, 1*time.Second, rateLimit.IntervalOverhead)
 }
 
