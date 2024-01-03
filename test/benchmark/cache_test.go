@@ -19,13 +19,13 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkInMemoryCachedSummonerByPUUID-16 171974 6091 ns/op 2997 B/op 8 allocs/op
-BenchmarkInMemoryCachedSummonerByPUUID-16 194630 6271 ns/op 2769 B/op 8 allocs/op
-BenchmarkInMemoryCachedSummonerByPUUID-16 189826 6242 ns/op 2813 B/op 8 allocs/op
-BenchmarkInMemoryCachedSummonerByPUUID-16 188211 6261 ns/op 2828 B/op 8 allocs/op
-BenchmarkInMemoryCachedSummonerByPUUID-16 193594 6205 ns/op 2778 B/op 8 allocs/op
+BenchmarkInternalCachedSummonerByPUUID-16 171974 6091 ns/op 2997 B/op 8 allocs/op
+BenchmarkInternalCachedSummonerByPUUID-16 194630 6271 ns/op 2769 B/op 8 allocs/op
+BenchmarkInternalCachedSummonerByPUUID-16 189826 6242 ns/op 2813 B/op 8 allocs/op
+BenchmarkInternalCachedSummonerByPUUID-16 188211 6261 ns/op 2828 B/op 8 allocs/op
+BenchmarkInternalCachedSummonerByPUUID-16 193594 6205 ns/op 2778 B/op 8 allocs/op
 */
-func BenchmarkInMemoryCachedSummonerByPUUID(b *testing.B) {
+func BenchmarkInternalCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
