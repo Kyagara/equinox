@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 )
 
 var (
@@ -27,6 +28,19 @@ var (
 func main() {
 	flag.Parse()
 
+	path, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	paths := strings.Split(path, "/")
+	if paths[len(paths)-1] == "equinox" {
+		err := os.Chdir("./codegen")
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	if *updateFlag || os.Getenv("UPDATE_SPECS") == "1" {
 		fmt.Printf("Downloading specs...\n")
 		for _, spec := range SPECS_URLS {
@@ -37,7 +51,7 @@ func main() {
 		}
 	}
 
-	err := Compile()
+	err = Compile()
 	if err != nil {
 		panic(err)
 	}

@@ -1,5 +1,7 @@
 package equinox
 
+//go:generate go run ./codegen
+
 import (
 	"context"
 	"net/http"
