@@ -78,7 +78,8 @@ err := client.Cache.Set("https://...", data)
 
 // Using ExecuteRaw which returns []byte but skips checking cache.
 l := client.Internal.Logger("LOL_StatusV4_Platform")
-req, err := client.Internal.Request(ctx, l, api.RIOT_API_BASE_URL_FORMAT, http.MethodGet, lol.BR1, "/lol/status/v4/platform-data", "", nil)
+urlComponents := []string{"https://", lol.BR1, api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
+req, err := client.Internal.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
 data, err := client.Internal.ExecuteRaw(ctx, req)
 ```
 
@@ -121,6 +122,7 @@ func main() {
 - Maybe the context usage throughout the project could be improved
 - Maybe add more options to customize the rate limiter
 - Maybe add wrapped errors to improve error handling
+- Maybe use go workspace to separate the codegen and equinox project
 - Improve DDragon/CDragon support
 
 ## About
