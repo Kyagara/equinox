@@ -9,7 +9,6 @@ import (
 	"io"
 	"math"
 	"net/http"
-	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -36,24 +35,23 @@ type Client struct {
 }
 
 var (
-	ErrMaxRetries = errors.New("max retries reached")
+	ErrMaxRetries     = errors.New("max retries reached")
+	ErrContextIsNil   = errors.New("context must be non-nil")
+	ErrKeyNotProvided = errors.New("api key not provided")
 )
 
 var (
-	errContextIsNil   = errors.New("context must be non-nil")
-	errKeyNotProvided = errors.New("api key not provided")
-
 	cdnHeaders = http.Header{
 		"Accept":     {"application/json"},
 		"User-Agent": {"equinox - https://github.com/Kyagara/equinox"},
 	}
+
 	apiHeaders = http.Header{
 		"X-Riot-Token": {},
 		"Accept":       {"application/json"},
 		"Content-Type": {"application/json"},
 		"User-Agent":   {"equinox - https://github.com/Kyagara/equinox"},
 	}
-	cdns = []string{"ddragon.leagueoflegends.com", "cdn.communitydragon.org"}
 )
 
 func NewInternalClient(config api.EquinoxConfig) *Client {
@@ -93,7 +91,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod 
 	logger.Debug().Msg("Creating request")
 
 	if ctx == nil {
-		return api.EquinoxRequest{}, errContextIsNil
+		return api.EquinoxRequest{}, ErrContextIsNil
 	}
 
 	var buffer io.Reader
@@ -118,14 +116,14 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod 
 		Route:    urlComponents[1],
 		URL:      url,
 		Request:  request,
-		IsCDN:    slices.Contains(cdns, request.URL.Host),
+		IsCDN:    strings.HasPrefix(urlComponents[2], "ddragon.") || strings.HasPrefix(urlComponents[2], "cdn."),
 	}
 
 	if equinoxReq.IsCDN {
 		request.Header = cdnHeaders
 	} else {
 		if c.key == "" {
-			return api.EquinoxRequest{}, errKeyNotProvided
+			return api.EquinoxRequest{}, ErrKeyNotProvided
 		}
 		request.Header = apiHeaders
 	}
@@ -137,7 +135,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	equinoxReq.Logger.Debug().Msg("Execute")
 
 	if ctx == nil {
-		return errContextIsNil
+		return ErrContextIsNil
 	}
 
 	url, err := GetURLWithAuthorizationHash(equinoxReq)
@@ -195,7 +193,7 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 	equinoxReq.Logger.Debug().Msg("ExecuteRaw")
 
 	if ctx == nil {
-		return nil, errContextIsNil
+		return nil, ErrContextIsNil
 	}
 
 	if c.IsRateLimitEnabled && !equinoxReq.IsCDN {
@@ -263,8 +261,8 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 		return 0, false, nil
 	}
 
-	err, ok := api.StatusCodeToError[response.StatusCode]
-	if ok {
+	err := api.StatusCodeToError(response.StatusCode)
+	if err != nil {
 		// 429 and 5xx responses will be retried
 		if response.StatusCode == http.StatusTooManyRequests || (response.StatusCode >= 500 && response.StatusCode < 600) {
 			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, response.Header), true, err
