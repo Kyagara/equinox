@@ -151,7 +151,7 @@ func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Meth
 				descArr = append(descArr,
 					"",
 					"# Parameters",
-					"   - `route` - Route to query.",
+					"   - route : Route to query.",
 				)
 
 				if len(allParams.Array()) > 0 {
@@ -164,11 +164,11 @@ func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Meth
 
 						desc := param.Get("description").String()
 						if desc != "" {
-							requiredStr += " -"
+							requiredStr += " :"
 						}
 
 						descArr = append(descArr,
-							fmt.Sprintf("   - `%s`%s %s", param.Get("name").String(), requiredStr, desc),
+							fmt.Sprintf("   - %s%s %s", param.Get("name").String(), requiredStr, desc),
 						)
 					}
 				}

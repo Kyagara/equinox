@@ -31,8 +31,8 @@ type DeckV1 struct {
 // Create a new deck for the calling user.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `Authorization`
+//   - route : Route to query.
+//   - Authorization
 //
 // # Riot API Reference
 //
@@ -65,8 +65,8 @@ func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *
 // Get a list of the calling user's decks.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `Authorization`
+//   - route : Route to query.
+//   - Authorization
 //
 // # Riot API Reference
 //
@@ -108,8 +108,8 @@ type InventoryV1 struct {
 // Return a list of cards owned by the calling user.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `Authorization`
+//   - route : Route to query.
+//   - Authorization
 //
 // # Riot API Reference
 //
@@ -151,8 +151,8 @@ type MatchV1 struct {
 // Get match by id
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `matchId`
+//   - route : Route to query.
+//   - matchId
 //
 // # Riot API Reference
 //
@@ -180,8 +180,8 @@ func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId str
 // Get a list of match ids by PUUID
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `puuid`
+//   - route : Route to query.
+//   - puuid
 //
 // # Riot API Reference
 //
@@ -218,7 +218,7 @@ type RankedV1 struct {
 // Get the players in Master tier.
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -255,7 +255,7 @@ type StatusV1 struct {
 // Get Legends of Runeterra status for the given platform.
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
