@@ -62,12 +62,12 @@ func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
 
 // Returns the default equinox config with a provided key.
 //
-//   - Key  		: The provided Riot API key.
-//   - HTTPClient   : http.Client with a timeout of 15 seconds.
-//   - Cache		: BigCache with an eviction time of 4 minutes.
-//   - RateLimit	: Internal rate limiter with a limit usage factor of 1.0 and interval overhead of 1 second.
-//   - Logger		: api.Logger object with zerolog.WarnLevel. Will log if rate limited or when retrying a request (before waiting).
-//   - Retry		: api.Retry object with a limit of 3 and jitter of 500 milliseconds.
+//   - Key  	  : The provided Riot API key.
+//   - HTTPClient : http.Client with a timeout of 15 seconds.
+//   - Cache	  : BigCache with an eviction time of 4 minutes.
+//   - RateLimit  : Internal rate limiter with a limit usage factor of 1.0 and interval overhead of 1 second.
+//   - Logger	  : api.Logger object with zerolog.WarnLevel. Will log if rate limited or when retrying a request (before waiting).
+//   - Retry	  : api.Retry object with a limit of 3 and jitter of 500 milliseconds.
 func DefaultConfig(key string) (api.EquinoxConfig, error) {
 	ctx := context.Background()
 	cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
@@ -91,8 +91,8 @@ func DefaultConfig(key string) (api.EquinoxConfig, error) {
 
 // Returns the default retry config
 //
-//   - MaxRetries  : 3
-//   - Jitter	   : 500 milliseconds
+//   - MaxRetries : 3
+//   - Jitter     : 500 milliseconds
 func DefaultRetry() api.Retry {
 	return api.Retry{MaxRetries: 3, Jitter: 500 * time.Millisecond}
 }
