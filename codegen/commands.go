@@ -150,9 +150,9 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 
 		valRoutes := getRouteConstants(specs["routesTable"], "val-platform")
 		LOL_TFT_Routes := getRouteConstants(specs["routesTable"], "platform")
-		gameTypes := getGenericConstants(specs["gameTypes"])
-		gameModes := getGenericConstants(specs["gameModes"])
-		queueTypes := getGenericConstants(specs["queueTypes"])
+		gameTypes := getGenericConstants(specs["gameTypes"], "GameType")
+		gameModes := getGenericConstants(specs["gameModes"], "GameMode")
+		queueTypes := getGenericConstants(specs["queueTypes"], "QueueType")
 
 		endpointGroups := getEndpointGroup(clientName, specs["spec"])
 		endpointGroupsKeys := getMapKeys(endpointGroups)
