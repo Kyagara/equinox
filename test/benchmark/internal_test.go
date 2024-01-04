@@ -15,15 +15,17 @@ import (
 )
 
 /*
+Simulating an endpoint method
+
 goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkInternals-16 221295 5250 ns/op 1402 B/op 17 allocs/op
-BenchmarkInternals-16 209899 5375 ns/op 1402 B/op 17 allocs/op
-BenchmarkInternals-16 206281 5249 ns/op 1402 B/op 17 allocs/op
-BenchmarkInternals-16 215037 5364 ns/op 1402 B/op 17 allocs/op
-BenchmarkInternals-16 207663 5274 ns/op 1402 B/op 17 allocs/op
+BenchmarkInternals-16 301467 3775 ns/op 1402 B/op 17 allocs/op
+BenchmarkInternals-16 287043 3790 ns/op 1402 B/op 17 allocs/op
+BenchmarkInternals-16 303676 3782 ns/op 1402 B/op 17 allocs/op
+BenchmarkInternals-16 289886 3777 ns/op 1402 B/op 17 allocs/op
+BenchmarkInternals-16 290647 3792 ns/op 1402 B/op 17 allocs/op
 */
 func BenchmarkInternals(b *testing.B) {
 	b.ReportAllocs()
@@ -38,29 +40,38 @@ func BenchmarkInternals(b *testing.B) {
 	config.Retry = equinox.DefaultRetry()
 	client := internal.NewInternalClient(config)
 
-	logger := client.Logger("LOL_SummonerV4_ByPUUID")
-	ctx := context.Background()
-	urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
-
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
+		logger := client.Logger("LOL_SummonerV4_ByPUUID")
+		ctx := context.Background()
+		urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
 		equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
-		require.NoError(b, err)
+		if err != nil {
+			b.Fail()
+		}
 		var data string
 		err = client.Execute(ctx, equinoxReq, &data)
-		require.NoError(b, err)
+		if err != nil {
+			b.Fail()
+		}
+		if data != "response" {
+			b.Fail()
+		}
 	}
 }
 
 /*
+equinoxReq.Request.URL.String() causes 3 allocs, the alloc results are not modified to account for that
+
 goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkRequest-16 304810 3738 ns/op 664 B/op 8 allocs/op
-BenchmarkRequest-16 308384 3693 ns/op 664 B/op 8 allocs/op
-BenchmarkRequest-16 308928 3684 ns/op 664 B/op 8 allocs/op
-BenchmarkRequest-16 301702 3741 ns/op 664 B/op 8 allocs/op
-BenchmarkRequest-16 310485 3734 ns/op 664 B/op 8 allocs/op
+BenchmarkRequest-16 724022 1602 ns/op 648 B/op 7 allocs/op
+BenchmarkRequest-16 751404 1597 ns/op 648 B/op 7 allocs/op
+BenchmarkRequest-16 631826 1594 ns/op 648 B/op 7 allocs/op
+BenchmarkRequest-16 693741 1616 ns/op 648 B/op 7 allocs/op
+BenchmarkRequest-16 633535 1611 ns/op 648 B/op 7 allocs/op
 */
 func BenchmarkRequest(b *testing.B) {
 	b.ReportAllocs()
@@ -74,11 +85,15 @@ func BenchmarkRequest(b *testing.B) {
 	ctx := context.Background()
 	urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
 
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
-		require.NoError(b, err)
-		// equinoxReq.Request.URL.String() causes 4 allocs
-		require.Equal(b, "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid", equinoxReq.Request.URL.String())
+		if err != nil {
+			b.Fail()
+		}
+		if equinoxReq.Request.URL.String() != "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid" {
+			b.Fail()
+		}
 	}
 }
 
@@ -87,11 +102,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkExecute-16 241426 4647 ns/op 889 B/op 14 allocs/op
-BenchmarkExecute-16 239658 4719 ns/op 889 B/op 14 allocs/op
-BenchmarkExecute-16 244675 4652 ns/op 889 B/op 14 allocs/op
-BenchmarkExecute-16 247274 4616 ns/op 889 B/op 14 allocs/op
-BenchmarkExecute-16 245326 4682 ns/op 889 B/op 14 allocs/op
+BenchmarkExecute-16 427688 2455 ns/op 873 B/op 13 allocs/op
+BenchmarkExecute-16 451112 2455 ns/op 873 B/op 13 allocs/op
+BenchmarkExecute-16 468093 2439 ns/op 873 B/op 13 allocs/op
+BenchmarkExecute-16 440035 2450 ns/op 873 B/op 13 allocs/op
+BenchmarkExecute-16 460554 2440 ns/op 873 B/op 13 allocs/op
 */
 func BenchmarkExecute(b *testing.B) {
 	b.ReportAllocs()
@@ -113,11 +128,16 @@ func BenchmarkExecute(b *testing.B) {
 	equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 	require.NoError(b, err)
 
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		var data string
 		err = client.Execute(ctx, equinoxReq, &data)
-		require.NoError(b, err)
-		require.Equal(b, "response", data)
+		if err != nil {
+			b.Fail()
+		}
+		if data != "response" {
+			b.Fail()
+		}
 	}
 }
 
@@ -126,11 +146,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkExecuteRaw-16 262534 4372 ns/op 1400 B/op 15 allocs/op
-BenchmarkExecuteRaw-16 277652 4298 ns/op 1400 B/op 15 allocs/op
-BenchmarkExecuteRaw-16 267313 4249 ns/op 1400 B/op 15 allocs/op
-BenchmarkExecuteRaw-16 265563 4284 ns/op 1400 B/op 15 allocs/op
-BenchmarkExecuteRaw-16 264864 4260 ns/op 1400 B/op 15 allocs/op
+BenchmarkExecuteRaw-16 518600 2072 ns/op 1368 B/op 13 allocs/op
+BenchmarkExecuteRaw-16 582710 2033 ns/op 1368 B/op 13 allocs/op
+BenchmarkExecuteRaw-16 519804 2037 ns/op 1368 B/op 13 allocs/op
+BenchmarkExecuteRaw-16 525337 2151 ns/op 1368 B/op 13 allocs/op
+BenchmarkExecuteRaw-16 558279 2050 ns/op 1368 B/op 13 allocs/op
 */
 func BenchmarkExecuteRaw(b *testing.B) {
 	b.ReportAllocs()
@@ -152,14 +172,29 @@ func BenchmarkExecuteRaw(b *testing.B) {
 	equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 	require.NoError(b, err)
 
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		data, err := client.ExecuteRaw(ctx, equinoxReq)
-		require.NoError(b, err)
-		// string(data) causes an allocation
-		require.Equal(b, `"response"`, string(data))
+		if err != nil {
+			b.Fail()
+		}
+		if len(data) != 10 {
+			b.Fail()
+		}
 	}
 }
 
+/*
+goos: linux - WSL2
+goarch: amd64
+pkg: github.com/Kyagara/equinox/test/benchmark
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkURLWithAuthorizationHash-16 2008862 597.8 ns/op 216 B/op 5 allocs/op
+BenchmarkURLWithAuthorizationHash-16 2007656 592.6 ns/op 216 B/op 5 allocs/op
+BenchmarkURLWithAuthorizationHash-16 2016522 594.7 ns/op 216 B/op 5 allocs/op
+BenchmarkURLWithAuthorizationHash-16 1999180 593.0 ns/op 216 B/op 5 allocs/op
+BenchmarkURLWithAuthorizationHash-16 1991668 603.5 ns/op 216 B/op 5 allocs/op
+*/
 func BenchmarkURLWithAuthorizationHash(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
@@ -185,9 +220,14 @@ func BenchmarkURLWithAuthorizationHash(b *testing.B) {
 	equinoxReq.URL = req.URL.String()
 	req.Header.Set("Authorization", "7267ee00-5696-47b8-9cae-8db3d49c8c33")
 
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		hash, err := internal.GetURLWithAuthorizationHash(equinoxReq)
-		require.NoError(b, err)
-		require.Equal(b, "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d", hash)
+		if err != nil {
+			b.Fail()
+		}
+		if hash != "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d" {
+			b.Fail()
+		}
 	}
 }

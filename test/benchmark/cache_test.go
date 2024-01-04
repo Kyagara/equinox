@@ -19,11 +19,48 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkInternalCachedSummonerByPUUID-16 171974 6091 ns/op 2997 B/op 8 allocs/op
-BenchmarkInternalCachedSummonerByPUUID-16 194630 6271 ns/op 2769 B/op 8 allocs/op
-BenchmarkInternalCachedSummonerByPUUID-16 189826 6242 ns/op 2813 B/op 8 allocs/op
-BenchmarkInternalCachedSummonerByPUUID-16 188211 6261 ns/op 2828 B/op 8 allocs/op
-BenchmarkInternalCachedSummonerByPUUID-16 193594 6205 ns/op 2778 B/op 8 allocs/op
+BenchmarkSummonerByPUUID-16 203803 5621 ns/op 1498 B/op 17 allocs/op
+BenchmarkSummonerByPUUID-16 210289 5591 ns/op 1498 B/op 17 allocs/op
+BenchmarkSummonerByPUUID-16 203768 5672 ns/op 1498 B/op 17 allocs/op
+BenchmarkSummonerByPUUID-16 206062 5780 ns/op 1498 B/op 17 allocs/op
+BenchmarkSummonerByPUUID-16 202708 5710 ns/op 1498 B/op 17 allocs/op
+*/
+func BenchmarkSummonerByPUUID(b *testing.B) {
+	b.ReportAllocs()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
+
+	config := util.NewTestEquinoxConfig()
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
+	client := equinox.NewClientWithConfig(config)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		ctx := context.Background()
+		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+		if err != nil {
+			b.Fail()
+		}
+		if data.Name != "Phanes" {
+			b.Fail()
+		}
+	}
+}
+
+/*
+goos: linux - WSL2
+goarch: amd64
+pkg: github.com/Kyagara/equinox/test/benchmark
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkInternalCachedSummonerByPUUID-16 316039 3766 ns/op 1024 B/op 7 allocs/op
+BenchmarkInternalCachedSummonerByPUUID-16 325017 3594 ns/op 1024 B/op 7 allocs/op
+BenchmarkInternalCachedSummonerByPUUID-16 312504 3684 ns/op 1024 B/op 7 allocs/op
+BenchmarkInternalCachedSummonerByPUUID-16 311102 3653 ns/op 1024 B/op 7 allocs/op
+BenchmarkInternalCachedSummonerByPUUID-16 327607 3721 ns/op 1024 B/op 7 allocs/op
 */
 func BenchmarkInternalCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
@@ -36,11 +73,16 @@ func BenchmarkInternalCachedSummonerByPUUID(b *testing.B) {
 	client, err := equinox.NewClient("RGAPI-TEST")
 	require.NoError(b, err)
 
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-		require.NoError(b, err)
-		require.Equal(b, "Phanes", data.Name)
+		if err != nil {
+			b.Fail()
+		}
+		if data.Name != "Phanes" {
+			b.Fail()
+		}
 	}
 }
 
@@ -49,11 +91,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkRedisCachedSummonerByPUUID-16 22797 53065 ns/op 1151 B/op 14 allocs/op
-BenchmarkRedisCachedSummonerByPUUID-16 23408 52363 ns/op 1152 B/op 14 allocs/op
-BenchmarkRedisCachedSummonerByPUUID-16 23143 49585 ns/op 1152 B/op 14 allocs/op
-BenchmarkRedisCachedSummonerByPUUID-16 25165 52813 ns/op 1151 B/op 14 allocs/op
-BenchmarkRedisCachedSummonerByPUUID-16 23169 51766 ns/op 1152 B/op 14 allocs/op
+BenchmarkRedisCachedSummonerByPUUID-16 26541 47643 ns/op 1135 B/op 13 allocs/op
+BenchmarkRedisCachedSummonerByPUUID-16 27054 46633 ns/op 1136 B/op 13 allocs/op
+BenchmarkRedisCachedSummonerByPUUID-16 25658 45578 ns/op 1135 B/op 13 allocs/op
+BenchmarkRedisCachedSummonerByPUUID-16 26203 45947 ns/op 1135 B/op 13 allocs/op
+BenchmarkRedisCachedSummonerByPUUID-16 25495 47976 ns/op 1135 B/op 13 allocs/op
 */
 func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
@@ -77,42 +119,15 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 	config.Cache = cache
 	client := equinox.NewClientWithConfig(config)
 
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-		require.NoError(b, err)
-		require.Equal(b, "Phanes", data.Name)
-	}
-}
-
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkSummonerByPUUID-16 143720 8108 ns/op 1514 B/op 18 allocs/op
-BenchmarkSummonerByPUUID-16 145818 8021 ns/op 1514 B/op 18 allocs/op
-BenchmarkSummonerByPUUID-16 144967 7982 ns/op 1514 B/op 18 allocs/op
-BenchmarkSummonerByPUUID-16 140066 8181 ns/op 1514 B/op 18 allocs/op
-BenchmarkSummonerByPUUID-16 145996 7994 ns/op 1514 B/op 18 allocs/op
-*/
-func BenchmarkSummonerByPUUID(b *testing.B) {
-	b.ReportAllocs()
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
-
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client := equinox.NewClientWithConfig(config)
-
-	for i := 0; i < b.N; i++ {
-		ctx := context.Background()
-		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-		require.NoError(b, err)
-		require.Equal(b, "Phanes", data.Name)
+		if err != nil {
+			b.Fail()
+		}
+		if data.Name != "Phanes" {
+			b.Fail()
+		}
 	}
 }

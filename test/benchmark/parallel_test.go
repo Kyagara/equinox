@@ -8,27 +8,27 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/clients/ddragon"
+	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
 )
 
-// This revealed problems with multiple limits in a bucket, only the first bucket was being respected.
-//
-// The only thing that really matters here for benchmark purposes is B/op and allocs/op.
 /*
+The only thing that really matters here for benchmark purposes is B/op and allocs/op.
+
 goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelRateLimit-16 100 100043976 ns/op 3007 B/op 33 allocs/op
-BenchmarkParallelRateLimit-16 100 100038252 ns/op 2894 B/op 32 allocs/op
-BenchmarkParallelRateLimit-16 100 100059004 ns/op 3062 B/op 33 allocs/op
-BenchmarkParallelRateLimit-16 100 100040742 ns/op 2934 B/op 32 allocs/op
-BenchmarkParallelRateLimit-16 100 100045917 ns/op 2868 B/op 32 allocs/op
+BenchmarkParallelRateLimit-16 100 100046964 ns/op 2817 B/op 31 allocs/op
+BenchmarkParallelRateLimit-16 100 100046359 ns/op 2795 B/op 31 allocs/op
+BenchmarkParallelRateLimit-16 100 100051542 ns/op 2965 B/op 31 allocs/op
+BenchmarkParallelRateLimit-16 100 100048269 ns/op 2755 B/op 31 allocs/op
+BenchmarkParallelRateLimit-16 100 100044937 ns/op 2770 B/op 31 allocs/op
 */
 func BenchmarkParallelRateLimit(b *testing.B) {
 	b.ReportAllocs()
@@ -49,12 +49,17 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, 1*time.Second)
 	client := equinox.NewClientWithConfig(config)
 
+	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-			require.NoError(b, err)
-			require.Equal(b, "Phanes", data.Name)
+			if err != nil {
+				b.Fail()
+			}
+			if data.Name != "Phanes" {
+				b.Fail()
+			}
 		}
 	})
 }
@@ -64,43 +69,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelCachedSummonerByPUUID-16 278990 3961 ns/op 2246 B/op 8 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 300795 3995 ns/op 2159 B/op 8 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 284236 4077 ns/op 2224 B/op 8 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 300584 4184 ns/op 2159 B/op 8 allocs/op
-BenchmarkParallelCachedSummonerByPUUID-16 276688 4668 ns/op 2256 B/op 8 allocs/op
-*/
-func BenchmarkParallelCachedSummonerByPUUID(b *testing.B) {
-	b.ReportAllocs()
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
-
-	client, err := equinox.NewClient("RGAPI-TEST")
-	require.NoError(b, err)
-
-	b.RunParallel(func(pb *testing.PB) {
-		for pb.Next() {
-			ctx := context.Background()
-			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-			require.NoError(b, err)
-			require.Equal(b, "Phanes", data.Name)
-		}
-	})
-}
-
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelSummonerByPUUID-16 232520 4927 ns/op 1525 B/op 18 allocs/op
-BenchmarkParallelSummonerByPUUID-16 243302 4908 ns/op 1525 B/op 18 allocs/op
-BenchmarkParallelSummonerByPUUID-16 224158 4896 ns/op 1525 B/op 18 allocs/op
-BenchmarkParallelSummonerByPUUID-16 231002 4952 ns/op 1526 B/op 18 allocs/op
-BenchmarkParallelSummonerByPUUID-16 230145 4934 ns/op 1527 B/op 18 allocs/op
+BenchmarkParallelSummonerByPUUID-16 297469 3876 ns/op 1507 B/op 17 allocs/op
+BenchmarkParallelSummonerByPUUID-16 262147 3895 ns/op 1508 B/op 17 allocs/op
+BenchmarkParallelSummonerByPUUID-16 295494 3960 ns/op 1508 B/op 17 allocs/op
+BenchmarkParallelSummonerByPUUID-16 286360 3919 ns/op 1509 B/op 17 allocs/op
+BenchmarkParallelSummonerByPUUID-16 260604 3953 ns/op 1508 B/op 17 allocs/op
 */
 func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
@@ -115,12 +88,17 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	config.Retry = equinox.DefaultRetry()
 	client := equinox.NewClientWithConfig(config)
 
+	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
-			require.NoError(b, err)
-			require.Equal(b, "Phanes", data.Name)
+			if err != nil {
+				b.Fail()
+			}
+			if data.Name != "Phanes" {
+				b.Fail()
+			}
 		}
 	})
 }
@@ -130,45 +108,102 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelDDragonRealms-16 227568 5248 ns/op 1705 B/op 18 allocs/op
-BenchmarkParallelDDragonRealms-16 229098 5130 ns/op 1705 B/op 18 allocs/op
-BenchmarkParallelDDragonRealms-16 200659 5458 ns/op 1706 B/op 18 allocs/op
-BenchmarkParallelDDragonRealms-16 221775 5168 ns/op 1705 B/op 18 allocs/op
-BenchmarkParallelDDragonRealms-16 234630 5219 ns/op 1704 B/op 18 allocs/op
+BenchmarkParallelRedisCachedSummonerByPUUID-16 130348 8137 ns/op 1142 B/op 13 allocs/op
+BenchmarkParallelRedisCachedSummonerByPUUID-16 130482 8131 ns/op 1147 B/op 13 allocs/op
+BenchmarkParallelRedisCachedSummonerByPUUID-16 137911 8058 ns/op 1147 B/op 13 allocs/op
+BenchmarkParallelRedisCachedSummonerByPUUID-16 136819 8066 ns/op 1147 B/op 13 allocs/op
+BenchmarkParallelRedisCachedSummonerByPUUID-16 136263 8157 ns/op 1146 B/op 13 allocs/op
 */
-func BenchmarkParallelDDragonRealms(b *testing.B) {
+func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://ddragon.leagueoflegends.com/realms/na.json",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/realm.json")))
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
+
+	ctx := context.Background()
+	redisConfig := &redis.Options{
+		Network: "tcp",
+		Addr:    "127.0.0.1:6379",
+	}
+	cache, err := cache.NewRedis(ctx, redisConfig, 4*time.Minute)
+	require.NoError(b, err)
+
+	config := util.NewTestEquinoxConfig()
+	config.Logger = equinox.DefaultLogger()
+	config.Retry = equinox.DefaultRetry()
+	config.Cache = cache
+	client := equinox.NewClientWithConfig(config)
+
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			ctx := context.Background()
+			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+			if err != nil {
+				b.Fail()
+			}
+			if data.Name != "Phanes" {
+				b.Fail()
+			}
+		}
+	})
+}
+
+/*
+This function clones apiHeaders and adds a new Authorization header.
+
+goos: linux - WSL2
+goarch: amd64
+pkg: github.com/Kyagara/equinox/test/benchmark
+cpu: AMD Ryzen 7 2700 Eight-Core Processor
+BenchmarkParallelSummonerByAccessToken-16 242644 4476 ns/op 2182 B/op 25 allocs/op
+BenchmarkParallelSummonerByAccessToken-16 234915 4703 ns/op 2183 B/op 25 allocs/op
+BenchmarkParallelSummonerByAccessToken-16 259096 4523 ns/op 2182 B/op 25 allocs/op
+BenchmarkParallelSummonerByAccessToken-16 262804 4422 ns/op 2182 B/op 25 allocs/op
+BenchmarkParallelSummonerByAccessToken-16 251022 4775 ns/op 2184 B/op 25 allocs/op
+*/
+func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
+	b.ReportAllocs()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/me",
+		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
 	client := equinox.NewClientWithConfig(config)
 
+	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
-			data, err := client.DDragon.Realm.ByName(ctx, ddragon.NA)
-			require.NoError(b, err)
-			require.Equal(b, "13.24.1", data.V)
+			data, err := client.LOL.SummonerV4.ByAccessToken(ctx, lol.BR1, "accesstoken")
+			if err != nil {
+				b.Fail()
+			}
+			if data.Name != "Phanes" {
+				b.Fail()
+			}
 		}
 	})
 }
 
 /*
+This function has multiple http queries.
+
 goos: linux
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelMatchListByPUUID-16 177630 6101 ns/op 2823 B/op 34 allocs/op
-BenchmarkParallelMatchListByPUUID-16 193851 6562 ns/op 2823 B/op 34 allocs/op
-BenchmarkParallelMatchListByPUUID-16 168358 6158 ns/op 2822 B/op 34 allocs/op
-BenchmarkParallelMatchListByPUUID-16 190045 5902 ns/op 2823 B/op 34 allocs/op
-BenchmarkParallelMatchListByPUUID-16 182811 6005 ns/op 2825 B/op 34 allocs/op
+BenchmarkParallelMatchListByPUUID-16 240529 5072 ns/op 2802 B/op 33 allocs/op
+BenchmarkParallelMatchListByPUUID-16 232051 4994 ns/op 2802 B/op 33 allocs/op
+BenchmarkParallelMatchListByPUUID-16 234236 5013 ns/op 2803 B/op 33 allocs/op
+BenchmarkParallelMatchListByPUUID-16 218185 5074 ns/op 2804 B/op 33 allocs/op
+BenchmarkParallelMatchListByPUUID-16 222524 5005 ns/op 2805 B/op 33 allocs/op
 */
 func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	b.ReportAllocs()
@@ -183,12 +218,17 @@ func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	config.Retry = equinox.DefaultRetry()
 	client := equinox.NewClientWithConfig(config)
 
+	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
 			data, err := client.LOL.MatchV5.ListByPUUID(ctx, api.ASIA, "puuid", -1, -1, 420, "ranked", -1, 20)
-			require.NoError(b, err)
-			require.Equal(b, "KR_6841523755", data[0])
+			if err != nil {
+				b.Fail()
+			}
+			if data[0] != "KR_6841523755" {
+				b.Fail()
+			}
 		}
 	})
 }
