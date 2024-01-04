@@ -119,11 +119,10 @@ func main() {
 
 ## Todo
 
-- More tests for the internal client and rate limit
+- Add Redis store for rate limit
 - Maybe the context usage throughout the project could be improved
 - Maybe add more options to customize the rate limiter
-- Maybe add wrapped errors to improve error handling
-- Add Redis store for rate limit
+- More tests for the internal client and rate limit
 - Improve DDragon/CDragon support
 
 ## About
@@ -143,7 +142,7 @@ Projects not written in go:
 
 A rewrite of Riven's [code generation](https://github.com/MingweiSamuel/Riven/tree/v/2.x.x/riven/srcgen) is used in [equinox](https://github.com/Kyagara/equinox/tree/main/codegen).
 
-If cloning the project, make sure to have a `go.work` file in the root of the project so you can use `go generate` from the root.
+If cloning the project, make sure to have a `go.work` file in the root of the project, if you don't, you will get an error when trying to run `go generate`.
 
 ```
 go 1.21
