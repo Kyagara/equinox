@@ -264,6 +264,8 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 	i := internal.NewInternalClient(config)
 	require.True(t, i.IsRetryEnabled)
 
+	// All counts start at 1 here because only CheckRetryAfter and client.Do is being tested
+
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
 		httpmock.NewBytesResponder(429, []byte(`{}`)).HeaderSet(map[string][]string{
 			"X-Rate-Limit-Type":         {"application"},
@@ -272,7 +274,7 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 			"X-Method-Rate-Limit":       {"100:100"},
 			"X-Method-Rate-Limit-Count": {"1:100"},
 			"Retry-After":               {"1"},
-		}))
+		}).Times(2))
 
 	res := lol.PlatformDataV4DTO{}
 	l := i.Logger("client_endpoint_method")
@@ -292,7 +294,6 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 	_, err = i.ExecuteRaw(nil, equinoxReq)
 	require.Error(t, err)
 
-	// Won't block
 	ctx := context.Background()
 	equinoxReq, err = i.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
@@ -302,7 +303,6 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 	err = i.Execute(ctx, equinoxReq, &res)
 	require.ErrorIs(t, err, internal.ErrMaxRetries)
 
-	httpmock.Reset()
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
 		httpmock.NewBytesResponder(429, []byte(`{}`)).HeaderSet(map[string][]string{
 			"X-Rate-Limit-Type":         {"method"},
@@ -311,12 +311,28 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 			"X-Method-Rate-Limit":       {"100:100"},
 			"X-Method-Rate-Limit-Count": {"1:100"},
 			"Retry-After":               {"1"},
-		}))
+		}).Times(2))
 
 	// Method/Service rate limited
 	// This will take 2.5 seconds since it will retry one time. Retry-After + 0.5s of jitter
 	err = i.Execute(ctx, equinoxReq, &res)
 	require.ErrorIs(t, err, internal.ErrMaxRetries)
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewBytesResponder(429, []byte(`{}`)).HeaderSet(map[string][]string{
+			"X-App-Rate-Limit":          {"100:100"},
+			"X-App-Rate-Limit-Count":    {"1:100"},
+			"X-Method-Rate-Limit":       {"100:100"},
+			"X-Method-Rate-Limit-Count": {"1:100"},
+		}).Times(1))
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewBytesResponder(200, []byte(`{}`)))
+
+	// Method/Service rate limited
+	// This will take 2.5 seconds since it will retry one time and then succeed. DEFAULT_RETRY_AFTER + 0.5s of jitter
+	err = i.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
 }
 
 func TestGetDDragonLOLVersions(t *testing.T) {
