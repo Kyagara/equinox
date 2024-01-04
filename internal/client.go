@@ -219,6 +219,8 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 // The loop will always run at least once
 func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.Response, error) {
 	equinoxReq.Logger.Debug().Msg("Sending request")
+
+	var httpErr error
 	for i := 0; i < c.maxRetries+1; i++ {
 		response, err := c.http.Do(equinoxReq.Request)
 		if err != nil {
@@ -244,10 +246,11 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 				return nil, err
 			}
 		}
+		httpErr = err
 	}
 
 	equinoxReq.Logger.Error().Err(ErrMaxRetries).Msg("Request failed")
-	return nil, ErrMaxRetries
+	return nil, fmt.Errorf("%w: %w", ErrMaxRetries, httpErr)
 }
 
 func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, bool, error) {

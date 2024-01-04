@@ -120,14 +120,16 @@ func (r *RateLimit) CheckRetryAfter(route string, methodID string, headers http.
 		return DEFAULT_RETRY_AFTER
 	}
 
-	delayF, _ := strconv.ParseFloat(retryAfter, 32)
-	delay := time.Duration(delayF+0.5) * time.Second
-
-	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
+	delayF, err := strconv.Atoi(retryAfter)
+	if err != nil {
+		return DEFAULT_RETRY_AFTER
+	}
+	delay := time.Duration(delayF) * time.Second
 
 	r.mutex.Lock()
 	limits := r.Region[route]
 
+	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
 	if limitType == APP_RATE_LIMIT_TYPE {
 		limits.App.setDelay(delay)
 	} else {
