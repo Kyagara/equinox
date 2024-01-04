@@ -52,7 +52,7 @@ func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *
 		return "", err
 	}
 	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
-	equinoxReq.Request.Header.Set("Authorization", authorization)
+	equinoxReq.Request.Header.Add("Authorization", authorization)
 	var data string
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
@@ -86,7 +86,7 @@ func (e *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorizati
 		return nil, err
 	}
 	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
-	equinoxReq.Request.Header.Set("Authorization", authorization)
+	equinoxReq.Request.Header.Add("Authorization", authorization)
 	var data []DeckV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
@@ -129,7 +129,7 @@ func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, author
 		return nil, err
 	}
 	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
-	equinoxReq.Request.Header.Set("Authorization", authorization)
+	equinoxReq.Request.Header.Add("Authorization", authorization)
 	var data []CardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {

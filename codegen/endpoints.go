@@ -352,7 +352,7 @@ func formatAddHeaderParam(params []gjson.Result) []string {
 		if headerName == "authorization" {
 			headerName = "Authorization"
 		}
-		headers = append(headers, fmt.Sprintf(`equinoxReq.Request.Header.Set("%s", %s)`, headerName, name))
+		headers = append(headers, fmt.Sprintf(`equinoxReq.Request.Header.Add("%s", %s)`, headerName, name))
 	}
 	return headers
 }
@@ -397,7 +397,7 @@ func formatAddQueryParam(params []gjson.Result) []string {
 		}
 
 		queries = append(queries, fmt.Sprintf(`if %s {
-    values.Set("%s", %s)
+    values.Add("%s", %s)
 }`, condition, letHeaderName, value))
 	}
 	return queries

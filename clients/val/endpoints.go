@@ -51,7 +51,7 @@ func (e *ContentV1) Content(ctx context.Context, route PlatformRoute, locale str
 	}
 	values := url.Values{}
 	if locale != "" {
-		values.Set("locale", locale)
+		values.Add("locale", locale)
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data ContentV1DTO
@@ -196,10 +196,10 @@ func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId s
 	}
 	values := url.Values{}
 	if size != -1 {
-		values.Set("size", strconv.FormatInt(int64(size), 10))
+		values.Add("size", strconv.FormatInt(int64(size), 10))
 	}
 	if startIndex != -1 {
-		values.Set("startIndex", strconv.FormatInt(int64(startIndex), 10))
+		values.Add("startIndex", strconv.FormatInt(int64(startIndex), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
 	var data LeaderboardV1DTO

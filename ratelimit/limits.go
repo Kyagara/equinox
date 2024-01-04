@@ -18,7 +18,7 @@ type Limits struct {
 func NewLimits() *Limits {
 	return &Limits{
 		App:     NewLimit(APP_RATE_LIMIT_TYPE),
-		Methods: make(map[string]*Limit),
+		Methods: make(map[string]*Limit, 1),
 	}
 }
 

@@ -27,7 +27,12 @@ func NewInternalRateLimit(limitUsageFactor float32, intervalOverhead time.Durati
 	if intervalOverhead < 0 {
 		intervalOverhead = 1 * time.Second
 	}
-	return &RateLimit{Region: make(map[string]*Limits), LimitUsageFactor: limitUsageFactor, IntervalOverhead: intervalOverhead, Enabled: true}
+	return &RateLimit{
+		Region:           make(map[string]*Limits, 1),
+		LimitUsageFactor: limitUsageFactor,
+		IntervalOverhead: intervalOverhead,
+		Enabled:          true,
+	}
 }
 ```
 
@@ -79,20 +84,28 @@ func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitTy
 		return NewLimit(limitType)
 	}
 
-	limit := NewLimit(limitType)
-
 	limits := strings.Split(limitHeader, ",")
 	counts := strings.Split(countHeader, ",")
-	rates := make([]*Bucket, len(limits))
+
+	if len(limits) == 0 {
+		return NewLimit(limitType)
+	}
+
+	limit := &Limit{
+		buckets:    make([]*Bucket, len(limits)),
+		limitType:  limitType,
+		retryAfter: 0,
+		mutex:      sync.Mutex{},
+	}
 
 	for i, limitString := range limits {
 		baseLimit, interval := getNumbersFromPair(limitString)
 		count, _ := getNumbersFromPair(counts[i])
-		limit := int(math.Floor(math.Max(1, float64(baseLimit)*float64(r.LimitUsageFactor))))
-		rates[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, limit, limit-count)
+		newLimit := int(math.Max(1, float64(baseLimit)*r.LimitUsageFactor))
+		currentTokens := newLimit - count
+		limit.buckets[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, newLimit, currentTokens)
 	}
 
-	limit.buckets = rates
 	return limit
 }
 ```

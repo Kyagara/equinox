@@ -187,3 +187,39 @@ func TestCheckRetryAfter(t *testing.T) {
 	delay = r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
 	require.Equal(t, 10*time.Second, delay)
 }
+
+func TestWaitN(t *testing.T) {
+	t.Run("deadline not exceeded", func(t *testing.T) {
+		t.Parallel()
+
+		ctx := context.Background()
+		estimated := time.Now().Add(1 * time.Second)
+		duration := 2 * time.Second
+		err := ratelimit.WaitN(ctx, estimated, duration)
+		require.NoError(t, err)
+	})
+
+	t.Run("deadline exceeded", func(t *testing.T) {
+		t.Parallel()
+
+		ctx := context.Background()
+		duration := time.Second
+		ctx, cancel := context.WithTimeout(ctx, duration)
+		estimated := time.Now().Add(2 * time.Second)
+		err := ratelimit.WaitN(ctx, estimated, duration)
+		require.Equal(t, err, ratelimit.ErrContextDeadlineExceeded)
+		cancel()
+	})
+
+	t.Run("deadline exceeded", func(t *testing.T) {
+		t.Parallel()
+
+		ctx := context.Background()
+		ctx, cancel := context.WithCancel(ctx)
+		estimated := time.Now().Add(10 * time.Second)
+		duration := 5 * time.Second
+		cancel()
+		err := ratelimit.WaitN(ctx, estimated, duration)
+		require.Equal(t, err, context.Canceled)
+	})
+}
