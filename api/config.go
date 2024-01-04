@@ -25,26 +25,6 @@ type EquinoxConfig struct {
 	Retry Retry
 }
 
-// Retry configuration.
-type Retry struct {
-	// Retries are exponential, 0 disables retries
-	MaxRetries int
-	// In milliseconds
-	Jitter time.Duration
-}
-
-// Logger configuration.
-type Logger struct {
-	TimeFieldFormat string
-	Level           zerolog.Level
-	// Enables prettified logging
-	Pretty bool
-	// Prints the timestamp
-	EnableTimestamp bool
-	// Adds the equinox configuration to logs
-	EnableConfigLogging bool
-}
-
 func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
 	if c.Retry.MaxRetries > 0 {
 		encoder.Object("retry", c.Retry)
@@ -57,6 +37,14 @@ func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
 	}
 }
 
+// Retry configuration.
+type Retry struct {
+	// Retries are exponential, 0 disables retries
+	MaxRetries int
+	// In milliseconds
+	Jitter time.Duration
+}
+
 func (r Retry) MarshalZerologObject(encoder *zerolog.Event) {
 	if r.MaxRetries > 0 {
 		encoder.Int("max_retries", r.MaxRetries)
@@ -64,4 +52,16 @@ func (r Retry) MarshalZerologObject(encoder *zerolog.Event) {
 	if r.Jitter > 0 {
 		encoder.Dur("jitter", r.Jitter)
 	}
+}
+
+// Logger configuration.
+type Logger struct {
+	TimeFieldFormat string
+	Level           zerolog.Level
+	// Enables prettified logging
+	Pretty bool
+	// Prints the timestamp
+	EnableTimestamp bool
+	// Adds the equinox configuration to logs
+	EnableConfigLogging bool
 }

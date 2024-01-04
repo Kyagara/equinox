@@ -39,18 +39,31 @@ var (
 	ErrGatewayTimeout       = errors.New("gateway timeout")
 )
 
-var (
-	StatusCodeToError = map[int]error{
-		http.StatusBadRequest:           ErrBadRequest,
-		http.StatusUnauthorized:         ErrUnauthorized,
-		http.StatusForbidden:            ErrForbidden,
-		http.StatusNotFound:             ErrNotFound,
-		http.StatusMethodNotAllowed:     ErrMethodNotAllowed,
-		http.StatusUnsupportedMediaType: ErrUnsupportedMediaType,
-		http.StatusTooManyRequests:      ErrTooManyRequests,
-		http.StatusInternalServerError:  ErrInternalServer,
-		http.StatusBadGateway:           ErrBadGateway,
-		http.StatusServiceUnavailable:   ErrServiceUnavailable,
-		http.StatusGatewayTimeout:       ErrGatewayTimeout,
+func StatusCodeToError(statusCode int) error {
+	switch statusCode {
+	case http.StatusBadRequest:
+		return ErrBadRequest
+	case http.StatusUnauthorized:
+		return ErrUnauthorized
+	case http.StatusForbidden:
+		return ErrForbidden
+	case http.StatusNotFound:
+		return ErrNotFound
+	case http.StatusMethodNotAllowed:
+		return ErrMethodNotAllowed
+	case http.StatusUnsupportedMediaType:
+		return ErrUnsupportedMediaType
+	case http.StatusTooManyRequests:
+		return ErrTooManyRequests
+	case http.StatusInternalServerError:
+		return ErrInternalServer
+	case http.StatusBadGateway:
+		return ErrBadGateway
+	case http.StatusServiceUnavailable:
+		return ErrServiceUnavailable
+	case http.StatusGatewayTimeout:
+		return ErrGatewayTimeout
+	default:
+		return nil
 	}
-)
+}
