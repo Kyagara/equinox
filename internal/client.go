@@ -85,7 +85,7 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 	if config.Retry.MaxRetries == 0 {
 		config.Retry.MaxRetries = 1
 	}
-	apiHeaders.Add("X-Riot-Token", config.Key)
+	apiHeaders.Set("X-Riot-Token", config.Key)
 	return client
 }
 
