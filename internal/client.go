@@ -48,7 +48,7 @@ var (
 		"User-Agent": {"equinox - https://github.com/Kyagara/equinox"},
 	}
 	apiHeaders = http.Header{
-		"X-Riot-Token": {""},
+		"X-Riot-Token": {},
 		"Accept":       {"application/json"},
 		"Content-Type": {"application/json"},
 		"User-Agent":   {"equinox - https://github.com/Kyagara/equinox"},
@@ -71,7 +71,7 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 		http: config.HTTPClient,
 		loggers: Loggers{
 			main:    NewLogger(config),
-			methods: make(map[string]zerolog.Logger, 5),
+			methods: make(map[string]zerolog.Logger, 1),
 			mutex:   sync.Mutex{},
 		},
 		cache:              config.Cache,
@@ -85,7 +85,7 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 	if config.Retry.MaxRetries == 0 {
 		config.Retry.MaxRetries = 1
 	}
-	apiHeaders.Set("X-Riot-Token", config.Key)
+	apiHeaders.Add("X-Riot-Token", config.Key)
 	return client
 }
 

@@ -82,7 +82,7 @@ func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, 
 		return nil, err
 	}
 	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
-	equinoxReq.Request.Header.Set("Authorization", authorization)
+	equinoxReq.Request.Header.Add("Authorization", authorization)
 	var data AccountV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
