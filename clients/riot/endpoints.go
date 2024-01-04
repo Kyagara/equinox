@@ -31,9 +31,9 @@ type AccountV1 struct {
 // Get active shard for a player
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `game`
-//   - `puuid`
+//   - route : Route to query.
+//   - game
+//   - puuid
 //
 // # Riot API Reference
 //
@@ -61,8 +61,8 @@ func (e *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRoute, ga
 // Get account by access token
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `Authorization`
+//   - route : Route to query.
+//   - Authorization
 //
 // # Riot API Reference
 //
@@ -95,8 +95,8 @@ func (e *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, 
 // Get account by puuid
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `puuid`
+//   - route : Route to query.
+//   - puuid
 //
 // # Riot API Reference
 //
@@ -124,9 +124,9 @@ func (e *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute, puuid 
 // Get account by riot id
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `tagLine` - When querying for a player by their riot id, the gameName and tagLine query params are required.
-//   - `gameName` - When querying for a player by their riot id, the gameName and tagLine query params are required.
+//   - route : Route to query.
+//   - tagLine : When querying for a player by their riot id, the gameName and tagLine query params are required.
+//   - gameName : When querying for a player by their riot id, the gameName and tagLine query params are required.
 //
 // # Riot API Reference
 //

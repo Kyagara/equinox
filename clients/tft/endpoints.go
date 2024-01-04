@@ -33,8 +33,8 @@ type LeagueV1 struct {
 // Get league with given ID, including inactive entries.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `leagueId` - The UUID of the league.
+//   - route : Route to query.
+//   - leagueId : The UUID of the league.
 //
 // # Riot API Reference
 //
@@ -62,8 +62,8 @@ func (e *LeagueV1) ByID(ctx context.Context, route PlatformRoute, leagueId strin
 // Get the challenger league.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `queue` (optional) - Defaults to RANKED_TFT.
+//   - route : Route to query.
+//   - queue (optional) : Defaults to RANKED_TFT.
 //
 // # Riot API Reference
 //
@@ -96,11 +96,11 @@ func (e *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformRoute, q
 // Get all the league entries.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `tier`
-//   - `division`
-//   - `queue` (optional) - Defaults to RANKED_TFT.
-//   - `page` (optional) - Defaults to 1. Starts with page 1.
+//   - route : Route to query.
+//   - tier
+//   - division
+//   - queue (optional) : Defaults to RANKED_TFT.
+//   - page (optional) : Defaults to 1. Starts with page 1.
 //
 // # Riot API Reference
 //
@@ -136,8 +136,8 @@ func (e *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, 
 // Get the grandmaster league.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `queue` (optional) - Defaults to RANKED_TFT.
+//   - route : Route to query.
+//   - queue (optional) : Defaults to RANKED_TFT.
 //
 // # Riot API Reference
 //
@@ -170,8 +170,8 @@ func (e *LeagueV1) GrandmasterByQueue(ctx context.Context, route PlatformRoute, 
 // Get the master league.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `queue` (optional) - Defaults to RANKED_TFT.
+//   - route : Route to query.
+//   - queue (optional) : Defaults to RANKED_TFT.
 //
 // # Riot API Reference
 //
@@ -204,8 +204,8 @@ func (e *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute, queue
 // Get league entries for a given summoner ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `summonerId`
+//   - route : Route to query.
+//   - summonerId
 //
 // # Riot API Reference
 //
@@ -233,8 +233,8 @@ func (e *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, sum
 // Get the top rated ladder for given queue
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `queue`
+//   - route : Route to query.
+//   - queue
 //
 // # Riot API Reference
 //
@@ -271,8 +271,8 @@ type MatchV1 struct {
 // Get a match by match id
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `matchId`
+//   - route : Route to query.
+//   - matchId
 //
 // # Riot API Reference
 //
@@ -300,12 +300,12 @@ func (e *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId str
 // Get a list of match ids by PUUID
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `puuid`
-//   - `start` (optional) - Defaults to 0. Start index.
-//   - `endTime` (optional) - Epoch timestamp in seconds.
-//   - `startTime` (optional) - Epoch timestamp in seconds. The matchlist started storing timestamps on June 16th, 2021. Any matches played before June 16th, 2021 won't be included in the results if the startTime filter is set.
-//   - `count` (optional) - Defaults to 20. Number of match ids to return.
+//   - route : Route to query.
+//   - puuid
+//   - start (optional) : Defaults to 0. Start index.
+//   - endTime (optional) : Epoch timestamp in seconds.
+//   - startTime (optional) : Epoch timestamp in seconds. The matchlist started storing timestamps on June 16th, 2021. Any matches played before June 16th, 2021 won't be included in the results if the startTime filter is set.
+//   - count (optional) : Defaults to 20. Number of match ids to return.
 //
 // # Riot API Reference
 //
@@ -356,7 +356,7 @@ type StatusV1 struct {
 // Get Teamfight Tactics status for the given platform.
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -393,8 +393,8 @@ type SummonerV1 struct {
 // Get a summoner by access token.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `Authorization` (optional) - Bearer token.
+//   - route : Route to query.
+//   - Authorization (optional) : Bearer token.
 //
 // # Riot API Reference
 //
@@ -427,8 +427,8 @@ func (e *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, aut
 // Get a summoner by account ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedAccountId`
+//   - route : Route to query.
+//   - encryptedAccountId
 //
 // # Riot API Reference
 //
@@ -456,8 +456,8 @@ func (e *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute, encry
 // Get a summoner by summoner name.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `summonerName` - Summoner Name
+//   - route : Route to query.
+//   - summonerName : Summoner Name
 //
 // # Riot API Reference
 //
@@ -485,8 +485,8 @@ func (e *SummonerV1) ByName(ctx context.Context, route PlatformRoute, summonerNa
 // Get a summoner by PUUID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedPUUID` - Summoner ID
+//   - route : Route to query.
+//   - encryptedPUUID : Summoner ID
 //
 // # Riot API Reference
 //
@@ -514,8 +514,8 @@ func (e *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, encrypted
 // Get a summoner by summoner ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedSummonerId` - Summoner ID
+//   - route : Route to query.
+//   - encryptedSummonerId : Summoner ID
 //
 // # Riot API Reference
 //

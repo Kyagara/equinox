@@ -33,7 +33,7 @@ type ChallengesV1 struct {
 // List of all basic challenge configuration information (includes all translations for names and descriptions)
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -61,7 +61,7 @@ func (e *ChallengesV1) AllChallengeConfigs(ctx context.Context, route PlatformRo
 // Map of level to percentile of players who have achieved it - keys: ChallengeId -> Season -> Level -> percentile of players who achieved it
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -89,8 +89,8 @@ func (e *ChallengesV1) AllChallengePercentiles(ctx context.Context, route Platfo
 // Returns player information with list of all progressed challenges (REST)
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `puuid`
+//   - route : Route to query.
+//   - puuid
 //
 // # Riot API Reference
 //
@@ -118,8 +118,8 @@ func (e *ChallengesV1) ByPUUID(ctx context.Context, route PlatformRoute, puuid s
 // Get challenge configuration (REST)
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `challengeId`
+//   - route : Route to query.
+//   - challengeId
 //
 // # Riot API Reference
 //
@@ -147,10 +147,10 @@ func (e *ChallengesV1) ChallengeConfigs(ctx context.Context, route PlatformRoute
 // Return top players for each level. Level must be MASTER, GRANDMASTER or CHALLENGER.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `level`
-//   - `challengeId`
-//   - `limit` (optional)
+//   - route : Route to query.
+//   - level
+//   - challengeId
+//   - limit (optional)
 //
 // # Riot API Reference
 //
@@ -183,8 +183,8 @@ func (e *ChallengesV1) ChallengeLeaderboards(ctx context.Context, route Platform
 // Map of level to percentile of players who have achieved it
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `challengeId`
+//   - route : Route to query.
+//   - challengeId
 //
 // # Riot API Reference
 //
@@ -221,8 +221,8 @@ type ChampionMasteryV4 struct {
 // Get all champion mastery entries sorted by number of champion points descending.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedPUUID`
+//   - route : Route to query.
+//   - encryptedPUUID
 //
 // # Riot API Reference
 //
@@ -250,9 +250,9 @@ func (e *ChampionMasteryV4) AllMasteriesByPUUID(ctx context.Context, route Platf
 // Get a champion mastery by puuid and champion ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedPUUID`
-//   - `championId` - Champion ID to retrieve Champion Mastery.
+//   - route : Route to query.
+//   - encryptedPUUID
+//   - championId : Champion ID to retrieve Champion Mastery.
 //
 // # Riot API Reference
 //
@@ -280,8 +280,8 @@ func (e *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route PlatformRo
 // Get a player's total champion mastery score, which is the sum of individual champion mastery levels.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedPUUID`
+//   - route : Route to query.
+//   - encryptedPUUID
 //
 // # Riot API Reference
 //
@@ -309,9 +309,9 @@ func (e *ChampionMasteryV4) MasteryScoreByPUUID(ctx context.Context, route Platf
 // Get specified number of top champion mastery entries sorted by number of champion points descending.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedPUUID`
-//   - `count` (optional) - Number of entries to retrieve, defaults to 3.
+//   - route : Route to query.
+//   - encryptedPUUID
+//   - count (optional) : Number of entries to retrieve, defaults to 3.
 //
 // # Riot API Reference
 //
@@ -353,7 +353,7 @@ type ChampionV3 struct {
 // Returns champion rotations, including free-to-play and low-level free-to-play rotations (REST)
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -390,8 +390,8 @@ type ClashV1 struct {
 // Get tournament by ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `tournamentId`
+//   - route : Route to query.
+//   - tournamentId
 //
 // # Riot API Reference
 //
@@ -419,8 +419,8 @@ func (e *ClashV1) ByID(ctx context.Context, route PlatformRoute, tournamentId in
 // Get tournament by team ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `teamId`
+//   - route : Route to query.
+//   - teamId
 //
 // # Riot API Reference
 //
@@ -452,8 +452,8 @@ func (e *ClashV1) ByTeamID(ctx context.Context, route PlatformRoute, teamId stri
 // This endpoint returns a list of active Clash players for a given summoner ID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `summonerId`
+//   - route : Route to query.
+//   - summonerId
 //
 // # Riot API Reference
 //
@@ -481,8 +481,8 @@ func (e *ClashV1) SummonerEntriesBySummonerID(ctx context.Context, route Platfor
 // Get team by ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `teamId`
+//   - route : Route to query.
+//   - teamId
 //
 // # Riot API Reference
 //
@@ -510,7 +510,7 @@ func (e *ClashV1) TeamByTeamID(ctx context.Context, route PlatformRoute, teamId 
 // Get all active or upcoming tournaments.
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -547,11 +547,11 @@ type LeagueExpV4 struct {
 // Get all the league entries.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `queue` - Note that the queue value must be a valid ranked queue.
-//   - `tier`
-//   - `division`
-//   - `page` (optional) - Defaults to 1. Starts with page 1.
+//   - route : Route to query.
+//   - queue : Note that the queue value must be a valid ranked queue.
+//   - tier
+//   - division
+//   - page (optional) : Defaults to 1. Starts with page 1.
 //
 // # Riot API Reference
 //
@@ -593,8 +593,8 @@ type LeagueV4 struct {
 // Get league with given ID, including inactive entries.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `leagueId` - The UUID of the league.
+//   - route : Route to query.
+//   - leagueId : The UUID of the league.
 //
 // # Riot API Reference
 //
@@ -622,8 +622,8 @@ func (e *LeagueV4) ByID(ctx context.Context, route PlatformRoute, leagueId strin
 // Get the challenger league for given queue.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `queue`
+//   - route : Route to query.
+//   - queue
 //
 // # Riot API Reference
 //
@@ -651,11 +651,11 @@ func (e *LeagueV4) ChallengerByQueue(ctx context.Context, route PlatformRoute, q
 // Get all the league entries.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `division`
-//   - `tier`
-//   - `queue` - Note that the queue value must be a valid ranked queue.
-//   - `page` (optional) - Defaults to 1. Starts with page 1.
+//   - route : Route to query.
+//   - division
+//   - tier
+//   - queue : Note that the queue value must be a valid ranked queue.
+//   - page (optional) : Defaults to 1. Starts with page 1.
 //
 // # Riot API Reference
 //
@@ -688,8 +688,8 @@ func (e *LeagueV4) Entries(ctx context.Context, route PlatformRoute, queue Queue
 // Get the grandmaster league of a specific queue.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `queue`
+//   - route : Route to query.
+//   - queue
 //
 // # Riot API Reference
 //
@@ -717,8 +717,8 @@ func (e *LeagueV4) GrandmasterByQueue(ctx context.Context, route PlatformRoute, 
 // Get the master league for given queue.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `queue`
+//   - route : Route to query.
+//   - queue
 //
 // # Riot API Reference
 //
@@ -746,8 +746,8 @@ func (e *LeagueV4) MasterByQueue(ctx context.Context, route PlatformRoute, queue
 // Get league entries in all queues for a given summoner ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedSummonerId`
+//   - route : Route to query.
+//   - encryptedSummonerId
 //
 // # Riot API Reference
 //
@@ -784,8 +784,8 @@ type MatchV5 struct {
 // Get a match by match id
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `matchId`
+//   - route : Route to query.
+//   - matchId
 //
 // # Riot API Reference
 //
@@ -813,14 +813,14 @@ func (e *MatchV5) ByID(ctx context.Context, route api.RegionalRoute, matchId str
 // Get a list of match ids by puuid
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `puuid`
-//   - `startTime` (optional) - Epoch timestamp in seconds. The matchlist started storing timestamps on June 16th, 2021. Any matches played before June 16th, 2021 won't be included in the results if the startTime filter is set.
-//   - `endTime` (optional) - Epoch timestamp in seconds.
-//   - `queue` (optional) - Filter the list of match ids by a specific queue id. This filter is mutually inclusive of the type filter meaning any match ids returned must match both the queue and type filters.
-//   - `type` (optional) - Filter the list of match ids by the type of match. This filter is mutually inclusive of the queue filter meaning any match ids returned must match both the queue and type filters.
-//   - `start` (optional) - Defaults to 0. Start index.
-//   - `count` (optional) - Defaults to 20. Valid values: 0 to 100. Number of match ids to return.
+//   - route : Route to query.
+//   - puuid
+//   - startTime (optional) : Epoch timestamp in seconds. The matchlist started storing timestamps on June 16th, 2021. Any matches played before June 16th, 2021 won't be included in the results if the startTime filter is set.
+//   - endTime (optional) : Epoch timestamp in seconds.
+//   - queue (optional) : Filter the list of match ids by a specific queue id. This filter is mutually inclusive of the type filter meaning any match ids returned must match both the queue and type filters.
+//   - type (optional) : Filter the list of match ids by the type of match. This filter is mutually inclusive of the queue filter meaning any match ids returned must match both the queue and type filters.
+//   - start (optional) : Defaults to 0. Start index.
+//   - count (optional) : Defaults to 20. Valid values: 0 to 100. Number of match ids to return.
 //
 // # Riot API Reference
 //
@@ -868,8 +868,8 @@ func (e *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRoute, puui
 // Get a match timeline by match id
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `matchId`
+//   - route : Route to query.
+//   - matchId
 //
 // # Riot API Reference
 //
@@ -906,8 +906,8 @@ type SpectatorV4 struct {
 // Get current game information for the given summoner ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedSummonerId` - The ID of the summoner.
+//   - route : Route to query.
+//   - encryptedSummonerId : The ID of the summoner.
 //
 // # Riot API Reference
 //
@@ -935,7 +935,7 @@ func (e *SpectatorV4) CurrentGameBySummonerID(ctx context.Context, route Platfor
 // Get list of featured games.
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -974,7 +974,7 @@ type StatusV3 struct {
 // Requests to this API are not counted against the application Rate Limits.
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -1011,7 +1011,7 @@ type StatusV4 struct {
 // Get League of Legends status for the given platform.
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -1048,8 +1048,8 @@ type SummonerV4 struct {
 // Get a summoner by access token.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `Authorization` (optional) - Bearer token
+//   - route : Route to query.
+//   - Authorization (optional) : Bearer token
 //
 // # Riot API Reference
 //
@@ -1082,8 +1082,8 @@ func (e *SummonerV4) ByAccessToken(ctx context.Context, route PlatformRoute, aut
 // Get a summoner by account ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedAccountId`
+//   - route : Route to query.
+//   - encryptedAccountId
 //
 // # Riot API Reference
 //
@@ -1111,8 +1111,8 @@ func (e *SummonerV4) ByAccountID(ctx context.Context, route PlatformRoute, encry
 // Get a summoner by summoner name.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `summonerName` - Summoner Name
+//   - route : Route to query.
+//   - summonerName : Summoner Name
 //
 // # Riot API Reference
 //
@@ -1140,8 +1140,8 @@ func (e *SummonerV4) ByName(ctx context.Context, route PlatformRoute, summonerNa
 // Get a summoner by PUUID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedPUUID` - Summoner ID
+//   - route : Route to query.
+//   - encryptedPUUID : Summoner ID
 //
 // # Riot API Reference
 //
@@ -1169,8 +1169,8 @@ func (e *SummonerV4) ByPUUID(ctx context.Context, route PlatformRoute, encrypted
 // Get a summoner by its RSO encrypted PUUID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `rsoPUUID` - Summoner ID
+//   - route : Route to query.
+//   - rsoPUUID : Summoner ID
 //
 // # Riot API Reference
 //
@@ -1198,8 +1198,8 @@ func (e *SummonerV4) ByRSOPUUID(ctx context.Context, route PlatformRoute, rsoPUU
 // Get a summoner by summoner ID.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `encryptedSummonerId` - Summoner ID
+//   - route : Route to query.
+//   - encryptedSummonerId : Summoner ID
 //
 // # Riot API Reference
 //
@@ -1236,9 +1236,9 @@ type TournamentStubV5 struct {
 // Create a tournament code for the given tournament - Stub method
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `count` (optional) - The number of codes to create (max 1000)
-//   - `tournamentId` - The tournament ID
+//   - route : Route to query.
+//   - count (optional) : The number of codes to create (max 1000)
+//   - tournamentId : The tournament ID
 //
 // # Riot API Reference
 //
@@ -1274,8 +1274,8 @@ func (e *TournamentStubV5) CreateTournamentCode(ctx context.Context, route api.R
 // Gets a list of lobby events by tournament code - Stub method
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `tournamentCode` - The short code to look up lobby events for
+//   - route : Route to query.
+//   - tournamentCode : The short code to look up lobby events for
 //
 // # Riot API Reference
 //
@@ -1307,7 +1307,7 @@ func (e *TournamentStubV5) LobbyEventsByCode(ctx context.Context, route api.Regi
 // Providers will need to call this endpoint first to register their callback URL and their API key with the tournament system before any other tournament provider endpoints will work.
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -1335,7 +1335,7 @@ func (e *TournamentStubV5) RegisterProviderData(ctx context.Context, route api.R
 // Creates a tournament and returns its ID - Stub method
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -1363,8 +1363,8 @@ func (e *TournamentStubV5) RegisterTournament(ctx context.Context, route api.Reg
 // Returns the tournament code DTO associated with a tournament code string - Stub Method
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `tournamentCode` - The tournament code string.
+//   - route : Route to query.
+//   - tournamentCode : The tournament code string.
 //
 // # Riot API Reference
 //
@@ -1401,9 +1401,9 @@ type TournamentV5 struct {
 // Create a tournament code for the given tournament.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `tournamentId` - The tournament ID
-//   - `count` (optional) - The number of codes to create (max 1000)
+//   - route : Route to query.
+//   - tournamentId : The tournament ID
+//   - count (optional) : The number of codes to create (max 1000)
 //
 // # Riot API Reference
 //
@@ -1447,8 +1447,8 @@ func (e *TournamentV5) CreateTournamentCode(ctx context.Context, route api.Regio
 // This will only work for tournament codes created after November 10, 2023.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `tournamentCode`
+//   - route : Route to query.
+//   - tournamentCode
 //
 // # Riot API Reference
 //
@@ -1476,8 +1476,8 @@ func (e *TournamentV5) Games(ctx context.Context, route api.RegionalRoute, tourn
 // Gets a list of lobby events by tournament code.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `tournamentCode` - The short code to look up lobby events for
+//   - route : Route to query.
+//   - tournamentCode : The short code to look up lobby events for
 //
 // # Riot API Reference
 //
@@ -1509,7 +1509,7 @@ func (e *TournamentV5) LobbyEventsByCode(ctx context.Context, route api.Regional
 // Providers will need to call this endpoint first to register their callback URL and their API key with the tournament system before any other tournament provider endpoints will work.
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -1537,7 +1537,7 @@ func (e *TournamentV5) RegisterProviderData(ctx context.Context, route api.Regio
 // Creates a tournament and returns its ID.
 //
 // # Parameters
-//   - `route` - Route to query.
+//   - route : Route to query.
 //
 // # Riot API Reference
 //
@@ -1565,8 +1565,8 @@ func (e *TournamentV5) RegisterTournament(ctx context.Context, route api.Regiona
 // Returns the tournament code DTO associated with a tournament code string.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `tournamentCode` - The tournament code string.
+//   - route : Route to query.
+//   - tournamentCode : The tournament code string.
 //
 // # Riot API Reference
 //
@@ -1594,8 +1594,8 @@ func (e *TournamentV5) TournamentCode(ctx context.Context, route api.RegionalRou
 // Update the pick type, map, spectator type, or allowed puuids for a code.
 //
 // # Parameters
-//   - `route` - Route to query.
-//   - `tournamentCode` - The tournament code to update
+//   - route : Route to query.
+//   - tournamentCode : The tournament code to update
 //
 // # Riot API Reference
 //
