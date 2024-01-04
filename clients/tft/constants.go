@@ -102,7 +102,7 @@ const (
 	LA2 PlatformRoute = "la2"
 	// North America.
 	NA1 PlatformRoute = "na1"
-	// Oceana.
+	// Oceania.
 	OC1 PlatformRoute = "oc1"
 	// Public Beta Environment, special beta testing platform. Located in North America.
 	PBE1 PlatformRoute = "pbe1"

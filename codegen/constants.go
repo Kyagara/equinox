@@ -37,12 +37,15 @@ func getRouteConstants(routesTable gjson.Result, routeType string) map[string]Ro
 	return routes
 }
 
-func getGenericConstants(table gjson.Result) map[string]GenericConstant {
+func getGenericConstants(table gjson.Result, constName string) map[string]GenericConstant {
 	consts := make(map[string]GenericConstant, len(table.Map()))
 
 	for _, item := range table.Array() {
 		desc := item.Get("x-desc").String()
 		name := item.Get("x-name").String()
+		if name == "CHERRY" {
+			name += "_" + constName
+		}
 		deprecated := item.Get("x-deprecated").Bool()
 
 		consts[name] = GenericConstant{

@@ -102,7 +102,7 @@ const (
 	LA2 PlatformRoute = "la2"
 	// North America.
 	NA1 PlatformRoute = "na1"
-	// Oceana.
+	// Oceania.
 	OC1 PlatformRoute = "oc1"
 	// Public Beta Environment, special beta testing platform. Located in North America.
 	PBE1 PlatformRoute = "pbe1"
@@ -181,7 +181,7 @@ const (
 	LAS TournamentRegion = "las"
 	// North America.
 	NA TournamentRegion = "na"
-	// Oceana.
+	// Oceania.
 	OCE TournamentRegion = "oce"
 	// Public Beta Environment, special beta testing platform. Located in North America.
 	PBE TournamentRegion = "pbe"
@@ -255,7 +255,7 @@ const (
 	// Blood Hunt Assassin games
 	ASSASSINATE GameMode = "ASSASSINATE"
 	// 2v2v2v2
-	CHERRY GameMode = "CHERRY"
+	CHERRY_GAMEMODE GameMode = "CHERRY_GameMode"
 	// Classic Summoner's Rift and Twisted Treeline games
 	CLASSIC GameMode = "CLASSIC"
 	// Dark Star: Singularity games
@@ -308,8 +308,8 @@ func (gameMode GameMode) String() string {
 		return "ASCENSION"
 	case ASSASSINATE:
 		return "ASSASSINATE"
-	case CHERRY:
-		return "CHERRY"
+	case CHERRY_GAMEMODE:
+		return "CHERRY_GameMode"
 	case CLASSIC:
 		return "CLASSIC"
 	case DARKSTAR:
@@ -359,6 +359,8 @@ func (gameMode GameMode) String() string {
 type QueueType string
 
 const (
+	// 2v2v2v2 "Arena" games
+	CHERRY_QUEUETYPE QueueType = "CHERRY_QueueType"
 	// 5v5 Ranked Flex games
 	RANKED_FLEX_SR QueueType = "RANKED_FLEX_SR"
 	// 3v3 Ranked Flex games
@@ -371,6 +373,8 @@ const (
 
 func (queue QueueType) String() string {
 	switch queue {
+	case CHERRY_QUEUETYPE:
+		return "CHERRY_QueueType"
 	case RANKED_FLEX_SR:
 		return "RANKED_FLEX_SR"
 	case RANKED_FLEX_TT:
