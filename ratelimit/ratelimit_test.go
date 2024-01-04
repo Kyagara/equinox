@@ -183,6 +183,10 @@ func TestCheckRetryAfter(t *testing.T) {
 	delay := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
 	require.Equal(t, 2*time.Second, delay)
 
+	headers.Set(ratelimit.RETRY_AFTER_HEADER, "asdf")
+	delay = r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
+	require.Equal(t, 2*time.Second, delay)
+
 	headers.Set(ratelimit.RETRY_AFTER_HEADER, "10")
 	delay = r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
 	require.Equal(t, 10*time.Second, delay)
