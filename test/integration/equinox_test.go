@@ -52,7 +52,7 @@ func init() {
 			Timeout: 15 * time.Second,
 		},
 		Cache:     cache,
-		RateLimit: ratelimit.NewInternalRateLimit(0.99, 1*time.Second),
+		RateLimit: ratelimit.NewInternalRateLimit(0.99, time.Second),
 		Retry:     api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond},
 		Logger:    util.TestLogger(),
 	}
