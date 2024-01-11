@@ -54,7 +54,7 @@ func NewInternalRateLimit(limitUsageFactor float64, intervalOverhead time.Durati
 		limitUsageFactor = 0.99
 	}
 	if intervalOverhead < 0 {
-		intervalOverhead = 1 * time.Second
+		intervalOverhead = time.Second
 	}
 	return &RateLimit{
 		Region:           make(map[string]*Limits, 1),

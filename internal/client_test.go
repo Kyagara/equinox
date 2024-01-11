@@ -260,7 +260,7 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 
 	config := util.NewTestEquinoxConfig()
 	config.Retry = api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond}
-	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, 1*time.Second)
+	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
 	i := internal.NewInternalClient(config)
 	require.True(t, i.IsRetryEnabled)
 

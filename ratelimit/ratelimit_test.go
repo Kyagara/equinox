@@ -24,7 +24,7 @@ func TestNewLimits(t *testing.T) {
 
 func TestNewInternalRateLimit(t *testing.T) {
 	t.Parallel()
-	rateLimit := ratelimit.NewInternalRateLimit(0.99, 1*time.Second)
+	rateLimit := ratelimit.NewInternalRateLimit(0.99, time.Second)
 	require.NotNil(t, rateLimit)
 	require.Empty(t, rateLimit.Region)
 	require.True(t, rateLimit.Enabled)
@@ -37,7 +37,7 @@ func TestNewInternalRateLimit(t *testing.T) {
 	require.NotEmpty(t, rateLimit.Region["route"].Methods["method"])
 	rateLimit = ratelimit.NewInternalRateLimit(-1, -1)
 	require.Equal(t, float64(0.99), rateLimit.LimitUsageFactor)
-	require.Equal(t, 1*time.Second, rateLimit.IntervalOverhead)
+	require.Equal(t, time.Second, rateLimit.IntervalOverhead)
 }
 
 func TestRateLimitCheck(t *testing.T) {
@@ -112,7 +112,7 @@ func TestRateLimitCheck(t *testing.T) {
 func TestLimitsDontMatch(t *testing.T) {
 	t.Parallel()
 	config := util.NewTestEquinoxConfig()
-	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, 1*time.Second)
+	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
 	client := internal.NewInternalClient(config)
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",
@@ -128,7 +128,7 @@ func TestLimitsDontMatch(t *testing.T) {
 		ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},
 	}
 
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(1*time.Second))
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second))
 	defer cancel()
 
 	// Used here just to populate the Limits
@@ -197,7 +197,7 @@ func TestWaitN(t *testing.T) {
 		t.Parallel()
 
 		ctx := context.Background()
-		estimated := time.Now().Add(1 * time.Second)
+		estimated := time.Now().Add(time.Second)
 		duration := 2 * time.Second
 		err := ratelimit.WaitN(ctx, estimated, duration)
 		require.NoError(t, err)

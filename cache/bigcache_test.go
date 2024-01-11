@@ -17,7 +17,7 @@ func TestNewBigCache(t *testing.T) {
 	c, err := cache.NewBigCache(ctx, config)
 	require.NoError(t, err)
 	require.NotEmpty(t, c)
-	invalidConfig := bigcache.Config{LifeWindow: -1 * time.Minute}
+	invalidConfig := bigcache.Config{LifeWindow: -time.Minute}
 	c, err = cache.NewBigCache(ctx, invalidConfig)
 	require.NotEmpty(t, err)
 	require.Nil(t, c)
