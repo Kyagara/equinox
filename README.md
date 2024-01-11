@@ -119,7 +119,7 @@ func main() {
 
 ## Todo
 
-- Add Redis store for rate limit
+- Add Redis store for rate limit, using a lua script
 - Maybe the context usage throughout the project could be improved
 - Maybe add more options to customize the rate limiter
 - More tests for the internal client and rate limit
