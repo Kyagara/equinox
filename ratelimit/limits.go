@@ -61,11 +61,14 @@ func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route s
 				Str("limit_type", l.limitType).
 				Object("bucket", bucket).
 				Msg("Rate limited")
+
 			err := WaitN(ctx, bucket.next, time.Until(bucket.next))
 			if err != nil {
 				bucket.mutex.Unlock()
 				return err
 			}
+
+			// 'next' reset is now in the past, so reset the bucket
 			bucket.check()
 			bucket.tokens++
 		}
