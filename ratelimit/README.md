@@ -11,7 +11,7 @@ You can create an InternalRateLimit with `NewInternalRateLimit()`. RateLimit inc
 
 ```go
 type RateLimit struct {
-	Region  map[string]*Limits
+	Route  map[string]*Limits
 	Enabled bool
 	// Factor to be applied to the limit. E.g. if set to 0.5, the limit will be reduced by 50%.
 	LimitUsageFactor float32
@@ -28,7 +28,7 @@ func NewInternalRateLimit(limitUsageFactor float32, intervalOverhead time.Durati
 		intervalOverhead = time.Second
 	}
 	return &RateLimit{
-		Region:           make(map[string]*Limits, 1),
+		Route:            make(map[string]*Limits, 1),
 		LimitUsageFactor: limitUsageFactor,
 		IntervalOverhead: intervalOverhead,
 		Enabled:          true,
@@ -73,10 +73,10 @@ func NewBucket(interval time.Duration, intervalOverhead time.Duration, baseLimit
 }
 ```
 
-- When a bucket is full, the amount of tokens will be the same as the limit - Not Rate limited, able to `Take()` a token from the bucket.
-- When a bucket is empty, the amount of tokens will be 0 - Rate limited, not able to `Take()` a token without waiting.
+- When a bucket is full, the amount of tokens will be the same as the limit - Rate limited, not able to `Reserve()` a request from the bucket.
+- When a bucket is empty, the amount of tokens will be 0 - Not rate limited, able to `Reserve()` a request.
 
-When initializing a bucket, the current amount of tokens will be the same as the limit minus the current count provided from the `X-App-Rate-Limit-Count` or `X-Method-Rate-Limit-Count` headers.
+When initializing a bucket, the current amount of tokens will be the same as the count provided from the `X-App-Rate-Limit-Count`/`X-Method-Rate-Limit-Count` headers.
 
 ```go
 func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitType string) *Limit {
@@ -102,21 +102,20 @@ func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitTy
 		baseLimit, interval := getNumbersFromPair(limitString)
 		count, _ := getNumbersFromPair(counts[i])
 		newLimit := int(math.Max(1, float64(baseLimit)*r.LimitUsageFactor))
-		currentTokens := newLimit - count
-		limit.buckets[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, newLimit, currentTokens)
+		limit.buckets[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, newLimit, count)
 	}
 
 	return limit
 }
 ```
 
-### Take
+### Reserve
 
-After creating a request and checking if it was cached, the client will use `Take()`, initializing the App and Method buckets in a **route** AND the **MethodID** if not initialized.
+After creating a request and checking if it was cached, the client will use `Reserve()`, initializing the App and Method buckets in a **route** AND the **MethodID** if not initialized.
 
-If rate limited, `Take()` will block until the next bucket reset. A `context` can be passed, allowing for cancellation, a check will be done to see if waiting would exceed the deadline set in a context, returning an error if it would.
+If rate limited, `Reserve()` will block until the next bucket reset. A `context` can be passed, allowing for the request to be cancelled, a check will be done to see if waiting would exceed the deadline set in a context, returning an error if it would.
 
-`Take()` will then decrease tokens for the App and Method in the buckets involved by one.
+`Reserve()` will reserve one request for the App and Method buckets in a **route**.
 
 ### Update
 

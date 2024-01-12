@@ -24,17 +24,21 @@ func TestNewLimits(t *testing.T) {
 
 func TestNewInternalRateLimit(t *testing.T) {
 	t.Parallel()
+
 	rateLimit := ratelimit.NewInternalRateLimit(0.99, time.Second)
 	require.NotNil(t, rateLimit)
-	require.Empty(t, rateLimit.Region)
+	require.Empty(t, rateLimit.Route)
 	require.True(t, rateLimit.Enabled)
-	require.Nil(t, rateLimit.Region["route"])
-	err := rateLimit.Take(context.Background(), zerolog.Nop(), "route", "method")
+	require.Nil(t, rateLimit.Route["route"])
+
+	err := rateLimit.Reserve(context.Background(), zerolog.Nop(), "route", "method")
 	require.NoError(t, err)
-	require.NotNil(t, rateLimit.Region["route"].App)
-	require.NotEmpty(t, rateLimit.Region["route"])
-	require.NotNil(t, rateLimit.Region["route"].Methods)
-	require.NotEmpty(t, rateLimit.Region["route"].Methods["method"])
+	require.NotNil(t, rateLimit.Route["route"].App)
+	require.NotEmpty(t, rateLimit.Route["route"])
+	require.NotNil(t, rateLimit.Route["route"].Methods)
+	require.NotEmpty(t, rateLimit.Route["route"].Methods["method"])
+
+	// Test invalid values are being replaced with valid ones
 	rateLimit = ratelimit.NewInternalRateLimit(-1, -1)
 	require.Equal(t, float64(0.99), rateLimit.LimitUsageFactor)
 	require.Equal(t, time.Second, rateLimit.IntervalOverhead)
@@ -51,60 +55,60 @@ func TestRateLimitCheck(t *testing.T) {
 	t.Run("buckets not created", func(t *testing.T) {
 		t.Parallel()
 		r := &ratelimit.RateLimit{
-			Region: make(map[string]*ratelimit.Limits),
+			Route: make(map[string]*ratelimit.Limits),
 		}
-		require.Nil(t, r.Region[equinoxReq.Route])
+		require.Nil(t, r.Route[equinoxReq.Route])
 		ctx := context.Background()
-		err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
-		require.NotNil(t, r.Region[equinoxReq.Route].Methods)
-		require.NotNil(t, r.Region[equinoxReq.Route].Methods[equinoxReq.MethodID])
+		require.NotNil(t, r.Route[equinoxReq.Route].Methods)
+		require.NotNil(t, r.Route[equinoxReq.Route].Methods[equinoxReq.MethodID])
 	})
 
 	// These tests should take around 2 seconds each
 
 	t.Run("app rate limited", func(t *testing.T) {
 		t.Parallel()
-		r := &ratelimit.RateLimit{Region: make(map[string]*ratelimit.Limits)}
+		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"19:2"},
 		}
 		ctx := context.Background()
-		err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
-		err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 	})
 
 	t.Run("method rate limited", func(t *testing.T) {
 		t.Parallel()
-		r := &ratelimit.RateLimit{Region: make(map[string]*ratelimit.Limits)}
+		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"100:2,200:2"},
 			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:2,199:2"},
 		}
 		ctx := context.Background()
-		err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
-		err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 	})
 
 	t.Run("waiting bucket to reset", func(t *testing.T) {
 		t.Parallel()
-		r := &ratelimit.RateLimit{Region: make(map[string]*ratelimit.Limits)}
+		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"20:2"},
 		}
 		ctx := context.Background()
-		err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
-		err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 	})
 }
@@ -132,15 +136,15 @@ func TestLimitsDontMatch(t *testing.T) {
 	defer cancel()
 
 	// Used here just to populate the Limits
-	err := r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+	err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.NoError(t, err)
 
 	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
 
 	// Both requests shouldn't be rate limited or block
-	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+	err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.NoError(t, err)
-	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+	err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.NoError(t, err)
 
 	headers = http.Header{
@@ -151,19 +155,19 @@ func TestLimitsDontMatch(t *testing.T) {
 	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
 
 	// Should have no issue
-	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+	err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.NoError(t, err)
 
 	// The buckets should've been updated, so this request should be rate limited and block
 	// Since we have a deadline, this should return a DeadlineExceeded error
-	err = r.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+	err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 }
 
 func TestCheckRetryAfter(t *testing.T) {
 	t.Parallel()
 	r := &ratelimit.RateLimit{
-		Region: map[string]*ratelimit.Limits{
+		Route: map[string]*ratelimit.Limits{
 			"route": {
 				App: ratelimit.NewLimit(ratelimit.APP_RATE_LIMIT_TYPE),
 				Methods: map[string]*ratelimit.Limit{
