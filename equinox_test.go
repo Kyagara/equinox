@@ -113,7 +113,7 @@ func TestRateLimitWithMock(t *testing.T) {
 	// One request left, it should be blocked as it would exceed the rate limit
 
 	// A deadline is set, however, the bucket refill would take longer than the ctx deadline, waiting would exceed that deadline
-	// It also shouldn't Reserve() a token from the bucket
+	// It also shouldn't Reserve() a request from the bucket
 	ctx := context.Background()
 	ctx, c := context.WithTimeout(ctx, 2*time.Second)
 	defer c()
