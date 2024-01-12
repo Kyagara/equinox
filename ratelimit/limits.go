@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// Limits in a region.
+// Limits in a route.
 type Limits struct {
 	App     *Limit
 	Methods map[string]*Limit
@@ -67,7 +67,7 @@ func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route s
 				return err
 			}
 			bucket.check()
-			bucket.tokens--
+			bucket.tokens++
 		}
 		bucket.mutex.Unlock()
 	}

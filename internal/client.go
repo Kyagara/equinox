@@ -153,7 +153,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	}
 
 	if c.IsRateLimitEnabled && !equinoxReq.IsCDN {
-		err := c.ratelimit.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := c.ratelimit.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		if err != nil {
 			return err
 		}
@@ -197,7 +197,7 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 	}
 
 	if c.IsRateLimitEnabled && !equinoxReq.IsCDN {
-		err := c.ratelimit.Take(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := c.ratelimit.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		if err != nil {
 			return nil, err
 		}

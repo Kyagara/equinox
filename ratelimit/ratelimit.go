@@ -34,7 +34,7 @@ var (
 )
 
 type RateLimit struct {
-	Region  map[string]*Limits
+	Route   map[string]*Limits
 	Enabled bool
 	// Factor to be applied to the limit. E.g. if set to 0.5, the limit will be reduced by 50%.
 	LimitUsageFactor float64
@@ -57,24 +57,24 @@ func NewInternalRateLimit(limitUsageFactor float64, intervalOverhead time.Durati
 		intervalOverhead = time.Second
 	}
 	return &RateLimit{
-		Region:           make(map[string]*Limits, 1),
+		Route:            make(map[string]*Limits, 1),
 		LimitUsageFactor: limitUsageFactor,
 		IntervalOverhead: intervalOverhead,
 		Enabled:          true,
 	}
 }
 
-// Take decreases tokens for the App and Method rate limit buckets in a route by one.
+// Reserves one request for the App and Method buckets in a route.
 //
 // If rate limited, will block until the next bucket reset.
-func (r *RateLimit) Take(ctx context.Context, logger zerolog.Logger, route string, methodID string) error {
+func (r *RateLimit) Reserve(ctx context.Context, logger zerolog.Logger, route string, methodID string) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
-	limits, ok := r.Region[route]
+	limits, ok := r.Route[route]
 	if !ok {
 		limits = NewLimits()
-		r.Region[route] = limits
+		r.Route[route] = limits
 	}
 
 	methods, ok := limits.Methods[methodID]
@@ -95,7 +95,7 @@ func (r *RateLimit) Update(logger zerolog.Logger, route string, methodID string,
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
-	limits := r.Region[route]
+	limits := r.Route[route]
 
 	appRateLimitHeader := headers.Get(APP_RATE_LIMIT_HEADER)
 	appRateLimitCountHeader := headers.Get(APP_RATE_LIMIT_COUNT_HEADER)
@@ -113,7 +113,7 @@ func (r *RateLimit) Update(logger zerolog.Logger, route string, methodID string,
 	}
 }
 
-// CheckRetryAfter returns the number of seconds to wait before retrying from the Retry-After header, or 2 seconds if not found.
+// CheckRetryAfter returns the number of seconds to wait from the Retry-After header before retrying, or DEFAULT_RETRY_AFTER if not found.
 func (r *RateLimit) CheckRetryAfter(route string, methodID string, headers http.Header) time.Duration {
 	retryAfter := headers.Get(RETRY_AFTER_HEADER)
 	if retryAfter == "" {
@@ -127,7 +127,7 @@ func (r *RateLimit) CheckRetryAfter(route string, methodID string, headers http.
 	delay := time.Duration(delayF) * time.Second
 
 	r.mutex.Lock()
-	limits := r.Region[route]
+	limits := r.Route[route]
 
 	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
 	if limitType == APP_RATE_LIMIT_TYPE {
@@ -161,10 +161,9 @@ func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitTy
 
 	for i, limitString := range limits {
 		baseLimit, interval := getNumbersFromPair(limitString)
-		count, _ := getNumbersFromPair(counts[i])
 		newLimit := int(math.Max(1, float64(baseLimit)*r.LimitUsageFactor))
-		currentTokens := newLimit - count
-		limit.buckets[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, newLimit, currentTokens)
+		count, _ := getNumbersFromPair(counts[i])
+		limit.buckets[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, newLimit, count)
 	}
 
 	return limit

@@ -41,7 +41,7 @@ func NewBucket(interval time.Duration, intervalOverhead time.Duration, baseLimit
 func (b *Bucket) check() {
 	now := time.Now()
 	if b.next.Before(now) {
-		b.tokens = b.limit
+		b.tokens = 0
 		b.next = now.Add(b.interval + b.intervalOverhead)
 	}
 }
@@ -51,9 +51,6 @@ func (b *Bucket) isRateLimited() bool {
 	if b.limit == 0 {
 		return false
 	}
-	if b.tokens < 0 {
-		return true
-	}
-	b.tokens--
-	return b.tokens <= 0
+	b.tokens++
+	return b.tokens >= b.limit
 }
