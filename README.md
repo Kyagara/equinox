@@ -40,7 +40,7 @@ Create a new instance of the equinox client:
 
 ```go
 client, err := equinox.NewClient("RIOT_API_KEY")
-// Or:
+// or:
 client, err := equinox.NewClientWithConfig(api.EquinoxConfig{})
 ```
 
