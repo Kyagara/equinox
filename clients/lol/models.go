@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = d712d94a43004a22ad9f31b9ebfbcaa9e0820305
+// Spec version = e610739a49d23996a0987245e4bb5796bcd18533
 
 // ApexPlayerInfoDto data object.
 type ApexPlayerInfoV1DTO struct {
@@ -130,6 +130,7 @@ type CurrentGameInfoV4DTO struct {
 
 // CurrentGameParticipant data object.
 type CurrentGameParticipantV4DTO struct {
+	PUUID string `json:"puuid,omitempty"`
 	// The encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
 	// The summoner name of this participant
@@ -562,6 +563,7 @@ type ObserverV4DTO struct {
 
 // ParticipantChallenges data object.
 type ParticipantChallengesV5DTO struct {
+	LegendaryItemUsed                         []int32 `json:"legendaryItemUsed,omitempty"`
 	AbilityUses                               float64 `json:"abilityUses,omitempty"`
 	AcesBefore15Minutes                       float64 `json:"acesBefore15Minutes,omitempty"`
 	AlliedJungleMonsterKills                  float64 `json:"alliedJungleMonsterKills,omitempty"`
@@ -686,7 +688,6 @@ type ParticipantChallengesV5DTO struct {
 	TurretTakedowns                           float64 `json:"turretTakedowns,omitempty"`
 	TurretsTakenWithRiftHerald                float64 `json:"turretsTakenWithRiftHerald,omitempty"`
 	TwentyMinionsIn3SecondsCount              float64 `json:"twentyMinionsIn3SecondsCount,omitempty"`
-	TwoWardsOneSweeperCount                   int32   `json:"twoWardsOneSweeperCount,omitempty"`
 	UnseenRecalls                             float64 `json:"unseenRecalls,omitempty"`
 	VisionScoreAdvantageLaneOpponent          float64 `json:"visionScoreAdvantageLaneOpponent,omitempty"`
 	VisionScorePerMinute                      float64 `json:"visionScorePerMinute,omitempty"`
@@ -694,6 +695,7 @@ type ParticipantChallengesV5DTO struct {
 	WardTakedownsBefore20M                    float64 `json:"wardTakedownsBefore20M,omitempty"`
 	WardsGuarded                              float64 `json:"wardsGuarded,omitempty"`
 	X12AssistStreakCount                      float64 `json:"12AssistStreakCount,omitempty"`
+	TwoWardsOneSweeperCount                   int32   `json:"twoWardsOneSweeperCount,omitempty"`
 }
 
 // ParticipantMissions data object.
@@ -714,6 +716,8 @@ type ParticipantMissionsV5DTO struct {
 
 // Participant data object.
 type ParticipantV4DTO struct {
+	PUUID      string `json:"puuid,omitempty"`
+	SummonerID string `json:"summonerId,omitempty"`
 	// The summoner name of this participant
 	SummonerName string `json:"summonerName,omitempty"`
 	// The ID of the champion played by this participant
