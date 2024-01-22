@@ -8,7 +8,7 @@ package lor
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = e610739a49d23996a0987245e4bb5796bcd18533
+// Spec version = 82c5b64c16bd63688a0d19f471a19301bae8be4a
 
 // CardDto data object.
 type CardV1DTO struct {
@@ -31,6 +31,8 @@ type DeckV1DTO struct {
 
 // InfoDto data object.
 type InfoV1DTO struct {
+	// (Legal values:  standard,  eternal)
+	GameFormat string `json:"game_format,omitempty"`
 	// (Legal values:  Constructed,  Expeditions,  Tutorial)
 	GameMode         string `json:"game_mode,omitempty"`
 	GameStartTimeUtc string `json:"game_start_time_utc,omitempty"`

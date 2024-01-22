@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = e610739a49d23996a0987245e4bb5796bcd18533
+// Spec version = 82c5b64c16bd63688a0d19f471a19301bae8be4a
 
 import (
 	"context"
