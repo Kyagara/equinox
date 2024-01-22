@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = e610739a49d23996a0987245e4bb5796bcd18533
+// Spec version = 82c5b64c16bd63688a0d19f471a19301bae8be4a
 
 // ApexPlayerInfoDto data object.
 type ApexPlayerInfoV1DTO struct {
@@ -130,6 +130,7 @@ type CurrentGameInfoV4DTO struct {
 
 // CurrentGameParticipant data object.
 type CurrentGameParticipantV4DTO struct {
+	// The encrypted puuid of this participant
 	PUUID string `json:"puuid,omitempty"`
 	// The encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
@@ -207,8 +208,6 @@ type FeaturedGameInfoV4DTO struct {
 	GameLength int64 `json:"gameLength,omitempty"`
 	// The queue type (queue types are documented on the Game Constants page)
 	GameQueueConfigID int64 `json:"gameQueueConfigId,omitempty"`
-	// The game start time represented in epoch milliseconds
-	GameStartTime int64 `json:"gameStartTime,omitempty"`
 	// The ID of the map
 	MapID int64 `json:"mapId,omitempty"`
 }
@@ -716,7 +715,9 @@ type ParticipantMissionsV5DTO struct {
 
 // Participant data object.
 type ParticipantV4DTO struct {
-	PUUID      string `json:"puuid,omitempty"`
+	// Encrypted puuid of this participant
+	PUUID string `json:"puuid,omitempty"`
+	// Encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
 	// The summoner name of this participant
 	SummonerName string `json:"summonerName,omitempty"`
