@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 82c5b64c16bd63688a0d19f471a19301bae8be4a
+// Spec version = 48735a0c9d1c521d94a20ff0b0b9dc927ab430ca
 
 // CompanionDto data object.
 type CompanionV1DTO struct {
@@ -26,6 +26,7 @@ type ContentV1DTO struct {
 
 // InfoDto data object.
 type InfoV1DTO struct {
+	EndOfGameResult string `json:"endOfGameResult,omitempty"`
 	// Game variation key. Game variations documented in TFT static data.
 	GameVariation string `json:"game_variation,omitempty"`
 	// Game client version.

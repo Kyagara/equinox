@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 82c5b64c16bd63688a0d19f471a19301bae8be4a
+// Spec version = 48735a0c9d1c521d94a20ff0b0b9dc927ab430ca
 
 // AbilityCastsDto data object.
 type AbilityCastsV1DTO struct {
