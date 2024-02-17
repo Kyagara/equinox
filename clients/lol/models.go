@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 82c5b64c16bd63688a0d19f471a19301bae8be4a
+// Spec version = 48735a0c9d1c521d94a20ff0b0b9dc927ab430ca
 
 // ApexPlayerInfoDto data object.
 type ApexPlayerInfoV1DTO struct {
@@ -238,6 +238,7 @@ type IncidentV3DTO struct {
 
 // InfoDto data object.
 type InfoV5DTO struct {
+	EndOfGameResult string `json:"endOfGameResult,omitempty"`
 	// Refer to the Game Constants documentation.
 	GameMode GameMode `json:"gameMode,omitempty"`
 	GameName string   `json:"gameName,omitempty"`
@@ -481,10 +482,11 @@ type MatchTimelineInfoParticipantV5DTO struct {
 
 // MatchTimelineInfo data object.
 type MatchTimelineInfoV5DTO struct {
-	Frames        []MatchTimelineInfoFrameV5DTO       `json:"frames,omitempty"`
-	Participants  []MatchTimelineInfoParticipantV5DTO `json:"participants,omitempty"`
-	GameID        int64                               `json:"gameId,omitempty"`
-	FrameInterval int32                               `json:"frameInterval,omitempty"`
+	EndOfGameResult string                              `json:"endOfGameResult,omitempty"`
+	Frames          []MatchTimelineInfoFrameV5DTO       `json:"frames,omitempty"`
+	Participants    []MatchTimelineInfoParticipantV5DTO `json:"participants,omitempty"`
+	GameID          int64                               `json:"gameId,omitempty"`
+	FrameInterval   int32                               `json:"frameInterval,omitempty"`
 }
 
 // MatchTimelinePosition data object.
