@@ -24,18 +24,20 @@ type ModelProperty struct {
 
 func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]gjson.Result) map[string]Model {
 	apiModels := make(map[string]Model, len(filteredEndpointGroups))
+	dtoCount := 0
 
 	for _, dtos := range filteredEndpointGroups {
 		for _, rawDTO := range dtos {
+			dtoCount++
 			dtoSplit := strings.Split(rawDTO, ".")
 			dto, version := getDTOAndVersion(rawDTO)
 
 			schema := schema[rawDTO]
 			schemaDescription := normalizeDescription(schema.Get("description").String())
 
-			properties := schema.Get("properties")
-			props := make([]ModelProperty, 0, len(properties.Map()))
-			for propKey, prop := range properties.Map() {
+			properties := schema.Get("properties").Map()
+			props := make([]ModelProperty, 0, len(properties))
+			for propKey, prop := range properties {
 				name, fieldType := getModelField(prop, propKey, version, dtoSplit[0])
 				description := normalizeDescription(prop.Get("description").String())
 
@@ -45,18 +47,31 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 					Description: description,
 					JSONField:   fmt.Sprintf("`json:\"%s,omitempty\"`", propKey),
 				})
+
+			}
+
+			if len(props) != len(properties) {
+				panic(fmt.Errorf("unexpected props length for %s: %d != %d", rawDTO, len(properties), len(props)))
 			}
 
 			sort.Slice(props, func(i, j int) bool {
 				return props[i].Name < props[j].Name
 			})
 
+			if _, ok := apiModels[dto]; ok {
+				panic(fmt.Errorf("duplicate data object, needs to be renamed in models & format files: %s", dto))
+			}
+
 			apiModels[dto] = Model{
 				Description: schemaDescription,
-				DTO:         dtoSplit[1],
+				DTO:         rawDTO,
 				Props:       props,
 			}
 		}
+	}
+
+	if len(apiModels) != dtoCount {
+		panic(fmt.Errorf("unexpected amount of data objects: %d != %d", dtoCount, len(apiModels)))
 	}
 
 	return apiModels
@@ -140,6 +155,12 @@ func getModelField(prop gjson.Result, propKey string, version string, endpoint s
 	}
 	if strings.HasPrefix(endpoint, "lor-ranked") && strings.Contains(propType, "Player"+version+"DTO") {
 		propType = strings.Replace(propType, "Player", "LeaderboardPlayer", 1)
+	}
+	if strings.HasPrefix(endpoint, "spectator") {
+		if propKey == "participants" && !strings.HasPrefix(propType, "[]Current") {
+			propType = strings.Replace(propType, "ParticipantV", "FeaturedGameParticipantV", 1)
+		}
+
 	}
 
 	return name, propType

@@ -135,6 +135,14 @@ func normalizeDTOName(dto string, version string, endpoint string) (string, stri
 	if strings.HasPrefix(endpoint, "val-status") && strings.HasPrefix(temp, "Content") {
 		temp = "Status" + temp
 	}
+	if strings.HasPrefix(endpoint, "spectator") {
+		if strings.HasPrefix(temp, "Participant") {
+			temp = strings.Replace(temp, "Participant", "FeaturedGameParticipant", 1)
+		}
+		if strings.HasPrefix(temp, "Perks") {
+			temp = strings.Replace(temp, "Perks", "SpectatorPerks", 1)
+		}
+	}
 
 	temp += version + "DTO"
 	temp = strings.Replace(temp, "ChampionInfoV", "ChampionRotationV", 1)

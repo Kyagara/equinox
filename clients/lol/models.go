@@ -10,20 +10,20 @@ package lol
 
 // Spec version = ba7699aed741222f2431e1f3e4ba42c3ac302510
 
-// ApexPlayerInfoDto data object.
+// lol-challenges-v1.ApexPlayerInfoDto
 type ApexPlayerInfoV1DTO struct {
 	PUUID    string  `json:"puuid,omitempty"`
 	Position int32   `json:"position,omitempty"`
 	Value    float64 `json:"value,omitempty"`
 }
 
-// BanDto data object.
+// match-v5.BanDto
 type BanV5DTO struct {
 	ChampionID int32 `json:"championId,omitempty"`
 	PickTurn   int32 `json:"pickTurn,omitempty"`
 }
 
-// BannedChampion data object.
+// spectator-v4.BannedChampion
 type BannedChampionV4DTO struct {
 	// The ID of the banned champion
 	ChampionID int64 `json:"championId,omitempty"`
@@ -33,7 +33,7 @@ type BannedChampionV4DTO struct {
 	TeamID int64 `json:"teamId,omitempty"`
 }
 
-// BannedChampion data object.
+// spectator-v5.BannedChampion
 type BannedChampionV5DTO struct {
 	// The ID of the banned champion
 	ChampionID int64 `json:"championId,omitempty"`
@@ -43,7 +43,7 @@ type BannedChampionV5DTO struct {
 	TeamID int64 `json:"teamId,omitempty"`
 }
 
-// ChallengeConfigInfoDto data object.
+// lol-challenges-v1.ChallengeConfigInfoDto
 type ChallengeConfigInfoV1DTO struct {
 	LocalizedNames map[string]map[string]string `json:"localizedNames,omitempty"`
 	Thresholds     map[string]float64           `json:"thresholds,omitempty"`
@@ -57,7 +57,7 @@ type ChallengeConfigInfoV1DTO struct {
 	Leaderboard    bool   `json:"leaderboard,omitempty"`
 }
 
-// ChallengeInfo data object.
+// lol-challenges-v1.ChallengeInfo
 type ChallengeInfoV1DTO struct {
 	Level          Tier    `json:"level,omitempty"`
 	AchievedTime   int64   `json:"achievedTime,omitempty"`
@@ -68,7 +68,7 @@ type ChallengeInfoV1DTO struct {
 	Value          float64 `json:"value,omitempty"`
 }
 
-// ChallengePoints data object.
+// lol-challenges-v1.ChallengePoints
 type ChallengePointsV1DTO struct {
 	Level      Tier    `json:"level,omitempty"`
 	Current    int64   `json:"current,omitempty"`
@@ -76,7 +76,7 @@ type ChallengePointsV1DTO struct {
 	Percentile float64 `json:"percentile,omitempty"`
 }
 
-// ChampionMasteryDto data object.
+// champion-mastery-v4.ChampionMasteryDto
 type ChampionMasteryV4DTO struct {
 	PUUID string `json:"puuid,omitempty"`
 	// Summoner ID for this entry. (Encrypted)
@@ -99,20 +99,20 @@ type ChampionMasteryV4DTO struct {
 	ChestGranted bool `json:"chestGranted,omitempty"`
 }
 
-// ChampionInfo data object.
+// champion-v3.ChampionInfo
 type ChampionRotationV3DTO struct {
 	FreeChampionIDs              []int32 `json:"freeChampionIds,omitempty"`
 	FreeChampionIDsForNewPlayers []int32 `json:"freeChampionIdsForNewPlayers,omitempty"`
 	MaxNewPlayerLevel            int32   `json:"maxNewPlayerLevel,omitempty"`
 }
 
-// ContentDto data object.
+// lol-status-v4.ContentDto
 type ContentV4DTO struct {
 	Content string `json:"content,omitempty"`
 	Locale  string `json:"locale,omitempty"`
 }
 
-// CurrentGameInfo data object.
+// spectator-v4.CurrentGameInfo
 type CurrentGameInfoV4DTO struct {
 	// The game mode
 	GameMode GameMode `json:"gameMode,omitempty"`
@@ -138,7 +138,7 @@ type CurrentGameInfoV4DTO struct {
 	MapID int64 `json:"mapId,omitempty"`
 }
 
-// CurrentGameInfo data object.
+// spectator-v5.CurrentGameInfo
 type CurrentGameInfoV5DTO struct {
 	// The game mode
 	GameMode GameMode `json:"gameMode,omitempty"`
@@ -164,7 +164,7 @@ type CurrentGameInfoV5DTO struct {
 	MapID int64 `json:"mapId,omitempty"`
 }
 
-// CurrentGameParticipant data object.
+// spectator-v4.CurrentGameParticipant
 type CurrentGameParticipantV4DTO struct {
 	// The encrypted puuid of this participant
 	PUUID string `json:"puuid,omitempty"`
@@ -175,7 +175,7 @@ type CurrentGameParticipantV4DTO struct {
 	// List of Game Customizations
 	GameCustomizationObjects []GameCustomizationObjectV4DTO `json:"gameCustomizationObjects,omitempty"`
 	// Perks/Runes Reforged Information
-	Perks PerksV4DTO `json:"perks,omitempty"`
+	Perks SpectatorPerksV4DTO `json:"perks,omitempty"`
 	// The ID of the champion played by this participant
 	ChampionID int64 `json:"championId,omitempty"`
 	// The ID of the profile icon used by this participant
@@ -190,7 +190,7 @@ type CurrentGameParticipantV4DTO struct {
 	Bot bool `json:"bot,omitempty"`
 }
 
-// CurrentGameParticipant data object.
+// spectator-v5.CurrentGameParticipant
 type CurrentGameParticipantV5DTO struct {
 	// The encrypted puuid of this participant
 	PUUID string `json:"puuid,omitempty"`
@@ -201,7 +201,7 @@ type CurrentGameParticipantV5DTO struct {
 	// List of Game Customizations
 	GameCustomizationObjects []GameCustomizationObjectV5DTO `json:"gameCustomizationObjects,omitempty"`
 	// Perks/Runes Reforged Information
-	Perks PerksV5DTO `json:"perks,omitempty"`
+	Perks SpectatorPerksV5DTO `json:"perks,omitempty"`
 	// The ID of the champion played by this participant
 	ChampionID int64 `json:"championId,omitempty"`
 	// The ID of the profile icon used by this participant
@@ -216,7 +216,7 @@ type CurrentGameParticipantV5DTO struct {
 	Bot bool `json:"bot,omitempty"`
 }
 
-// LeagueEntryDTO data object.
+// league-exp-v4.LeagueEntryDTO
 type ExpLeagueEntryV4DTO struct {
 	LeagueID  string    `json:"leagueId,omitempty"`
 	QueueType QueueType `json:"queueType,omitempty"`
@@ -238,7 +238,7 @@ type ExpLeagueEntryV4DTO struct {
 	Veteran    bool  `json:"veteran,omitempty"`
 }
 
-// MiniSeriesDTO data object.
+// league-exp-v4.MiniSeriesDTO
 type ExpMiniSeriesV4DTO struct {
 	Progress string `json:"progress,omitempty"`
 	Losses   int32  `json:"losses,omitempty"`
@@ -246,7 +246,7 @@ type ExpMiniSeriesV4DTO struct {
 	Wins     int32  `json:"wins,omitempty"`
 }
 
-// FeaturedGameInfo data object.
+// spectator-v4.FeaturedGameInfo
 type FeaturedGameInfoV4DTO struct {
 	// The game mode
 	//
@@ -263,7 +263,7 @@ type FeaturedGameInfoV4DTO struct {
 	// Banned champion information
 	BannedChampions []BannedChampionV4DTO `json:"bannedChampions,omitempty"`
 	// The participant information
-	Participants []ParticipantV4DTO `json:"participants,omitempty"`
+	Participants []FeaturedGameParticipantV4DTO `json:"participants,omitempty"`
 	// The ID of the game
 	GameID int64 `json:"gameId,omitempty"`
 	// The amount of time in seconds that has passed since the game started
@@ -274,7 +274,7 @@ type FeaturedGameInfoV4DTO struct {
 	MapID int64 `json:"mapId,omitempty"`
 }
 
-// FeaturedGameInfo data object.
+// spectator-v5.FeaturedGameInfo
 type FeaturedGameInfoV5DTO struct {
 	// The game mode
 	//
@@ -291,7 +291,7 @@ type FeaturedGameInfoV5DTO struct {
 	// Banned champion information
 	BannedChampions []BannedChampionV5DTO `json:"bannedChampions,omitempty"`
 	// The participant information
-	Participants []ParticipantV5DTO `json:"participants,omitempty"`
+	Participants []FeaturedGameParticipantV5DTO `json:"participants,omitempty"`
 	// The ID of the game
 	GameID int64 `json:"gameId,omitempty"`
 	// The amount of time in seconds that has passed since the game started
@@ -302,7 +302,51 @@ type FeaturedGameInfoV5DTO struct {
 	MapID int64 `json:"mapId,omitempty"`
 }
 
-// FeaturedGames data object.
+// spectator-v4.Participant
+type FeaturedGameParticipantV4DTO struct {
+	// Encrypted puuid of this participant
+	PUUID string `json:"puuid,omitempty"`
+	// Encrypted summoner ID of this participant
+	SummonerID string `json:"summonerId,omitempty"`
+	// The summoner name of this participant
+	SummonerName string `json:"summonerName,omitempty"`
+	// The ID of the champion played by this participant
+	ChampionID int64 `json:"championId,omitempty"`
+	// The ID of the profile icon used by this participant
+	ProfileIconID int64 `json:"profileIconId,omitempty"`
+	// The ID of the first summoner spell used by this participant
+	Spell1ID int64 `json:"spell1Id,omitempty"`
+	// The ID of the second summoner spell used by this participant
+	Spell2ID int64 `json:"spell2Id,omitempty"`
+	// The team ID of this participant, indicating the participant's team
+	TeamID int64 `json:"teamId,omitempty"`
+	// Flag indicating whether or not this participant is a bot
+	Bot bool `json:"bot,omitempty"`
+}
+
+// spectator-v5.Participant
+type FeaturedGameParticipantV5DTO struct {
+	// Encrypted puuid of this participant
+	PUUID string `json:"puuid,omitempty"`
+	// Encrypted summoner ID of this participant
+	SummonerID string `json:"summonerId,omitempty"`
+	// The summoner name of this participant
+	SummonerName string `json:"summonerName,omitempty"`
+	// The ID of the champion played by this participant
+	ChampionID int64 `json:"championId,omitempty"`
+	// The ID of the profile icon used by this participant
+	ProfileIconID int64 `json:"profileIconId,omitempty"`
+	// The ID of the first summoner spell used by this participant
+	Spell1ID int64 `json:"spell1Id,omitempty"`
+	// The ID of the second summoner spell used by this participant
+	Spell2ID int64 `json:"spell2Id,omitempty"`
+	// The team ID of this participant, indicating the participant's team
+	TeamID int64 `json:"teamId,omitempty"`
+	// Flag indicating whether or not this participant is a bot
+	Bot bool `json:"bot,omitempty"`
+}
+
+// spectator-v4.FeaturedGames
 type FeaturedGamesV4DTO struct {
 	// The list of featured games
 	GameList []FeaturedGameInfoV4DTO `json:"gameList,omitempty"`
@@ -310,7 +354,7 @@ type FeaturedGamesV4DTO struct {
 	ClientRefreshInterval int64 `json:"clientRefreshInterval,omitempty"`
 }
 
-// FeaturedGames data object.
+// spectator-v5.FeaturedGames
 type FeaturedGamesV5DTO struct {
 	// The list of featured games
 	GameList []FeaturedGameInfoV5DTO `json:"gameList,omitempty"`
@@ -318,7 +362,7 @@ type FeaturedGamesV5DTO struct {
 	ClientRefreshInterval int64 `json:"clientRefreshInterval,omitempty"`
 }
 
-// GameCustomizationObject data object.
+// spectator-v4.GameCustomizationObject
 type GameCustomizationObjectV4DTO struct {
 	// Category identifier for Game Customization
 	Category string `json:"category,omitempty"`
@@ -326,7 +370,7 @@ type GameCustomizationObjectV4DTO struct {
 	Content string `json:"content,omitempty"`
 }
 
-// GameCustomizationObject data object.
+// spectator-v5.GameCustomizationObject
 type GameCustomizationObjectV5DTO struct {
 	// Category identifier for Game Customization
 	Category string `json:"category,omitempty"`
@@ -334,7 +378,7 @@ type GameCustomizationObjectV5DTO struct {
 	Content string `json:"content,omitempty"`
 }
 
-// Incident data object.
+// lol-status-v3.Incident
 type IncidentV3DTO struct {
 	CreatedAt string         `json:"created_at,omitempty"`
 	Updates   []MessageV3DTO `json:"updates,omitempty"`
@@ -342,7 +386,7 @@ type IncidentV3DTO struct {
 	Active    bool           `json:"active,omitempty"`
 }
 
-// InfoDto data object.
+// match-v5.InfoDto
 type InfoV5DTO struct {
 	EndOfGameResult string `json:"endOfGameResult,omitempty"`
 	// Refer to the Game Constants documentation.
@@ -372,7 +416,7 @@ type InfoV5DTO struct {
 	QueueID int32 `json:"queueId,omitempty"`
 }
 
-// LeagueEntryDTO data object.
+// league-v4.LeagueEntryDTO
 type LeagueEntryV4DTO struct {
 	LeagueID  string    `json:"leagueId,omitempty"`
 	QueueType QueueType `json:"queueType,omitempty"`
@@ -394,7 +438,7 @@ type LeagueEntryV4DTO struct {
 	Veteran    bool  `json:"veteran,omitempty"`
 }
 
-// LeagueItemDTO data object.
+// league-v4.LeagueItemDTO
 type LeagueItemV4DTO struct {
 	Rank Division `json:"rank,omitempty"`
 	// Player's encrypted summonerId.
@@ -412,7 +456,7 @@ type LeagueItemV4DTO struct {
 	Veteran    bool  `json:"veteran,omitempty"`
 }
 
-// LeagueListDTO data object.
+// league-v4.LeagueListDTO
 type LeagueListV4DTO struct {
 	LeagueID string            `json:"leagueId,omitempty"`
 	Name     string            `json:"name,omitempty"`
@@ -421,11 +465,11 @@ type LeagueListV4DTO struct {
 	Entries  []LeagueItemV4DTO `json:"entries,omitempty"`
 }
 
-// Level data object.
+// lol-challenges-v1.Level
 type LevelV1DTO struct {
 }
 
-// LobbyEventV5DTO data object.
+// tournament-v5.LobbyEventV5DTO
 type LobbyEventV5DTO struct {
 	// The type of event that was triggered
 	EventType string `json:"eventType,omitempty"`
@@ -435,12 +479,12 @@ type LobbyEventV5DTO struct {
 	Timestamp string `json:"timestamp,omitempty"`
 }
 
-// LobbyEventV5DTOWrapper data object.
+// tournament-v5.LobbyEventV5DTOWrapper
 type LobbyEventWrapperV5DTO struct {
 	EventList []LobbyEventV5DTO `json:"eventList,omitempty"`
 }
 
-// MatchTimelineInfoFrameEvent data object.
+// match-v5.MatchTimelineInfoFrameEvent
 type MatchTimelineInfoFrameEventV5DTO struct {
 	BuildingType   string `json:"buildingType,omitempty"`
 	KillType       string `json:"killType,omitempty"`
@@ -483,7 +527,7 @@ type MatchTimelineInfoFrameEventV5DTO struct {
 	WinningTeam             int32                                               `json:"winningTeam,omitempty"`
 }
 
-// MatchTimelineInfoFrameEventVictimDamageDealt data object.
+// match-v5.MatchTimelineInfoFrameEventVictimDamageDealt
 type MatchTimelineInfoFrameEventVictimDamageDealtV5DTO struct {
 	Name           string `json:"name,omitempty"`
 	SpellName      string `json:"spellName,omitempty"`
@@ -496,7 +540,7 @@ type MatchTimelineInfoFrameEventVictimDamageDealtV5DTO struct {
 	Basic          bool   `json:"basic,omitempty"`
 }
 
-// MatchTimelineInfoFrameParticipantFrameChampionStats data object.
+// match-v5.MatchTimelineInfoFrameParticipantFrameChampionStats
 type MatchTimelineInfoFrameParticipantFrameChampionStatsV5DTO struct {
 	AbilityHaste         int32 `json:"abilityHaste,omitempty"`
 	AbilityPower         int32 `json:"abilityPower,omitempty"`
@@ -525,7 +569,7 @@ type MatchTimelineInfoFrameParticipantFrameChampionStatsV5DTO struct {
 	SpellVamp            int32 `json:"spellVamp,omitempty"`
 }
 
-// MatchTimelineInfoFrameParticipantFrameDamageStats data object.
+// match-v5.MatchTimelineInfoFrameParticipantFrameDamageStats
 type MatchTimelineInfoFrameParticipantFrameDamageStatsV5DTO struct {
 	MagicDamageDone               int32 `json:"magicDamageDone,omitempty"`
 	MagicDamageDoneToChampions    int32 `json:"magicDamageDoneToChampions,omitempty"`
@@ -541,7 +585,7 @@ type MatchTimelineInfoFrameParticipantFrameDamageStatsV5DTO struct {
 	TrueDamageTaken               int32 `json:"trueDamageTaken,omitempty"`
 }
 
-// MatchTimelineInfoFrameParticipantFrame data object.
+// match-v5.MatchTimelineInfoFrameParticipantFrame
 type MatchTimelineInfoFrameParticipantFrameV5DTO struct {
 	ChampionStats            MatchTimelineInfoFrameParticipantFrameChampionStatsV5DTO `json:"championStats,omitempty"`
 	CurrentGold              int32                                                    `json:"currentGold,omitempty"`
@@ -557,7 +601,7 @@ type MatchTimelineInfoFrameParticipantFrameV5DTO struct {
 	XP                       int32                                                    `json:"xp,omitempty"`
 }
 
-// MatchTimelineInfoFrameParticipantFrames data object.
+// match-v5.MatchTimelineInfoFrameParticipantFrames
 type MatchTimelineInfoFrameParticipantFramesV5DTO struct {
 	X1 MatchTimelineInfoFrameParticipantFrameV5DTO `json:"1,omitempty"`
 	// Possibly null for the Arena 2v2v2v2 (`CHERRY`) game mode.
@@ -573,20 +617,20 @@ type MatchTimelineInfoFrameParticipantFramesV5DTO struct {
 	X9 MatchTimelineInfoFrameParticipantFrameV5DTO `json:"9,omitempty"`
 }
 
-// MatchTimelineInfoFrame data object.
+// match-v5.MatchTimelineInfoFrame
 type MatchTimelineInfoFrameV5DTO struct {
 	Events            []MatchTimelineInfoFrameEventV5DTO           `json:"events,omitempty"`
 	ParticipantFrames MatchTimelineInfoFrameParticipantFramesV5DTO `json:"participantFrames,omitempty"`
 	Timestamp         int32                                        `json:"timestamp,omitempty"`
 }
 
-// MatchTimelineInfoParticipant data object.
+// match-v5.MatchTimelineInfoParticipant
 type MatchTimelineInfoParticipantV5DTO struct {
 	PUUID         string `json:"puuid,omitempty"`
 	ParticipantID int32  `json:"participantId,omitempty"`
 }
 
-// MatchTimelineInfo data object.
+// match-v5.MatchTimelineInfo
 type MatchTimelineInfoV5DTO struct {
 	EndOfGameResult string                              `json:"endOfGameResult,omitempty"`
 	Frames          []MatchTimelineInfoFrameV5DTO       `json:"frames,omitempty"`
@@ -595,19 +639,19 @@ type MatchTimelineInfoV5DTO struct {
 	FrameInterval   int32                               `json:"frameInterval,omitempty"`
 }
 
-// MatchTimelinePosition data object.
+// match-v5.MatchTimelinePosition
 type MatchTimelinePositionV5DTO struct {
 	X int32 `json:"x,omitempty"`
 	Y int32 `json:"y,omitempty"`
 }
 
-// MatchTimelineDto data object.
+// match-v5.MatchTimelineDto
 type MatchTimelineV5DTO struct {
 	Metadata MetadataV5DTO          `json:"metadata,omitempty"`
 	Info     MatchTimelineInfoV5DTO `json:"info,omitempty"`
 }
 
-// MatchDto data object.
+// match-v5.MatchDto
 type MatchV5DTO struct {
 	// Match metadata.
 	Metadata MetadataV5DTO `json:"metadata,omitempty"`
@@ -615,7 +659,7 @@ type MatchV5DTO struct {
 	Info InfoV5DTO `json:"info,omitempty"`
 }
 
-// Message data object.
+// lol-status-v3.Message
 type MessageV3DTO struct {
 	Author       string             `json:"author,omitempty"`
 	Content      string             `json:"content,omitempty"`
@@ -627,7 +671,7 @@ type MessageV3DTO struct {
 	Translations []TranslationV3DTO `json:"translations,omitempty"`
 }
 
-// MetadataDto data object.
+// match-v5.MetadataDto
 type MetadataV5DTO struct {
 	// Match data version.
 	DataVersion string `json:"dataVersion,omitempty"`
@@ -637,7 +681,7 @@ type MetadataV5DTO struct {
 	Participants []string `json:"participants,omitempty"`
 }
 
-// MiniSeriesDTO data object.
+// league-v4.MiniSeriesDTO
 type MiniSeriesV4DTO struct {
 	Progress string `json:"progress,omitempty"`
 	Losses   int32  `json:"losses,omitempty"`
@@ -645,13 +689,13 @@ type MiniSeriesV4DTO struct {
 	Wins     int32  `json:"wins,omitempty"`
 }
 
-// ObjectiveDto data object.
+// match-v5.ObjectiveDto
 type ObjectiveV5DTO struct {
 	First bool  `json:"first,omitempty"`
 	Kills int32 `json:"kills,omitempty"`
 }
 
-// ObjectivesDto data object.
+// match-v5.ObjectivesDto
 type ObjectivesV5DTO struct {
 	Baron      ObjectiveV5DTO `json:"baron,omitempty"`
 	Champion   ObjectiveV5DTO `json:"champion,omitempty"`
@@ -662,19 +706,19 @@ type ObjectivesV5DTO struct {
 	Tower      ObjectiveV5DTO `json:"tower,omitempty"`
 }
 
-// Observer data object.
+// spectator-v4.Observer
 type ObserverV4DTO struct {
 	// Key used to decrypt the spectator grid game data for playback
 	EncryptionKey string `json:"encryptionKey,omitempty"`
 }
 
-// Observer data object.
+// spectator-v5.Observer
 type ObserverV5DTO struct {
 	// Key used to decrypt the spectator grid game data for playback
 	EncryptionKey string `json:"encryptionKey,omitempty"`
 }
 
-// ParticipantChallenges data object.
+// match-v5.ParticipantChallenges
 type ParticipantChallengesV5DTO struct {
 	LegendaryItemUsed                         []int32 `json:"legendaryItemUsed,omitempty"`
 	AbilityUses                               float64 `json:"abilityUses,omitempty"`
@@ -811,7 +855,7 @@ type ParticipantChallengesV5DTO struct {
 	TwoWardsOneSweeperCount                   int32   `json:"twoWardsOneSweeperCount,omitempty"`
 }
 
-// ParticipantMissions data object.
+// match-v5.ParticipantMissions
 type ParticipantMissionsV5DTO struct {
 	PlayerScore0  int32 `json:"playerScore0,omitempty"`
 	PlayerScore1  int32 `json:"playerScore1,omitempty"`
@@ -827,29 +871,7 @@ type ParticipantMissionsV5DTO struct {
 	PlayerScore9  int32 `json:"playerScore9,omitempty"`
 }
 
-// Participant data object.
-type ParticipantV4DTO struct {
-	// Encrypted puuid of this participant
-	PUUID string `json:"puuid,omitempty"`
-	// Encrypted summoner ID of this participant
-	SummonerID string `json:"summonerId,omitempty"`
-	// The summoner name of this participant
-	SummonerName string `json:"summonerName,omitempty"`
-	// The ID of the champion played by this participant
-	ChampionID int64 `json:"championId,omitempty"`
-	// The ID of the profile icon used by this participant
-	ProfileIconID int64 `json:"profileIconId,omitempty"`
-	// The ID of the first summoner spell used by this participant
-	Spell1ID int64 `json:"spell1Id,omitempty"`
-	// The ID of the second summoner spell used by this participant
-	Spell2ID int64 `json:"spell2Id,omitempty"`
-	// The team ID of this participant, indicating the participant's team
-	TeamID int64 `json:"teamId,omitempty"`
-	// Flag indicating whether or not this participant is a bot
-	Bot bool `json:"bot,omitempty"`
-}
-
-// ParticipantDto data object.
+// match-v5.ParticipantDto
 type ParticipantV5DTO struct {
 	ChampionName string `json:"championName,omitempty"`
 	// Both individualPosition and teamPosition are computed by the game server and are different versions of the most likely position played by a player. The individualPosition is the best guess for which position the player actually played in isolation of anything else. The teamPosition is the best guess for which position the player actually played if we add the constraint that each team must have one top player, one jungle, one middle, etc. Generally the recommendation is to use the teamPosition field over the individualPosition field.
@@ -1001,14 +1023,14 @@ type ParticipantV5DTO struct {
 	Win                            bool  `json:"win,omitempty"`
 }
 
-// PerkStatsDto data object.
+// match-v5.PerkStatsDto
 type PerkStatsV5DTO struct {
 	Defense int32 `json:"defense,omitempty"`
 	Flex    int32 `json:"flex,omitempty"`
 	Offense int32 `json:"offense,omitempty"`
 }
 
-// PerkStyleSelectionDto data object.
+// match-v5.PerkStyleSelectionDto
 type PerkStyleSelectionV5DTO struct {
 	Perk int32 `json:"perk,omitempty"`
 	Var1 int32 `json:"var1,omitempty"`
@@ -1016,30 +1038,20 @@ type PerkStyleSelectionV5DTO struct {
 	Var3 int32 `json:"var3,omitempty"`
 }
 
-// PerkStyleDto data object.
+// match-v5.PerkStyleDto
 type PerkStyleV5DTO struct {
 	Description string                    `json:"description,omitempty"`
 	Selections  []PerkStyleSelectionV5DTO `json:"selections,omitempty"`
 	Style       int32                     `json:"style,omitempty"`
 }
 
-// Perks data object.
-type PerksV4DTO struct {
-	// IDs of the perks/runes assigned.
-	PerkIDs []int64 `json:"perkIds,omitempty"`
-	// Primary runes path
-	PerkStyle int64 `json:"perkStyle,omitempty"`
-	// Secondary runes path
-	PerkSubStyle int64 `json:"perkSubStyle,omitempty"`
-}
-
-// PerksDto data object.
+// match-v5.PerksDto
 type PerksV5DTO struct {
 	Styles    []PerkStyleV5DTO `json:"styles,omitempty"`
 	StatPerks PerkStatsV5DTO   `json:"statPerks,omitempty"`
 }
 
-// PlatformDataDto data object.
+// lol-status-v4.PlatformDataDto
 type PlatformDataV4DTO struct {
 	ID           string        `json:"id,omitempty"`
 	Name         string        `json:"name,omitempty"`
@@ -1048,7 +1060,7 @@ type PlatformDataV4DTO struct {
 	Maintenances []StatusV4DTO `json:"maintenances,omitempty"`
 }
 
-// PlayerClientPreferences data object.
+// lol-challenges-v1.PlayerClientPreferences
 type PlayerClientPreferencesV1DTO struct {
 	BannerAccent             string  `json:"bannerAccent,omitempty"`
 	CrestBorder              string  `json:"crestBorder,omitempty"`
@@ -1057,7 +1069,7 @@ type PlayerClientPreferencesV1DTO struct {
 	PrestigeCrestBorderLevel int32   `json:"prestigeCrestBorderLevel,omitempty"`
 }
 
-// PlayerInfoDto data object.
+// lol-challenges-v1.PlayerInfoDto
 type PlayerInfoV1DTO struct {
 	CategoryPoints map[string]ChallengePointsV1DTO `json:"categoryPoints,omitempty"`
 	Challenges     []ChallengeInfoV1DTO            `json:"challenges,omitempty"`
@@ -1065,7 +1077,7 @@ type PlayerInfoV1DTO struct {
 	TotalPoints    ChallengePointsV1DTO            `json:"totalPoints,omitempty"`
 }
 
-// PlayerDto data object.
+// clash-v1.PlayerDto
 type PlayerV1DTO struct {
 	// (Legal values:  UNSELECTED,  FILL,  TOP,  JUNGLE,  MIDDLE,  BOTTOM,  UTILITY)
 	Position string `json:"position,omitempty"`
@@ -1075,7 +1087,7 @@ type PlayerV1DTO struct {
 	TeamID     string `json:"teamId,omitempty"`
 }
 
-// ProviderRegistrationParametersV5 data object.
+// tournament-v5.ProviderRegistrationParametersV5
 type ProviderRegistrationParametersV5DTO struct {
 	// The region in which the provider will be running tournaments.
 	//
@@ -1085,7 +1097,7 @@ type ProviderRegistrationParametersV5DTO struct {
 	URL string `json:"url,omitempty"`
 }
 
-// Service data object.
+// lol-status-v3.Service
 type ServiceV3DTO struct {
 	Name      string          `json:"name,omitempty"`
 	Slug      string          `json:"slug,omitempty"`
@@ -1093,7 +1105,7 @@ type ServiceV3DTO struct {
 	Incidents []IncidentV3DTO `json:"incidents,omitempty"`
 }
 
-// ShardStatus data object.
+// lol-status-v3.ShardStatus
 type ShardStatusV3DTO struct {
 	Hostname  string         `json:"hostname,omitempty"`
 	Name      string         `json:"name,omitempty"`
@@ -1103,11 +1115,31 @@ type ShardStatusV3DTO struct {
 	Services  []ServiceV3DTO `json:"services,omitempty"`
 }
 
-// State data object.
+// spectator-v4.Perks
+type SpectatorPerksV4DTO struct {
+	// IDs of the perks/runes assigned.
+	PerkIDs []int64 `json:"perkIds,omitempty"`
+	// Primary runes path
+	PerkStyle int64 `json:"perkStyle,omitempty"`
+	// Secondary runes path
+	PerkSubStyle int64 `json:"perkSubStyle,omitempty"`
+}
+
+// spectator-v5.Perks
+type SpectatorPerksV5DTO struct {
+	// IDs of the perks/runes assigned.
+	PerkIDs []int64 `json:"perkIds,omitempty"`
+	// Primary runes path
+	PerkStyle int64 `json:"perkStyle,omitempty"`
+	// Secondary runes path
+	PerkSubStyle int64 `json:"perkSubStyle,omitempty"`
+}
+
+// lol-challenges-v1.State
 type StateV1DTO struct {
 }
 
-// StatusDto data object.
+// lol-status-v4.StatusDto
 type StatusV4DTO struct {
 	ArchiveAt string `json:"archive_at,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
@@ -1123,7 +1155,7 @@ type StatusV4DTO struct {
 	ID        int32          `json:"id,omitempty"`
 }
 
-// LobbyEventV5DTO data object.
+// tournament-stub-v5.LobbyEventV5DTO
 type StubLobbyEventV5DTO struct {
 	// The type of event that was triggered
 	EventType string `json:"eventType,omitempty"`
@@ -1133,12 +1165,12 @@ type StubLobbyEventV5DTO struct {
 	Timestamp string `json:"timestamp,omitempty"`
 }
 
-// LobbyEventV5DTOWrapper data object.
+// tournament-stub-v5.LobbyEventV5DTOWrapper
 type StubLobbyEventWrapperV5DTO struct {
 	EventList []StubLobbyEventV5DTO `json:"eventList,omitempty"`
 }
 
-// ProviderRegistrationParametersV5 data object.
+// tournament-stub-v5.ProviderRegistrationParametersV5
 type StubProviderRegistrationParametersV5DTO struct {
 	// The region in which the provider will be running tournaments.
 	//
@@ -1148,7 +1180,7 @@ type StubProviderRegistrationParametersV5DTO struct {
 	URL string `json:"url,omitempty"`
 }
 
-// TournamentCodeParametersV5 data object.
+// tournament-stub-v5.TournamentCodeParametersV5
 type StubTournamentCodeParametersV5DTO struct {
 	// The map type of the game.
 	//
@@ -1172,7 +1204,7 @@ type StubTournamentCodeParametersV5DTO struct {
 	EnoughPlayers bool `json:"enoughPlayers,omitempty"`
 }
 
-// TournamentCodeV5DTO data object.
+// tournament-stub-v5.TournamentCodeV5DTO
 type StubTournamentCodeV5DTO struct {
 	// The tournament code.
 	Code string `json:"code,omitempty"`
@@ -1204,7 +1236,7 @@ type StubTournamentCodeV5DTO struct {
 	TournamentID int32 `json:"tournamentId,omitempty"`
 }
 
-// TournamentRegistrationParametersV5 data object.
+// tournament-stub-v5.TournamentRegistrationParametersV5
 type StubTournamentRegistrationParametersV5DTO struct {
 	// The optional name of the tournament.
 	Name string `json:"name,omitempty"`
@@ -1212,7 +1244,7 @@ type StubTournamentRegistrationParametersV5DTO struct {
 	ProviderID int32 `json:"providerId,omitempty"`
 }
 
-// SummonerDTO data object.
+// summoner-v4.SummonerDTO
 type SummonerV4DTO struct {
 	// Encrypted account ID. Max length 56 characters.
 	AccountID string `json:"accountId,omitempty"`
@@ -1230,7 +1262,7 @@ type SummonerV4DTO struct {
 	SummonerLevel int64 `json:"summonerLevel,omitempty"`
 }
 
-// TeamDto data object.
+// clash-v1.TeamDto
 type TeamV1DTO struct {
 	Abbreviation string `json:"abbreviation,omitempty"`
 	// Summoner ID of the team captain.
@@ -1244,7 +1276,7 @@ type TeamV1DTO struct {
 	TournamentID int32         `json:"tournamentId,omitempty"`
 }
 
-// TeamDto data object.
+// match-v5.TeamDto
 type TeamV5DTO struct {
 	Bans       []BanV5DTO      `json:"bans,omitempty"`
 	Objectives ObjectivesV5DTO `json:"objectives,omitempty"`
@@ -1252,7 +1284,7 @@ type TeamV5DTO struct {
 	Win        bool            `json:"win,omitempty"`
 }
 
-// TournamentCodeParametersV5 data object.
+// tournament-v5.TournamentCodeParametersV5
 type TournamentCodeParametersV5DTO struct {
 	// The map type of the game.
 	//
@@ -1276,7 +1308,7 @@ type TournamentCodeParametersV5DTO struct {
 	EnoughPlayers bool `json:"enoughPlayers,omitempty"`
 }
 
-// TournamentCodeUpdateParametersV5 data object.
+// tournament-v5.TournamentCodeUpdateParametersV5
 type TournamentCodeUpdateParametersV5DTO struct {
 	// The map type
 	//
@@ -1294,7 +1326,7 @@ type TournamentCodeUpdateParametersV5DTO struct {
 	AllowedParticipants []string `json:"allowedParticipants,omitempty"`
 }
 
-// TournamentCodeV5DTO data object.
+// tournament-v5.TournamentCodeV5DTO
 type TournamentCodeV5DTO struct {
 	// The tournament code.
 	Code string `json:"code,omitempty"`
@@ -1326,7 +1358,7 @@ type TournamentCodeV5DTO struct {
 	TournamentID int32 `json:"tournamentId,omitempty"`
 }
 
-// TournamentGamesV5 data object.
+// tournament-v5.TournamentGamesV5
 type TournamentGamesV5DTO struct {
 	GameMode string `json:"gameMode,omitempty"`
 	GameName string `json:"gameName,omitempty"`
@@ -1344,7 +1376,7 @@ type TournamentGamesV5DTO struct {
 	GameMap int32 `json:"gameMap,omitempty"`
 }
 
-// TournamentPhaseDto data object.
+// clash-v1.TournamentPhaseDto
 type TournamentPhaseV1DTO struct {
 	Cancelled        bool  `json:"cancelled,omitempty"`
 	ID               int32 `json:"id,omitempty"`
@@ -1352,7 +1384,7 @@ type TournamentPhaseV1DTO struct {
 	StartTime        int64 `json:"startTime,omitempty"`
 }
 
-// TournamentRegistrationParametersV5 data object.
+// tournament-v5.TournamentRegistrationParametersV5
 type TournamentRegistrationParametersV5DTO struct {
 	// The optional name of the tournament.
 	Name string `json:"name,omitempty"`
@@ -1360,13 +1392,13 @@ type TournamentRegistrationParametersV5DTO struct {
 	ProviderID int32 `json:"providerId,omitempty"`
 }
 
-// TournamentTeamV5 data object.
+// tournament-v5.TournamentTeamV5
 type TournamentTeamV5DTO struct {
 	// Player Unique UUID (Encrypted)
 	PUUID string `json:"puuid,omitempty"`
 }
 
-// TournamentDto data object.
+// clash-v1.TournamentDto
 type TournamentV1DTO struct {
 	NameKey          string `json:"nameKey,omitempty"`
 	NameKeySecondary string `json:"nameKeySecondary,omitempty"`
@@ -1376,18 +1408,18 @@ type TournamentV1DTO struct {
 	ThemeID  int32                  `json:"themeId,omitempty"`
 }
 
-// Tracking data object.
+// lol-challenges-v1.Tracking
 type TrackingV1DTO struct {
 }
 
-// Translation data object.
+// lol-status-v3.Translation
 type TranslationV3DTO struct {
 	Content   string `json:"content,omitempty"`
 	Locale    string `json:"locale,omitempty"`
 	UpdatedAt string `json:"updated_at,omitempty"`
 }
 
-// UpdateDto data object.
+// lol-status-v4.UpdateDto
 type UpdateV4DTO struct {
 	Author    string `json:"author,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`

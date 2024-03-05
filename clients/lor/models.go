@@ -10,26 +10,26 @@ package lor
 
 // Spec version = ba7699aed741222f2431e1f3e4ba42c3ac302510
 
-// CardDto data object.
+// lor-inventory-v1.CardDto
 type CardV1DTO struct {
 	Code  string `json:"code,omitempty"`
 	Count string `json:"count,omitempty"`
 }
 
-// ContentDto data object.
+// lor-status-v1.ContentDto
 type ContentV1DTO struct {
 	Content string `json:"content,omitempty"`
 	Locale  string `json:"locale,omitempty"`
 }
 
-// DeckDto data object.
+// lor-deck-v1.DeckDto
 type DeckV1DTO struct {
 	Code string `json:"code,omitempty"`
 	ID   string `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
 }
 
-// InfoDto data object.
+// lor-match-v1.InfoDto
 type InfoV1DTO struct {
 	// (Legal values:  standard,  eternal)
 	GameFormat string `json:"game_format,omitempty"`
@@ -44,7 +44,7 @@ type InfoV1DTO struct {
 	TotalTurnCount int32 `json:"total_turn_count,omitempty"`
 }
 
-// PlayerDto data object.
+// lor-ranked-v1.PlayerDto
 type LeaderboardPlayerV1DTO struct {
 	Name string `json:"name,omitempty"`
 	// League points.
@@ -52,13 +52,13 @@ type LeaderboardPlayerV1DTO struct {
 	Rank int32 `json:"rank,omitempty"`
 }
 
-// LeaderboardDto data object.
+// lor-ranked-v1.LeaderboardDto
 type LeaderboardV1DTO struct {
 	// A list of players in Master tier.
 	Players []LeaderboardPlayerV1DTO `json:"players,omitempty"`
 }
 
-// MatchDto data object.
+// lor-match-v1.MatchDto
 type MatchV1DTO struct {
 	// Match metadata.
 	Metadata MetadataV1DTO `json:"metadata,omitempty"`
@@ -66,7 +66,7 @@ type MatchV1DTO struct {
 	Info InfoV1DTO `json:"info,omitempty"`
 }
 
-// MetadataDto data object.
+// lor-match-v1.MetadataDto
 type MetadataV1DTO struct {
 	// Match data version.
 	DataVersion string `json:"data_version,omitempty"`
@@ -76,13 +76,13 @@ type MetadataV1DTO struct {
 	Participants []string `json:"participants,omitempty"`
 }
 
-// NewDeckDto data object.
+// lor-deck-v1.NewDeckDto
 type NewDeckV1DTO struct {
 	Code string `json:"code,omitempty"`
 	Name string `json:"name,omitempty"`
 }
 
-// PlatformDataDto data object.
+// lor-status-v1.PlatformDataDto
 type PlatformDataV1DTO struct {
 	ID           string        `json:"id,omitempty"`
 	Name         string        `json:"name,omitempty"`
@@ -91,7 +91,7 @@ type PlatformDataV1DTO struct {
 	Maintenances []StatusV1DTO `json:"maintenances,omitempty"`
 }
 
-// PlayerDto data object.
+// lor-match-v1.PlayerDto
 type PlayerV1DTO struct {
 	// Code for the deck played. Refer to LOR documentation for details on deck codes.
 	DeckCode    string   `json:"deck_code,omitempty"`
@@ -103,7 +103,7 @@ type PlayerV1DTO struct {
 	OrderOfPlay int32 `json:"order_of_play,omitempty"`
 }
 
-// StatusDto data object.
+// lor-status-v1.StatusDto
 type StatusV1DTO struct {
 	ArchiveAt string `json:"archive_at,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
@@ -119,7 +119,7 @@ type StatusV1DTO struct {
 	ID        int32          `json:"id,omitempty"`
 }
 
-// UpdateDto data object.
+// lor-status-v1.UpdateDto
 type UpdateV1DTO struct {
 	Author    string `json:"author,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
