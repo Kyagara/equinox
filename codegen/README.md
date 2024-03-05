@@ -16,6 +16,7 @@ Changes includes all libraries used, such as pongo2 for templating, strcase for 
 
 ### Todo
 
+- Prefix all models with the endpoint name to avoid duplicates, this should reduce the amount of names checks and replaces.
 - Add checks for required fields (queries and headers), returning errors if they are missing, for now only Authorization headers are required so it's not a big deal.
 - Generating code may allow for some performance improvements.
 
