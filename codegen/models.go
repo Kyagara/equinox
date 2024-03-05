@@ -32,6 +32,10 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 			dtoSplit := strings.Split(rawDTO, ".")
 			dto, version := getDTOAndVersion(rawDTO)
 
+			if _, ok := apiModels[dto]; ok {
+				panic(fmt.Errorf("duplicate data object, needs to be renamed in models & format files: %s", dto))
+			}
+
 			schema := schema[rawDTO]
 			schemaDescription := normalizeDescription(schema.Get("description").String())
 
@@ -57,10 +61,6 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 			sort.Slice(props, func(i, j int) bool {
 				return props[i].Name < props[j].Name
 			})
-
-			if _, ok := apiModels[dto]; ok {
-				panic(fmt.Errorf("duplicate data object, needs to be renamed in models & format files: %s", dto))
-			}
 
 			apiModels[dto] = Model{
 				Description: schemaDescription,
@@ -160,7 +160,6 @@ func getModelField(prop gjson.Result, propKey string, version string, endpoint s
 		if propKey == "participants" && !strings.HasPrefix(propType, "[]Current") {
 			propType = strings.Replace(propType, "ParticipantV", "FeaturedGameParticipantV", 1)
 		}
-
 	}
 
 	return name, propType

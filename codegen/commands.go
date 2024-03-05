@@ -53,7 +53,7 @@ func Compile() error {
 
 	specVersion := specs["spec"].Get("info.version").String()
 	if specVersion == "" {
-		return fmt.Errorf("spec version not found")
+		return fmt.Errorf("spec version not found, is the spec up to date?")
 	}
 
 	fmt.Printf("Spec version: %s\n", specVersion)
