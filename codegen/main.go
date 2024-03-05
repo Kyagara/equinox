@@ -7,12 +7,17 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/tidwall/gjson"
 )
 
 var (
 	updateFlag = flag.Bool("update", false, "Update all specs.")
 
 	clients = []string{"riot", "lol", "tft", "val", "lor"}
+
+	// Current specs
+	specs = make(map[string]gjson.Result, len(SPECS_URLS))
 
 	SPECS_URLS = [][]string{
 		{"http://www.mingweisamuel.com/riotapi-schema/openapi-3.0.0.json", "./specs/spec.json"},
@@ -26,12 +31,14 @@ var (
 func main() {
 	flag.Parse()
 
+	// Get current working directory
 	path, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
 
 	paths := strings.Split(path, "/")
+	// Change directory to "./codegen" if the last element of the path is "equinox"
 	if paths[len(paths)-1] == "equinox" {
 		err := os.Chdir("./codegen")
 		if err != nil {

@@ -17,6 +17,7 @@ Changes includes all libraries used, such as pongo2 for templating, strcase for 
 ### Todo
 
 - Add checks for required fields (queries and headers), returning errors if they are missing, for now only Authorization headers are required so it's not a big deal.
+- Fix issue of ParticipantV5DTO and PerksV5DTO sometimes using V4DTO instead of V5DTO
 - Generating code may allow for some performance improvements.
 
 ## Usage

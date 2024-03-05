@@ -15,43 +15,42 @@ func getMapKeys(endpointGroups map[string][]EndpointGroup) []string {
 	return keys
 }
 
-// Read all files and return the filename and content
-func readTemplateFiles(path string) ([][]string, error) {
+// Read all template files and return its content keyed by the filename
+func readTemplateFiles(path string) (map[string][]byte, error) {
 	pattern := filepath.Join(path, "*.tmpl")
 	files, err := filepath.Glob(pattern)
 	if err != nil {
 		return nil, err
 	}
 
-	templates := make([][]string, 0, len(files))
+	templates := make(map[string][]byte, len(files))
 	for _, f := range files {
 		b, err := os.ReadFile(f)
 		if err != nil {
 			return nil, err
 		}
 		filename := filepath.Base(f)
-		templates = append(templates, []string{filename[:len(filename)-5], string(b)})
+		templates[filename[:len(filename)-5]] = b
 	}
 	return templates, nil
 }
 
 // Read all json files and return their json objects keyed by the filename
-func readJSONSpecsFiles() (map[string]gjson.Result, error) {
+func readJSONSpecsFiles(jsonFiles map[string]gjson.Result) error {
 	pattern := filepath.Join("./specs/", "*.json")
 	files, err := filepath.Glob(pattern)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	jsonFiles := make(map[string]gjson.Result, len(files))
 	for _, f := range files {
 		content, err := os.ReadFile(f)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		filename := filepath.Base(f)
 		jsonFiles[filename[:len(filename)-5]] = gjson.ParseBytes(content)
 	}
 
-	return jsonFiles, nil
+	return nil
 }
