@@ -10,7 +10,7 @@ package val
 
 // Spec version = ba7699aed741222f2431e1f3e4ba42c3ac302510
 
-// AbilityCastsDto data object.
+// val-match-v1.AbilityCastsDto
 type AbilityCastsV1DTO struct {
 	Ability1Casts int32 `json:"ability1Casts,omitempty"`
 	Ability2Casts int32 `json:"ability2Casts,omitempty"`
@@ -18,7 +18,7 @@ type AbilityCastsV1DTO struct {
 	UltimateCasts int32 `json:"ultimateCasts,omitempty"`
 }
 
-// AbilityDto data object.
+// val-match-v1.AbilityDto
 type AbilityV1DTO struct {
 	Ability1Effects string `json:"ability1Effects,omitempty"`
 	Ability2Effects string `json:"ability2Effects,omitempty"`
@@ -26,7 +26,7 @@ type AbilityV1DTO struct {
 	UltimateEffects string `json:"ultimateEffects,omitempty"`
 }
 
-// ActDto data object.
+// val-content-v1.ActDto
 type ActV1DTO struct {
 	// This field is excluded from the response when a locale is set
 	LocalizedNames LocalizedNamesV1DTO `json:"localizedNames,omitempty"`
@@ -37,13 +37,13 @@ type ActV1DTO struct {
 	IsActive       bool                `json:"isActive,omitempty"`
 }
 
-// CoachDto data object.
+// val-match-v1.CoachDto
 type CoachV1DTO struct {
 	PUUID  string `json:"puuid,omitempty"`
 	TeamID string `json:"teamId,omitempty"`
 }
 
-// ContentItemDto data object.
+// val-content-v1.ContentItemDto
 type ContentItemV1DTO struct {
 	AssetName string `json:"assetName,omitempty"`
 	// This field is only included for maps and game modes. These values are used in the match response.
@@ -54,7 +54,7 @@ type ContentItemV1DTO struct {
 	Name           string              `json:"name,omitempty"`
 }
 
-// ContentDto data object.
+// val-content-v1.ContentDto
 type ContentV1DTO struct {
 	Version      string             `json:"version,omitempty"`
 	Acts         []ActV1DTO         `json:"acts,omitempty"`
@@ -76,7 +76,7 @@ type ContentV1DTO struct {
 	Totems []string `json:"totems,omitempty"`
 }
 
-// DamageDto data object.
+// val-match-v1.DamageDto
 type DamageV1DTO struct {
 	// PUUID
 	Receiver  string `json:"receiver,omitempty"`
@@ -86,7 +86,7 @@ type DamageV1DTO struct {
 	Legshots  int32  `json:"legshots,omitempty"`
 }
 
-// EconomyDto data object.
+// val-match-v1.EconomyDto
 type EconomyV1DTO struct {
 	Armor        string `json:"armor,omitempty"`
 	Weapon       string `json:"weapon,omitempty"`
@@ -95,14 +95,14 @@ type EconomyV1DTO struct {
 	Spent        int32  `json:"spent,omitempty"`
 }
 
-// FinishingDamageDto data object.
+// val-match-v1.FinishingDamageDto
 type FinishingDamageV1DTO struct {
 	DamageItem          string `json:"damageItem,omitempty"`
 	DamageType          string `json:"damageType,omitempty"`
 	IsSecondaryFireMode bool   `json:"isSecondaryFireMode,omitempty"`
 }
 
-// KillDto data object.
+// val-match-v1.KillDto
 type KillV1DTO struct {
 	// PUUID
 	Killer string `json:"killer,omitempty"`
@@ -117,7 +117,7 @@ type KillV1DTO struct {
 	TimeSinceRoundStartMillis int32                  `json:"timeSinceRoundStartMillis,omitempty"`
 }
 
-// PlayerDto data object.
+// val-ranked-v1.PlayerDto
 type LeaderboardPlayerV1DTO struct {
 	// This field may be omitted if the player has been anonymized.
 	GameName string `json:"gameName,omitempty"`
@@ -131,7 +131,7 @@ type LeaderboardPlayerV1DTO struct {
 	RankedRating    int64  `json:"rankedRating,omitempty"`
 }
 
-// LeaderboardDto data object.
+// val-ranked-v1.LeaderboardDto
 type LeaderboardV1DTO struct {
 	TierDetails map[int64]TierDetailV1DTO `json:"tierDetails,omitempty"`
 	// The act id for the given leaderboard. Act ids can be found using the val-content API.
@@ -148,7 +148,7 @@ type LeaderboardV1DTO struct {
 	TotalPlayers int64 `json:"totalPlayers,omitempty"`
 }
 
-// LocalizedNamesDto data object.
+// val-content-v1.LocalizedNamesDto
 type LocalizedNamesV1DTO struct {
 	ArAe string `json:"ar-AE,omitempty"`
 	DeDe string `json:"de-DE,omitempty"`
@@ -171,13 +171,13 @@ type LocalizedNamesV1DTO struct {
 	ZhTw string `json:"zh-TW,omitempty"`
 }
 
-// LocationDto data object.
+// val-match-v1.LocationDto
 type LocationV1DTO struct {
 	X int32 `json:"x,omitempty"`
 	Y int32 `json:"y,omitempty"`
 }
 
-// MatchInfoDto data object.
+// val-match-v1.MatchInfoDto
 type MatchInfoV1DTO struct {
 	CustomGameName     string `json:"customGameName,omitempty"`
 	GameMode           string `json:"gameMode,omitempty"`
@@ -192,7 +192,7 @@ type MatchInfoV1DTO struct {
 	IsRanked           bool   `json:"isRanked,omitempty"`
 }
 
-// MatchDto data object.
+// val-match-v1.MatchDto
 type MatchV1DTO struct {
 	Coaches      []CoachV1DTO       `json:"coaches,omitempty"`
 	Players      []PlayerV1DTO      `json:"players,omitempty"`
@@ -201,20 +201,20 @@ type MatchV1DTO struct {
 	MatchInfo    MatchInfoV1DTO     `json:"matchInfo,omitempty"`
 }
 
-// MatchlistEntryDto data object.
+// val-match-v1.MatchlistEntryDto
 type MatchlistEntryV1DTO struct {
 	MatchID             string `json:"matchId,omitempty"`
 	QueueID             string `json:"queueId,omitempty"`
 	GameStartTimeMillis int64  `json:"gameStartTimeMillis,omitempty"`
 }
 
-// MatchlistDto data object.
+// val-match-v1.MatchlistDto
 type MatchlistV1DTO struct {
 	PUUID   string                `json:"puuid,omitempty"`
 	History []MatchlistEntryV1DTO `json:"history,omitempty"`
 }
 
-// PlatformDataDto data object.
+// val-status-v1.PlatformDataDto
 type PlatformDataV1DTO struct {
 	ID           string        `json:"id,omitempty"`
 	Name         string        `json:"name,omitempty"`
@@ -223,14 +223,14 @@ type PlatformDataV1DTO struct {
 	Maintenances []StatusV1DTO `json:"maintenances,omitempty"`
 }
 
-// PlayerLocationsDto data object.
+// val-match-v1.PlayerLocationsDto
 type PlayerLocationsV1DTO struct {
 	PUUID       string        `json:"puuid,omitempty"`
 	Location    LocationV1DTO `json:"location,omitempty"`
 	ViewRadians float32       `json:"viewRadians,omitempty"`
 }
 
-// PlayerRoundStatsDto data object.
+// val-match-v1.PlayerRoundStatsDto
 type PlayerRoundStatsV1DTO struct {
 	Ability AbilityV1DTO  `json:"ability,omitempty"`
 	PUUID   string        `json:"puuid,omitempty"`
@@ -240,7 +240,7 @@ type PlayerRoundStatsV1DTO struct {
 	Score   int32         `json:"score,omitempty"`
 }
 
-// PlayerStatsDto data object.
+// val-match-v1.PlayerStatsDto
 type PlayerStatsV1DTO struct {
 	AbilityCasts   AbilityCastsV1DTO `json:"abilityCasts,omitempty"`
 	Assists        int32             `json:"assists,omitempty"`
@@ -251,7 +251,7 @@ type PlayerStatsV1DTO struct {
 	Score          int32             `json:"score,omitempty"`
 }
 
-// PlayerDto data object.
+// val-match-v1.PlayerDto
 type PlayerV1DTO struct {
 	CharacterID     string           `json:"characterId,omitempty"`
 	GameName        string           `json:"gameName,omitempty"`
@@ -265,14 +265,14 @@ type PlayerV1DTO struct {
 	CompetitiveTier int32            `json:"competitiveTier,omitempty"`
 }
 
-// RecentMatchesDto data object.
+// val-match-v1.RecentMatchesDto
 type RecentMatchesV1DTO struct {
 	// A list of recent match ids.
 	MatchIDs    []string `json:"matchIds,omitempty"`
 	CurrentTime int64    `json:"currentTime,omitempty"`
 }
 
-// RoundResultDto data object.
+// val-match-v1.RoundResultDto
 type RoundResultV1DTO struct {
 	// PUUID of player
 	BombDefuser string `json:"bombDefuser,omitempty"`
@@ -293,13 +293,13 @@ type RoundResultV1DTO struct {
 	RoundNum              int32                   `json:"roundNum,omitempty"`
 }
 
-// ContentDto data object.
+// val-status-v1.ContentDto
 type StatusContentV1DTO struct {
 	Content string `json:"content,omitempty"`
 	Locale  string `json:"locale,omitempty"`
 }
 
-// StatusDto data object.
+// val-status-v1.StatusDto
 type StatusV1DTO struct {
 	ArchiveAt string `json:"archive_at,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
@@ -315,7 +315,7 @@ type StatusV1DTO struct {
 	ID        int32                `json:"id,omitempty"`
 }
 
-// TeamDto data object.
+// val-match-v1.TeamDto
 type TeamV1DTO struct {
 	// This is an arbitrary string. Red and Blue in bomb modes. The puuid of the player in deathmatch.
 	TeamID string `json:"teamId,omitempty"`
@@ -326,14 +326,14 @@ type TeamV1DTO struct {
 	Won          bool  `json:"won,omitempty"`
 }
 
-// TierDetailDto data object.
+// val-ranked-v1.TierDetailDto
 type TierDetailV1DTO struct {
 	RankedRatingThreshold int64 `json:"rankedRatingThreshold,omitempty"`
 	StartingIndex         int64 `json:"startingIndex,omitempty"`
 	StartingPage          int64 `json:"startingPage,omitempty"`
 }
 
-// UpdateDto data object.
+// val-status-v1.UpdateDto
 type UpdateV1DTO struct {
 	Author    string `json:"author,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`

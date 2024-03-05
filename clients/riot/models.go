@@ -10,7 +10,7 @@ package riot
 
 // Spec version = ba7699aed741222f2431e1f3e4ba42c3ac302510
 
-// AccountDto data object.
+// account-v1.AccountDto
 type AccountV1DTO struct {
 	// This field may be excluded from the response if the account doesn't have a gameName.
 	GameName string `json:"gameName,omitempty"`
@@ -19,7 +19,7 @@ type AccountV1DTO struct {
 	TagLine string `json:"tagLine,omitempty"`
 }
 
-// ActiveShardDto data object.
+// account-v1.ActiveShardDto
 type ActiveShardV1DTO struct {
 	ActiveShard string `json:"activeShard,omitempty"`
 	Game        string `json:"game,omitempty"`

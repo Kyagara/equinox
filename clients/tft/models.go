@@ -10,7 +10,7 @@ package tft
 
 // Spec version = ba7699aed741222f2431e1f3e4ba42c3ac302510
 
-// CompanionDto data object.
+// tft-match-v1.CompanionDto
 type CompanionV1DTO struct {
 	ContentID string `json:"content_ID,omitempty"`
 	Species   string `json:"species,omitempty"`
@@ -18,13 +18,13 @@ type CompanionV1DTO struct {
 	SkinID    int32  `json:"skin_ID,omitempty"`
 }
 
-// ContentDto data object.
+// tft-status-v1.ContentDto
 type ContentV1DTO struct {
 	Content string `json:"content,omitempty"`
 	Locale  string `json:"locale,omitempty"`
 }
 
-// InfoDto data object.
+// tft-match-v1.InfoDto
 type InfoV1DTO struct {
 	EndOfGameResult string `json:"endOfGameResult,omitempty"`
 	// Game variation key. Game variations documented in TFT static data.
@@ -44,7 +44,7 @@ type InfoV1DTO struct {
 	TftSetNumber int32 `json:"tft_set_number,omitempty"`
 }
 
-// LeagueEntryDTO data object.
+// tft-league-v1.LeagueEntryDTO
 type LeagueEntryV1DTO struct {
 	// Not included for the RANKED_TFT_TURBO queueType.
 	LeagueID string `json:"leagueId,omitempty"`
@@ -82,7 +82,7 @@ type LeagueEntryV1DTO struct {
 	Veteran bool `json:"veteran,omitempty"`
 }
 
-// LeagueItemDTO data object.
+// tft-league-v1.LeagueItemDTO
 type LeagueItemV1DTO struct {
 	Rank Division `json:"rank,omitempty"`
 	// Player's encrypted summonerId.
@@ -100,7 +100,7 @@ type LeagueItemV1DTO struct {
 	Veteran    bool  `json:"veteran,omitempty"`
 }
 
-// LeagueListDTO data object.
+// tft-league-v1.LeagueListDTO
 type LeagueListV1DTO struct {
 	LeagueID string            `json:"leagueId,omitempty"`
 	Name     string            `json:"name,omitempty"`
@@ -109,7 +109,7 @@ type LeagueListV1DTO struct {
 	Entries  []LeagueItemV1DTO `json:"entries,omitempty"`
 }
 
-// MatchDto data object.
+// tft-match-v1.MatchDto
 type MatchV1DTO struct {
 	// Match metadata.
 	Metadata MetadataV1DTO `json:"metadata,omitempty"`
@@ -117,7 +117,7 @@ type MatchV1DTO struct {
 	Info InfoV1DTO `json:"info,omitempty"`
 }
 
-// MetadataDto data object.
+// tft-match-v1.MetadataDto
 type MetadataV1DTO struct {
 	// Match data version.
 	DataVersion string `json:"data_version,omitempty"`
@@ -127,7 +127,7 @@ type MetadataV1DTO struct {
 	Participants []string `json:"participants,omitempty"`
 }
 
-// MiniSeriesDTO data object.
+// tft-league-v1.MiniSeriesDTO
 type MiniSeriesV1DTO struct {
 	Progress string `json:"progress,omitempty"`
 	Losses   int32  `json:"losses,omitempty"`
@@ -135,7 +135,7 @@ type MiniSeriesV1DTO struct {
 	Wins     int32  `json:"wins,omitempty"`
 }
 
-// ParticipantDto data object.
+// tft-match-v1.ParticipantDto
 type ParticipantV1DTO struct {
 	// Participant's companion.
 	Companion CompanionV1DTO `json:"companion,omitempty"`
@@ -162,7 +162,7 @@ type ParticipantV1DTO struct {
 	TotalDamageToPlayers int32 `json:"total_damage_to_players,omitempty"`
 }
 
-// PlatformDataDto data object.
+// tft-status-v1.PlatformDataDto
 type PlatformDataV1DTO struct {
 	ID           string        `json:"id,omitempty"`
 	Name         string        `json:"name,omitempty"`
@@ -171,7 +171,7 @@ type PlatformDataV1DTO struct {
 	Maintenances []StatusV1DTO `json:"maintenances,omitempty"`
 }
 
-// StatusDto data object.
+// tft-status-v1.StatusDto
 type StatusV1DTO struct {
 	ArchiveAt string `json:"archive_at,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
@@ -187,7 +187,7 @@ type StatusV1DTO struct {
 	ID        int32          `json:"id,omitempty"`
 }
 
-// SummonerDTO data object.
+// tft-summoner-v1.SummonerDTO
 type SummonerV1DTO struct {
 	// Encrypted account ID. Max length 56 characters.
 	AccountID string `json:"accountId,omitempty"`
@@ -205,7 +205,7 @@ type SummonerV1DTO struct {
 	SummonerLevel int64 `json:"summonerLevel,omitempty"`
 }
 
-// TopRatedLadderEntryDto data object.
+// tft-league-v1.TopRatedLadderEntryDto
 type TopRatedLadderEntryV1DTO struct {
 	// (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
 	RatedTier                    string `json:"ratedTier,omitempty"`
@@ -217,7 +217,7 @@ type TopRatedLadderEntryV1DTO struct {
 	Wins int32 `json:"wins,omitempty"`
 }
 
-// TraitDto data object.
+// tft-match-v1.TraitDto
 type TraitV1DTO struct {
 	// Trait name.
 	Name string `json:"name,omitempty"`
@@ -231,7 +231,7 @@ type TraitV1DTO struct {
 	TierTotal int32 `json:"tier_total,omitempty"`
 }
 
-// UnitDto data object.
+// tft-match-v1.UnitDto
 type UnitV1DTO struct {
 	// This field was introduced in patch 9.22 with data_version 2.
 	CharacterID string `json:"character_id,omitempty"`
@@ -248,7 +248,7 @@ type UnitV1DTO struct {
 	Tier int32 `json:"tier,omitempty"`
 }
 
-// UpdateDto data object.
+// tft-status-v1.UpdateDto
 type UpdateV1DTO struct {
 	Author    string `json:"author,omitempty"`
 	CreatedAt string `json:"created_at,omitempty"`
