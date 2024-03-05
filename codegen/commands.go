@@ -44,8 +44,9 @@ func DownloadAndSaveSpecs(spec []string) error {
 	return fmt.Errorf("failed to download '%s'. Status code: '%d'", url, response.StatusCode)
 }
 
+// Generates the code
 func Compile() error {
-	specs, err := readJSONSpecsFiles()
+	err := readJSONSpecsFiles(specs)
 	if err != nil {
 		return err
 	}
@@ -67,6 +68,7 @@ func Compile() error {
 	return compileClients(specs, specVersion)
 }
 
+// Format() runs 'goimports' and 'gofmt' after generating the code
 func Format() error {
 	fmt.Printf("Formatting imports\n")
 	err := runCommand(exec.Command("goimports", "-w", "../"))
@@ -117,8 +119,8 @@ func compileApi(specs map[string]gjson.Result, specVersion string) error {
 	results := make(map[string][]byte, len(templates))
 
 	// Compiling templates
-	for _, template := range templates {
-		tmpl, err := pongo2.FromString(template[1])
+	for filename, template := range templates {
+		tmpl, err := pongo2.FromBytes(template)
 		if err != nil {
 			return err
 		}
@@ -128,7 +130,7 @@ func compileApi(specs map[string]gjson.Result, specVersion string) error {
 			return err
 		}
 
-		results[template[0]] = result
+		results[filename] = result
 	}
 
 	// Writing results
@@ -192,12 +194,12 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 		results := make(map[string][]byte, len(templates))
 
 		// Compiling templates
-		for _, template := range templates {
-			if template[0] == "constants" && (clientName == "riot" || clientName == "lor") {
+		for filename, template := range templates {
+			if filename == "constants" && (clientName == "riot" || clientName == "lor") {
 				continue
 			}
 
-			tmpl, err := pongo2.FromString(template[1])
+			tmpl, err := pongo2.FromBytes(template)
 			if err != nil {
 				return err
 			}
@@ -206,7 +208,7 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 			if err != nil {
 				return err
 			}
-			results[template[0]] = result
+			results[filename] = result
 		}
 
 		// Writing results
