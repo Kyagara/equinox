@@ -110,19 +110,14 @@ func normalizeDTOName(dto string, version string, endpoint string) (string, stri
 	temp := dto
 	temp = strings.ReplaceAll(temp, "Dto", "")
 	temp = strings.ReplaceAll(temp, "DTO", "")
-
-	if strings.Contains(temp, version+"Wrapper") {
-		temp = strings.Replace(temp, version+"Wrapper", "Wrapper", 1)
-	}
-
-	if strings.Contains(endpoint, "tournament") && strings.Contains(endpoint, "stub") {
-		if strings.HasPrefix(temp, "Tournament") || strings.HasPrefix(temp, "LobbyEvent") || strings.HasPrefix(temp, "Provider") {
-			temp = "Stub" + temp
-		}
-	}
-
 	temp = strings.ReplaceAll(temp, version, "")
+	temp = strings.Replace(temp, "ChampionInfo", "ChampionRotation", 1)
 
+	isPrimiteType := isPrimiteType(temp)
+
+	if strings.HasPrefix(endpoint, "tournament-stub") && !strings.HasPrefix(temp, "Stub") && !isPrimiteType {
+		temp = "Stub" + temp
+	}
 	if strings.HasPrefix(endpoint, "league-exp") && (strings.HasPrefix(temp, "League") || strings.HasPrefix(temp, "Mini")) {
 		temp = "Exp" + temp
 	}
@@ -145,8 +140,6 @@ func normalizeDTOName(dto string, version string, endpoint string) (string, stri
 	}
 
 	temp += version + "DTO"
-	temp = strings.Replace(temp, "ChampionInfoV", "ChampionRotationV", 1)
-	temp = removeGameName(temp)
 	for _, v := range goTypes {
 		if strings.HasSuffix(temp, v+version+"DTO") {
 			temp = strings.Replace(temp, version+"DTO", "", 1)
@@ -229,4 +222,8 @@ func cleanIfPrimitiveType(prop gjson.Result, version, endpoint, t string) string
 	}
 
 	return t
+}
+
+func isPrimiteType(valType string) bool {
+	return slices.Contains(goTypes, valType) || (strings.HasPrefix(valType, "[]") || strings.HasPrefix(valType, "map["))
 }
