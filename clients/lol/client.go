@@ -9,6 +9,7 @@
 //   - StatusV4
 //   - MatchV5
 //   - SpectatorV4
+//   - SpectatorV5
 //   - SummonerV4
 //   - TournamentStubV5
 //   - TournamentV5
@@ -24,7 +25,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 48735a0c9d1c521d94a20ff0b0b9dc927ab430ca
+// Spec version = ba7699aed741222f2431e1f3e4ba42c3ac302510
 
 import "github.com/Kyagara/equinox/internal"
 
@@ -39,6 +40,7 @@ type Client struct {
 	StatusV4          StatusV4
 	MatchV5           MatchV5
 	SpectatorV4       SpectatorV4
+	SpectatorV5       SpectatorV5
 	SummonerV4        SummonerV4
 	TournamentStubV5  TournamentStubV5
 	TournamentV5      TournamentV5
@@ -57,6 +59,7 @@ func NewLOLClient(client *internal.Client) *Client {
 		StatusV4:          StatusV4{internal: client},
 		MatchV5:           MatchV5{internal: client},
 		SpectatorV4:       SpectatorV4{internal: client},
+		SpectatorV5:       SpectatorV5{internal: client},
 		SummonerV4:        SummonerV4{internal: client},
 		TournamentStubV5:  TournamentStubV5{internal: client},
 		TournamentV5:      TournamentV5{internal: client},

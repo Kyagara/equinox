@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 48735a0c9d1c521d94a20ff0b0b9dc927ab430ca
+// Spec version = ba7699aed741222f2431e1f3e4ba42c3ac302510
 
 import (
 	"context"
@@ -952,6 +952,72 @@ func (e *SpectatorV4) Featured(ctx context.Context, route PlatformRoute) (*Featu
 		return nil, err
 	}
 	var data FeaturedGamesV4DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// # Riot API Reference
+//
+// [spectator-v5]
+//
+// [spectator-v5]: https://developer.riotgames.com/apis#spectator-v5
+type SpectatorV5 struct {
+	internal *internal.Client
+}
+
+// Get current game information for the given puuid.
+//
+// # Parameters
+//   - route : Route to query.
+//   - encryptedPUUID : The puuid of the summoner.
+//
+// # Riot API Reference
+//
+// [spectator-v5.getCurrentGameInfoByPuuid]
+//
+// [spectator-v5.getCurrentGameInfoByPuuid]: https://developer.riotgames.com/api-methods/#spectator-v5/GET_getCurrentGameInfoByPuuid
+func (e *SpectatorV5) CurrentGameInfoByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (*CurrentGameInfoV5DTO, error) {
+	logger := e.internal.Logger("LOL_SpectatorV5_CurrentGameInfoByPUUID")
+	logger.Trace().Msg("Method started execution")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/v5/active-games/by-summoner/", encryptedPUUID}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "spectator-v5.getCurrentGameInfoByPuuid", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data CurrentGameInfoV5DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Get list of featured games.
+//
+// # Parameters
+//   - route : Route to query.
+//
+// # Riot API Reference
+//
+// [spectator-v5.getFeaturedGames]
+//
+// [spectator-v5.getFeaturedGames]: https://developer.riotgames.com/api-methods/#spectator-v5/GET_getFeaturedGames
+func (e *SpectatorV5) Featured(ctx context.Context, route PlatformRoute) (*FeaturedGamesV5DTO, error) {
+	logger := e.internal.Logger("LOL_SpectatorV5_Featured")
+	logger.Trace().Msg("Method started execution")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/v5/featured-games"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "spectator-v5.getFeaturedGames", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data FeaturedGamesV5DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
