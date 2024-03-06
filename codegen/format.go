@@ -108,21 +108,20 @@ func normalizeDTOName(dto string, version string) (string, string) {
 		version = version[len(version)-2:]
 	}
 
-	temp := dto
-	temp = strings.ReplaceAll(temp, "Dto", "")
-	temp = strings.ReplaceAll(temp, "DTO", "")
-	temp = strings.ReplaceAll(temp, version, "")
-	temp = strings.Replace(temp, "ChampionInfo", "ChampionRotation", 1)
+	dto = strings.ReplaceAll(dto, "Dto", "")
+	dto = strings.ReplaceAll(dto, "DTO", "")
+	dto = strings.ReplaceAll(dto, version, "")
+	dto = strings.Replace(dto, "ChampionInfo", "ChampionRotation", 1)
 
-	temp += version + "DTO"
+	dto += version + "DTO"
 	for _, v := range goTypes {
-		if strings.HasSuffix(temp, v+version+"DTO") {
-			temp = strings.Replace(temp, version+"DTO", "", 1)
+		if strings.HasSuffix(dto, v+version+"DTO") {
+			dto = strings.Replace(dto, version+"DTO", "", 1)
 			break
 		}
 	}
 
-	return temp, version
+	return dto, version
 }
 func stringifyType(prop gjson.Result) string {
 	if prop.Get("anyOf").Exists() {
@@ -131,19 +130,23 @@ func stringifyType(prop gjson.Result) string {
 
 	enumType := prop.Get("x-enum").String()
 	if enumType != "" && enumType != "locale" {
-		propType := prop.Get("x-type").String()
 		if enumType == "champion" {
 			if prop.Get("format").String() == "" {
 				return "int64"
 			}
+
 			return prop.Get("format").String()
 		}
+
+		propType := prop.Get("x-type").String()
 		if propType == "" {
 			enumType = strcase.ToCamel(enumType)
 		}
+
 		if propType == "string" {
 			return strcase.ToCamel(enumType)
 		}
+
 		return prop.Get("format").String()
 	}
 
@@ -161,11 +164,13 @@ func stringifyType(prop gjson.Result) string {
 			if prop.Get("format").String() == "int32" {
 				return "int32"
 			}
+
 			return "int64"
 		case "number":
 			if prop.Get("format").String() == "float" {
 				return "float32"
 			}
+
 			return "float64"
 		case "array":
 			return "[]" + stringifyType(prop.Get("items"))
@@ -185,10 +190,6 @@ func stringifyType(prop gjson.Result) string {
 
 func cleanDTOPropType(prop gjson.Result, version string, endpoint string, dto string) string {
 	if !slices.Contains(goTypes, dto) && !prop.Get("x-enum").Exists() {
-		if slices.Contains(goTypes, dto) {
-			return dto
-		}
-
 		for _, pType := range goTypes {
 			if strings.HasSuffix(dto, pType) {
 				return dto

@@ -12,11 +12,11 @@ In addition, the specs that are downloaded and used are from [riotapi-schema](ht
 
 Changes had to be made to translate the Rust output to Golang (I miss Option<>), mainly with how the clients are organized (I miss impl).
 
-Changes includes all libraries used, such as pongo2 for templating, strcase for case conversion and gjson for JSON.
+Changes includes all libraries used, such as pongo2 for templating, strcase for case conversion and gjson for navigating through the JSON files.
 
 ### Todo
 
-- Prefix all models with the endpoint name to avoid duplicates, this should reduce the amount of names checks and replaces, will require a lot of changes since functions like `normalizeDTOName` are reused in multiple places.
+- Improve flow, currently a lot of functions are being reused and edge cases that might pop up can be really annoying to fix.
 - Add checks for required fields (queries and headers), returning errors if they are missing, for now only Authorization headers are required so it's not a big deal.
 - Generating code may allow for some performance improvements.
 

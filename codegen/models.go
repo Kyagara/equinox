@@ -116,6 +116,7 @@ func getDTOAndVersion(rawDTO string) (string, string) {
 	endpoint = clientRegex.ReplaceAllString(endpoint, "")
 	endpoint = endpoint[:len(endpoint)-3]
 	endpoint = strcase.ToCamel(endpoint)
+
 	if endpoint == "TournamentStub" && strings.HasPrefix(name, "Tournament") {
 		name = strings.Replace(name, "Tournament", "", 1)
 	}
@@ -169,5 +170,6 @@ func getModelField(prop gjson.Result, propKey string, version string, endpoint s
 	}
 
 	name = strings.Replace(name, "Ids", "IDs", 1)
+
 	return name, propType
 }
