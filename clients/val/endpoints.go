@@ -145,7 +145,7 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, puuid st
 // [val-match-v1.getRecent]
 //
 // [val-match-v1.getRecent]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getRecent
-func (e *MatchV1) Recent(ctx context.Context, route PlatformRoute, queue string) (*RecentMatchesV1DTO, error) {
+func (e *MatchV1) Recent(ctx context.Context, route PlatformRoute, queue string) (*MatchRecentMatchesV1DTO, error) {
 	logger := e.internal.Logger("VAL_MatchV1_Recent")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/match/v1/recent-matches/by-queue/", queue}
@@ -154,7 +154,7 @@ func (e *MatchV1) Recent(ctx context.Context, route PlatformRoute, queue string)
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data RecentMatchesV1DTO
+	var data MatchRecentMatchesV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -185,7 +185,7 @@ type RankedV1 struct {
 // [val-ranked-v1.getLeaderboard]
 //
 // [val-ranked-v1.getLeaderboard]: https://developer.riotgames.com/api-methods/#val-ranked-v1/GET_getLeaderboard
-func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, size int32, startIndex int32) (*LeaderboardV1DTO, error) {
+func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, size int32, startIndex int32) (*RankedLeaderboardV1DTO, error) {
 	logger := e.internal.Logger("VAL_RankedV1_Leaderboard")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/ranked/v1/leaderboards/by-act/", actId}
@@ -202,7 +202,7 @@ func (e *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId s
 		values.Add("startIndex", strconv.FormatInt(int64(startIndex), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
-	var data LeaderboardV1DTO
+	var data RankedLeaderboardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -230,7 +230,7 @@ type StatusV1 struct {
 // [val-status-v1.getPlatformData]
 //
 // [val-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#val-status-v1/GET_getPlatformData
-func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV1DTO, error) {
+func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*StatusPlatformDataV1DTO, error) {
 	logger := e.internal.Logger("VAL_StatusV1_Platform")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/status/v1/platform-data"}
@@ -239,7 +239,7 @@ func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*Platform
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data PlatformDataV1DTO
+	var data StatusPlatformDataV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")

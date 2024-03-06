@@ -40,7 +40,7 @@ type ChallengesV1 struct {
 // [lol-challenges-v1.getAllChallengeConfigs]
 //
 // [lol-challenges-v1.getAllChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getAllChallengeConfigs
-func (e *ChallengesV1) AllChallengeConfigs(ctx context.Context, route PlatformRoute) ([]ChallengeConfigInfoV1DTO, error) {
+func (e *ChallengesV1) AllChallengeConfigs(ctx context.Context, route PlatformRoute) ([]ChallengesChallengeConfigInfoV1DTO, error) {
 	logger := e.internal.Logger("LOL_ChallengesV1_AllChallengeConfigs")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/config"}
@@ -49,7 +49,7 @@ func (e *ChallengesV1) AllChallengeConfigs(ctx context.Context, route PlatformRo
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data []ChallengeConfigInfoV1DTO
+	var data []ChallengesChallengeConfigInfoV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -97,7 +97,7 @@ func (e *ChallengesV1) AllChallengePercentiles(ctx context.Context, route Platfo
 // [lol-challenges-v1.getPlayerData]
 //
 // [lol-challenges-v1.getPlayerData]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getPlayerData
-func (e *ChallengesV1) ByPUUID(ctx context.Context, route PlatformRoute, puuid string) (*PlayerInfoV1DTO, error) {
+func (e *ChallengesV1) ByPUUID(ctx context.Context, route PlatformRoute, puuid string) (*ChallengesPlayerInfoV1DTO, error) {
 	logger := e.internal.Logger("LOL_ChallengesV1_ByPUUID")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/player-data/", puuid}
@@ -106,7 +106,7 @@ func (e *ChallengesV1) ByPUUID(ctx context.Context, route PlatformRoute, puuid s
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data PlayerInfoV1DTO
+	var data ChallengesPlayerInfoV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -126,7 +126,7 @@ func (e *ChallengesV1) ByPUUID(ctx context.Context, route PlatformRoute, puuid s
 // [lol-challenges-v1.getChallengeConfigs]
 //
 // [lol-challenges-v1.getChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeConfigs
-func (e *ChallengesV1) ChallengeConfigs(ctx context.Context, route PlatformRoute, challengeId int64) (*ChallengeConfigInfoV1DTO, error) {
+func (e *ChallengesV1) ChallengeConfigs(ctx context.Context, route PlatformRoute, challengeId int64) (*ChallengesChallengeConfigInfoV1DTO, error) {
 	logger := e.internal.Logger("LOL_ChallengesV1_ChallengeConfigs")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(challengeId, 10), "/config"}
@@ -135,7 +135,7 @@ func (e *ChallengesV1) ChallengeConfigs(ctx context.Context, route PlatformRoute
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data ChallengeConfigInfoV1DTO
+	var data ChallengesChallengeConfigInfoV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -157,7 +157,7 @@ func (e *ChallengesV1) ChallengeConfigs(ctx context.Context, route PlatformRoute
 // [lol-challenges-v1.getChallengeLeaderboards]
 //
 // [lol-challenges-v1.getChallengeLeaderboards]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeLeaderboards
-func (e *ChallengesV1) ChallengeLeaderboards(ctx context.Context, route PlatformRoute, challengeId int64, level Tier, limit int32) ([]ApexPlayerInfoV1DTO, error) {
+func (e *ChallengesV1) ChallengeLeaderboards(ctx context.Context, route PlatformRoute, challengeId int64, level Tier, limit int32) ([]ChallengesApexPlayerInfoV1DTO, error) {
 	logger := e.internal.Logger("LOL_ChallengesV1_ChallengeLeaderboards")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(challengeId, 10), "/leaderboards/by-level/", level.String()}
@@ -171,7 +171,7 @@ func (e *ChallengesV1) ChallengeLeaderboards(ctx context.Context, route Platform
 		values.Add("limit", strconv.FormatInt(int64(limit), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
-	var data []ApexPlayerInfoV1DTO
+	var data []ChallengesApexPlayerInfoV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -398,7 +398,7 @@ type ClashV1 struct {
 // [clash-v1.getTournamentById]
 //
 // [clash-v1.getTournamentById]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentById
-func (e *ClashV1) ByID(ctx context.Context, route PlatformRoute, tournamentId int32) (*TournamentV1DTO, error) {
+func (e *ClashV1) ByID(ctx context.Context, route PlatformRoute, tournamentId int32) (*ClashTournamentV1DTO, error) {
 	logger := e.internal.Logger("LOL_ClashV1_ByID")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/clash/v1/tournaments/", strconv.FormatInt(int64(tournamentId), 10)}
@@ -407,7 +407,7 @@ func (e *ClashV1) ByID(ctx context.Context, route PlatformRoute, tournamentId in
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data TournamentV1DTO
+	var data ClashTournamentV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -427,7 +427,7 @@ func (e *ClashV1) ByID(ctx context.Context, route PlatformRoute, tournamentId in
 // [clash-v1.getTournamentByTeam]
 //
 // [clash-v1.getTournamentByTeam]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentByTeam
-func (e *ClashV1) ByTeamID(ctx context.Context, route PlatformRoute, teamId string) (*TournamentV1DTO, error) {
+func (e *ClashV1) ByTeamID(ctx context.Context, route PlatformRoute, teamId string) (*ClashTournamentV1DTO, error) {
 	logger := e.internal.Logger("LOL_ClashV1_ByTeamID")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/clash/v1/tournaments/by-team/", teamId}
@@ -436,7 +436,7 @@ func (e *ClashV1) ByTeamID(ctx context.Context, route PlatformRoute, teamId stri
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data TournamentV1DTO
+	var data ClashTournamentV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -460,7 +460,7 @@ func (e *ClashV1) ByTeamID(ctx context.Context, route PlatformRoute, teamId stri
 // [clash-v1.getPlayersBySummoner]
 //
 // [clash-v1.getPlayersBySummoner]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getPlayersBySummoner
-func (e *ClashV1) SummonerEntriesBySummonerID(ctx context.Context, route PlatformRoute, summonerId string) ([]PlayerV1DTO, error) {
+func (e *ClashV1) SummonerEntriesBySummonerID(ctx context.Context, route PlatformRoute, summonerId string) ([]ClashPlayerV1DTO, error) {
 	logger := e.internal.Logger("LOL_ClashV1_SummonerEntriesBySummonerID")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/clash/v1/players/by-summoner/", summonerId}
@@ -469,7 +469,7 @@ func (e *ClashV1) SummonerEntriesBySummonerID(ctx context.Context, route Platfor
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data []PlayerV1DTO
+	var data []ClashPlayerV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -489,7 +489,7 @@ func (e *ClashV1) SummonerEntriesBySummonerID(ctx context.Context, route Platfor
 // [clash-v1.getTeamById]
 //
 // [clash-v1.getTeamById]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTeamById
-func (e *ClashV1) TeamByTeamID(ctx context.Context, route PlatformRoute, teamId string) (*TeamV1DTO, error) {
+func (e *ClashV1) TeamByTeamID(ctx context.Context, route PlatformRoute, teamId string) (*ClashTeamV1DTO, error) {
 	logger := e.internal.Logger("LOL_ClashV1_TeamByTeamID")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/clash/v1/teams/", teamId}
@@ -498,7 +498,7 @@ func (e *ClashV1) TeamByTeamID(ctx context.Context, route PlatformRoute, teamId 
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data TeamV1DTO
+	var data ClashTeamV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -517,7 +517,7 @@ func (e *ClashV1) TeamByTeamID(ctx context.Context, route PlatformRoute, teamId 
 // [clash-v1.getTournaments]
 //
 // [clash-v1.getTournaments]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournaments
-func (e *ClashV1) Tournaments(ctx context.Context, route PlatformRoute) ([]TournamentV1DTO, error) {
+func (e *ClashV1) Tournaments(ctx context.Context, route PlatformRoute) ([]ClashTournamentV1DTO, error) {
 	logger := e.internal.Logger("LOL_ClashV1_Tournaments")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/clash/v1/tournaments"}
@@ -526,7 +526,7 @@ func (e *ClashV1) Tournaments(ctx context.Context, route PlatformRoute) ([]Tourn
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data []TournamentV1DTO
+	var data []ClashTournamentV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -558,7 +558,7 @@ type LeagueExpV4 struct {
 // [league-exp-v4.getLeagueEntries]
 //
 // [league-exp-v4.getLeagueEntries]: https://developer.riotgames.com/api-methods/#league-exp-v4/GET_getLeagueEntries
-func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue QueueType, tier Tier, division Division, page int32) ([]ExpLeagueEntryV4DTO, error) {
+func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue QueueType, tier Tier, division Division, page int32) ([]LeagueExpLeagueEntryV4DTO, error) {
 	logger := e.internal.Logger("LOL_LeagueExpV4_Entries")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/league-exp/v4/entries/", queue.String(), "/", tier.String(), "/", division.String()}
@@ -572,7 +572,7 @@ func (e *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue Qu
 		values.Add("page", strconv.FormatInt(int64(page), 10))
 	}
 	equinoxReq.Request.URL.RawQuery = values.Encode()
-	var data []ExpLeagueEntryV4DTO
+	var data []LeagueExpLeagueEntryV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -914,7 +914,7 @@ type SpectatorV4 struct {
 // [spectator-v4.getCurrentGameInfoBySummoner]
 //
 // [spectator-v4.getCurrentGameInfoBySummoner]: https://developer.riotgames.com/api-methods/#spectator-v4/GET_getCurrentGameInfoBySummoner
-func (e *SpectatorV4) CurrentGameBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*CurrentGameInfoV4DTO, error) {
+func (e *SpectatorV4) CurrentGameBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*SpectatorCurrentGameInfoV4DTO, error) {
 	logger := e.internal.Logger("LOL_SpectatorV4_CurrentGameBySummonerID")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/v4/active-games/by-summoner/", encryptedSummonerId}
@@ -923,7 +923,7 @@ func (e *SpectatorV4) CurrentGameBySummonerID(ctx context.Context, route Platfor
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data CurrentGameInfoV4DTO
+	var data SpectatorCurrentGameInfoV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -942,7 +942,7 @@ func (e *SpectatorV4) CurrentGameBySummonerID(ctx context.Context, route Platfor
 // [spectator-v4.getFeaturedGames]
 //
 // [spectator-v4.getFeaturedGames]: https://developer.riotgames.com/api-methods/#spectator-v4/GET_getFeaturedGames
-func (e *SpectatorV4) Featured(ctx context.Context, route PlatformRoute) (*FeaturedGamesV4DTO, error) {
+func (e *SpectatorV4) Featured(ctx context.Context, route PlatformRoute) (*SpectatorFeaturedGamesV4DTO, error) {
 	logger := e.internal.Logger("LOL_SpectatorV4_Featured")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/v4/featured-games"}
@@ -951,7 +951,7 @@ func (e *SpectatorV4) Featured(ctx context.Context, route PlatformRoute) (*Featu
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data FeaturedGamesV4DTO
+	var data SpectatorFeaturedGamesV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -980,7 +980,7 @@ type SpectatorV5 struct {
 // [spectator-v5.getCurrentGameInfoByPuuid]
 //
 // [spectator-v5.getCurrentGameInfoByPuuid]: https://developer.riotgames.com/api-methods/#spectator-v5/GET_getCurrentGameInfoByPuuid
-func (e *SpectatorV5) CurrentGameInfoByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (*CurrentGameInfoV5DTO, error) {
+func (e *SpectatorV5) CurrentGameInfoByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (*SpectatorCurrentGameInfoV5DTO, error) {
 	logger := e.internal.Logger("LOL_SpectatorV5_CurrentGameInfoByPUUID")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/v5/active-games/by-summoner/", encryptedPUUID}
@@ -989,7 +989,7 @@ func (e *SpectatorV5) CurrentGameInfoByPUUID(ctx context.Context, route Platform
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data CurrentGameInfoV5DTO
+	var data SpectatorCurrentGameInfoV5DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -1008,7 +1008,7 @@ func (e *SpectatorV5) CurrentGameInfoByPUUID(ctx context.Context, route Platform
 // [spectator-v5.getFeaturedGames]
 //
 // [spectator-v5.getFeaturedGames]: https://developer.riotgames.com/api-methods/#spectator-v5/GET_getFeaturedGames
-func (e *SpectatorV5) Featured(ctx context.Context, route PlatformRoute) (*FeaturedGamesV5DTO, error) {
+func (e *SpectatorV5) Featured(ctx context.Context, route PlatformRoute) (*SpectatorFeaturedGamesV5DTO, error) {
 	logger := e.internal.Logger("LOL_SpectatorV5_Featured")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/v5/featured-games"}
@@ -1017,7 +1017,7 @@ func (e *SpectatorV5) Featured(ctx context.Context, route PlatformRoute) (*Featu
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data FeaturedGamesV5DTO
+	var data SpectatorFeaturedGamesV5DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -1047,7 +1047,7 @@ type StatusV3 struct {
 // [lol-status-v3.getShardData]
 //
 // [lol-status-v3.getShardData]: https://developer.riotgames.com/api-methods/#lol-status-v3/GET_getShardData
-func (e *StatusV3) Shard(ctx context.Context, route PlatformRoute) (*ShardStatusV3DTO, error) {
+func (e *StatusV3) Shard(ctx context.Context, route PlatformRoute) (*StatusShardStatusV3DTO, error) {
 	logger := e.internal.Logger("LOL_StatusV3_Shard")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v3/shard-data"}
@@ -1056,7 +1056,7 @@ func (e *StatusV3) Shard(ctx context.Context, route PlatformRoute) (*ShardStatus
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data ShardStatusV3DTO
+	var data StatusShardStatusV3DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -1084,7 +1084,7 @@ type StatusV4 struct {
 // [lol-status-v4.getPlatformData]
 //
 // [lol-status-v4.getPlatformData]: https://developer.riotgames.com/api-methods/#lol-status-v4/GET_getPlatformData
-func (e *StatusV4) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV4DTO, error) {
+func (e *StatusV4) Platform(ctx context.Context, route PlatformRoute) (*StatusPlatformDataV4DTO, error) {
 	logger := e.internal.Logger("LOL_StatusV4_Platform")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
@@ -1093,7 +1093,7 @@ func (e *StatusV4) Platform(ctx context.Context, route PlatformRoute) (*Platform
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data PlatformDataV4DTO
+	var data StatusPlatformDataV4DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -1311,7 +1311,7 @@ type TournamentStubV5 struct {
 // [tournament-stub-v5.createTournamentCode]
 //
 // [tournament-stub-v5.createTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_createTournamentCode
-func (e *TournamentStubV5) CreateTournamentCode(ctx context.Context, route api.RegionalRoute, body *StubTournamentCodeParametersV5DTO, count int32, tournamentId int64) ([]string, error) {
+func (e *TournamentStubV5) CreateTournamentCode(ctx context.Context, route api.RegionalRoute, body *TournamentStubCodeParametersV5DTO, count int32, tournamentId int64) ([]string, error) {
 	logger := e.internal.Logger("LOL_TournamentStubV5_CreateTournamentCode")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament-stub/v5/codes"}
@@ -1348,7 +1348,7 @@ func (e *TournamentStubV5) CreateTournamentCode(ctx context.Context, route api.R
 // [tournament-stub-v5.getLobbyEventsByCode]
 //
 // [tournament-stub-v5.getLobbyEventsByCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/GET_getLobbyEventsByCode
-func (e *TournamentStubV5) LobbyEventsByCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*StubLobbyEventWrapperV5DTO, error) {
+func (e *TournamentStubV5) LobbyEventsByCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*TournamentStubLobbyEventWrapperV5DTO, error) {
 	logger := e.internal.Logger("LOL_TournamentStubV5_LobbyEventsByCode")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament-stub/v5/lobby-events/by-code/", tournamentCode}
@@ -1357,7 +1357,7 @@ func (e *TournamentStubV5) LobbyEventsByCode(ctx context.Context, route api.Regi
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data StubLobbyEventWrapperV5DTO
+	var data TournamentStubLobbyEventWrapperV5DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -1380,7 +1380,7 @@ func (e *TournamentStubV5) LobbyEventsByCode(ctx context.Context, route api.Regi
 // [tournament-stub-v5.registerProviderData]
 //
 // [tournament-stub-v5.registerProviderData]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_registerProviderData
-func (e *TournamentStubV5) RegisterProviderData(ctx context.Context, route api.RegionalRoute, body *StubProviderRegistrationParametersV5DTO) (int32, error) {
+func (e *TournamentStubV5) RegisterProviderData(ctx context.Context, route api.RegionalRoute, body *TournamentStubProviderRegistrationParametersV5DTO) (int32, error) {
 	logger := e.internal.Logger("LOL_TournamentStubV5_RegisterProviderData")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament-stub/v5/providers"}
@@ -1408,7 +1408,7 @@ func (e *TournamentStubV5) RegisterProviderData(ctx context.Context, route api.R
 // [tournament-stub-v5.registerTournament]
 //
 // [tournament-stub-v5.registerTournament]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_registerTournament
-func (e *TournamentStubV5) RegisterTournament(ctx context.Context, route api.RegionalRoute, body *StubTournamentRegistrationParametersV5DTO) (int32, error) {
+func (e *TournamentStubV5) RegisterTournament(ctx context.Context, route api.RegionalRoute, body *TournamentStubRegistrationParametersV5DTO) (int32, error) {
 	logger := e.internal.Logger("LOL_TournamentStubV5_RegisterTournament")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament-stub/v5/tournaments"}
@@ -1437,7 +1437,7 @@ func (e *TournamentStubV5) RegisterTournament(ctx context.Context, route api.Reg
 // [tournament-stub-v5.getTournamentCode]
 //
 // [tournament-stub-v5.getTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/GET_getTournamentCode
-func (e *TournamentStubV5) TournamentCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*StubTournamentCodeV5DTO, error) {
+func (e *TournamentStubV5) TournamentCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*TournamentStubCodeV5DTO, error) {
 	logger := e.internal.Logger("LOL_TournamentStubV5_TournamentCode")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament-stub/v5/codes/", tournamentCode}
@@ -1446,7 +1446,7 @@ func (e *TournamentStubV5) TournamentCode(ctx context.Context, route api.Regiona
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data StubTournamentCodeV5DTO
+	var data TournamentStubCodeV5DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -1550,7 +1550,7 @@ func (e *TournamentV5) Games(ctx context.Context, route api.RegionalRoute, tourn
 // [tournament-v5.getLobbyEventsByCode]
 //
 // [tournament-v5.getLobbyEventsByCode]: https://developer.riotgames.com/api-methods/#tournament-v5/GET_getLobbyEventsByCode
-func (e *TournamentV5) LobbyEventsByCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*LobbyEventWrapperV5DTO, error) {
+func (e *TournamentV5) LobbyEventsByCode(ctx context.Context, route api.RegionalRoute, tournamentCode string) (*TournamentLobbyEventWrapperV5DTO, error) {
 	logger := e.internal.Logger("LOL_TournamentV5_LobbyEventsByCode")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament/v5/lobby-events/by-code/", tournamentCode}
@@ -1559,7 +1559,7 @@ func (e *TournamentV5) LobbyEventsByCode(ctx context.Context, route api.Regional
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data LobbyEventWrapperV5DTO
+	var data TournamentLobbyEventWrapperV5DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -1582,7 +1582,7 @@ func (e *TournamentV5) LobbyEventsByCode(ctx context.Context, route api.Regional
 // [tournament-v5.registerProviderData]
 //
 // [tournament-v5.registerProviderData]: https://developer.riotgames.com/api-methods/#tournament-v5/POST_registerProviderData
-func (e *TournamentV5) RegisterProviderData(ctx context.Context, route api.RegionalRoute, body *ProviderRegistrationParametersV5DTO) (int32, error) {
+func (e *TournamentV5) RegisterProviderData(ctx context.Context, route api.RegionalRoute, body *TournamentProviderRegistrationParametersV5DTO) (int32, error) {
 	logger := e.internal.Logger("LOL_TournamentV5_RegisterProviderData")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament/v5/providers"}

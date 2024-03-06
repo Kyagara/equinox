@@ -23,6 +23,7 @@ var (
 	digitRegex   = regexp.MustCompile(`^\d`)
 	versionRegex = regexp.MustCompile(`v.*\d`)
 	clientRegex  = regexp.MustCompile("(?i)(lor|riot|val|lol|tft)")
+	mapTypeRegex = regexp.MustCompile(`\](.+)`)
 )
 
 func preamble(packageName string, version string) string {
@@ -102,7 +103,7 @@ func formatEndpointName(endpointName string) string {
 	return name.String()
 }
 
-func normalizeDTOName(dto string, version string, endpoint string) (string, string) {
+func normalizeDTOName(dto string, version string) (string, string) {
 	if len(version) > 2 {
 		version = version[len(version)-2:]
 	}
@@ -112,32 +113,6 @@ func normalizeDTOName(dto string, version string, endpoint string) (string, stri
 	temp = strings.ReplaceAll(temp, "DTO", "")
 	temp = strings.ReplaceAll(temp, version, "")
 	temp = strings.Replace(temp, "ChampionInfo", "ChampionRotation", 1)
-
-	isPrimiteType := isPrimiteType(temp)
-
-	if strings.HasPrefix(endpoint, "tournament-stub") && !strings.HasPrefix(temp, "Stub") && !isPrimiteType {
-		temp = "Stub" + temp
-	}
-	if strings.HasPrefix(endpoint, "league-exp") && (strings.HasPrefix(temp, "League") || strings.HasPrefix(temp, "Mini")) {
-		temp = "Exp" + temp
-	}
-	if strings.HasPrefix(endpoint, "val-ranked") && strings.HasPrefix(temp, "Player") {
-		temp = strings.Replace(temp, "Player", "LeaderboardPlayer", 1)
-	}
-	if strings.HasPrefix(endpoint, "lor-ranked") && strings.HasPrefix(temp, "Player") {
-		temp = "Leaderboard" + temp
-	}
-	if strings.HasPrefix(endpoint, "val-status") && strings.HasPrefix(temp, "Content") {
-		temp = "Status" + temp
-	}
-	if strings.HasPrefix(endpoint, "spectator") {
-		if strings.HasPrefix(temp, "Participant") {
-			temp = strings.Replace(temp, "Participant", "FeaturedGameParticipant", 1)
-		}
-		if strings.HasPrefix(temp, "Perks") {
-			temp = strings.Replace(temp, "Perks", "SpectatorPerks", 1)
-		}
-	}
 
 	temp += version + "DTO"
 	for _, v := range goTypes {
@@ -149,7 +124,6 @@ func normalizeDTOName(dto string, version string, endpoint string) (string, stri
 
 	return temp, version
 }
-
 func stringifyType(prop gjson.Result) string {
 	if prop.Get("anyOf").Exists() {
 		prop = prop.Get("anyOf").Array()[0]
@@ -209,21 +183,53 @@ func stringifyType(prop gjson.Result) string {
 	return ""
 }
 
-func cleanIfPrimitiveType(prop gjson.Result, version, endpoint, t string) string {
-	if !slices.Contains(goTypes, t) && !prop.Get("x-enum").Exists() {
-		t, _ = normalizeDTOName(t, version, endpoint)
+func cleanDTOPropType(prop gjson.Result, version string, endpoint string, dto string) string {
+	if !slices.Contains(goTypes, dto) && !prop.Get("x-enum").Exists() {
+		if slices.Contains(goTypes, dto) {
+			return dto
+		}
 
 		for _, pType := range goTypes {
-			if strings.HasSuffix(t, pType+version+"DTO") {
-				t = strings.Replace(t, version+"DTO", "", 1)
-				break
+			if strings.HasSuffix(dto, pType) {
+				return dto
 			}
+		}
+
+		dto, _ = normalizeDTOName(dto, version)
+
+		endpoint = clientRegex.ReplaceAllString(endpoint, "")
+		endpoint = endpoint[:len(endpoint)-3]
+		endpoint = strcase.ToCamel(endpoint)
+
+		if strings.HasPrefix(dto, "[]") {
+			raw := dto[2:]
+
+			if slices.Contains(goTypes, raw) {
+				return dto
+			}
+
+			dto = strings.Replace(dto, dto, "[]"+endpoint+raw, 1)
+
+			if strings.Contains(dto, endpoint+endpoint) {
+				return strings.Replace(dto, endpoint+endpoint, endpoint, 1)
+			}
+
+			return dto
+		}
+
+		if strings.Contains(dto, "map") {
+			match := mapTypeRegex.FindStringSubmatch(dto)
+			return strings.Replace(dto, "]"+match[1], "]"+endpoint+match[1], 1)
+		}
+
+		if endpoint == "TournamentStub" && strings.HasPrefix(dto, "Tournament") {
+			dto = strings.Replace(dto, "Tournament", "", 1)
+		}
+
+		if !strings.HasPrefix(dto, endpoint) {
+			dto = endpoint + dto
 		}
 	}
 
-	return t
-}
-
-func isPrimiteType(valType string) bool {
-	return slices.Contains(goTypes, valType) || (strings.HasPrefix(valType, "[]") || strings.HasPrefix(valType, "map["))
+	return dto
 }

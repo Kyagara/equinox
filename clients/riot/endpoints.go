@@ -40,7 +40,7 @@ type AccountV1 struct {
 // [account-v1.getActiveShard]
 //
 // [account-v1.getActiveShard]: https://developer.riotgames.com/api-methods/#account-v1/GET_getActiveShard
-func (e *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRoute, game string, puuid string) (*ActiveShardV1DTO, error) {
+func (e *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRoute, game string, puuid string) (*AccountActiveShardV1DTO, error) {
 	logger := e.internal.Logger("Riot_AccountV1_ActiveShard")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/riot/account/v1/active-shards/by-game/", game, "/by-puuid/", puuid}
@@ -49,7 +49,7 @@ func (e *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRoute, ga
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data ActiveShardV1DTO
+	var data AccountActiveShardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")

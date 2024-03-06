@@ -422,14 +422,9 @@ func getReturnType(resp200 gjson.Result, version string, endpointID string) stri
 	returnType, _ := normalizeDTOName(
 		stringifyType(jsonInfo.Get("schema")),
 		version,
-		endpointID,
 	)
 
-	if strings.HasPrefix(endpointID, "league-exp") && strings.Contains(returnType, "LeagueEntry") {
-		returnType = strings.ReplaceAll(returnType, "LeagueEntry", "ExpLeagueEntry")
-	}
-
-	return cleanIfPrimitiveType(jsonInfo, version, endpointID, returnType)
+	return cleanDTOPropType(jsonInfo, version, endpointID, returnType)
 }
 
 func getBodyType(operation gjson.Result, version string, endpointID string) string {
@@ -437,8 +432,17 @@ func getBodyType(operation gjson.Result, version string, endpointID string) stri
 	body, _ := normalizeDTOName(
 		stringifyType(jsonInfo.Get("schema")),
 		version,
-		endpointID,
 	)
+
+	endpointID = clientRegex.ReplaceAllString(endpointID, "")
+	endpointID = endpointID[:len(endpointID)-3]
+	endpointID = strcase.ToCamel(endpointID)
+	if endpointID == "TournamentStub" && strings.HasPrefix(body, "Tournament") {
+		body = strings.Replace(body, "Tournament", "", 1)
+	}
+	if !strings.HasPrefix(body, endpointID) {
+		body = endpointID + body
+	}
 	return body
 }
 

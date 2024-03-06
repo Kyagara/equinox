@@ -39,7 +39,7 @@ type DeckV1 struct {
 // [lor-deck-v1.createDeck]
 //
 // [lor-deck-v1.createDeck]: https://developer.riotgames.com/api-methods/#lor-deck-v1/POST_createDeck
-func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *NewDeckV1DTO, authorization string) (string, error) {
+func (e *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *DeckNewDeckV1DTO, authorization string) (string, error) {
 	logger := e.internal.Logger("LOR_DeckV1_CreateDeck")
 	logger.Trace().Msg("Method started execution")
 	if authorization == "" {
@@ -116,7 +116,7 @@ type InventoryV1 struct {
 // [lor-inventory-v1.getCards]
 //
 // [lor-inventory-v1.getCards]: https://developer.riotgames.com/api-methods/#lor-inventory-v1/GET_getCards
-func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, authorization string) ([]CardV1DTO, error) {
+func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, authorization string) ([]InventoryCardV1DTO, error) {
 	logger := e.internal.Logger("LOR_InventoryV1_Cards")
 	logger.Trace().Msg("Method started execution")
 	if authorization == "" {
@@ -130,7 +130,7 @@ func (e *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, author
 	}
 	equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
 	equinoxReq.Request.Header.Add("Authorization", authorization)
-	var data []CardV1DTO
+	var data []InventoryCardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -225,7 +225,7 @@ type RankedV1 struct {
 // [lor-ranked-v1.getLeaderboards]
 //
 // [lor-ranked-v1.getLeaderboards]: https://developer.riotgames.com/api-methods/#lor-ranked-v1/GET_getLeaderboards
-func (e *RankedV1) Leaderboards(ctx context.Context, route api.RegionalRoute) (*LeaderboardV1DTO, error) {
+func (e *RankedV1) Leaderboards(ctx context.Context, route api.RegionalRoute) (*RankedLeaderboardV1DTO, error) {
 	logger := e.internal.Logger("LOR_RankedV1_Leaderboards")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/ranked/v1/leaderboards"}
@@ -234,7 +234,7 @@ func (e *RankedV1) Leaderboards(ctx context.Context, route api.RegionalRoute) (*
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data LeaderboardV1DTO
+	var data RankedLeaderboardV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -262,7 +262,7 @@ type StatusV1 struct {
 // [lor-status-v1.getPlatformData]
 //
 // [lor-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#lor-status-v1/GET_getPlatformData
-func (e *StatusV1) Platform(ctx context.Context, route api.RegionalRoute) (*PlatformDataV1DTO, error) {
+func (e *StatusV1) Platform(ctx context.Context, route api.RegionalRoute) (*StatusPlatformDataV1DTO, error) {
 	logger := e.internal.Logger("LOR_StatusV1_Platform")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/status/v1/platform-data"}
@@ -271,7 +271,7 @@ func (e *StatusV1) Platform(ctx context.Context, route api.RegionalRoute) (*Plat
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data PlatformDataV1DTO
+	var data StatusPlatformDataV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
