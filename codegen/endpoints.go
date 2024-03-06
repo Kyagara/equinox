@@ -12,36 +12,45 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-var methodNamesMapping = map[string]string{
-	"CurrentGameInfoBySummoner":   "CurrentGameBySummonerID",
-	"ChampionMasteryScoreByPUUID": "MasteryScoreByPUUID",
-	"AllChampionMasteriesByPUUID": "AllMasteriesByPUUID",
-	"ChampionMasteryByPUUID":      "MasteryByPUUID",
-	"TopChampionMasteriesByPUUID": "TopMasteriesByPUUID",
-	"AllChampionMasteries":        "AllMasteriesBySummonerID",
-	"ChampionMastery":             "MasteryBySummonerID",
-	"TopChampionMasteries":        "TopMasteriesBySummonerID",
-	"ChampionMasteryScore":        "ScoreBySummonerID",
-	"PlayersByPUUID":              "SummonerEntriesByPUUID",
-	"PlayersBySummoner":           "SummonerEntriesBySummonerID",
-	"FeaturedGames":               "Featured",
-	"ShardData":                   "Shard",
-	"TeamByID":                    "TeamByTeamID",
-	"ChampionInfo":                "Rotation",
-	"BySummonerName":              "ByName",
-	"MatchIdsByPUUID":             "ListByPUUID",
-	"Matchlist":                   "ListByPUUID",
-	"Configs":                     "ConfigByID",
-	"PlayerData":                  "ByPUUID",
-	"PlatformData":                "Platform",
-	"EntriesForSummoner":          "SummonerEntries",
-	"Challenger":                  "ChallengerByQueue",
-	"Grandmaster":                 "GrandmasterByQueue",
-	"Master":                      "MasterByQueue",
-	"TournamentByID":              "ByID",
-	"TournamentByTeam":            "ByTeamID",
-	"Match":                       "ByID",
-}
+var (
+	nilValues = map[string]string{
+		"int32":   "0",
+		"int64":   "0",
+		"float32": "0",
+		"float64": "0",
+	}
+
+	methodNamesMapping = map[string]string{
+		"CurrentGameInfoBySummoner":   "CurrentGameBySummonerID",
+		"ChampionMasteryScoreByPUUID": "MasteryScoreByPUUID",
+		"AllChampionMasteriesByPUUID": "AllMasteriesByPUUID",
+		"ChampionMasteryByPUUID":      "MasteryByPUUID",
+		"TopChampionMasteriesByPUUID": "TopMasteriesByPUUID",
+		"AllChampionMasteries":        "AllMasteriesBySummonerID",
+		"ChampionMastery":             "MasteryBySummonerID",
+		"TopChampionMasteries":        "TopMasteriesBySummonerID",
+		"ChampionMasteryScore":        "ScoreBySummonerID",
+		"PlayersByPUUID":              "SummonerEntriesByPUUID",
+		"PlayersBySummoner":           "SummonerEntriesBySummonerID",
+		"FeaturedGames":               "Featured",
+		"ShardData":                   "Shard",
+		"TeamByID":                    "TeamByTeamID",
+		"ChampionInfo":                "Rotation",
+		"BySummonerName":              "ByName",
+		"MatchIdsByPUUID":             "ListByPUUID",
+		"Matchlist":                   "ListByPUUID",
+		"Configs":                     "ConfigByID",
+		"PlayerData":                  "ByPUUID",
+		"PlatformData":                "Platform",
+		"EntriesForSummoner":          "SummonerEntries",
+		"Challenger":                  "ChallengerByQueue",
+		"Grandmaster":                 "GrandmasterByQueue",
+		"Master":                      "MasterByQueue",
+		"TournamentByID":              "ByID",
+		"TournamentByTeam":            "ByTeamID",
+		"Match":                       "ByID",
+	}
+)
 
 type EndpointGroup struct {
 	Path   string
@@ -453,12 +462,6 @@ func getNormalizedRoute(operation gjson.Result) string {
 }
 
 func getNilValue(returnType string) string {
-	nilValues := map[string]string{
-		"int32":   "0",
-		"int64":   "0",
-		"float32": "0",
-		"float64": "0",
-	}
 	if returnType == "string" {
 		return `""`
 	}
