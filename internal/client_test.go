@@ -276,7 +276,7 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 			"Retry-After":               {"1"},
 		}).Times(2))
 
-	res := lol.PlatformDataV4DTO{}
+	res := lol.StatusPlatformDataV4DTO{}
 	l := i.Logger("client_endpoint_method")
 
 	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}

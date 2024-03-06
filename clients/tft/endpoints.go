@@ -241,7 +241,7 @@ func (e *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, sum
 // [tft-league-v1.getTopRatedLadder]
 //
 // [tft-league-v1.getTopRatedLadder]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getTopRatedLadder
-func (e *LeagueV1) TopRatedLadder(ctx context.Context, route PlatformRoute, queue QueueType) ([]TopRatedLadderEntryV1DTO, error) {
+func (e *LeagueV1) TopRatedLadder(ctx context.Context, route PlatformRoute, queue QueueType) ([]LeagueTopRatedLadderEntryV1DTO, error) {
 	logger := e.internal.Logger("TFT_LeagueV1_TopRatedLadder")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/rated-ladders/", queue.String(), "/top"}
@@ -250,7 +250,7 @@ func (e *LeagueV1) TopRatedLadder(ctx context.Context, route PlatformRoute, queu
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data []TopRatedLadderEntryV1DTO
+	var data []LeagueTopRatedLadderEntryV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
@@ -363,7 +363,7 @@ type StatusV1 struct {
 // [tft-status-v1.getPlatformData]
 //
 // [tft-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#tft-status-v1/GET_getPlatformData
-func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*PlatformDataV1DTO, error) {
+func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*StatusPlatformDataV1DTO, error) {
 	logger := e.internal.Logger("TFT_StatusV1_Platform")
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/status/v1/platform-data"}
@@ -372,7 +372,7 @@ func (e *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*Platform
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
-	var data PlatformDataV1DTO
+	var data StatusPlatformDataV1DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")

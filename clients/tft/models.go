@@ -10,40 +10,6 @@ package tft
 
 // Spec version = 031d3e7fc343bd86d82c45559fc79d3a87fa1b82
 
-// tft-match-v1.CompanionDto
-type CompanionV1DTO struct {
-	ContentID string `json:"content_ID,omitempty"`
-	Species   string `json:"species,omitempty"`
-	ItemID    int32  `json:"item_ID,omitempty"`
-	SkinID    int32  `json:"skin_ID,omitempty"`
-}
-
-// tft-status-v1.ContentDto
-type ContentV1DTO struct {
-	Content string `json:"content,omitempty"`
-	Locale  string `json:"locale,omitempty"`
-}
-
-// tft-match-v1.InfoDto
-type InfoV1DTO struct {
-	EndOfGameResult string `json:"endOfGameResult,omitempty"`
-	// Game variation key. Game variations documented in TFT static data.
-	GameVariation string `json:"game_variation,omitempty"`
-	// Game client version.
-	GameVersion    string             `json:"game_version,omitempty"`
-	TftGameType    string             `json:"tft_game_type,omitempty"`
-	TftSetCoreName string             `json:"tft_set_core_name,omitempty"`
-	Participants   []ParticipantV1DTO `json:"participants,omitempty"`
-	// Unix timestamp.
-	GameDatetime int64 `json:"game_datetime,omitempty"`
-	// Game length in seconds.
-	GameLength float32 `json:"game_length,omitempty"`
-	// Please refer to the League of Legends documentation.
-	QueueID int32 `json:"queue_id,omitempty"`
-	// Teamfight Tactics set number.
-	TftSetNumber int32 `json:"tft_set_number,omitempty"`
-}
-
 // tft-league-v1.LeagueEntryDTO
 type LeagueEntryV1DTO struct {
 	// Not included for the RANKED_TFT_TURBO queueType.
@@ -63,7 +29,7 @@ type LeagueEntryV1DTO struct {
 	// Not included for the RANKED_TFT_TURBO queueType.
 	Tier Tier `json:"tier,omitempty"`
 	// Not included for the RANKED_TFT_TURBO queueType.
-	MiniSeries MiniSeriesV1DTO `json:"miniSeries,omitempty"`
+	MiniSeries LeagueMiniSeriesV1DTO `json:"miniSeries,omitempty"`
 	// Not included for the RANKED_TFT_TURBO queueType.
 	LeaguePoints int32 `json:"leaguePoints,omitempty"`
 	// Second through eighth placement.
@@ -86,10 +52,10 @@ type LeagueEntryV1DTO struct {
 type LeagueItemV1DTO struct {
 	Rank Division `json:"rank,omitempty"`
 	// Player's encrypted summonerId.
-	SummonerID   string          `json:"summonerId,omitempty"`
-	SummonerName string          `json:"summonerName,omitempty"`
-	MiniSeries   MiniSeriesV1DTO `json:"miniSeries,omitempty"`
-	LeaguePoints int32           `json:"leaguePoints,omitempty"`
+	SummonerID   string                `json:"summonerId,omitempty"`
+	SummonerName string                `json:"summonerName,omitempty"`
+	MiniSeries   LeagueMiniSeriesV1DTO `json:"miniSeries,omitempty"`
+	LeaguePoints int32                 `json:"leaguePoints,omitempty"`
 	// Second through eighth placement.
 	Losses int32 `json:"losses,omitempty"`
 	// First placement.
@@ -109,16 +75,56 @@ type LeagueListV1DTO struct {
 	Entries  []LeagueItemV1DTO `json:"entries,omitempty"`
 }
 
-// tft-match-v1.MatchDto
-type MatchV1DTO struct {
-	// Match metadata.
-	Metadata MetadataV1DTO `json:"metadata,omitempty"`
-	// Match info.
-	Info InfoV1DTO `json:"info,omitempty"`
+// tft-league-v1.MiniSeriesDTO
+type LeagueMiniSeriesV1DTO struct {
+	Progress string `json:"progress,omitempty"`
+	Losses   int32  `json:"losses,omitempty"`
+	Target   int32  `json:"target,omitempty"`
+	Wins     int32  `json:"wins,omitempty"`
+}
+
+// tft-league-v1.TopRatedLadderEntryDto
+type LeagueTopRatedLadderEntryV1DTO struct {
+	// (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
+	RatedTier                    string `json:"ratedTier,omitempty"`
+	SummonerID                   string `json:"summonerId,omitempty"`
+	SummonerName                 string `json:"summonerName,omitempty"`
+	PreviousUpdateLadderPosition int32  `json:"previousUpdateLadderPosition,omitempty"`
+	RatedRating                  int32  `json:"ratedRating,omitempty"`
+	// First placement.
+	Wins int32 `json:"wins,omitempty"`
+}
+
+// tft-match-v1.CompanionDto
+type MatchCompanionV1DTO struct {
+	ContentID string `json:"content_ID,omitempty"`
+	Species   string `json:"species,omitempty"`
+	ItemID    int32  `json:"item_ID,omitempty"`
+	SkinID    int32  `json:"skin_ID,omitempty"`
+}
+
+// tft-match-v1.InfoDto
+type MatchInfoV1DTO struct {
+	EndOfGameResult string `json:"endOfGameResult,omitempty"`
+	// Game variation key. Game variations documented in TFT static data.
+	GameVariation string `json:"game_variation,omitempty"`
+	// Game client version.
+	GameVersion    string                  `json:"game_version,omitempty"`
+	TftGameType    string                  `json:"tft_game_type,omitempty"`
+	TftSetCoreName string                  `json:"tft_set_core_name,omitempty"`
+	Participants   []MatchParticipantV1DTO `json:"participants,omitempty"`
+	// Unix timestamp.
+	GameDatetime int64 `json:"game_datetime,omitempty"`
+	// Game length in seconds.
+	GameLength float32 `json:"game_length,omitempty"`
+	// Please refer to the League of Legends documentation.
+	QueueID int32 `json:"queue_id,omitempty"`
+	// Teamfight Tactics set number.
+	TftSetNumber int32 `json:"tft_set_number,omitempty"`
 }
 
 // tft-match-v1.MetadataDto
-type MetadataV1DTO struct {
+type MatchMetadataV1DTO struct {
 	// Match data version.
 	DataVersion string `json:"data_version,omitempty"`
 	// Match id.
@@ -127,24 +133,16 @@ type MetadataV1DTO struct {
 	Participants []string `json:"participants,omitempty"`
 }
 
-// tft-league-v1.MiniSeriesDTO
-type MiniSeriesV1DTO struct {
-	Progress string `json:"progress,omitempty"`
-	Losses   int32  `json:"losses,omitempty"`
-	Target   int32  `json:"target,omitempty"`
-	Wins     int32  `json:"wins,omitempty"`
-}
-
 // tft-match-v1.ParticipantDto
-type ParticipantV1DTO struct {
+type MatchParticipantV1DTO struct {
 	// Participant's companion.
-	Companion CompanionV1DTO `json:"companion,omitempty"`
-	PUUID     string         `json:"puuid,omitempty"`
-	Augments  []string       `json:"augments,omitempty"`
+	Companion MatchCompanionV1DTO `json:"companion,omitempty"`
+	PUUID     string              `json:"puuid,omitempty"`
+	Augments  []string            `json:"augments,omitempty"`
 	// A complete list of traits for the participant's active units.
-	Traits []TraitV1DTO `json:"traits,omitempty"`
+	Traits []MatchTraitV1DTO `json:"traits,omitempty"`
 	// A list of active units for the participant.
-	Units []UnitV1DTO `json:"units,omitempty"`
+	Units []MatchUnitV1DTO `json:"units,omitempty"`
 	// Gold left after participant was eliminated.
 	GoldLeft int32 `json:"gold_left,omitempty"`
 	// The round the participant was eliminated in. Note: If the player was eliminated in stage 2-1 their last_round would be 5.
@@ -162,13 +160,70 @@ type ParticipantV1DTO struct {
 	TotalDamageToPlayers int32 `json:"total_damage_to_players,omitempty"`
 }
 
+// tft-match-v1.TraitDto
+type MatchTraitV1DTO struct {
+	// Trait name.
+	Name string `json:"name,omitempty"`
+	// Number of units with this trait.
+	NumUnits int32 `json:"num_units,omitempty"`
+	// Current style for this trait. (0 = No style, 1 = Bronze, 2 = Silver, 3 = Gold, 4 = Chromatic)
+	Style int32 `json:"style,omitempty"`
+	// Current active tier for the trait.
+	TierCurrent int32 `json:"tier_current,omitempty"`
+	// Total tiers for the trait.
+	TierTotal int32 `json:"tier_total,omitempty"`
+}
+
+// tft-match-v1.UnitDto
+type MatchUnitV1DTO struct {
+	// This field was introduced in patch 9.22 with data_version 2.
+	CharacterID string `json:"character_id,omitempty"`
+	// If a unit is chosen as part of the Fates set mechanic, the chosen trait will be indicated by this field. Otherwise this field is excluded from the response.
+	Chosen string `json:"chosen,omitempty"`
+	// Unit name. This field is often left blank.
+	Name      string   `json:"name,omitempty"`
+	ItemNames []string `json:"itemNames,omitempty"`
+	// A list of the unit's items. Please refer to the Teamfight Tactics documentation for item ids.
+	Items []int32 `json:"items,omitempty"`
+	// Unit rarity. This doesn't equate to the unit cost.
+	Rarity int32 `json:"rarity,omitempty"`
+	// Unit tier.
+	Tier int32 `json:"tier,omitempty"`
+}
+
+// tft-match-v1.MatchDto
+type MatchV1DTO struct {
+	// Match metadata.
+	Metadata MatchMetadataV1DTO `json:"metadata,omitempty"`
+	// Match info.
+	Info MatchInfoV1DTO `json:"info,omitempty"`
+}
+
+// tft-status-v1.ContentDto
+type StatusContentV1DTO struct {
+	Content string `json:"content,omitempty"`
+	Locale  string `json:"locale,omitempty"`
+}
+
 // tft-status-v1.PlatformDataDto
-type PlatformDataV1DTO struct {
+type StatusPlatformDataV1DTO struct {
 	ID           string        `json:"id,omitempty"`
 	Name         string        `json:"name,omitempty"`
 	Incidents    []StatusV1DTO `json:"incidents,omitempty"`
 	Locales      []string      `json:"locales,omitempty"`
 	Maintenances []StatusV1DTO `json:"maintenances,omitempty"`
+}
+
+// tft-status-v1.UpdateDto
+type StatusUpdateV1DTO struct {
+	Author    string `json:"author,omitempty"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+	// (Legal values: riotclient, riotstatus, game)
+	PublishLocations []string             `json:"publish_locations,omitempty"`
+	Translations     []StatusContentV1DTO `json:"translations,omitempty"`
+	ID               int32                `json:"id,omitempty"`
+	Publish          bool                 `json:"publish,omitempty"`
 }
 
 // tft-status-v1.StatusDto
@@ -181,10 +236,10 @@ type StatusV1DTO struct {
 	MaintenanceStatus string `json:"maintenance_status,omitempty"`
 	UpdatedAt         string `json:"updated_at,omitempty"`
 	// (Legal values: windows, macos, android, ios, ps4, xbone, switch)
-	Platforms []string       `json:"platforms,omitempty"`
-	Titles    []ContentV1DTO `json:"titles,omitempty"`
-	Updates   []UpdateV1DTO  `json:"updates,omitempty"`
-	ID        int32          `json:"id,omitempty"`
+	Platforms []string             `json:"platforms,omitempty"`
+	Titles    []StatusContentV1DTO `json:"titles,omitempty"`
+	Updates   []StatusUpdateV1DTO  `json:"updates,omitempty"`
+	ID        int32                `json:"id,omitempty"`
 }
 
 // tft-summoner-v1.SummonerDTO
@@ -203,59 +258,4 @@ type SummonerV1DTO struct {
 	RevisionDate int64 `json:"revisionDate,omitempty"`
 	// Summoner level associated with the summoner.
 	SummonerLevel int64 `json:"summonerLevel,omitempty"`
-}
-
-// tft-league-v1.TopRatedLadderEntryDto
-type TopRatedLadderEntryV1DTO struct {
-	// (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
-	RatedTier                    string `json:"ratedTier,omitempty"`
-	SummonerID                   string `json:"summonerId,omitempty"`
-	SummonerName                 string `json:"summonerName,omitempty"`
-	PreviousUpdateLadderPosition int32  `json:"previousUpdateLadderPosition,omitempty"`
-	RatedRating                  int32  `json:"ratedRating,omitempty"`
-	// First placement.
-	Wins int32 `json:"wins,omitempty"`
-}
-
-// tft-match-v1.TraitDto
-type TraitV1DTO struct {
-	// Trait name.
-	Name string `json:"name,omitempty"`
-	// Number of units with this trait.
-	NumUnits int32 `json:"num_units,omitempty"`
-	// Current style for this trait. (0 = No style, 1 = Bronze, 2 = Silver, 3 = Gold, 4 = Chromatic)
-	Style int32 `json:"style,omitempty"`
-	// Current active tier for the trait.
-	TierCurrent int32 `json:"tier_current,omitempty"`
-	// Total tiers for the trait.
-	TierTotal int32 `json:"tier_total,omitempty"`
-}
-
-// tft-match-v1.UnitDto
-type UnitV1DTO struct {
-	// This field was introduced in patch 9.22 with data_version 2.
-	CharacterID string `json:"character_id,omitempty"`
-	// If a unit is chosen as part of the Fates set mechanic, the chosen trait will be indicated by this field. Otherwise this field is excluded from the response.
-	Chosen string `json:"chosen,omitempty"`
-	// Unit name. This field is often left blank.
-	Name      string   `json:"name,omitempty"`
-	ItemNames []string `json:"itemNames,omitempty"`
-	// A list of the unit's items. Please refer to the Teamfight Tactics documentation for item ids.
-	Items []int32 `json:"items,omitempty"`
-	// Unit rarity. This doesn't equate to the unit cost.
-	Rarity int32 `json:"rarity,omitempty"`
-	// Unit tier.
-	Tier int32 `json:"tier,omitempty"`
-}
-
-// tft-status-v1.UpdateDto
-type UpdateV1DTO struct {
-	Author    string `json:"author,omitempty"`
-	CreatedAt string `json:"created_at,omitempty"`
-	UpdatedAt string `json:"updated_at,omitempty"`
-	// (Legal values: riotclient, riotstatus, game)
-	PublishLocations []string       `json:"publish_locations,omitempty"`
-	Translations     []ContentV1DTO `json:"translations,omitempty"`
-	ID               int32          `json:"id,omitempty"`
-	Publish          bool           `json:"publish,omitempty"`
 }

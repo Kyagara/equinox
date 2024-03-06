@@ -94,15 +94,41 @@ func normalizeDescription(desc string) string {
 func getDTOAndVersion(rawDTO string) (string, string) {
 	parts := strings.Split(rawDTO, ".")
 	endpoint := parts[0]
-	dto := parts[1]
-	v := strcase.ToCamel(versionRegex.FindString(endpoint))
-	name, version := normalizeDTOName(dto, v, endpoint)
+	name := parts[1]
+
+	version := strcase.ToCamel(versionRegex.FindString(endpoint))
+	if len(version) > 2 {
+		version = version[len(version)-2:]
+	}
+
+	name = strings.ReplaceAll(name, "Dto", "")
+	name = strings.ReplaceAll(name, "DTO", "")
+	name = strings.ReplaceAll(name, version, "")
+	name = strings.Replace(name, "ChampionInfo", "ChampionRotation", 1)
+	name += version + "DTO"
+	for _, v := range goTypes {
+		if strings.HasSuffix(name, v+version+"DTO") {
+			name = strings.Replace(name, version+"DTO", "", 1)
+			break
+		}
+	}
+
+	endpoint = clientRegex.ReplaceAllString(endpoint, "")
+	endpoint = endpoint[:len(endpoint)-3]
+	endpoint = strcase.ToCamel(endpoint)
+	if endpoint == "TournamentStub" && strings.HasPrefix(name, "Tournament") {
+		name = strings.Replace(name, "Tournament", "", 1)
+	}
+
+	if !strings.HasPrefix(name, endpoint) {
+		name = endpoint + name
+	}
 	return name, version
 }
 
 func getModelField(prop gjson.Result, propKey string, version string, endpoint string) (string, string) {
 	propType := stringifyType(prop)
-	propType = cleanIfPrimitiveType(prop, version, endpoint, propType)
+	propType = cleanDTOPropType(prop, version, endpoint, propType)
 
 	name := propKey
 	if digitRegex.MatchString(propKey) {
@@ -143,24 +169,5 @@ func getModelField(prop gjson.Result, propKey string, version string, endpoint s
 	}
 
 	name = strings.Replace(name, "Ids", "IDs", 1)
-
-	if strings.Contains(endpoint, "tournament-stub") && strings.Contains(propType, "[]LobbyEvent") {
-		propType = strings.Replace(propType, "LobbyEvent", "StubLobbyEvent", 1)
-	}
-	if strings.HasPrefix(endpoint, "val-ranked") && strings.Contains(propType, "Player"+version+"DTO") {
-		propType = strings.Replace(propType, "[]Player", "[]LeaderboardPlayer", 1)
-	}
-	if strings.HasPrefix(endpoint, "val-status") && strings.Contains(propType, "Content"+version+"DTO") {
-		propType = strings.Replace(propType, "Content", "StatusContent", 1)
-	}
-	if strings.HasPrefix(endpoint, "lor-ranked") && strings.Contains(propType, "Player"+version+"DTO") {
-		propType = strings.Replace(propType, "Player", "LeaderboardPlayer", 1)
-	}
-	if strings.HasPrefix(endpoint, "spectator") {
-		if propKey == "participants" && !strings.HasPrefix(propType, "[]Current") {
-			propType = strings.Replace(propType, "ParticipantV", "FeaturedGameParticipantV", 1)
-		}
-	}
-
 	return name, propType
 }
