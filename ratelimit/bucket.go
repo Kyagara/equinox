@@ -12,7 +12,7 @@ type Bucket struct {
 	next time.Time
 	// Current number of tokens, starts at limit
 	tokens int
-	// The limit given in the header without any modification
+	// The limit given in the header without any modifications
 	baseLimit int
 	// Maximum number of tokens
 	limit int
