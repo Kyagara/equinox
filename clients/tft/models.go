@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 031d3e7fc343bd86d82c45559fc79d3a87fa1b82
+// Spec version = 1e85b75ffc0bd58ccaf724557782b1e6b9bd27af
 
 // tft-league-v1.LeagueEntryDTO
 type LeagueEntryV1DTO struct {
@@ -110,17 +110,22 @@ type MatchInfoV1DTO struct {
 	GameVariation string `json:"game_variation,omitempty"`
 	// Game client version.
 	GameVersion    string                  `json:"game_version,omitempty"`
-	TftGameType    string                  `json:"tft_game_type,omitempty"`
-	TftSetCoreName string                  `json:"tft_set_core_name,omitempty"`
+	TFTGameType    string                  `json:"tft_game_type,omitempty"`
+	TFTSetCoreName string                  `json:"tft_set_core_name,omitempty"`
 	Participants   []MatchParticipantV1DTO `json:"participants,omitempty"`
+	GameCreation   int64                   `json:"gameCreation,omitempty"`
 	// Unix timestamp.
 	GameDatetime int64 `json:"game_datetime,omitempty"`
+	GameID       int64 `json:"gameId,omitempty"`
+	MapID        int64 `json:"mapId,omitempty"`
 	// Game length in seconds.
 	GameLength float32 `json:"game_length,omitempty"`
 	// Please refer to the League of Legends documentation.
-	QueueID int32 `json:"queue_id,omitempty"`
+	QueueID int32 `json:"queueId,omitempty"`
+	// Please refer to the League of Legends documentation.
+	QueueID_ int32 `json:"queue_id,omitempty"`
 	// Teamfight Tactics set number.
-	TftSetNumber int32 `json:"tft_set_number,omitempty"`
+	TFTSetNumber int32 `json:"tft_set_number,omitempty"`
 }
 
 // tft-match-v1.MetadataDto
@@ -133,6 +138,49 @@ type MatchMetadataV1DTO struct {
 	Participants []string `json:"participants,omitempty"`
 }
 
+// tft-match-v1.ParticipantMissionsDto
+type MatchParticipantMissionsV1DTO struct {
+	Assists                        int32 `json:"Assists,omitempty"`
+	DamageDealt                    int32 `json:"DamageDealt,omitempty"`
+	DamageDealtToObjectives        int32 `json:"DamageDealtToObjectives,omitempty"`
+	DamageDealtToTurrets           int32 `json:"DamageDealtToTurrets,omitempty"`
+	DamageTaken                    int32 `json:"DamageTaken,omitempty"`
+	DoubleKills                    int32 `json:"DoubleKills,omitempty"`
+	GoldEarned                     int32 `json:"GoldEarned,omitempty"`
+	GoldSpent                      int32 `json:"GoldSpent,omitempty"`
+	InhibitorsDestroyed            int32 `json:"InhibitorsDestroyed,omitempty"`
+	Kills                          int32 `json:"Kills,omitempty"`
+	LargestKillingSpree            int32 `json:"LargestKillingSpree,omitempty"`
+	LargestMultiKill               int32 `json:"LargestMultiKill,omitempty"`
+	MagicDamageDealt               int32 `json:"MagicDamageDealt,omitempty"`
+	MagicDamageDealtToChampions    int32 `json:"MagicDamageDealtToChampions,omitempty"`
+	NeutralMinionsKilledTeamJungle int32 `json:"NeutralMinionsKilledTeamJungle,omitempty"`
+	PhysicalDamageDealt            int32 `json:"PhysicalDamageDealt,omitempty"`
+	PhysicalDamageTaken            int32 `json:"PhysicalDamageTaken,omitempty"`
+	PlayerScore0                   int32 `json:"PlayerScore0,omitempty"`
+	PlayerScore1                   int32 `json:"PlayerScore1,omitempty"`
+	PlayerScore10                  int32 `json:"PlayerScore10,omitempty"`
+	PlayerScore11                  int32 `json:"PlayerScore11,omitempty"`
+	PlayerScore2                   int32 `json:"PlayerScore2,omitempty"`
+	PlayerScore3                   int32 `json:"PlayerScore3,omitempty"`
+	PlayerScore4                   int32 `json:"PlayerScore4,omitempty"`
+	PlayerScore5                   int32 `json:"PlayerScore5,omitempty"`
+	PlayerScore6                   int32 `json:"PlayerScore6,omitempty"`
+	PlayerScore9                   int32 `json:"PlayerScore9,omitempty"`
+	QuadraKills                    int32 `json:"QuadraKills,omitempty"`
+	Spell1Casts                    int32 `json:"Spell1Casts,omitempty"`
+	Spell2Casts                    int32 `json:"Spell2Casts,omitempty"`
+	Spell3Casts                    int32 `json:"Spell3Casts,omitempty"`
+	Spell4Casts                    int32 `json:"Spell4Casts,omitempty"`
+	SummonerSpell1Casts            int32 `json:"SummonerSpell1Casts,omitempty"`
+	TimeCcothers                   int32 `json:"TimeCCOthers,omitempty"`
+	TotalMinionsKilled             int32 `json:"TotalMinionsKilled,omitempty"`
+	TrueDamageDealtToChampions     int32 `json:"TrueDamageDealtToChampions,omitempty"`
+	UnrealKills                    int32 `json:"UnrealKills,omitempty"`
+	VisionScore                    int32 `json:"VisionScore,omitempty"`
+	WardsKilled                    int32 `json:"WardsKilled,omitempty"`
+}
+
 // tft-match-v1.ParticipantDto
 type MatchParticipantV1DTO struct {
 	// Participant's companion.
@@ -142,7 +190,8 @@ type MatchParticipantV1DTO struct {
 	// A complete list of traits for the participant's active units.
 	Traits []MatchTraitV1DTO `json:"traits,omitempty"`
 	// A list of active units for the participant.
-	Units []MatchUnitV1DTO `json:"units,omitempty"`
+	Units    []MatchUnitV1DTO              `json:"units,omitempty"`
+	Missions MatchParticipantMissionsV1DTO `json:"missions,omitempty"`
 	// Gold left after participant was eliminated.
 	GoldLeft int32 `json:"gold_left,omitempty"`
 	// The round the participant was eliminated in. Note: If the player was eliminated in stage 2-1 their last_round would be 5.
@@ -197,6 +246,148 @@ type MatchV1DTO struct {
 	Metadata MatchMetadataV1DTO `json:"metadata,omitempty"`
 	// Match info.
 	Info MatchInfoV1DTO `json:"info,omitempty"`
+}
+
+// spectator-tft-v5.BannedChampion
+type SpectatorBannedChampionV5DTO struct {
+	// The ID of the banned champion
+	ChampionID int64 `json:"championId,omitempty"`
+	// The turn during which the champion was banned
+	PickTurn int32 `json:"pickTurn,omitempty"`
+	// The ID of the team that banned the champion
+	TeamID int64 `json:"teamId,omitempty"`
+}
+
+// spectator-tft-v5.CurrentGameInfo
+type SpectatorCurrentGameInfoV5DTO struct {
+	// The game mode
+	GameMode GameMode `json:"gameMode,omitempty"`
+	// The game type
+	GameType GameType `json:"gameType,omitempty"`
+	// The observer information
+	Observers SpectatorObserverV5DTO `json:"observers,omitempty"`
+	// The ID of the platform on which the game is being played
+	PlatformID string `json:"platformId,omitempty"`
+	// Banned champion information
+	BannedChampions []SpectatorBannedChampionV5DTO `json:"bannedChampions,omitempty"`
+	// The participant information
+	Participants []SpectatorCurrentGameParticipantV5DTO `json:"participants,omitempty"`
+	// The ID of the game
+	GameID int64 `json:"gameId,omitempty"`
+	// The amount of time in seconds that has passed since the game started
+	GameLength int64 `json:"gameLength,omitempty"`
+	// The queue type (queue types are documented on the Game Constants page)
+	GameQueueConfigID int64 `json:"gameQueueConfigId,omitempty"`
+	// The game start time represented in epoch milliseconds
+	GameStartTime int64 `json:"gameStartTime,omitempty"`
+	// The ID of the map
+	MapID int64 `json:"mapId,omitempty"`
+}
+
+// spectator-tft-v5.CurrentGameParticipant
+type SpectatorCurrentGameParticipantV5DTO struct {
+	// The encrypted puuid of this participant
+	PUUID  string `json:"puuid,omitempty"`
+	RiotID string `json:"riotId,omitempty"`
+	// The encrypted summoner ID of this participant
+	SummonerID string `json:"summonerId,omitempty"`
+	// The summoner name of this participant
+	SummonerName string `json:"summonerName,omitempty"`
+	// List of Game Customizations
+	GameCustomizationObjects []SpectatorGameCustomizationObjectV5DTO `json:"gameCustomizationObjects,omitempty"`
+	// Perks/Runes Reforged Information
+	Perks SpectatorPerksV5DTO `json:"perks,omitempty"`
+	// The ID of the champion played by this participant
+	ChampionID int64 `json:"championId,omitempty"`
+	// The ID of the profile icon used by this participant
+	ProfileIconID int64 `json:"profileIconId,omitempty"`
+	// The ID of the first summoner spell used by this participant
+	Spell1ID int64 `json:"spell1Id,omitempty"`
+	// The ID of the second summoner spell used by this participant
+	Spell2ID int64 `json:"spell2Id,omitempty"`
+	// The team ID of this participant, indicating the participant's team
+	TeamID int64 `json:"teamId,omitempty"`
+}
+
+// spectator-tft-v5.FeaturedGameInfo
+type SpectatorFeaturedGameInfoV5DTO struct {
+	// The game mode
+	//
+	// (Legal values:  TFT)
+	GameMode GameMode `json:"gameMode,omitempty"`
+	// The game type
+	//
+	// (Legal values:  MATCHED)
+	GameType GameType `json:"gameType,omitempty"`
+	// The observer information
+	Observers SpectatorObserverV5DTO `json:"observers,omitempty"`
+	// The ID of the platform on which the game is being played
+	PlatformID string `json:"platformId,omitempty"`
+	// Banned champion information
+	BannedChampions []SpectatorBannedChampionV5DTO `json:"bannedChampions,omitempty"`
+	// The participant information
+	Participants []SpectatorParticipantV5DTO `json:"participants,omitempty"`
+	// The ID of the game
+	GameID int64 `json:"gameId,omitempty"`
+	// The amount of time in seconds that has passed since the game started
+	GameLength int64 `json:"gameLength,omitempty"`
+	// The queue type (queue types are documented on the Game Constants page)
+	GameQueueConfigID int64 `json:"gameQueueConfigId,omitempty"`
+	// The ID of the map
+	MapID int64 `json:"mapId,omitempty"`
+}
+
+// spectator-tft-v5.FeaturedGames
+type SpectatorFeaturedGamesV5DTO struct {
+	// The list of featured games
+	GameList []SpectatorFeaturedGameInfoV5DTO `json:"gameList,omitempty"`
+	// The suggested interval to wait before requesting FeaturedGames again
+	ClientRefreshInterval int64 `json:"clientRefreshInterval,omitempty"`
+}
+
+// spectator-tft-v5.GameCustomizationObject
+type SpectatorGameCustomizationObjectV5DTO struct {
+	// Category identifier for Game Customization
+	Category string `json:"category,omitempty"`
+	// Game Customization content
+	Content string `json:"content,omitempty"`
+}
+
+// spectator-tft-v5.Observer
+type SpectatorObserverV5DTO struct {
+	// Key used to decrypt the spectator grid game data for playback
+	EncryptionKey string `json:"encryptionKey,omitempty"`
+}
+
+// spectator-tft-v5.Participant
+type SpectatorParticipantV5DTO struct {
+	// Encrypted puuid of this participant
+	PUUID  string `json:"puuid,omitempty"`
+	RiotID string `json:"riotId,omitempty"`
+	// Encrypted summoner ID of this participant
+	SummonerID string `json:"summonerId,omitempty"`
+	// The summoner name of this participant
+	SummonerName string `json:"summonerName,omitempty"`
+	// The ID of the champion played by this participant
+	ChampionID int64 `json:"championId,omitempty"`
+	// The ID of the profile icon used by this participant
+	ProfileIconID int64 `json:"profileIconId,omitempty"`
+	// The ID of the first summoner spell used by this participant
+	Spell1ID int64 `json:"spell1Id,omitempty"`
+	// The ID of the second summoner spell used by this participant
+	Spell2ID int64 `json:"spell2Id,omitempty"`
+	// The team ID of this participant, indicating the participant's team
+	TeamID int64 `json:"teamId,omitempty"`
+}
+
+// spectator-tft-v5.Perks
+type SpectatorPerksV5DTO struct {
+	// IDs of the perks/runes assigned.
+	PerkIDs []int64 `json:"perkIds,omitempty"`
+	// Primary runes path
+	PerkStyle int64 `json:"perkStyle,omitempty"`
+	// Secondary runes path
+	PerkSubStyle int64 `json:"perkSubStyle,omitempty"`
 }
 
 // tft-status-v1.ContentDto

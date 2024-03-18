@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 031d3e7fc343bd86d82c45559fc79d3a87fa1b82
+// Spec version = 1e85b75ffc0bd58ccaf724557782b1e6b9bd27af
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -655,7 +655,7 @@ type MatchTimelineInfoFrameEventV5DTO struct {
 	TransformType  string `json:"transformType,omitempty"`
 	// Timeline event type.
 	//
-	// (Known legal values: ASCENDED_EVENT, BUILDING_KILL, CAPTURE_POINT, CHAMPION_KILL, CHAMPION_SPECIAL_KILL, CHAMPION_TRANSFORM, DRAGON_SOUL_GIVEN, ELITE_MONSTER_KILL, GAME_END, ITEM_DESTROYED, ITEM_PURCHASED, ITEM_SOLD, ITEM_UNDO, LEVEL_UP, PAUSE_END, PAUSE_START, SKILL_LEVEL_UP, TURRET_PLATE_DESTROYED, WARD_KILL, WARD_PLACED)
+	// (Known legal values: ASCENDED_EVENT, BUILDING_KILL, CAPTURE_POINT, CHAMPION_KILL, CHAMPION_SPECIAL_KILL, CHAMPION_TRANSFORM, DRAGON_SOUL_GIVEN, ELITE_MONSTER_KILL, GAME_END, ITEM_DESTROYED, ITEM_PURCHASED, ITEM_SOLD, ITEM_UNDO, LEVEL_UP, OBJECTIVE_BOUNTY_PRESTART, PAUSE_END, PAUSE_START, SKILL_LEVEL_UP, TURRET_PLATE_DESTROYED, WARD_KILL, WARD_PLACED)
 	Type                    string                                              `json:"type,omitempty"`
 	WardType                string                                              `json:"wardType,omitempty"`
 	AssistingParticipantIDs []int32                                             `json:"assistingParticipantIds,omitempty"`
@@ -892,7 +892,8 @@ type SpectatorCurrentGameInfoV5DTO struct {
 // spectator-v4.CurrentGameParticipant
 type SpectatorCurrentGameParticipantV4DTO struct {
 	// The encrypted puuid of this participant
-	PUUID string `json:"puuid,omitempty"`
+	PUUID  string `json:"puuid,omitempty"`
+	RiotID string `json:"riotId,omitempty"`
 	// The encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
 	// The summoner name of this participant
@@ -918,7 +919,8 @@ type SpectatorCurrentGameParticipantV4DTO struct {
 // spectator-v5.CurrentGameParticipant
 type SpectatorCurrentGameParticipantV5DTO struct {
 	// The encrypted puuid of this participant
-	PUUID string `json:"puuid,omitempty"`
+	PUUID  string `json:"puuid,omitempty"`
+	RiotID string `json:"riotId,omitempty"`
 	// The encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
 	// The summoner name of this participant
@@ -1044,7 +1046,8 @@ type SpectatorObserverV5DTO struct {
 // spectator-v4.Participant
 type SpectatorParticipantV4DTO struct {
 	// Encrypted puuid of this participant
-	PUUID string `json:"puuid,omitempty"`
+	PUUID  string `json:"puuid,omitempty"`
+	RiotID string `json:"riotId,omitempty"`
 	// Encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
 	// The summoner name of this participant
@@ -1066,7 +1069,8 @@ type SpectatorParticipantV4DTO struct {
 // spectator-v5.Participant
 type SpectatorParticipantV5DTO struct {
 	// Encrypted puuid of this participant
-	PUUID string `json:"puuid,omitempty"`
+	PUUID  string `json:"puuid,omitempty"`
+	RiotID string `json:"riotId,omitempty"`
 	// Encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
 	// The summoner name of this participant

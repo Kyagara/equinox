@@ -200,6 +200,25 @@ func (queue QueueType) String() string {
 {%- endif %}
  
 {% if ClientName == "tft" %}
+// TFT game type: matched game, custom game, or tutorial game.
+type GameType string
+
+const (
+{{- NewConstants("GameType", GameTypes) }}
+)
+
+{{- ConstantStringer("gameType", "GameType", GameTypes) }}
+
+// League of Legends game mode, such as Classic,
+// ARAM, URF, One For All, Ascension, etc.
+type GameMode string
+
+const (
+{{- NewConstants("GameMode", GameModes) }}
+)
+
+{{- ConstantStringer("gameMode", "GameMode", GameModes) }}
+
 // TFT ranked queue types.
 type QueueType string
 

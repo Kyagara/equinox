@@ -46,8 +46,12 @@ func getEndpointGroup(clientName string, spec gjson.Result) map[string][]Endpoin
 	paths := spec.Get("paths").Map()
 	for path, endpoint := range paths {
 		parts := strings.Split(path, "/")
-		if parts[1] == clientName || (parts[1] == "fulfillment" && clientName == "lol") {
-			endpointName := endpoint.Get("x-endpoint").String()
+		endpointName := endpoint.Get("x-endpoint").String()
+
+		if parts[1] == clientName || (parts[1] == "fulfillment" && clientName == "lol") || (strings.Contains(endpointName, "tft") && clientName == "tft") {
+			if clientName == "lol" && strings.Contains(endpointName, "tft") {
+				continue
+			}
 			endpoints[endpointName] = append(endpoints[endpointName], EndpointGroup{path, endpoint})
 		}
 	}
