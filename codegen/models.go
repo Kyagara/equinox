@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 
@@ -40,10 +41,29 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 			schemaDescription := normalizeDescription(schema.Get("description").String())
 
 			properties := schema.Get("properties").Map()
+			var sortedKeys []string
+			for key := range properties {
+				sortedKeys = append(sortedKeys, key)
+			}
+			sort.Strings(sortedKeys)
+
 			props := make([]ModelProperty, 0, len(properties))
-			for propKey, prop := range properties {
+			namesUsed := make([]string, 0, len(properties))
+
+			for _, propKey := range sortedKeys {
+				prop := properties[propKey]
 				name, fieldType := getModelField(prop, propKey, version, dtoSplit[0])
 				description := normalizeDescription(prop.Get("description").String())
+
+				if slices.Contains(namesUsed, name) {
+					name += "_"
+					fmt.Printf("Duplicate property name '%s' for property '%s'. New name: '%s'\n", name, propKey, name)
+
+					if slices.Contains(namesUsed, name) {
+						panic(fmt.Errorf("duplicate property name '%s' for property '%s'", name, propKey))
+					}
+				}
+				namesUsed = append(namesUsed, name)
 
 				props = append(props, ModelProperty{
 					Name:        name,
@@ -51,7 +71,6 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 					Description: description,
 					JSONField:   fmt.Sprintf("`json:\"%s,omitempty\"`", propKey),
 				})
-
 			}
 
 			if len(props) != len(properties) {
@@ -170,6 +189,7 @@ func getModelField(prop gjson.Result, propKey string, version string, endpoint s
 	}
 
 	name = strings.Replace(name, "Ids", "IDs", 1)
+	name = strings.Replace(name, "Tft", "TFT", 1)
 
 	return name, propType
 }

@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 031d3e7fc343bd86d82c45559fc79d3a87fa1b82
+// Spec version = 1e85b75ffc0bd58ccaf724557782b1e6b9bd27af
 
 import (
 	"context"
@@ -342,6 +342,72 @@ func (e *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puui
 		return nil, err
 	}
 	return data, nil
+}
+
+// # Riot API Reference
+//
+// [spectator-tft-v5]
+//
+// [spectator-tft-v5]: https://developer.riotgames.com/apis#spectator-tft-v5
+type SpectatorV5 struct {
+	internal *internal.Client
+}
+
+// Get current game information for the given puuid.
+//
+// # Parameters
+//   - route : Route to query.
+//   - encryptedPUUID : The puuid of the summoner.
+//
+// # Riot API Reference
+//
+// [spectator-tft-v5.getCurrentGameInfoByPuuid]
+//
+// [spectator-tft-v5.getCurrentGameInfoByPuuid]: https://developer.riotgames.com/api-methods/#spectator-tft-v5/GET_getCurrentGameInfoByPuuid
+func (e *SpectatorV5) CurrentGameInfoByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (*SpectatorCurrentGameInfoV5DTO, error) {
+	logger := e.internal.Logger("TFT_SpectatorV5_CurrentGameInfoByPUUID")
+	logger.Trace().Msg("Method started execution")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/tft/v5/active-games/by-puuid/", encryptedPUUID}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "spectator-tft-v5.getCurrentGameInfoByPuuid", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data SpectatorCurrentGameInfoV5DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Get list of featured games.
+//
+// # Parameters
+//   - route : Route to query.
+//
+// # Riot API Reference
+//
+// [spectator-tft-v5.getFeaturedGames]
+//
+// [spectator-tft-v5.getFeaturedGames]: https://developer.riotgames.com/api-methods/#spectator-tft-v5/GET_getFeaturedGames
+func (e *SpectatorV5) Featured(ctx context.Context, route PlatformRoute) (*SpectatorFeaturedGamesV5DTO, error) {
+	logger := e.internal.Logger("TFT_SpectatorV5_Featured")
+	logger.Trace().Msg("Method started execution")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/tft/v5/featured-games"}
+	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "spectator-tft-v5.getFeaturedGames", nil)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error creating request")
+		return nil, err
+	}
+	var data SpectatorFeaturedGamesV5DTO
+	err = e.internal.Execute(ctx, equinoxReq, &data)
+	if err != nil {
+		logger.Error().Err(err).Msg("Error executing request")
+		return nil, err
+	}
+	return &data, nil
 }
 
 // # Riot API Reference

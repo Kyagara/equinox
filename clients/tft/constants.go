@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 031d3e7fc343bd86d82c45559fc79d3a87fa1b82
+// Spec version = 1e85b75ffc0bd58ccaf724557782b1e6b9bd27af
 
 // LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
@@ -160,6 +160,149 @@ func (route PlatformRoute) String() string {
 		return "vn2"
 	default:
 		return string(route)
+	}
+}
+
+// TFT game type: matched game, custom game, or tutorial game.
+type GameType string
+
+const (
+	// Custom games
+	CUSTOM_GAME GameType = "CUSTOM_GAME"
+	// all other games
+	MATCHED_GAME GameType = "MATCHED_GAME"
+	// Tutorial games
+	TUTORIAL_GAME GameType = "TUTORIAL_GAME"
+)
+
+func (gameType GameType) String() string {
+	switch gameType {
+	case CUSTOM_GAME:
+		return "CUSTOM_GAME"
+	case MATCHED_GAME:
+		return "MATCHED_GAME"
+	case TUTORIAL_GAME:
+		return "TUTORIAL_GAME"
+	default:
+		return string(gameType)
+	}
+}
+
+// League of Legends game mode, such as Classic,
+// ARAM, URF, One For All, Ascension, etc.
+type GameMode string
+
+const (
+	// ARAM games
+	ARAM GameMode = "ARAM"
+	// All Random Summoner's Rift games
+	ARSR GameMode = "ARSR"
+	// Ascension games
+	ASCENSION GameMode = "ASCENSION"
+	// Blood Hunt Assassin games
+	ASSASSINATE GameMode = "ASSASSINATE"
+	// 2v2v2v2
+	CHERRY_GAMEMODE GameMode = "CHERRY_GameMode"
+	// Classic Summoner's Rift and Twisted Treeline games
+	CLASSIC GameMode = "CLASSIC"
+	// Dark Star: Singularity games
+	DARKSTAR GameMode = "DARKSTAR"
+	// Doom Bot games
+	DOOMBOTSTEEMO GameMode = "DOOMBOTSTEEMO"
+	// Snowdown Showdown games
+	FIRSTBLOOD GameMode = "FIRSTBLOOD"
+	// Nexus Blitz games
+	GAMEMODEX GameMode = "GAMEMODEX"
+	// Legend of the Poro King games
+	KINGPORO GameMode = "KINGPORO"
+	// Nexus Blitz games
+	NEXUSBLITZ GameMode = "NEXUSBLITZ"
+	// Dominion/Crystal Scar games
+	ODIN GameMode = "ODIN"
+	// Odyssey: Extraction games
+	ODYSSEY GameMode = "ODYSSEY"
+	// One for All games
+	ONEFORALL GameMode = "ONEFORALL"
+	// Practice tool training games.
+	PRACTICETOOL GameMode = "PRACTICETOOL"
+	// PROJECT: Hunters games
+	PROJECT GameMode = "PROJECT"
+	// Nexus Siege games
+	SIEGE GameMode = "SIEGE"
+	// Star Guardian Invasion games
+	STARGUARDIAN GameMode = "STARGUARDIAN"
+	// Teamfight Tactics, used in `spectator-v4` endpoints.
+	TFT GameMode = "TFT"
+	// Tutorial games
+	TUTORIAL GameMode = "TUTORIAL"
+	// Tutorial: Welcome to League.
+	TUTORIAL_MODULE_1 GameMode = "TUTORIAL_MODULE_1"
+	// Tutorial: Power Up.
+	TUTORIAL_MODULE_2 GameMode = "TUTORIAL_MODULE_2"
+	// Tutorial: Shop for Gear.
+	TUTORIAL_MODULE_3 GameMode = "TUTORIAL_MODULE_3"
+	// Ultimate Spellbook games
+	ULTBOOK GameMode = "ULTBOOK"
+	// URF games
+	URF GameMode = "URF"
+)
+
+func (gameMode GameMode) String() string {
+	switch gameMode {
+	case ARAM:
+		return "ARAM"
+	case ARSR:
+		return "ARSR"
+	case ASCENSION:
+		return "ASCENSION"
+	case ASSASSINATE:
+		return "ASSASSINATE"
+	case CHERRY_GAMEMODE:
+		return "CHERRY_GameMode"
+	case CLASSIC:
+		return "CLASSIC"
+	case DARKSTAR:
+		return "DARKSTAR"
+	case DOOMBOTSTEEMO:
+		return "DOOMBOTSTEEMO"
+	case FIRSTBLOOD:
+		return "FIRSTBLOOD"
+	case GAMEMODEX:
+		return "GAMEMODEX"
+	case KINGPORO:
+		return "KINGPORO"
+	case NEXUSBLITZ:
+		return "NEXUSBLITZ"
+	case ODIN:
+		return "ODIN"
+	case ODYSSEY:
+		return "ODYSSEY"
+	case ONEFORALL:
+		return "ONEFORALL"
+	case PRACTICETOOL:
+		return "PRACTICETOOL"
+	case PROJECT:
+		return "PROJECT"
+	case SIEGE:
+		return "SIEGE"
+	case STARGUARDIAN:
+		return "STARGUARDIAN"
+	case TFT:
+		return "TFT"
+	case TUTORIAL:
+		return "TUTORIAL"
+	case TUTORIAL_MODULE_1:
+		return "TUTORIAL_MODULE_1"
+	case TUTORIAL_MODULE_2:
+		return "TUTORIAL_MODULE_2"
+	case TUTORIAL_MODULE_3:
+		return "TUTORIAL_MODULE_3"
+	case ULTBOOK:
+		return "ULTBOOK"
+	case URF:
+		return "URF"
+	default:
+		return string(gameMode)
 	}
 }
 
