@@ -2,7 +2,8 @@
 
 ## Benchmark
 
-> Benchmarks are currently not automated.
+> [!WARNING]
+> Benchmarks are currently not automated, take the results in the code comments with a grain of salt.
 
 Benchmarks are separated in four files: parallel, data, cache and internal.
 
@@ -17,6 +18,7 @@ Keep in mind that since requests are mocked using `httpmock`, results (time, byt
 
 ## Integration
 
+> [!NOTE]
 > Integration tests are meant to be run manually.
 
 The objective of these tests is to test some methods from different games against the live Riot Games API, making sure the different HTTP methods are working as intended. Ideally, these tests should only contain methods allowed by a development key and should be only a handful of tests to avoid getting rate limited.

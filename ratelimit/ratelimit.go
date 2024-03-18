@@ -38,7 +38,7 @@ type RateLimit struct {
 	Enabled bool
 	// Factor to be applied to the limit. E.g. if set to 0.5, the limit will be reduced by 50%.
 	LimitUsageFactor float64
-	// Delay in milliseconds to be add to reset intervals.
+	// Delay in milliseconds to be added to reset intervals.
 	IntervalOverhead time.Duration
 	mutex            sync.Mutex
 }

@@ -8,17 +8,11 @@ You can find the source code for Riven [here](https://github.com/MingweiSamuel/R
 
 In addition, the specs that are downloaded and used are from [riotapi-schema](https://github.com/MingweiSamuel/riotapi-schema) project.
 
-### Changes
+## Changes
 
 Changes had to be made to translate the Rust output to Golang (I miss Option<>), mainly with how the clients are organized (I miss impl).
 
 Changes includes all libraries used, such as pongo2 for templating, strcase for case conversion and gjson for navigating through the JSON files.
-
-### Todo
-
-- Improve flow, currently a lot of functions are being reused and edge cases that might pop up can be really annoying to fix.
-- Add checks for required fields (queries and headers), returning errors if they are missing, for now only Authorization headers are required so it's not a big deal.
-- Generating code may allow for some performance improvements.
 
 ## Usage
 
@@ -42,3 +36,9 @@ UPDATE_SPECS=1 go generate ./...
 # or from inside the codegen folder
 go run . -update
 ```
+
+## Todo
+
+- Improve flow, currently a lot of functions are being reused and edge cases that might pop up can be really annoying to fix.
+- Add checks for required fields (queries and headers), returning errors if they are missing, for now only Authorization headers are required so it's not a big deal.
+- Generating code may allow for some performance improvements.
