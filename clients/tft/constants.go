@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 1e85b75ffc0bd58ccaf724557782b1e6b9bd27af
+// Spec version = 339cc5986ca34480f2ecf815246cade7105a897a
 
 // LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
@@ -202,7 +202,7 @@ const (
 	// Blood Hunt Assassin games
 	ASSASSINATE GameMode = "ASSASSINATE"
 	// 2v2v2v2
-	CHERRY_GAMEMODE GameMode = "CHERRY_GameMode"
+	CHERRY GameMode = "CHERRY"
 	// Classic Summoner's Rift and Twisted Treeline games
 	CLASSIC GameMode = "CLASSIC"
 	// Dark Star: Singularity games
@@ -257,8 +257,8 @@ func (gameMode GameMode) String() string {
 		return "ASCENSION"
 	case ASSASSINATE:
 		return "ASSASSINATE"
-	case CHERRY_GAMEMODE:
-		return "CHERRY_GameMode"
+	case CHERRY:
+		return "CHERRY"
 	case CLASSIC:
 		return "CLASSIC"
 	case DARKSTAR:

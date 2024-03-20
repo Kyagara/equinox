@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 1e85b75ffc0bd58ccaf724557782b1e6b9bd27af
+// Spec version = 339cc5986ca34480f2ecf815246cade7105a897a
 
 // LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
@@ -255,7 +255,7 @@ const (
 	// Blood Hunt Assassin games
 	ASSASSINATE GameMode = "ASSASSINATE"
 	// 2v2v2v2
-	CHERRY_GAMEMODE GameMode = "CHERRY_GameMode"
+	CHERRY GameMode = "CHERRY"
 	// Classic Summoner's Rift and Twisted Treeline games
 	CLASSIC GameMode = "CLASSIC"
 	// Dark Star: Singularity games
@@ -310,8 +310,8 @@ func (gameMode GameMode) String() string {
 		return "ASCENSION"
 	case ASSASSINATE:
 		return "ASSASSINATE"
-	case CHERRY_GAMEMODE:
-		return "CHERRY_GameMode"
+	case CHERRY:
+		return "CHERRY"
 	case CLASSIC:
 		return "CLASSIC"
 	case DARKSTAR:
@@ -364,7 +364,7 @@ type QueueType string
 
 const (
 	// 2v2v2v2 "Arena" games
-	CHERRY_QUEUETYPE QueueType = "CHERRY_QueueType"
+	CHERRY_QUEUETYPE QueueType = "CHERRY"
 	// 5v5 Ranked Flex games
 	RANKED_FLEX_SR QueueType = "RANKED_FLEX_SR"
 	// 3v3 Ranked Flex games
@@ -378,7 +378,7 @@ const (
 func (queue QueueType) String() string {
 	switch queue {
 	case CHERRY_QUEUETYPE:
-		return "CHERRY_QueueType"
+		return "CHERRY"
 	case RANKED_FLEX_SR:
 		return "RANKED_FLEX_SR"
 	case RANKED_FLEX_TT:

@@ -26,7 +26,7 @@
 - Exponential backoff
 
 > [!NOTE]
-> equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json) package, read more about it [here](https://github.com/golang/go/discussions/63397).
+> equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json), read more about it [here](https://github.com/golang/go/discussions/63397).
 
 Check the [Wiki](https://github.com/Kyagara/equinox/wiki) for more information.
 

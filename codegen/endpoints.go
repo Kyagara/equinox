@@ -308,11 +308,6 @@ func formatRouteArgument(pathParams []gjson.Result, route string) string {
 			newValue := args[index-1]
 			schema := pathParams[index-1].Get("schema")
 			paramType := schema.Get("type").String()
-			if newValue == "championId" {
-				counter++
-				newValue = "strconv.FormatInt(championId, 10)"
-				return fmt.Sprintf("\", %s, \"", newValue)
-			}
 
 			if schema.Get("enum").Exists() && schema.Get("x-enum").Exists() {
 				counter++

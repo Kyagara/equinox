@@ -43,12 +43,13 @@ func getGenericConstants(table gjson.Result, constName string) map[string]Generi
 	for _, item := range table.Array() {
 		desc := item.Get("x-desc").String()
 		name := item.Get("x-name").String()
+		value := name
 		if name == "CHERRY" {
 			name += "_" + constName
 		}
 		deprecated := item.Get("x-deprecated").Bool()
 
-		consts[name] = GenericConstant{
+		consts[value] = GenericConstant{
 			Name:        name,
 			Description: desc,
 			Deprecated:  deprecated,
