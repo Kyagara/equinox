@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 1e85b75ffc0bd58ccaf724557782b1e6b9bd27af
+// Spec version = 339cc5986ca34480f2ecf815246cade7105a897a
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -655,7 +655,7 @@ type MatchTimelineInfoFrameEventV5DTO struct {
 	TransformType  string `json:"transformType,omitempty"`
 	// Timeline event type.
 	//
-	// (Known legal values: ASCENDED_EVENT, BUILDING_KILL, CAPTURE_POINT, CHAMPION_KILL, CHAMPION_SPECIAL_KILL, CHAMPION_TRANSFORM, DRAGON_SOUL_GIVEN, ELITE_MONSTER_KILL, GAME_END, ITEM_DESTROYED, ITEM_PURCHASED, ITEM_SOLD, ITEM_UNDO, LEVEL_UP, OBJECTIVE_BOUNTY_PRESTART, PAUSE_END, PAUSE_START, SKILL_LEVEL_UP, TURRET_PLATE_DESTROYED, WARD_KILL, WARD_PLACED)
+	// (Known legal values: ASCENDED_EVENT, BUILDING_KILL, CAPTURE_POINT, CHAMPION_KILL, CHAMPION_SPECIAL_KILL, CHAMPION_TRANSFORM, DRAGON_SOUL_GIVEN, ELITE_MONSTER_KILL, GAME_END, ITEM_DESTROYED, ITEM_PURCHASED, ITEM_SOLD, ITEM_UNDO, LEVEL_UP, OBJECTIVE_BOUNTY_FINISH, OBJECTIVE_BOUNTY_PRESTART, PAUSE_END, PAUSE_START, SKILL_LEVEL_UP, TURRET_PLATE_DESTROYED, WARD_KILL, WARD_PLACED)
 	Type                    string                                              `json:"type,omitempty"`
 	WardType                string                                              `json:"wardType,omitempty"`
 	AssistingParticipantIDs []int32                                             `json:"assistingParticipantIds,omitempty"`

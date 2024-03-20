@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 1e85b75ffc0bd58ccaf724557782b1e6b9bd27af
+// Spec version = 339cc5986ca34480f2ecf815246cade7105a897a
 
 import (
 	"context"
@@ -259,10 +259,10 @@ func (e *ChampionMasteryV4) AllMasteriesByPUUID(ctx context.Context, route Platf
 // [champion-mastery-v4.getChampionMasteryByPUUID]
 //
 // [champion-mastery-v4.getChampionMasteryByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryByPUUID
-func (e *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string, championId int64) (*ChampionMasteryV4DTO, error) {
+func (e *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string, championId int32) (*ChampionMasteryV4DTO, error) {
 	logger := e.internal.Logger("LOL_ChampionMasteryV4_MasteryByPUUID")
 	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-puuid/", encryptedPUUID, "/by-champion/", strconv.FormatInt(championId, 10)}
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-puuid/", encryptedPUUID, "/by-champion/", strconv.FormatInt(int64(championId), 10)}
 	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getChampionMasteryByPUUID", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")

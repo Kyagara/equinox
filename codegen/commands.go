@@ -44,7 +44,7 @@ func DownloadAndSaveSpecs(spec []string) error {
 	return fmt.Errorf("failed to download '%s'. Status code: '%d'", url, response.StatusCode)
 }
 
-// Generates the code
+// Generates the code from the specs
 func Compile() error {
 	err := readJSONSpecsFiles(specs)
 	if err != nil {
@@ -56,27 +56,27 @@ func Compile() error {
 		return fmt.Errorf("spec version not found, is the spec up to date?")
 	}
 
-	fmt.Printf("Spec version: %s\n", specVersion)
+	fmt.Printf("Current spec version: %s\n", specVersion)
 
-	fmt.Printf("Compiling API module\n")
+	fmt.Printf("Compiling API package\n")
 	err = compileApi(specs, specVersion)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Compiling client modules\n")
+	fmt.Printf("Compiling client packages\n")
 	return compileClients(specs, specVersion)
 }
 
-// Format() runs 'goimports' and 'gofmt' after generating the code
+// Formats the generated code with 'goimports', 'gofmt' and 'betteralign'
 func Format() error {
-	fmt.Printf("Formatting imports\n")
+	fmt.Printf("Running 'goimports'\n")
 	err := runCommand(exec.Command("goimports", "-w", "../"))
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Formatting code\n")
+	fmt.Printf("Running 'gofmt'\n")
 	err = runCommand(exec.Command("gofmt", "-w", "../"))
 	if err != nil {
 		return err
@@ -96,7 +96,7 @@ func runCommand(cmd *exec.Cmd) error {
 		if cmd.Args[0] == "betteralign" && strings.Contains(out, "struct with") {
 			return nil
 		}
-		fmt.Printf("Failed to execute command: %s, Output: %s\n", err, out)
+		fmt.Printf("Error executing command '%s'\nOutput:\n%s", cmd.String(), out)
 		return err
 	}
 	return nil
@@ -120,6 +120,8 @@ func compileApi(specs map[string]gjson.Result, specVersion string) error {
 
 	// Compiling templates
 	for filename, template := range templates {
+		fmt.Printf("Generating '%s' file\n", filename)
+
 		tmpl, err := pongo2.FromBytes(template)
 		if err != nil {
 			return err
@@ -135,8 +137,9 @@ func compileApi(specs map[string]gjson.Result, specVersion string) error {
 
 	// Writing results
 	for filename, result := range results {
-		if err := os.WriteFile("../api/"+filename+".go", result, 0644); err != nil {
-			return err
+		err := os.WriteFile("../api/"+filename+".go", result, 0644)
+		if err != nil {
+			return fmt.Errorf("error writing to file: %w", err)
 		}
 	}
 	return nil
@@ -145,6 +148,7 @@ func compileApi(specs map[string]gjson.Result, specVersion string) error {
 func compileClients(specs map[string]gjson.Result, specVersion string) error {
 	for _, clientName := range clients {
 		fmt.Printf("Generating '%s' client\n", clientName)
+
 		schemas := specs["spec"].Get("components.schemas")
 
 		preamble := preamble(clientName, specVersion)
@@ -213,8 +217,9 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 
 		// Writing results
 		for filename, result := range results {
-			if err := os.WriteFile("../clients/"+clientName+"/"+filename+".go", result, 0644); err != nil {
-				return err
+			err := os.WriteFile("../clients/"+clientName+"/"+filename+".go", result, 0644)
+			if err != nil {
+				return fmt.Errorf("error writing to file: %w", err)
 			}
 		}
 	}

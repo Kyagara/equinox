@@ -135,10 +135,6 @@ func stringifyType(prop gjson.Result) string {
 	enumType := prop.Get("x-enum").String()
 	if enumType != "" && enumType != "locale" {
 		if enumType == "champion" {
-			if prop.Get("format").String() == "" {
-				return "int64"
-			}
-
 			return prop.Get("format").String()
 		}
 
