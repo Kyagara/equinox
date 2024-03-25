@@ -57,7 +57,7 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 
 				if slices.Contains(namesUsed, name) {
 					name += "_"
-					fmt.Printf("Duplicate property name '%s' for property '%s'. New name: '%s'\n", name, propKey, name)
+					fmt.Printf("Duplicate property name for property '%s' in '%s'. Renamed: '%s'\n", propKey, rawDTO, name)
 
 					if slices.Contains(namesUsed, name) {
 						panic(fmt.Errorf("duplicate property name '%s' for property '%s'", name, propKey))

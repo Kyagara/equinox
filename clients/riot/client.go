@@ -12,7 +12,7 @@ package riot
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 339cc5986ca34480f2ecf815246cade7105a897a
+// Spec version = 09d8c1d0fc1a3876de2513931c9cb27a616c8768
 
 import "github.com/Kyagara/equinox/internal"
 
