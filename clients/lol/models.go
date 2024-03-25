@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 339cc5986ca34480f2ecf815246cade7105a897a
+// Spec version = 09d8c1d0fc1a3876de2513931c9cb27a616c8768
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -440,18 +440,18 @@ type MatchParticipantChallengesV5DTO struct {
 
 // match-v5.ParticipantMissions
 type MatchParticipantMissionsV5DTO struct {
-	PlayerScore0  int32 `json:"playerScore0,omitempty"`
-	PlayerScore1  int32 `json:"playerScore1,omitempty"`
-	PlayerScore10 int32 `json:"playerScore10,omitempty"`
-	PlayerScore11 int32 `json:"playerScore11,omitempty"`
-	PlayerScore2  int32 `json:"playerScore2,omitempty"`
-	PlayerScore3  int32 `json:"playerScore3,omitempty"`
-	PlayerScore4  int32 `json:"playerScore4,omitempty"`
-	PlayerScore5  int32 `json:"playerScore5,omitempty"`
-	PlayerScore6  int32 `json:"playerScore6,omitempty"`
-	PlayerScore7  int32 `json:"playerScore7,omitempty"`
-	PlayerScore8  int32 `json:"playerScore8,omitempty"`
-	PlayerScore9  int32 `json:"playerScore9,omitempty"`
+	PlayerScore0  int32 `json:"PlayerScore0,omitempty"`
+	PlayerScore1  int32 `json:"PlayerScore1,omitempty"`
+	PlayerScore10 int32 `json:"PlayerScore10,omitempty"`
+	PlayerScore11 int32 `json:"PlayerScore11,omitempty"`
+	PlayerScore2  int32 `json:"PlayerScore2,omitempty"`
+	PlayerScore3  int32 `json:"PlayerScore3,omitempty"`
+	PlayerScore4  int32 `json:"PlayerScore4,omitempty"`
+	PlayerScore5  int32 `json:"PlayerScore5,omitempty"`
+	PlayerScore6  int32 `json:"PlayerScore6,omitempty"`
+	PlayerScore7  int32 `json:"PlayerScore7,omitempty"`
+	PlayerScore8  int32 `json:"PlayerScore8,omitempty"`
+	PlayerScore9  int32 `json:"PlayerScore9,omitempty"`
 }
 
 // match-v5.ParticipantDto
@@ -461,12 +461,14 @@ type MatchParticipantV5DTO struct {
 	IndividualPosition string `json:"individualPosition,omitempty"`
 	Lane               string `json:"lane,omitempty"`
 	PUUID              string `json:"puuid,omitempty"`
-	RiotIDGameName     string `json:"riotIdGameName,omitempty"`
-	RiotIDName         string `json:"riotIdName,omitempty"`
-	RiotIDTagline      string `json:"riotIdTagline,omitempty"`
-	Role               string `json:"role,omitempty"`
-	SummonerID         string `json:"summonerId,omitempty"`
-	SummonerName       string `json:"summonerName,omitempty"`
+	// Use `riotIdName` for games before patch 14.5.
+	RiotIDGameName string `json:"riotIdGameName,omitempty"`
+	// Replaced by `riotIdGameName` in games played in patch 14.5 and after.
+	RiotIDName    string `json:"riotIdName,omitempty"`
+	RiotIDTagline string `json:"riotIdTagline,omitempty"`
+	Role          string `json:"role,omitempty"`
+	SummonerID    string `json:"summonerId,omitempty"`
+	SummonerName  string `json:"summonerName,omitempty"`
 	// Both individualPosition and teamPosition are computed by the game server and are different versions of the most likely position played by a player. The individualPosition is the best guess for which position the player actually played in isolation of anything else. The teamPosition is the best guess for which position the player actually played if we add the constraint that each team must have one top player, one jungle, one middle, etc. Generally the recommendation is to use the teamPosition field over the individualPosition field.
 	TeamPosition    string                          `json:"teamPosition,omitempty"`
 	Perks           MatchPerksV5DTO                 `json:"perks,omitempty"`

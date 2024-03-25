@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 339cc5986ca34480f2ecf815246cade7105a897a
+// Spec version = 09d8c1d0fc1a3876de2513931c9cb27a616c8768
 
 // tft-league-v1.LeagueEntryDTO
 type LeagueEntryV1DTO struct {
@@ -145,17 +145,22 @@ type MatchParticipantMissionsV1DTO struct {
 	DamageDealtToObjectives        int32 `json:"DamageDealtToObjectives,omitempty"`
 	DamageDealtToTurrets           int32 `json:"DamageDealtToTurrets,omitempty"`
 	DamageTaken                    int32 `json:"DamageTaken,omitempty"`
+	Deaths                         int32 `json:"Deaths,omitempty"`
 	DoubleKills                    int32 `json:"DoubleKills,omitempty"`
 	GoldEarned                     int32 `json:"GoldEarned,omitempty"`
 	GoldSpent                      int32 `json:"GoldSpent,omitempty"`
 	InhibitorsDestroyed            int32 `json:"InhibitorsDestroyed,omitempty"`
+	KillingSprees                  int32 `json:"KillingSprees,omitempty"`
 	Kills                          int32 `json:"Kills,omitempty"`
 	LargestKillingSpree            int32 `json:"LargestKillingSpree,omitempty"`
 	LargestMultiKill               int32 `json:"LargestMultiKill,omitempty"`
 	MagicDamageDealt               int32 `json:"MagicDamageDealt,omitempty"`
 	MagicDamageDealtToChampions    int32 `json:"MagicDamageDealtToChampions,omitempty"`
+	MagicDamageTaken               int32 `json:"MagicDamageTaken,omitempty"`
 	NeutralMinionsKilledTeamJungle int32 `json:"NeutralMinionsKilledTeamJungle,omitempty"`
+	PentaKills                     int32 `json:"PentaKills,omitempty"`
 	PhysicalDamageDealt            int32 `json:"PhysicalDamageDealt,omitempty"`
+	PhysicalDamageDealtToChampions int32 `json:"PhysicalDamageDealtToChampions,omitempty"`
 	PhysicalDamageTaken            int32 `json:"PhysicalDamageTaken,omitempty"`
 	PlayerScore0                   int32 `json:"PlayerScore0,omitempty"`
 	PlayerScore1                   int32 `json:"PlayerScore1,omitempty"`
@@ -174,8 +179,12 @@ type MatchParticipantMissionsV1DTO struct {
 	Spell4Casts                    int32 `json:"Spell4Casts,omitempty"`
 	SummonerSpell1Casts            int32 `json:"SummonerSpell1Casts,omitempty"`
 	TimeCcothers                   int32 `json:"TimeCCOthers,omitempty"`
+	TotalDamageDealtToChampions    int32 `json:"TotalDamageDealtToChampions,omitempty"`
 	TotalMinionsKilled             int32 `json:"TotalMinionsKilled,omitempty"`
+	TripleKills                    int32 `json:"TripleKills,omitempty"`
+	TrueDamageDealt                int32 `json:"TrueDamageDealt,omitempty"`
 	TrueDamageDealtToChampions     int32 `json:"TrueDamageDealtToChampions,omitempty"`
+	TrueDamageTaken                int32 `json:"TrueDamageTaken,omitempty"`
 	UnrealKills                    int32 `json:"UnrealKills,omitempty"`
 	VisionScore                    int32 `json:"VisionScore,omitempty"`
 	WardsKilled                    int32 `json:"WardsKilled,omitempty"`
