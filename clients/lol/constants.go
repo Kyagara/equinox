@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 09d8c1d0fc1a3876de2513931c9cb27a616c8768
+// Spec version = 50e0dd62c27c4cbb1b353fc311529f937c279806
 
 // LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
@@ -284,7 +284,7 @@ const (
 	SIEGE GameMode = "SIEGE"
 	// Star Guardian Invasion games
 	STARGUARDIAN GameMode = "STARGUARDIAN"
-	// Teamfight Tactics, used in `spectator-v4` endpoints.
+	// Teamfight Tactics.
 	TFT GameMode = "TFT"
 	// Tutorial games
 	TUTORIAL GameMode = "TUTORIAL"

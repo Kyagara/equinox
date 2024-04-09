@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 09d8c1d0fc1a3876de2513931c9cb27a616c8768
+// Spec version = 50e0dd62c27c4cbb1b353fc311529f937c279806
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -819,16 +819,6 @@ type MatchV5DTO struct {
 	Info MatchInfoV5DTO `json:"info,omitempty"`
 }
 
-// spectator-v4.BannedChampion
-type SpectatorBannedChampionV4DTO struct {
-	// The ID of the banned champion
-	ChampionID int64 `json:"championId,omitempty"`
-	// The turn during which the champion was banned
-	PickTurn int32 `json:"pickTurn,omitempty"`
-	// The ID of the team that banned the champion
-	TeamID int64 `json:"teamId,omitempty"`
-}
-
 // spectator-v5.BannedChampion
 type SpectatorBannedChampionV5DTO struct {
 	// The ID of the banned champion
@@ -837,32 +827,6 @@ type SpectatorBannedChampionV5DTO struct {
 	PickTurn int32 `json:"pickTurn,omitempty"`
 	// The ID of the team that banned the champion
 	TeamID int64 `json:"teamId,omitempty"`
-}
-
-// spectator-v4.CurrentGameInfo
-type SpectatorCurrentGameInfoV4DTO struct {
-	// The game mode
-	GameMode GameMode `json:"gameMode,omitempty"`
-	// The game type
-	GameType GameType `json:"gameType,omitempty"`
-	// The observer information
-	Observers SpectatorObserverV4DTO `json:"observers,omitempty"`
-	// The ID of the platform on which the game is being played
-	PlatformID string `json:"platformId,omitempty"`
-	// Banned champion information
-	BannedChampions []SpectatorBannedChampionV4DTO `json:"bannedChampions,omitempty"`
-	// The participant information
-	Participants []SpectatorCurrentGameParticipantV4DTO `json:"participants,omitempty"`
-	// The ID of the game
-	GameID int64 `json:"gameId,omitempty"`
-	// The amount of time in seconds that has passed since the game started
-	GameLength int64 `json:"gameLength,omitempty"`
-	// The queue type (queue types are documented on the Game Constants page)
-	GameQueueConfigID int64 `json:"gameQueueConfigId,omitempty"`
-	// The game start time represented in epoch milliseconds
-	GameStartTime int64 `json:"gameStartTime,omitempty"`
-	// The ID of the map
-	MapID int64 `json:"mapId,omitempty"`
 }
 
 // spectator-v5.CurrentGameInfo
@@ -891,33 +855,6 @@ type SpectatorCurrentGameInfoV5DTO struct {
 	MapID int64 `json:"mapId,omitempty"`
 }
 
-// spectator-v4.CurrentGameParticipant
-type SpectatorCurrentGameParticipantV4DTO struct {
-	// The encrypted puuid of this participant
-	PUUID  string `json:"puuid,omitempty"`
-	RiotID string `json:"riotId,omitempty"`
-	// The encrypted summoner ID of this participant
-	SummonerID string `json:"summonerId,omitempty"`
-	// The summoner name of this participant
-	SummonerName string `json:"summonerName,omitempty"`
-	// List of Game Customizations
-	GameCustomizationObjects []SpectatorGameCustomizationObjectV4DTO `json:"gameCustomizationObjects,omitempty"`
-	// Perks/Runes Reforged Information
-	Perks SpectatorPerksV4DTO `json:"perks,omitempty"`
-	// The ID of the champion played by this participant
-	ChampionID int64 `json:"championId,omitempty"`
-	// The ID of the profile icon used by this participant
-	ProfileIconID int64 `json:"profileIconId,omitempty"`
-	// The ID of the first summoner spell used by this participant
-	Spell1ID int64 `json:"spell1Id,omitempty"`
-	// The ID of the second summoner spell used by this participant
-	Spell2ID int64 `json:"spell2Id,omitempty"`
-	// The team ID of this participant, indicating the participant's team
-	TeamID int64 `json:"teamId,omitempty"`
-	// Flag indicating whether or not this participant is a bot
-	Bot bool `json:"bot,omitempty"`
-}
-
 // spectator-v5.CurrentGameParticipant
 type SpectatorCurrentGameParticipantV5DTO struct {
 	// The encrypted puuid of this participant
@@ -943,34 +880,6 @@ type SpectatorCurrentGameParticipantV5DTO struct {
 	TeamID int64 `json:"teamId,omitempty"`
 	// Flag indicating whether or not this participant is a bot
 	Bot bool `json:"bot,omitempty"`
-}
-
-// spectator-v4.FeaturedGameInfo
-type SpectatorFeaturedGameInfoV4DTO struct {
-	// The game mode
-	//
-	// (Legal values:  CLASSIC,  ODIN,  ARAM,  TUTORIAL,  ONEFORALL,  ASCENSION,  FIRSTBLOOD,  KINGPORO)
-	GameMode GameMode `json:"gameMode,omitempty"`
-	// The game type
-	//
-	// (Legal values:  CUSTOM_GAME,  MATCHED_GAME,  TUTORIAL_GAME)
-	GameType GameType `json:"gameType,omitempty"`
-	// The observer information
-	Observers SpectatorObserverV4DTO `json:"observers,omitempty"`
-	// The ID of the platform on which the game is being played
-	PlatformID string `json:"platformId,omitempty"`
-	// Banned champion information
-	BannedChampions []SpectatorBannedChampionV4DTO `json:"bannedChampions,omitempty"`
-	// The participant information
-	Participants []SpectatorParticipantV4DTO `json:"participants,omitempty"`
-	// The ID of the game
-	GameID int64 `json:"gameId,omitempty"`
-	// The amount of time in seconds that has passed since the game started
-	GameLength int64 `json:"gameLength,omitempty"`
-	// The queue type (queue types are documented on the Game Constants page)
-	GameQueueConfigID int64 `json:"gameQueueConfigId,omitempty"`
-	// The ID of the map
-	MapID int64 `json:"mapId,omitempty"`
 }
 
 // spectator-v5.FeaturedGameInfo
@@ -1001,28 +910,12 @@ type SpectatorFeaturedGameInfoV5DTO struct {
 	MapID int64 `json:"mapId,omitempty"`
 }
 
-// spectator-v4.FeaturedGames
-type SpectatorFeaturedGamesV4DTO struct {
-	// The list of featured games
-	GameList []SpectatorFeaturedGameInfoV4DTO `json:"gameList,omitempty"`
-	// The suggested interval to wait before requesting FeaturedGames again
-	ClientRefreshInterval int64 `json:"clientRefreshInterval,omitempty"`
-}
-
 // spectator-v5.FeaturedGames
 type SpectatorFeaturedGamesV5DTO struct {
 	// The list of featured games
 	GameList []SpectatorFeaturedGameInfoV5DTO `json:"gameList,omitempty"`
 	// The suggested interval to wait before requesting FeaturedGames again
 	ClientRefreshInterval int64 `json:"clientRefreshInterval,omitempty"`
-}
-
-// spectator-v4.GameCustomizationObject
-type SpectatorGameCustomizationObjectV4DTO struct {
-	// Category identifier for Game Customization
-	Category string `json:"category,omitempty"`
-	// Game Customization content
-	Content string `json:"content,omitempty"`
 }
 
 // spectator-v5.GameCustomizationObject
@@ -1033,39 +926,10 @@ type SpectatorGameCustomizationObjectV5DTO struct {
 	Content string `json:"content,omitempty"`
 }
 
-// spectator-v4.Observer
-type SpectatorObserverV4DTO struct {
-	// Key used to decrypt the spectator grid game data for playback
-	EncryptionKey string `json:"encryptionKey,omitempty"`
-}
-
 // spectator-v5.Observer
 type SpectatorObserverV5DTO struct {
 	// Key used to decrypt the spectator grid game data for playback
 	EncryptionKey string `json:"encryptionKey,omitempty"`
-}
-
-// spectator-v4.Participant
-type SpectatorParticipantV4DTO struct {
-	// Encrypted puuid of this participant
-	PUUID  string `json:"puuid,omitempty"`
-	RiotID string `json:"riotId,omitempty"`
-	// Encrypted summoner ID of this participant
-	SummonerID string `json:"summonerId,omitempty"`
-	// The summoner name of this participant
-	SummonerName string `json:"summonerName,omitempty"`
-	// The ID of the champion played by this participant
-	ChampionID int64 `json:"championId,omitempty"`
-	// The ID of the profile icon used by this participant
-	ProfileIconID int64 `json:"profileIconId,omitempty"`
-	// The ID of the first summoner spell used by this participant
-	Spell1ID int64 `json:"spell1Id,omitempty"`
-	// The ID of the second summoner spell used by this participant
-	Spell2ID int64 `json:"spell2Id,omitempty"`
-	// The team ID of this participant, indicating the participant's team
-	TeamID int64 `json:"teamId,omitempty"`
-	// Flag indicating whether or not this participant is a bot
-	Bot bool `json:"bot,omitempty"`
 }
 
 // spectator-v5.Participant
@@ -1091,16 +955,6 @@ type SpectatorParticipantV5DTO struct {
 	Bot bool `json:"bot,omitempty"`
 }
 
-// spectator-v4.Perks
-type SpectatorPerksV4DTO struct {
-	// IDs of the perks/runes assigned.
-	PerkIDs []int64 `json:"perkIds,omitempty"`
-	// Primary runes path
-	PerkStyle int64 `json:"perkStyle,omitempty"`
-	// Secondary runes path
-	PerkSubStyle int64 `json:"perkSubStyle,omitempty"`
-}
-
 // spectator-v5.Perks
 type SpectatorPerksV5DTO struct {
 	// IDs of the perks/runes assigned.
@@ -1117,26 +971,6 @@ type StatusContentV4DTO struct {
 	Locale  string `json:"locale,omitempty"`
 }
 
-// lol-status-v3.Incident
-type StatusIncidentV3DTO struct {
-	CreatedAt string               `json:"created_at,omitempty"`
-	Updates   []StatusMessageV3DTO `json:"updates,omitempty"`
-	ID        int64                `json:"id,omitempty"`
-	Active    bool                 `json:"active,omitempty"`
-}
-
-// lol-status-v3.Message
-type StatusMessageV3DTO struct {
-	Author       string                   `json:"author,omitempty"`
-	Content      string                   `json:"content,omitempty"`
-	CreatedAt    string                   `json:"created_at,omitempty"`
-	Heading      string                   `json:"heading,omitempty"`
-	ID           string                   `json:"id,omitempty"`
-	Severity     string                   `json:"severity,omitempty"`
-	UpdatedAt    string                   `json:"updated_at,omitempty"`
-	Translations []StatusTranslationV3DTO `json:"translations,omitempty"`
-}
-
 // lol-status-v4.PlatformDataDto
 type StatusPlatformDataV4DTO struct {
 	ID           string        `json:"id,omitempty"`
@@ -1144,31 +978,6 @@ type StatusPlatformDataV4DTO struct {
 	Incidents    []StatusV4DTO `json:"incidents,omitempty"`
 	Locales      []string      `json:"locales,omitempty"`
 	Maintenances []StatusV4DTO `json:"maintenances,omitempty"`
-}
-
-// lol-status-v3.Service
-type StatusServiceV3DTO struct {
-	Name      string                `json:"name,omitempty"`
-	Slug      string                `json:"slug,omitempty"`
-	Status    string                `json:"status,omitempty"`
-	Incidents []StatusIncidentV3DTO `json:"incidents,omitempty"`
-}
-
-// lol-status-v3.ShardStatus
-type StatusShardStatusV3DTO struct {
-	Hostname  string               `json:"hostname,omitempty"`
-	Name      string               `json:"name,omitempty"`
-	RegionTag string               `json:"region_tag,omitempty"`
-	Slug      string               `json:"slug,omitempty"`
-	Locales   []string             `json:"locales,omitempty"`
-	Services  []StatusServiceV3DTO `json:"services,omitempty"`
-}
-
-// lol-status-v3.Translation
-type StatusTranslationV3DTO struct {
-	Content   string `json:"content,omitempty"`
-	Locale    string `json:"locale,omitempty"`
-	UpdatedAt string `json:"updated_at,omitempty"`
 }
 
 // lol-status-v4.UpdateDto
@@ -1275,7 +1084,7 @@ type TournamentCodeV5DTO struct {
 	PickType string `json:"pickType,omitempty"`
 	// The tournament code's region.
 	//
-	// (Legal values:  BR,  EUNE,  EUW,  JP,  LAN,  LAS,  NA,  OCE,  PBE,  RU,  TR,  KR)
+	// (Legal values:  BR,  EUNE,  EUW,  JP,  LAN,  LAS,  NA,  OCE,  PBE,  RU,  TR,  KR,  PH,  SG,  TH,  TW,  VN)
 	Region string `json:"region,omitempty"`
 	// The spectator mode for the tournament code game.
 	Spectators string `json:"spectators,omitempty"`
@@ -1328,7 +1137,7 @@ type TournamentLobbyEventWrapperV5DTO struct {
 type TournamentProviderRegistrationParametersV5DTO struct {
 	// The region in which the provider will be running tournaments.
 	//
-	// (Legal values:  BR,  EUNE,  EUW,  JP,  LAN,  LAS,  NA,  OCE,  PBE,  RU,  TR,  KR)
+	// (Legal values:  BR,  EUNE,  EUW,  JP,  LAN,  LAS,  NA,  OCE,  PBE,  RU,  TR,  KR,  PH,  SG,  TH,  TW,  VN)
 	Region string `json:"region,omitempty"`
 	// The provider's callback URL to which tournament game results in this region should be posted. The URL must be well-formed, use the http or https protocol, and use the default port for the protocol (http URLs must use port 80, https URLs must use port 443).
 	URL string `json:"url,omitempty"`

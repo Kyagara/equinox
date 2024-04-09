@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 09d8c1d0fc1a3876de2513931c9cb27a616c8768
+// Spec version = 50e0dd62c27c4cbb1b353fc311529f937c279806
 
 import (
 	"context"
@@ -896,72 +896,6 @@ func (e *MatchV5) Timeline(ctx context.Context, route api.RegionalRoute, matchId
 
 // # Riot API Reference
 //
-// [spectator-v4]
-//
-// [spectator-v4]: https://developer.riotgames.com/apis#spectator-v4
-type SpectatorV4 struct {
-	internal *internal.Client
-}
-
-// Get current game information for the given summoner ID.
-//
-// # Parameters
-//   - route : Route to query.
-//   - encryptedSummonerId : The ID of the summoner.
-//
-// # Riot API Reference
-//
-// [spectator-v4.getCurrentGameInfoBySummoner]
-//
-// [spectator-v4.getCurrentGameInfoBySummoner]: https://developer.riotgames.com/api-methods/#spectator-v4/GET_getCurrentGameInfoBySummoner
-func (e *SpectatorV4) CurrentGameBySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*SpectatorCurrentGameInfoV4DTO, error) {
-	logger := e.internal.Logger("LOL_SpectatorV4_CurrentGameBySummonerID")
-	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/v4/active-games/by-summoner/", encryptedSummonerId}
-	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "spectator-v4.getCurrentGameInfoBySummoner", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data SpectatorCurrentGameInfoV4DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Get list of featured games.
-//
-// # Parameters
-//   - route : Route to query.
-//
-// # Riot API Reference
-//
-// [spectator-v4.getFeaturedGames]
-//
-// [spectator-v4.getFeaturedGames]: https://developer.riotgames.com/api-methods/#spectator-v4/GET_getFeaturedGames
-func (e *SpectatorV4) Featured(ctx context.Context, route PlatformRoute) (*SpectatorFeaturedGamesV4DTO, error) {
-	logger := e.internal.Logger("LOL_SpectatorV4_Featured")
-	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/v4/featured-games"}
-	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "spectator-v4.getFeaturedGames", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data SpectatorFeaturedGamesV4DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// # Riot API Reference
-//
 // [spectator-v5]
 //
 // [spectator-v5]: https://developer.riotgames.com/apis#spectator-v5
@@ -1018,45 +952,6 @@ func (e *SpectatorV5) Featured(ctx context.Context, route PlatformRoute) (*Spect
 		return nil, err
 	}
 	var data SpectatorFeaturedGamesV5DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// # Riot API Reference
-//
-// [lol-status-v3]
-//
-// [lol-status-v3]: https://developer.riotgames.com/apis#lol-status-v3
-type StatusV3 struct {
-	internal *internal.Client
-}
-
-// Get League of Legends status for the given shard.
-// ## Rate Limit Notes
-// Requests to this API are not counted against the application Rate Limits.
-//
-// # Parameters
-//   - route : Route to query.
-//
-// # Riot API Reference
-//
-// [lol-status-v3.getShardData]
-//
-// [lol-status-v3.getShardData]: https://developer.riotgames.com/api-methods/#lol-status-v3/GET_getShardData
-func (e *StatusV3) Shard(ctx context.Context, route PlatformRoute) (*StatusShardStatusV3DTO, error) {
-	logger := e.internal.Logger("LOL_StatusV3_Shard")
-	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v3/shard-data"}
-	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-status-v3.getShardData", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data StatusShardStatusV3DTO
 	err = e.internal.Execute(ctx, equinoxReq, &data)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error executing request")
