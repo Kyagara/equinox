@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 09d8c1d0fc1a3876de2513931c9cb27a616c8768
+// Spec version = 50e0dd62c27c4cbb1b353fc311529f937c279806
 
 import (
 	"context"
