@@ -6,7 +6,6 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
@@ -34,17 +33,20 @@ func BenchmarkMatchByID(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "BR1_2744215970")
 		if err != nil {
-			b.Fail()
+			b.Fatal(err)
 		}
 		if data.Info.GameCreation != 1686266124922 {
-			b.Fail()
+			b.Fatalf("GameCreation != 1686266124922, got: %d", data.Info.GameCreation)
 		}
 	}
 }
@@ -71,54 +73,20 @@ func BenchmarkMatchTimeline(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.MatchV5.Timeline(ctx, api.AMERICAS, "BR1_2744215970")
 		if err != nil {
-			b.Fail()
+			b.Fatal()
 		}
 		if data.Info.GameID != 2744215970 {
-			b.Fail()
-		}
-	}
-}
-
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkDDragonAllChampions-16 709 1716146 ns/op 143037 B/op 1489 allocs/op
-BenchmarkDDragonAllChampions-16 704 1688116 ns/op 143021 B/op 1489 allocs/op
-BenchmarkDDragonAllChampions-16 687 1679027 ns/op 143038 B/op 1489 allocs/op
-BenchmarkDDragonAllChampions-16 703 1695122 ns/op 143033 B/op 1489 allocs/op
-BenchmarkDDragonAllChampions-16 692 1690217 ns/op 143030 B/op 1489 allocs/op
-*/
-func BenchmarkDDragonAllChampions(b *testing.B) {
-	b.ReportAllocs()
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
-	httpmock.RegisterResponder("GET", "https://ddragon.leagueoflegends.com/cdn/13.22.1/data/en_US/champion.json",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/champions.json")))
-
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client := equinox.NewClientWithConfig(config)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		ctx := context.Background()
-		data, err := client.DDragon.Champion.AllChampions(ctx, "13.22.1", ddragon.EnUS)
-		if err != nil {
-			b.Fail()
-		}
-		if data["Ahri"].Name != "Ahri" {
-			b.Fail()
+			b.Fatalf("GameID != 2744215970, got %d", data.Info.GameID)
 		}
 	}
 }
@@ -146,17 +114,20 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.VAL.ContentV1.Content(ctx, val.BR, "")
 		if err != nil {
-			b.Fail()
+			b.Fatal()
 		}
 		if data.Version != "release-07.10" {
-			b.Fail()
+			b.Fatalf("Version != release-07.10, got %s", data.Version)
 		}
 	}
 }

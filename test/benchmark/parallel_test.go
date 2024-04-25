@@ -14,7 +14,6 @@ import (
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
 	"github.com/redis/go-redis/v9"
-	"github.com/stretchr/testify/require"
 )
 
 /*
@@ -47,7 +46,10 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
 	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
@@ -55,10 +57,10 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 			if err != nil {
-				b.Fail()
+				b.Fatal(err)
 			}
 			if data.ProfileIconID != 1386 {
-				b.Fail()
+				b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
 			}
 		}
 	})
@@ -86,7 +88,10 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
@@ -94,10 +99,10 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 			if err != nil {
-				b.Fail()
+				b.Fatal(err)
 			}
 			if data.ProfileIconID != 1386 {
-				b.Fail()
+				b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
 			}
 		}
 	})
@@ -128,13 +133,18 @@ func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 		Addr:    "127.0.0.1:6379",
 	}
 	cache, err := cache.NewRedis(ctx, redisConfig, 4*time.Minute)
-	require.NoError(b, err)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
 	config.Cache = cache
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
@@ -142,10 +152,10 @@ func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 			if err != nil {
-				b.Fail()
+				b.Fatal(err)
 			}
 			if data.ProfileIconID != 1386 {
-				b.Fail()
+				b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
 			}
 		}
 	})
@@ -175,7 +185,10 @@ func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
@@ -183,10 +196,10 @@ func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByAccessToken(ctx, lol.BR1, "accesstoken")
 			if err != nil {
-				b.Fail()
+				b.Fatal(err)
 			}
 			if data.ProfileIconID != 1386 {
-				b.Fail()
+				b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
 			}
 		}
 	})
@@ -216,7 +229,10 @@ func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
@@ -224,10 +240,10 @@ func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 			ctx := context.Background()
 			data, err := client.LOL.MatchV5.ListByPUUID(ctx, api.ASIA, "puuid", -1, -1, 420, "ranked", -1, 20)
 			if err != nil {
-				b.Fail()
+				b.Fatal(err)
 			}
 			if data[0] != "KR_6841523755" {
-				b.Fail()
+				b.Fatalf("data[0] != KR_6841523755, got %s", data[0])
 			}
 		}
 	})

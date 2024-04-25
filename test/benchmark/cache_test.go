@@ -36,17 +36,20 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 		if err != nil {
-			b.Fail()
+			b.Fatal(err)
 		}
 		if data.ProfileIconID != 1386 {
-			b.Fail()
+			b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
 		}
 	}
 }
@@ -71,17 +74,19 @@ func BenchmarkInternalCachedSummonerByPUUID(b *testing.B) {
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	client, err := equinox.NewClient("RGAPI-TEST")
-	require.NoError(b, err)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 		if err != nil {
-			b.Fail()
+			b.Fatal(err)
 		}
 		if data.ProfileIconID != 1386 {
-			b.Fail()
+			b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
 		}
 	}
 }
@@ -117,17 +122,20 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
 	config.Cache = cache
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 		if err != nil {
-			b.Fail()
+			b.Fatal(err)
 		}
 		if data.ProfileIconID != 1386 {
-			b.Fail()
+			b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
 		}
 	}
 }

@@ -12,7 +12,6 @@ import (
 )
 
 func TestVALContent(t *testing.T) {
-	checkIfOnlyDataDragon(t)
 	ctx := context.Background()
 	content, err := client.VAL.ContentV1.Content(ctx, val.NA, "en-US")
 	require.NoError(t, err)
@@ -21,7 +20,6 @@ func TestVALContent(t *testing.T) {
 }
 
 func TestVALRankedLeaderboard(t *testing.T) {
-	checkIfOnlyDataDragon(t)
 	ctx := context.Background()
 	leaderboard, err := client.VAL.RankedV1.Leaderboard(ctx, val.BR, "4401f9fd-4170-2e4c-4bc3-f3b4d7d150d1", 2, 0)
 	require.NoError(t, err)

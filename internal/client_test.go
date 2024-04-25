@@ -24,8 +24,8 @@ import (
 
 func TestNewInternalClient(t *testing.T) {
 	t.Parallel()
-	internalClient := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NotEmpty(t, internalClient)
+	internalClient, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	require.NoError(t, err)
 	require.False(t, internalClient.IsCacheEnabled)
 	require.False(t, internalClient.IsRateLimitEnabled)
 	require.False(t, internalClient.IsRetryEnabled)
@@ -35,8 +35,8 @@ func TestNewInternalClient(t *testing.T) {
 	config.Cache = nil
 	config.RateLimit = nil
 
-	internalClient = internal.NewInternalClient(config)
-	require.NotEmpty(t, internalClient)
+	internalClient, err = internal.NewInternalClient(config)
+	require.NoError(t, err)
 	require.False(t, internalClient.IsCacheEnabled)
 	require.False(t, internalClient.IsRateLimitEnabled)
 	require.False(t, internalClient.IsRetryEnabled)
@@ -47,23 +47,22 @@ func TestNewInternalClient(t *testing.T) {
 	config.RateLimit.Enabled = true
 	config.Key = ""
 
-	internalClient = internal.NewInternalClient(config)
-	require.NotEmpty(t, internalClient)
+	_, err = internal.NewInternalClient(config)
+	require.Equal(t, internal.ErrKeyNotProvided, err)
+
+	config.Key = "RGAPI-TEST"
+
+	internalClient, err = internal.NewInternalClient(config)
+	require.NoError(t, err)
+
 	require.True(t, internalClient.IsCacheEnabled)
 	require.True(t, internalClient.IsRateLimitEnabled)
 	require.True(t, internalClient.IsRetryEnabled)
-
-	l := internalClient.Logger("client_endpoint_method")
-	ctx := context.Background()
-	_, gotErr := internalClient.Request(ctx, l, http.MethodGet, []string{"https://", "", api.RIOT_API_BASE_URL_FORMAT}, "", nil)
-	require.Error(t, gotErr)
-
-	_, gotErr = internalClient.Request(ctx, l, http.MethodGet, []string{"https://", "", api.D_DRAGON_BASE_URL_FORMAT}, "", nil)
-	require.NoError(t, gotErr)
 }
 
 func TestInternalClientNewRequest(t *testing.T) {
-	internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	require.NoError(t, err)
 	l := internal.Logger("client_endpoint_method")
 	tests := []struct {
 		name    string
@@ -97,7 +96,8 @@ func TestInternalClientRequest(t *testing.T) {
 		"message": "cool",
 	}
 	config := util.NewTestEquinoxConfig()
-	client := internal.NewInternalClient(config)
+	client, err := internal.NewInternalClient(config)
+	require.NoError(t, err)
 
 	url := "https://cool.and.real.api/post"
 
@@ -238,7 +238,8 @@ func TestInternalClientErrorResponses(t *testing.T) {
 			httpmock.RegisterResponder("GET", "https://tests.api.riotgames.com/",
 				httpmock.NewBytesResponder(test.code, []byte(`{}`)))
 
-			internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
+			internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
+			require.NoError(t, err)
 			l := internal.Logger("client_endpoint_method")
 			ctx := context.Background()
 			urlComponents := []string{"https://", "tests", api.RIOT_API_BASE_URL_FORMAT, "/"}
@@ -261,8 +262,10 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 	config := util.NewTestEquinoxConfig()
 	config.Retry = api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond}
 	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
-	i := internal.NewInternalClient(config)
-	require.True(t, i.IsRetryEnabled)
+	internalClient, err := internal.NewInternalClient(config)
+	require.NoError(t, err)
+
+	require.True(t, internalClient.IsRetryEnabled)
 
 	// All counts start at 1 here because only CheckRetryAfter and client.Do is being tested
 
@@ -277,30 +280,30 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 		}).Times(2))
 
 	res := lol.StatusPlatformDataV4DTO{}
-	l := i.Logger("client_endpoint_method")
+	l := internalClient.Logger("client_endpoint_method")
 
 	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
 
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	equinoxReq, err := i.Request(nil, l, http.MethodGet, urlComponents, "", nil)
+	equinoxReq, err := internalClient.Request(nil, l, http.MethodGet, urlComponents, "", nil)
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	err = i.Execute(nil, equinoxReq, &res)
+	err = internalClient.Execute(nil, equinoxReq, &res)
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	_, err = i.ExecuteRaw(nil, equinoxReq)
+	_, err = internalClient.ExecuteRaw(nil, equinoxReq)
 	require.Error(t, err)
 
 	ctx := context.Background()
-	equinoxReq, err = i.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
+	equinoxReq, err = internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
 	// Application rate limited
 	// This will take 2.5 seconds since it will retry one time. Retry-After + 0.5s of jitter
-	err = i.Execute(ctx, equinoxReq, &res)
+	err = internalClient.Execute(ctx, equinoxReq, &res)
 	require.ErrorIs(t, err, internal.ErrMaxRetries)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
@@ -315,7 +318,7 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 
 	// Method/Service rate limited
 	// This will take 2.5 seconds since it will retry one time. Retry-After + 0.5s of jitter
-	err = i.Execute(ctx, equinoxReq, &res)
+	err = internalClient.Execute(ctx, equinoxReq, &res)
 	require.ErrorIs(t, err, internal.ErrMaxRetries)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
@@ -331,34 +334,8 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 
 	// Method/Service rate limited
 	// This will take 2.5 seconds since it will retry one time and then succeed. DEFAULT_RETRY_AFTER + 0.5s of jitter
-	err = i.Execute(ctx, equinoxReq, &res)
+	err = internalClient.Execute(ctx, equinoxReq, &res)
 	require.NoError(t, err)
-}
-
-func TestGetDDragonLOLVersions(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
-	internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
-
-	httpmock.RegisterResponder("GET", "https://ddragon.leagueoflegends.com/api/versions.json",
-		httpmock.NewStringResponder(200, `["1.0"]`).Times(1))
-
-	ctx := context.Background()
-	versions, err := internal.GetDDragonLOLVersions(ctx, "client_endpoint_method")
-	require.NoError(t, err)
-	require.Equal(t, "1.0", versions[0])
-
-	versions, err = internal.GetDDragonLOLVersions(ctx, "client_endpoint_method")
-	require.Error(t, err)
-	require.Empty(t, versions)
-
-	httpmock.RegisterResponder("GET", "https://ddragon.leagueoflegends.com/api/versions.json",
-		httpmock.NewStringResponder(404, `["1.0"]`).Times(1))
-
-	versions, err = internal.GetDDragonLOLVersions(ctx, "client_endpoint_method")
-	require.Error(t, err)
-	require.Empty(t, versions)
 }
 
 func TestGetURLWithAuthorizationHash(t *testing.T) {
@@ -392,7 +369,8 @@ func TestInternalClientExecutes(t *testing.T) {
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
 		httpmock.NewStringResponder(200, `"response"`))
 
-	internal := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	require.NoError(t, err)
 
 	ctx := context.Background()
 
@@ -426,8 +404,8 @@ func TestExecutesWithCache(t *testing.T) {
 	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(5*time.Minute))
 	require.NoError(t, err)
 	config.Cache = cache
-	internalClient := internal.NewInternalClient(config)
-	require.NotEmpty(t, internalClient)
+	internalClient, err := internal.NewInternalClient(config)
+	require.NoError(t, err)
 	require.True(t, internalClient.IsCacheEnabled)
 
 	l := internalClient.Logger("client_endpoint_method")

@@ -23,7 +23,7 @@ jobs:
           cache: false
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v5
         with:
           version: latest
 
@@ -61,9 +61,6 @@ jobs:
 
       - name: Run tests
         run: GOEXPERIMENT=nocoverageredesign go test ./... -v -race -coverprofile cover.out -covermode atomic
-
-      - name: Run only DDragon/CDragon integration tests
-        run: go test -v -tags=integration ./test/integration
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

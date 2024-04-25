@@ -19,7 +19,6 @@
   - Teamfight Tactics
   - Valorant
   - Legends of Runeterra
-- Data Dragon and Community Dragon - (Incomplete)
 - Rate limit (Internal)
 - Caching with [BigCache](https://github.com/allegro/bigcache) or [Redis](https://github.com/go-redis/redis)
 - Logging with [zerolog](https://github.com/rs/zerolog)
@@ -72,7 +71,6 @@ func main() {
 - Maybe the context usage throughout the project could be improved
 - Maybe add more options to customize the rate limiter
 - More tests for the internal client and rate limit
-- Improve DDragon/CDragon support
 
 ## Disclaimer
 

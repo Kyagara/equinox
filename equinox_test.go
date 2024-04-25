@@ -8,6 +8,7 @@ import (
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
+	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
@@ -26,24 +27,26 @@ func TestNewEquinoxClient(t *testing.T) {
 			key:  "RGAPI-TEST",
 		},
 		{
-			name: "nil key",
-			key:  "",
+			name:    "nil key",
+			key:     "",
+			wantErr: internal.ErrKeyNotProvided,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			client, err := equinox.NewClient(test.key)
-			require.Equal(t, test.wantErr, err)
-			require.NotEmpty(t, client)
-			require.NotEmpty(t, client.Cache)
-			require.NotEmpty(t, client.LOL)
-			require.NotEmpty(t, client.LOR)
-			require.NotEmpty(t, client.TFT)
-			require.NotEmpty(t, client.VAL)
-			require.NotEmpty(t, client.Riot)
-			require.NotEmpty(t, client.CDragon)
-			require.NotEmpty(t, client.DDragon)
+			if test.wantErr == nil {
+				require.NotEmpty(t, client.Cache)
+				require.NotEmpty(t, client.LOL)
+				require.NotEmpty(t, client.LOR)
+				require.NotEmpty(t, client.TFT)
+				require.NotEmpty(t, client.VAL)
+				require.NotEmpty(t, client.Riot)
+			} else {
+				require.Equal(t, test.wantErr, err)
+			}
+
 		})
 	}
 }
@@ -71,10 +74,10 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			client := equinox.NewClientWithConfig(test.config)
+			client, err := equinox.NewClientWithConfig(test.config)
 
 			if test.wantErr == nil {
-				require.NotEmpty(t, client)
+				require.NoError(t, err)
 			}
 
 			if test.name == "no cache" {
@@ -102,7 +105,8 @@ func TestRateLimitWithMock(t *testing.T) {
 	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
 	config.Retry = api.Retry{MaxRetries: 3}
 
-	client := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewClientWithConfig(config)
+	require.NoError(t, err)
 
 	for i := 1; i <= 4; i++ {
 		ctx := context.Background()
@@ -117,7 +121,7 @@ func TestRateLimitWithMock(t *testing.T) {
 	ctx := context.Background()
 	ctx, c := context.WithTimeout(ctx, 2*time.Second)
 	defer c()
-	_, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 
 	// This last request should block until rate limit is reset, this test should take around 3 seconds

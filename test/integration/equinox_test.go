@@ -5,10 +5,8 @@ package integration
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
-	"testing"
 	"time"
 
 	"github.com/Kyagara/equinox"
@@ -23,27 +21,16 @@ var (
 	client *equinox.Equinox
 )
 
-var onlyDataDragon = false
-
-func checkIfOnlyDataDragon(t *testing.T) {
-	if onlyDataDragon {
-		t.Skip()
-	}
-}
-
 func init() {
 	key := os.Getenv("RIOT_GAMES_API_KEY")
-	if key == "" || key == "RGAPI..." || key == "RGAPI-TEST" {
-		fmt.Println("RIOT_GAMES_API_KEY not found. Only Data Dragon tests will run.")
-		onlyDataDragon = true
-		key = "RGAPI-TEST"
+	if key == "" {
+		panic("RIOT_GAMES_API_KEY not set")
 	}
 
 	ctx := context.Background()
 	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
 	}
 
 	config := api.EquinoxConfig{
@@ -57,5 +44,8 @@ func init() {
 		Logger:    util.TestLogger(),
 	}
 
-	client = equinox.NewClientWithConfig(config)
+	client, err = equinox.NewClientWithConfig(config)
+	if err != nil {
+		panic(err)
+	}
 }
