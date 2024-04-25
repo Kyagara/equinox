@@ -28,7 +28,7 @@
 > [!NOTE]
 > equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json), read more about it [here](https://github.com/golang/go/discussions/63397).
 
-Check the [Wiki](https://github.com/Kyagara/equinox/wiki) for more information.
+Check the [Wiki](https://github.com/Kyagara/equinox/wiki) for more information about the library.
 
 ## Example
 
@@ -68,6 +68,7 @@ func main() {
 
 - Create a rate limit interface
 - Add Redis store for rate limit, using a lua script
+- Update test data and benchmarks
 - Maybe the context usage throughout the project could be improved
 - Maybe add more options to customize the rate limiter
 - More tests for the internal client and rate limit
