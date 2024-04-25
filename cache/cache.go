@@ -22,11 +22,10 @@ type Cache struct {
 	store     Store
 	StoreType StoreType
 	TTL       time.Duration
-	Enabled   bool
 }
 
 func (c Cache) MarshalZerologObject(encoder *zerolog.Event) {
-	if c.Enabled {
+	if c.TTL > 0 {
 		encoder.Str("store", string(c.StoreType)).Dur("ttl", c.TTL)
 	}
 }
@@ -55,7 +54,6 @@ func NewBigCache(ctx context.Context, config bigcache.Config) (*Cache, error) {
 		store:     &BigCacheStore{client: bigcache},
 		TTL:       config.LifeWindow,
 		StoreType: BigCache,
-		Enabled:   true,
 	}
 	return cache, nil
 }
@@ -72,12 +70,12 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 	}
 	cache := &Cache{
 		store: &RedisStore{
-			client: redis,
-			ttl:    ttl,
+			client:    redis,
+			ttl:       ttl,
+			namespace: "equinox:cache:",
 		},
 		TTL:       ttl,
 		StoreType: RedisCache,
-		Enabled:   true,
 	}
 	return cache, nil
 }
@@ -107,6 +105,8 @@ func (c *Cache) Delete(ctx context.Context, key string) error {
 }
 
 // Clears the entire cache.
+//
+// For Redis, the entire 'cache' namespace under 'equinox' is deleted.
 func (c *Cache) Clear(ctx context.Context) error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled

@@ -32,7 +32,7 @@ func TestCacheMethods(t *testing.T) {
 	require.Equal(t, cache.ErrCacheIsDisabled, err)
 
 	cacheStore.MarshalZerologObject(&zerolog.Event{})
-	cacheStore.Enabled = true
+
 	var logger zerolog.Logger
 	logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Object("cache", cacheStore).Logger()
 	logger.Info().Msg("Testing cache marshal")

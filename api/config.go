@@ -13,15 +13,15 @@ import (
 type EquinoxConfig struct {
 	// http.Client used internally.
 	HTTPClient *http.Client
-	// The cache used to store all GET requests done by the client.
+	// The Cache used, storing all GET requests done by the client, optional.
 	Cache *cache.Cache
-	// The type of rate limiter to use, only disable it if you know what you're doing.
+	// The RateLimit used, only disable it if you know what you're doing.
 	RateLimit *ratelimit.RateLimit
 	// Riot API Key.
 	Key string
-	// Configuration for the logger.
+	// Configuration object for the Logger.
 	Logger Logger
-	// Configuration for retries.
+	// Configuration object for Retry.
 	Retry Retry
 }
 
@@ -29,7 +29,7 @@ func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
 	if c.Retry.MaxRetries > 0 {
 		encoder.Object("retry", c.Retry)
 	}
-	if c.Cache.Enabled {
+	if c.Cache.TTL != 0 {
 		encoder.Object("cache", c.Cache)
 	}
 	if c.RateLimit.Enabled {
@@ -37,11 +37,13 @@ func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
 	}
 }
 
-// Retry configuration.
+// Retry configuration object.
+//
+// Retries have exponential backoff.
 type Retry struct {
-	// Retries are exponential, 0 disables retries
+	// Maximum number of retries, 0 disables retries.
 	MaxRetries int
-	// In milliseconds
+	// Jitter, in milliseconds, added to the retry interval.
 	Jitter time.Duration
 }
 
@@ -54,14 +56,14 @@ func (r Retry) MarshalZerologObject(encoder *zerolog.Event) {
 	}
 }
 
-// Logger configuration.
+// Logger configuration object.
 type Logger struct {
 	TimeFieldFormat string
 	Level           zerolog.Level
-	// Enables prettified logging
+	// Enables prettified logging.
 	Pretty bool
-	// Prints the timestamp
+	// Prints the timestamp.
 	EnableTimestamp bool
-	// Adds the equinox configuration to logs
+	// Logs configurations objects from the client, includes Cache, Retry and RateLimit.
 	EnableConfigLogging bool
 }
