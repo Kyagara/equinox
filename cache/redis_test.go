@@ -13,6 +13,7 @@ import (
 
 func TestNewRedis(t *testing.T) {
 	t.Parallel()
+
 	s := miniredis.RunT(t)
 	require.NotEmpty(t, s)
 	ctx := context.Background()
@@ -30,6 +31,7 @@ func TestNewRedis(t *testing.T) {
 
 func TestRedisMethods(t *testing.T) {
 	t.Parallel()
+
 	s := miniredis.RunT(t)
 	require.NotEmpty(t, s)
 	ctx := context.Background()
@@ -49,6 +51,7 @@ func TestRedisMethods(t *testing.T) {
 	err = cache.Set(ctx, key, response)
 	require.NoError(t, err)
 
+	// Get on cached key
 	retrievedData, err := cache.Get(ctx, key)
 	require.NoError(t, err)
 	require.NotEmpty(t, retrievedData)

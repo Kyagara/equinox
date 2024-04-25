@@ -16,6 +16,7 @@ import (
 
 func TestNewLimits(t *testing.T) {
 	t.Parallel()
+
 	limits := ratelimit.NewLimits()
 	require.NotNil(t, limits)
 	require.NotEmpty(t, limits.App)
@@ -55,6 +56,7 @@ func TestRateLimitCheck(t *testing.T) {
 
 	t.Run("buckets not created", func(t *testing.T) {
 		t.Parallel()
+
 		r := &ratelimit.RateLimit{
 			Route: make(map[string]*ratelimit.Limits),
 		}
@@ -70,6 +72,7 @@ func TestRateLimitCheck(t *testing.T) {
 
 	t.Run("app rate limited", func(t *testing.T) {
 		t.Parallel()
+
 		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
@@ -85,6 +88,7 @@ func TestRateLimitCheck(t *testing.T) {
 
 	t.Run("method rate limited", func(t *testing.T) {
 		t.Parallel()
+
 		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"100:2,200:2"},
@@ -100,6 +104,7 @@ func TestRateLimitCheck(t *testing.T) {
 
 	t.Run("waiting bucket to reset", func(t *testing.T) {
 		t.Parallel()
+
 		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits)}
 		headers := http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
@@ -116,6 +121,7 @@ func TestRateLimitCheck(t *testing.T) {
 
 func TestLimitsDontMatch(t *testing.T) {
 	t.Parallel()
+
 	config := util.NewTestEquinoxConfig()
 	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
 	client, err := internal.NewInternalClient(config)
@@ -168,6 +174,7 @@ func TestLimitsDontMatch(t *testing.T) {
 
 func TestCheckRetryAfter(t *testing.T) {
 	t.Parallel()
+
 	r := &ratelimit.RateLimit{
 		Route: map[string]*ratelimit.Limits{
 			"route": {

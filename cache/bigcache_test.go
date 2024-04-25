@@ -12,11 +12,13 @@ import (
 
 func TestNewBigCache(t *testing.T) {
 	t.Parallel()
+
 	ctx := context.Background()
 	config := bigcache.DefaultConfig(5 * time.Minute)
 	c, err := cache.NewBigCache(ctx, config)
 	require.NoError(t, err)
 	require.NotEmpty(t, c)
+
 	invalidConfig := bigcache.Config{LifeWindow: -time.Minute}
 	c, err = cache.NewBigCache(ctx, invalidConfig)
 	require.NotEmpty(t, err)
@@ -25,6 +27,7 @@ func TestNewBigCache(t *testing.T) {
 
 func TestBigCacheMethods(t *testing.T) {
 	t.Parallel()
+
 	ctx := context.Background()
 	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
 	require.NoError(t, err)
@@ -37,6 +40,7 @@ func TestBigCacheMethods(t *testing.T) {
 	err = cache.Set(ctx, key, response)
 	require.NoError(t, err)
 
+	// Get on cached key
 	retrievedData, err := cache.Get(ctx, key)
 	require.NoError(t, err)
 	require.NotEmpty(t, retrievedData)
