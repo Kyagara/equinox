@@ -356,7 +356,7 @@ func formatAddHeaderParam(params []gjson.Result) []string {
 		if headerName == "authorization" {
 			headerName = "Authorization"
 		}
-		headers = append(headers, fmt.Sprintf(`equinoxReq.Request.Header.Add("%s", %s)`, headerName, name))
+		headers = append(headers, fmt.Sprintf(`request.Request.Header.Add("%s", %s)`, headerName, name))
 	}
 	return headers
 }

@@ -28,8 +28,8 @@ type {{ StructName }} struct {
 {%- for Description in Method.Description %}
 // {{ Description|safe }}
 {%- endfor %}
-func (e *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ Method.MethodReturnTuple }} {
-    logger := e.internal.Logger("{{ NormalizedClientName + "_" + StructName + "_" + Method.Name }}")
+func (endpoint *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ Method.MethodReturnTuple }} {
+    logger := endpoint.internal.Logger("{{ NormalizedClientName + "_" + StructName + "_" + Method.Name }}")
     logger.Trace().Msg("Method started execution")
 {%- if Method.Headers|length > 0 %}
     {%- for HeaderCheck in Method.HeaderChecks sorted %}
@@ -37,7 +37,7 @@ func (e *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ Method.M
     {%- endfor %}
 {%- endif %}
     urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, {{ Method.URLPath|safe }}}
-    equinoxReq, err := e.internal.Request(ctx, logger, http.Method{{ Method.HTTPMethod }}, urlComponents, "{{ Method.OperationID }}", {{ Method.Body }})
+    request, err := endpoint.internal.Request(ctx, logger, http.Method{{ Method.HTTPMethod }}, urlComponents, "{{ Method.OperationID }}", {{ Method.Body }})
     if err != nil {
         logger.Error().Err(err).Msg("Error creating request")
         return {{ Method.ErrorReturn|safe }}
@@ -49,10 +49,10 @@ func (e *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ Method.M
     {{ QueryParam|safe }}
 {%- endfor %}
 {%- if Method.Queries|length > 0 %}
-    equinoxReq.Request.URL.RawQuery = values.Encode()
+    request.Request.URL.RawQuery = values.Encode()
 {%- endif %}
 {%- if Method.Headers|length > 0 %}
-    equinoxReq.Request.Header = equinoxReq.Request.Header.Clone()
+    request.Request.Header = request.Request.Header.Clone()
 {%- endif %}
 {%- for HeaderParam in Method.Headers sorted %}
     {{ HeaderParam|safe }}
@@ -60,7 +60,7 @@ func (e *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ Method.M
 {%- if Method.HasReturn %}
     var data {{ Method.ReturnType }}
 {%- endif %}
-    err = e.internal.Execute(ctx, equinoxReq, {% if Method.HasReturn %}&data{% else %}nil{% endif %})
+    err = endpoint.internal.Execute(ctx, request, {% if Method.HasReturn %}&data{% else %}nil{% endif %})
     if err != nil {
         logger.Error().Err(err).Msg("Error executing request")
         return {{ Method.ErrorReturn|safe }}
