@@ -57,7 +57,7 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 			if err != nil {
 				b.Fail()
 			}
-			if data.Name != "Phanes" {
+			if data.ProfileIconID != 1386 {
 				b.Fail()
 			}
 		}
@@ -96,7 +96,7 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 			if err != nil {
 				b.Fail()
 			}
-			if data.Name != "Phanes" {
+			if data.ProfileIconID != 1386 {
 				b.Fail()
 			}
 		}
@@ -144,7 +144,7 @@ func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 			if err != nil {
 				b.Fail()
 			}
-			if data.Name != "Phanes" {
+			if data.ProfileIconID != 1386 {
 				b.Fail()
 			}
 		}
@@ -185,7 +185,7 @@ func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 			if err != nil {
 				b.Fail()
 			}
-			if data.Name != "Phanes" {
+			if data.ProfileIconID != 1386 {
 				b.Fail()
 			}
 		}

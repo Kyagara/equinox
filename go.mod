@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/alicebob/miniredis/v2 v2.32.1
 	github.com/allegro/bigcache/v3 v3.1.0
-	github.com/go-json-experiment/json v0.0.0-20231102232822-2e55bd4e08b0
+	github.com/go-json-experiment/json v0.0.0-20240418180308-af2d5061e6c2
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/rs/zerolog v1.32.0

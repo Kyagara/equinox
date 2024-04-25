@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 50e0dd62c27c4cbb1b353fc311529f937c279806
+// Spec version = 3d364f8efe1fc3090102af41f8d7fec1554abf45
 
 // val-content-v1.ActDto
 type ContentActV1DTO struct {
@@ -127,17 +127,20 @@ type MatchFinishingDamageV1DTO struct {
 
 // val-match-v1.MatchInfoDto
 type MatchInfoV1DTO struct {
-	CustomGameName     string `json:"customGameName,omitempty"`
-	GameMode           string `json:"gameMode,omitempty"`
-	MapID              string `json:"mapId,omitempty"`
-	MatchID            string `json:"matchId,omitempty"`
-	ProvisioningFlowID string `json:"provisioningFlowId,omitempty"`
-	QueueID            string `json:"queueId,omitempty"`
-	SeasonID           string `json:"seasonId,omitempty"`
-	GameStartMillis    int64  `json:"gameStartMillis,omitempty"`
-	GameLengthMillis   int32  `json:"gameLengthMillis,omitempty"`
-	IsCompleted        bool   `json:"isCompleted,omitempty"`
-	IsRanked           bool   `json:"isRanked,omitempty"`
+	PremierMatchInfo   map[string]any `json:"premierMatchInfo,omitempty"`
+	CustomGameName     string         `json:"customGameName,omitempty"`
+	GameMode           string         `json:"gameMode,omitempty"`
+	GameVersion        string         `json:"gameVersion,omitempty"`
+	MapID              string         `json:"mapId,omitempty"`
+	MatchID            string         `json:"matchId,omitempty"`
+	ProvisioningFlowID string         `json:"provisioningFlowId,omitempty"`
+	QueueID            string         `json:"queueId,omitempty"`
+	Region             string         `json:"region,omitempty"`
+	SeasonID           string         `json:"seasonId,omitempty"`
+	GameStartMillis    int64          `json:"gameStartMillis,omitempty"`
+	GameLengthMillis   int32          `json:"gameLengthMillis,omitempty"`
+	IsCompleted        bool           `json:"isCompleted,omitempty"`
+	IsRanked           bool           `json:"isRanked,omitempty"`
 }
 
 // val-match-v1.KillDto
@@ -200,7 +203,9 @@ type MatchPlayerV1DTO struct {
 	TagLine         string                `json:"tagLine,omitempty"`
 	TeamID          string                `json:"teamId,omitempty"`
 	Stats           MatchPlayerStatsV1DTO `json:"stats,omitempty"`
+	AccountLevel    int32                 `json:"accountLevel,omitempty"`
 	CompetitiveTier int32                 `json:"competitiveTier,omitempty"`
+	IsObserver      bool                  `json:"isObserver,omitempty"`
 }
 
 // val-match-v1.RecentMatchesDto
