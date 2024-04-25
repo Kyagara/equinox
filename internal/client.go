@@ -84,6 +84,7 @@ func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 	return client, nil
 }
 
+// Creates a new 'EquinoxRequest' object for the 'Execute' and 'ExecuteRaw' methods.
 func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod string, urlComponents []string, methodID string, body any) (api.EquinoxRequest, error) {
 	logger.Debug().Msg("Creating request")
 
@@ -120,6 +121,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod 
 	return equinoxReq, nil
 }
 
+// Executes a 'EquinoxRequest', checks cache and unmarshals the response into 'target'.
 func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, target any) error {
 	equinoxReq.Logger.Debug().Msg("Execute")
 
@@ -177,7 +179,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	return jsonv2.UnmarshalRead(response.Body, target)
 }
 
-// ExecuteRaw executes a request without Get/Set from cache and returns []byte.
+// ExecuteRaw executes a request skipping cache and returns []byte.
 func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) ([]byte, error) {
 	equinoxReq.Logger.Debug().Msg("ExecuteRaw")
 
@@ -211,6 +213,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 	for i := 0; i < c.maxRetries+1; i++ {
 		response, err := c.http.Do(equinoxReq.Request)
 		if err != nil {
+			// Stop retrying if the http.Client itself returns any error.
 			return nil, err
 		}
 
@@ -226,6 +229,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 		}
 
 		if i < c.maxRetries {
+			// Exponential backoff
 			sleep := delay*time.Duration(math.Pow(2, float64(i+1))) + c.jitter
 			equinoxReq.Logger.Warn().Str("status_code", response.Status).Dur("sleep", sleep).Msg("Retrying request")
 			err := ratelimit.WaitN(ctx, time.Now().Add(sleep), sleep)
@@ -263,7 +267,7 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 	return 0, false, fmt.Errorf("unexpected status code: %d", response.StatusCode)
 }
 
-// Generates an URL with the Authorization header if it exists. Don't want to store the Authorization header as key in plaintext.
+// Returns an URL with a hashed Authorization key if it exists.
 func GetURLWithAuthorizationHash(req api.EquinoxRequest) (string, error) {
 	auth := req.Request.Header.Get("Authorization")
 	if auth == "" {
@@ -271,10 +275,7 @@ func GetURLWithAuthorizationHash(req api.EquinoxRequest) (string, error) {
 	}
 
 	hash := sha256.New()
-	_, err := hash.Write([]byte(auth))
-	if err != nil {
-		return req.URL, err
-	}
+	hash.Write([]byte(auth))
 	hashedAuth := hash.Sum(nil)
 
 	return fmt.Sprintf("%s-%x", req.URL, hashedAuth), nil
