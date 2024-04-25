@@ -24,6 +24,7 @@ import (
 
 func TestNewInternalClient(t *testing.T) {
 	t.Parallel()
+
 	internalClient, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NoError(t, err)
 	require.False(t, internalClient.IsCacheEnabled)
@@ -334,6 +335,7 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 
 func TestGetURLWithAuthorizationHash(t *testing.T) {
 	t.Parallel()
+
 	req := &http.Request{
 		URL: &url.URL{
 			Scheme: "http",

@@ -12,26 +12,29 @@ import (
 
 func TestCacheMethods(t *testing.T) {
 	t.Parallel()
+
+	// Cache is disabled
 	cacheStore := &cache.Cache{}
 	require.NotNil(t, cacheStore)
 
 	ctx := context.Background()
 
-	bytes := []byte("data")
-	err := cacheStore.Set(ctx, "test", bytes)
+	key := "https://euw1.api.riotgames.com"
+	response := []byte("{data: 123}")
+
+	err := cacheStore.Set(ctx, key, response)
 	require.Equal(t, cache.ErrCacheIsDisabled, err)
-	_, err = cacheStore.Get(ctx, "test")
+	_, err = cacheStore.Get(ctx, key)
 	require.Equal(t, cache.ErrCacheIsDisabled, err)
-	err = cacheStore.Delete(ctx, "test")
-	require.Equal(t, cache.ErrCacheIsDisabled, err)
-	err = cacheStore.Set(ctx, "test", bytes)
+	err = cacheStore.Delete(ctx, key)
 	require.Equal(t, cache.ErrCacheIsDisabled, err)
 	err = cacheStore.Clear(ctx)
 	require.Equal(t, cache.ErrCacheIsDisabled, err)
-	_, err = cacheStore.Get(ctx, "test")
-	require.Equal(t, cache.ErrCacheIsDisabled, err)
 
 	cacheStore.MarshalZerologObject(&zerolog.Event{})
+
+	cacheStore.StoreType = cache.BigCache
+	cacheStore.TTL = 1
 
 	var logger zerolog.Logger
 	logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Object("cache", cacheStore).Logger()
