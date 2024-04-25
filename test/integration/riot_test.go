@@ -12,7 +12,6 @@ import (
 )
 
 func TestRiotAccountByID(t *testing.T) {
-	checkIfOnlyDataDragon(t)
 	ctx := context.Background()
 	account, err := client.Riot.AccountV1.ByRiotID(ctx, api.AMERICAS, "Kevin", "FFXIV")
 	require.NoError(t, err)

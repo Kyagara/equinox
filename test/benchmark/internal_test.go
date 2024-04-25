@@ -11,7 +11,6 @@ import (
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
-	"github.com/stretchr/testify/require"
 )
 
 /*
@@ -38,7 +37,10 @@ func BenchmarkInternals(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := internal.NewInternalClient(config)
+	client, err := internal.NewInternalClient(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -47,15 +49,15 @@ func BenchmarkInternals(b *testing.B) {
 		urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
 		equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 		if err != nil {
-			b.Fail()
+			b.Fatal(err)
 		}
 		var data string
 		err = client.Execute(ctx, equinoxReq, &data)
 		if err != nil {
-			b.Fail()
+			b.Fatal(err)
 		}
 		if data != "response" {
-			b.Fail()
+			b.Fatalf("data != response, got: %s", data)
 		}
 	}
 }
@@ -79,7 +81,10 @@ func BenchmarkRequest(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := internal.NewInternalClient(config)
+	client, err := internal.NewInternalClient(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
 	ctx := context.Background()
@@ -89,10 +94,10 @@ func BenchmarkRequest(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 		if err != nil {
-			b.Fail()
+			b.Fatal(err)
 		}
 		if equinoxReq.Request.URL.String() != "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid" {
-			b.Fail()
+			b.Fatalf("URL != https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid, got: %s", equinoxReq.Request.URL.String())
 		}
 	}
 }
@@ -119,24 +124,29 @@ func BenchmarkExecute(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := internal.NewInternalClient(config)
+	client, err := internal.NewInternalClient(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
 	ctx := context.Background()
 
 	urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
 	equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
-	require.NoError(b, err)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		var data string
 		err = client.Execute(ctx, equinoxReq, &data)
 		if err != nil {
-			b.Fail()
+			b.Fatal(err)
 		}
 		if data != "response" {
-			b.Fail()
+			b.Fatalf("data != response, got: %s", data)
 		}
 	}
 }
@@ -163,23 +173,28 @@ func BenchmarkExecuteRaw(b *testing.B) {
 	config := util.NewTestEquinoxConfig()
 	config.Logger = equinox.DefaultLogger()
 	config.Retry = equinox.DefaultRetry()
-	client := internal.NewInternalClient(config)
+	client, err := internal.NewInternalClient(config)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
 	ctx := context.Background()
 
 	urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/", "puuid"}
 	equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
-	require.NoError(b, err)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		data, err := client.ExecuteRaw(ctx, equinoxReq)
 		if err != nil {
-			b.Fail()
+			b.Fatal(err)
 		}
 		if len(data) != 10 {
-			b.Fail()
+			b.Fatalf("data length != 10, got: %d", len(data))
 		}
 	}
 }
@@ -222,12 +237,12 @@ func BenchmarkURLWithAuthorizationHash(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		hash, err := internal.GetURLWithAuthorizationHash(equinoxReq)
+		url, err := internal.GetURLWithAuthorizationHash(equinoxReq)
 		if err != nil {
-			b.Fail()
+			b.Fatal()
 		}
-		if hash != "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d" {
-			b.Fail()
+		if url != "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d" {
+			b.Fatalf("URL != http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d, got: %s", url)
 		}
 	}
 }

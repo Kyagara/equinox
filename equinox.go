@@ -9,8 +9,6 @@ import (
 
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
-	"github.com/Kyagara/equinox/clients/cdragon"
-	"github.com/Kyagara/equinox/clients/ddragon"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/clients/lor"
 	"github.com/Kyagara/equinox/clients/riot"
@@ -25,8 +23,6 @@ import (
 type Equinox struct {
 	Internal *internal.Client
 	Cache    *cache.Cache
-	DDragon  *ddragon.Client
-	CDragon  *cdragon.Client
 	Riot     *riot.Client
 	LOL      *lol.Client
 	TFT      *tft.Client
@@ -40,24 +36,25 @@ func NewClient(key string) (*Equinox, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewClientWithConfig(config), nil
+	return NewClientWithConfig(config)
 }
 
 // Creates a new equinox client using a custom configuration.
-func NewClientWithConfig(config api.EquinoxConfig) *Equinox {
-	client := internal.NewInternalClient(config)
+func NewClientWithConfig(config api.EquinoxConfig) (*Equinox, error) {
+	client, err := internal.NewInternalClient(config)
+	if err != nil {
+		return nil, err
+	}
 	equinox := &Equinox{
 		Internal: client,
 		Cache:    config.Cache,
-		DDragon:  ddragon.NewDDragonClient(client),
-		CDragon:  cdragon.NewCDragonClient(client),
 		Riot:     riot.NewRiotClient(client),
 		LOL:      lol.NewLOLClient(client),
 		TFT:      tft.NewTFTClient(client),
 		VAL:      val.NewVALClient(client),
 		LOR:      lor.NewLORClient(client),
 	}
-	return equinox
+	return equinox, nil
 }
 
 // Returns the default equinox config with a provided key.

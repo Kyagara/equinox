@@ -45,7 +45,8 @@ func TestNewInternalRateLimit(t *testing.T) {
 }
 
 func TestRateLimitCheck(t *testing.T) {
-	client := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	require.NoError(t, err)
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",
 		MethodID: "method",
@@ -117,7 +118,8 @@ func TestLimitsDontMatch(t *testing.T) {
 	t.Parallel()
 	config := util.NewTestEquinoxConfig()
 	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
-	client := internal.NewInternalClient(config)
+	client, err := internal.NewInternalClient(config)
+	require.NoError(t, err)
 	equinoxReq := &api.EquinoxRequest{
 		Route:    "route",
 		MethodID: "method",
@@ -136,7 +138,7 @@ func TestLimitsDontMatch(t *testing.T) {
 	defer cancel()
 
 	// Used here just to populate the Limits
-	err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+	err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 	require.NoError(t, err)
 
 	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)

@@ -41,20 +41,18 @@ var (
 )
 
 var (
-	cdnHeaders = http.Header{
-		"Accept":     {"application/json"},
-		"User-Agent": {"equinox - https://github.com/Kyagara/equinox"},
-	}
-
 	apiHeaders = http.Header{
-		"X-Riot-Token": {},
+		"X-Riot-Token": {""},
 		"Accept":       {"application/json"},
 		"Content-Type": {"application/json"},
 		"User-Agent":   {"equinox - https://github.com/Kyagara/equinox"},
 	}
 )
 
-func NewInternalClient(config api.EquinoxConfig) *Client {
+func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
+	if config.Key == "" {
+		return nil, ErrKeyNotProvided
+	}
 	if config.HTTPClient == nil {
 		config.HTTPClient = &http.Client{Timeout: 15 * time.Second}
 	}
@@ -62,8 +60,9 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 		config.Cache = &cache.Cache{}
 	}
 	if config.RateLimit == nil {
-		config.RateLimit = &ratelimit.RateLimit{Enabled: false}
+		config.RateLimit = &ratelimit.RateLimit{}
 	}
+
 	client := &Client{
 		key:  config.Key,
 		http: config.HTTPClient,
@@ -84,7 +83,7 @@ func NewInternalClient(config api.EquinoxConfig) *Client {
 		config.Retry.MaxRetries = 1
 	}
 	apiHeaders.Set("X-Riot-Token", config.Key)
-	return client
+	return client, nil
 }
 
 func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod string, urlComponents []string, methodID string, body any) (api.EquinoxRequest, error) {
@@ -116,17 +115,9 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod 
 		Route:    urlComponents[1],
 		URL:      url,
 		Request:  request,
-		IsCDN:    strings.HasPrefix(urlComponents[2], "ddragon.") || strings.HasPrefix(urlComponents[2], "cdn."),
 	}
 
-	if equinoxReq.IsCDN {
-		request.Header = cdnHeaders
-	} else {
-		if c.key == "" {
-			return api.EquinoxRequest{}, ErrKeyNotProvided
-		}
-		request.Header = apiHeaders
-	}
+	request.Header = apiHeaders
 
 	return equinoxReq, nil
 }
@@ -152,7 +143,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		}
 	}
 
-	if c.IsRateLimitEnabled && !equinoxReq.IsCDN {
+	if c.IsRateLimitEnabled {
 		err := c.ratelimit.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		if err != nil {
 			return err
@@ -196,7 +187,7 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 		return nil, ErrContextIsNil
 	}
 
-	if c.IsRateLimitEnabled && !equinoxReq.IsCDN {
+	if c.IsRateLimitEnabled {
 		err := c.ratelimit.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		if err != nil {
 			return nil, err
@@ -252,7 +243,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 }
 
 func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, bool, error) {
-	if c.IsRateLimitEnabled && !equinoxReq.IsCDN {
+	if c.IsRateLimitEnabled {
 		c.ratelimit.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, response.Header)
 	}
 
@@ -272,24 +263,6 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 	}
 
 	return 0, false, fmt.Errorf("unexpected status code: %d", response.StatusCode)
-}
-
-func (c *Client) GetDDragonLOLVersions(ctx context.Context, id string) ([]string, error) {
-	logger := c.Logger(id)
-	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", "", api.D_DRAGON_BASE_URL_FORMAT, "/api/versions.json"}
-	equinoxReq, err := c.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data []string
-	err = c.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return data, nil
 }
 
 // Generates an URL with the Authorization header if it exists. Don't want to store the Authorization header as key in plaintext.

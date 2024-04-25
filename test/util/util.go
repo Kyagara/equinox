@@ -9,7 +9,6 @@ import (
 	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/rs/zerolog"
-	"github.com/stretchr/testify/require"
 )
 
 // Creates an EquinoxConfig for tests.
@@ -43,6 +42,8 @@ func TestLogger() api.Logger {
 func ReadFile(b *testing.B, filename string) []byte {
 	b.Helper()
 	data, err := os.ReadFile(filename)
-	require.NoError(b, err)
+	if err != nil {
+		b.Fatal(err)
+	}
 	return data
 }
