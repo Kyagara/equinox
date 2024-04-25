@@ -18,6 +18,7 @@ var (
 		"int64",
 		"float32",
 		"float64",
+		"any",
 	}
 
 	digitRegex   = regexp.MustCompile(`^\d`)
@@ -127,6 +128,7 @@ func normalizeDTOName(dto string, version string) (string, string) {
 
 	return dto, version
 }
+
 func stringifyType(prop gjson.Result) string {
 	if prop.Get("anyOf").Exists() {
 		prop = prop.Get("anyOf").Array()[0]
@@ -177,6 +179,12 @@ func stringifyType(prop gjson.Result) string {
 		case "string":
 			return "string"
 		case "object":
+			// For undocumented props that only have {"type": "object"}
+			// From https://github.com/MingweiSamuel/Riven/commit/6ee5687437dac9f27f18a119dd0def15b0bd4602
+			if len(prop.Map()) == 1 {
+				return "map[string]any"
+			}
+
 			keyType := stringifyType(prop.Get("x-key"))
 			valueType := stringifyType(prop.Get("additionalProperties"))
 			return "map[" + keyType + "]" + valueType
@@ -188,49 +196,49 @@ func stringifyType(prop gjson.Result) string {
 	return ""
 }
 
-func cleanDTOPropType(prop gjson.Result, version string, endpoint string, dto string) string {
-	if !slices.Contains(goTypes, dto) && !prop.Get("x-enum").Exists() {
+func cleanDTOPropType(prop gjson.Result, version string, endpoint string, propType string) string {
+	if !slices.Contains(goTypes, propType) && !prop.Get("x-enum").Exists() {
 		for _, pType := range goTypes {
-			if strings.HasSuffix(dto, pType) {
-				return dto
+			if strings.HasSuffix(propType, pType) {
+				return propType
 			}
 		}
 
-		dto, _ = normalizeDTOName(dto, version)
+		propType, _ = normalizeDTOName(propType, version)
 
 		endpoint = clientRegex.ReplaceAllString(endpoint, "")
 		endpoint = endpoint[:len(endpoint)-3]
 		endpoint = strcase.ToCamel(endpoint)
 
-		if strings.HasPrefix(dto, "[]") {
-			raw := dto[2:]
+		if strings.HasPrefix(propType, "[]") {
+			raw := propType[2:]
 
 			if slices.Contains(goTypes, raw) {
-				return dto
+				return propType
 			}
 
-			dto = strings.Replace(dto, dto, "[]"+endpoint+raw, 1)
+			propType = strings.Replace(propType, propType, "[]"+endpoint+raw, 1)
 
-			if strings.Contains(dto, endpoint+endpoint) {
-				return strings.Replace(dto, endpoint+endpoint, endpoint, 1)
+			if strings.Contains(propType, endpoint+endpoint) {
+				return strings.Replace(propType, endpoint+endpoint, endpoint, 1)
 			}
 
-			return dto
+			return propType
 		}
 
-		if strings.Contains(dto, "map") {
-			match := mapTypeRegex.FindStringSubmatch(dto)
-			return strings.Replace(dto, "]"+match[1], "]"+endpoint+match[1], 1)
+		if strings.Contains(propType, "map") {
+			match := mapTypeRegex.FindStringSubmatch(propType)
+			return strings.Replace(propType, "]"+match[1], "]"+endpoint+match[1], 1)
 		}
 
-		if endpoint == "TournamentStub" && strings.HasPrefix(dto, "Tournament") {
-			dto = strings.Replace(dto, "Tournament", "", 1)
+		if endpoint == "TournamentStub" && strings.HasPrefix(propType, "Tournament") {
+			propType = strings.Replace(propType, "Tournament", "", 1)
 		}
 
-		if !strings.HasPrefix(dto, endpoint) {
-			dto = endpoint + dto
+		if !strings.HasPrefix(propType, endpoint) {
+			propType = endpoint + propType
 		}
 	}
 
-	return dto
+	return propType
 }

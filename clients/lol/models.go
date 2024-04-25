@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 50e0dd62c27c4cbb1b353fc311529f937c279806
+// Spec version = 3d364f8efe1fc3090102af41f8d7fec1554abf45
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -81,6 +81,7 @@ type ChallengesTrackingV1DTO struct {
 
 // champion-mastery-v4.ChampionMasteryDto
 type ChampionMasteryV4DTO struct {
+	// Player Universal Unique Identifier. Exact length of 78 characters. (Encrypted)
 	PUUID string `json:"puuid,omitempty"`
 	// Summoner ID for this entry. (Encrypted)
 	SummonerID string `json:"summonerId,omitempty"`
@@ -95,7 +96,9 @@ type ChampionMasteryV4DTO struct {
 	// Champion level for specified player and champion combination.
 	ChampionLevel int32 `json:"championLevel,omitempty"`
 	// Total number of champion points for this player and champion combination - they are used to determine championLevel.
-	ChampionPoints int32 `json:"championPoints,omitempty"`
+	ChampionPoints           int32 `json:"championPoints,omitempty"`
+	ChampionSeasonMilestone  int32 `json:"championSeasonMilestone,omitempty"`
+	MarkRequiredForNextLevel int32 `json:"markRequiredForNextLevel,omitempty"`
 	// The token earned for this champion at the current championLevel. When the championLevel is advanced the tokensEarned resets to 0.
 	TokensEarned int32 `json:"tokensEarned,omitempty"`
 	// Is chest granted for this champion or not in current season.
@@ -159,7 +162,6 @@ type LeagueEntryV4DTO struct {
 	Rank Division `json:"rank,omitempty"`
 	// Player's encrypted summonerId.
 	SummonerID   string                `json:"summonerId,omitempty"`
-	SummonerName string                `json:"summonerName,omitempty"`
 	Tier         Tier                  `json:"tier,omitempty"`
 	MiniSeries   LeagueMiniSeriesV4DTO `json:"miniSeries,omitempty"`
 	LeaguePoints int32                 `json:"leaguePoints,omitempty"`
@@ -181,7 +183,6 @@ type LeagueExpLeagueEntryV4DTO struct {
 	Rank Division `json:"rank,omitempty"`
 	// Player's summonerId (Encrypted)
 	SummonerID   string                   `json:"summonerId,omitempty"`
-	SummonerName string                   `json:"summonerName,omitempty"`
 	Tier         Tier                     `json:"tier,omitempty"`
 	MiniSeries   LeagueExpMiniSeriesV4DTO `json:"miniSeries,omitempty"`
 	LeaguePoints int32                    `json:"leaguePoints,omitempty"`
@@ -208,7 +209,6 @@ type LeagueItemV4DTO struct {
 	Rank Division `json:"rank,omitempty"`
 	// Player's encrypted summonerId.
 	SummonerID   string                `json:"summonerId,omitempty"`
-	SummonerName string                `json:"summonerName,omitempty"`
 	MiniSeries   LeagueMiniSeriesV4DTO `json:"miniSeries,omitempty"`
 	LeaguePoints int32                 `json:"leaguePoints,omitempty"`
 	// Losing team on Summoners Rift.
@@ -246,6 +246,7 @@ type MatchBanV5DTO struct {
 
 // match-v5.InfoDto
 type MatchInfoV5DTO struct {
+	// Refer to indicate if the game ended in termination.
 	EndOfGameResult string `json:"endOfGameResult,omitempty"`
 	// Refer to the Game Constants documentation.
 	GameMode GameMode `json:"gameMode,omitempty"`
@@ -862,8 +863,6 @@ type SpectatorCurrentGameParticipantV5DTO struct {
 	RiotID string `json:"riotId,omitempty"`
 	// The encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
-	// The summoner name of this participant
-	SummonerName string `json:"summonerName,omitempty"`
 	// List of Game Customizations
 	GameCustomizationObjects []SpectatorGameCustomizationObjectV5DTO `json:"gameCustomizationObjects,omitempty"`
 	// Perks/Runes Reforged Information
@@ -939,8 +938,6 @@ type SpectatorParticipantV5DTO struct {
 	RiotID string `json:"riotId,omitempty"`
 	// Encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
-	// The summoner name of this participant
-	SummonerName string `json:"summonerName,omitempty"`
 	// The ID of the champion played by this participant
 	ChampionID int64 `json:"championId,omitempty"`
 	// The ID of the profile icon used by this participant
@@ -1014,8 +1011,6 @@ type SummonerV4DTO struct {
 	AccountID string `json:"accountId,omitempty"`
 	// Encrypted summoner ID. Max length 63 characters.
 	ID string `json:"id,omitempty"`
-	// Summoner name.
-	Name string `json:"name,omitempty"`
 	// Encrypted PUUID. Exact length of 78 characters.
 	PUUID string `json:"puuid,omitempty"`
 	// ID of the summoner icon associated with the summoner.

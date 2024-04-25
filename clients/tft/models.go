@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 50e0dd62c27c4cbb1b353fc311529f937c279806
+// Spec version = 3d364f8efe1fc3090102af41f8d7fec1554abf45
 
 // tft-league-v1.LeagueEntryDTO
 type LeagueEntryV1DTO struct {
@@ -24,8 +24,7 @@ type LeagueEntryV1DTO struct {
 	// (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
 	RatedTier string `json:"ratedTier,omitempty"`
 	// Player's encrypted summonerId.
-	SummonerID   string `json:"summonerId,omitempty"`
-	SummonerName string `json:"summonerName,omitempty"`
+	SummonerID string `json:"summonerId,omitempty"`
 	// Not included for the RANKED_TFT_TURBO queueType.
 	Tier Tier `json:"tier,omitempty"`
 	// Not included for the RANKED_TFT_TURBO queueType.
@@ -53,7 +52,6 @@ type LeagueItemV1DTO struct {
 	Rank Division `json:"rank,omitempty"`
 	// Player's encrypted summonerId.
 	SummonerID   string                `json:"summonerId,omitempty"`
-	SummonerName string                `json:"summonerName,omitempty"`
 	MiniSeries   LeagueMiniSeriesV1DTO `json:"miniSeries,omitempty"`
 	LeaguePoints int32                 `json:"leaguePoints,omitempty"`
 	// Second through eighth placement.
@@ -88,7 +86,6 @@ type LeagueTopRatedLadderEntryV1DTO struct {
 	// (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
 	RatedTier                    string `json:"ratedTier,omitempty"`
 	SummonerID                   string `json:"summonerId,omitempty"`
-	SummonerName                 string `json:"summonerName,omitempty"`
 	PreviousUpdateLadderPosition int32  `json:"previousUpdateLadderPosition,omitempty"`
 	RatedRating                  int32  `json:"ratedRating,omitempty"`
 	// First placement.
@@ -300,8 +297,6 @@ type SpectatorCurrentGameParticipantV5DTO struct {
 	RiotID string `json:"riotId,omitempty"`
 	// The encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
-	// The summoner name of this participant
-	SummonerName string `json:"summonerName,omitempty"`
 	// List of Game Customizations
 	GameCustomizationObjects []SpectatorGameCustomizationObjectV5DTO `json:"gameCustomizationObjects,omitempty"`
 	// Perks/Runes Reforged Information
@@ -375,8 +370,6 @@ type SpectatorParticipantV5DTO struct {
 	RiotID string `json:"riotId,omitempty"`
 	// Encrypted summoner ID of this participant
 	SummonerID string `json:"summonerId,omitempty"`
-	// The summoner name of this participant
-	SummonerName string `json:"summonerName,omitempty"`
 	// The ID of the champion played by this participant
 	ChampionID int64 `json:"championId,omitempty"`
 	// The ID of the profile icon used by this participant
@@ -448,8 +441,6 @@ type SummonerV1DTO struct {
 	AccountID string `json:"accountId,omitempty"`
 	// Encrypted summoner ID. Max length 63 characters.
 	ID string `json:"id,omitempty"`
-	// Summoner name.
-	Name string `json:"name,omitempty"`
 	// Encrypted PUUID. Exact length of 78 characters.
 	PUUID string `json:"puuid,omitempty"`
 	// ID of the summoner icon associated with the summoner.

@@ -45,7 +45,7 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 		if err != nil {
 			b.Fail()
 		}
-		if data.Name != "Phanes" {
+		if data.ProfileIconID != 1386 {
 			b.Fail()
 		}
 	}
@@ -80,7 +80,7 @@ func BenchmarkInternalCachedSummonerByPUUID(b *testing.B) {
 		if err != nil {
 			b.Fail()
 		}
-		if data.Name != "Phanes" {
+		if data.ProfileIconID != 1386 {
 			b.Fail()
 		}
 	}
@@ -126,7 +126,7 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 		if err != nil {
 			b.Fail()
 		}
-		if data.Name != "Phanes" {
+		if data.ProfileIconID != 1386 {
 			b.Fail()
 		}
 	}

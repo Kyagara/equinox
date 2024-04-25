@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 50e0dd62c27c4cbb1b353fc311529f937c279806
+// Spec version = 3d364f8efe1fc3090102af41f8d7fec1554abf45
 
 import (
 	"context"
@@ -506,35 +506,6 @@ func (e *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute, encry
 	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/by-account/", encryptedAccountId}
 	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getByAccountId", nil)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
-		return nil, err
-	}
-	var data SummonerV1DTO
-	err = e.internal.Execute(ctx, equinoxReq, &data)
-	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Get a summoner by summoner name.
-//
-// # Parameters
-//   - route : Route to query.
-//   - summonerName : Summoner Name
-//
-// # Riot API Reference
-//
-// [tft-summoner-v1.getBySummonerName]
-//
-// [tft-summoner-v1.getBySummonerName]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getBySummonerName
-func (e *SummonerV1) ByName(ctx context.Context, route PlatformRoute, summonerName string) (*SummonerV1DTO, error) {
-	logger := e.internal.Logger("TFT_SummonerV1_ByName")
-	logger.Trace().Msg("Method started execution")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/by-name/", summonerName}
-	equinoxReq, err := e.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getBySummonerName", nil)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
