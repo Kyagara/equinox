@@ -8,15 +8,15 @@ import (
 )
 
 type Bucket struct {
-	// Next reset
+	// Next reset.
 	next time.Time
-	// Current number of tokens, starts at limit
+	// Current number of tokens, starts at limit.
 	tokens int
-	// The limit given in the header without any modifications
+	// The limit given in the header without any modifications.
 	baseLimit int
-	// Maximum number of tokens
+	// Maximum amount of tokens, modified by the LimitUsageFactor.
 	limit int
-	// Time interval in seconds
+	// Time interval in seconds.
 	interval         time.Duration
 	intervalOverhead time.Duration
 	mutex            sync.Mutex

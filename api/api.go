@@ -13,7 +13,7 @@ const (
 	RIOT_API_BASE_URL_FORMAT = ".api.riotgames.com"
 )
 
-// EquinoxRequest represents a request to the Riot API, its a struct that contains all information about a request.
+// Contains the request to the Riot API and all information about it.
 type EquinoxRequest struct {
 	Logger   zerolog.Logger
 	Route    string

@@ -30,7 +30,7 @@ type Equinox struct {
 	LOR      *lor.Client
 }
 
-// Creates a new equinox client with the default configuration
+// Creates a new equinox client with the default configuration.
 func NewClient(key string) (*Equinox, error) {
 	config, err := DefaultConfig(key)
 	if err != nil {
@@ -86,7 +86,7 @@ func DefaultConfig(key string) (api.EquinoxConfig, error) {
 	return config, nil
 }
 
-// Returns the default retry config
+// Returns the default Retry config.
 //
 //   - MaxRetries : 3
 //   - Jitter     : 500 milliseconds
@@ -94,7 +94,7 @@ func DefaultRetry() api.Retry {
 	return api.Retry{MaxRetries: 3, Jitter: 500 * time.Millisecond}
 }
 
-// Returns the default logger config
+// Returns the default Logger config.
 //
 //   - Level			   : zerolog.WarnLevel
 //   - Pretty			   : false

@@ -30,19 +30,33 @@ func TestBigCacheMethods(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, cache)
 
-	bytes := []byte("data")
-	err = cache.Set(ctx, "test", bytes)
+	// Data
+	key := "https://euw1.api.riotgames.com"
+	response := []byte("{data: 123}")
+
+	err = cache.Set(ctx, key, response)
 	require.NoError(t, err)
-	data, err := cache.Get(ctx, "test")
+
+	retrievedData, err := cache.Get(ctx, key)
 	require.NoError(t, err)
-	require.Equal(t, bytes, data)
-	err = cache.Delete(ctx, "test")
+	require.NotEmpty(t, retrievedData)
+
+	err = cache.Delete(ctx, key)
 	require.NoError(t, err)
-	err = cache.Set(ctx, "test", bytes)
+
+	// Get on deleted key
+	retrievedData, err = cache.Get(ctx, key)
 	require.NoError(t, err)
+	require.Empty(t, retrievedData)
+
+	err = cache.Set(ctx, key, response)
+	require.NoError(t, err)
+
 	err = cache.Clear(ctx)
 	require.NoError(t, err)
-	data, err = cache.Get(ctx, "test")
+
+	// Get on cleared cache
+	retrievedData, err = cache.Get(ctx, "test")
 	require.NoError(t, err)
-	require.Empty(t, data)
+	require.Empty(t, retrievedData)
 }

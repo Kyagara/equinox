@@ -45,7 +45,6 @@ var (
 		"X-Riot-Token": {""},
 		"Accept":       {"application/json"},
 		"Content-Type": {"application/json"},
-		"User-Agent":   {"equinox - https://github.com/Kyagara/equinox"},
 	}
 )
 
@@ -53,6 +52,7 @@ func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 	if config.Key == "" {
 		return nil, ErrKeyNotProvided
 	}
+
 	if config.HTTPClient == nil {
 		config.HTTPClient = &http.Client{Timeout: 15 * time.Second}
 	}
@@ -75,13 +75,11 @@ func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 		ratelimit:          config.RateLimit,
 		maxRetries:         config.Retry.MaxRetries,
 		jitter:             config.Retry.Jitter,
-		IsCacheEnabled:     config.Cache.TTL != 0,
+		IsCacheEnabled:     config.Cache.TTL > 0,
 		IsRateLimitEnabled: config.RateLimit.Enabled,
 		IsRetryEnabled:     config.Retry.MaxRetries > 0,
 	}
-	if config.Retry.MaxRetries == 0 {
-		config.Retry.MaxRetries = 1
-	}
+
 	apiHeaders.Set("X-Riot-Token", config.Key)
 	return client, nil
 }
@@ -179,7 +177,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	return jsonv2.UnmarshalRead(response.Body, target)
 }
 
-// ExecuteRaw executes a request without Get/Set from cache and returns []byte
+// ExecuteRaw executes a request without Get/Set from cache and returns []byte.
 func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) ([]byte, error) {
 	equinoxReq.Logger.Debug().Msg("ExecuteRaw")
 
@@ -203,13 +201,13 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 	return io.ReadAll(response.Body)
 }
 
-// Do sends the request n times from c.maxRetries and returns the response
-//
-// The loop will always run at least once
+// Do sends the request n times from c.maxRetries and returns the response.
 func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.Response, error) {
 	equinoxReq.Logger.Debug().Msg("Sending request")
 
 	var httpErr error
+
+	// MaxRetries+1 to run this loop at least once.
 	for i := 0; i < c.maxRetries+1; i++ {
 		response, err := c.http.Do(equinoxReq.Request)
 		if err != nil {
@@ -247,14 +245,14 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 		c.ratelimit.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, response.Header)
 	}
 
-	// 2xx responses
+	// 2xx responses.
 	if response.StatusCode >= 200 && response.StatusCode < 300 {
 		return 0, false, nil
 	}
 
 	err := api.StatusCodeToError(response.StatusCode)
 	if err != nil {
-		// 429 and 5xx responses will be retried
+		// 429 and 5xx responses will be retried.
 		if response.StatusCode == http.StatusTooManyRequests || (response.StatusCode >= 500 && response.StatusCode < 600) {
 			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, response.Header), true, err
 		}

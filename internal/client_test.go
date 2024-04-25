@@ -129,9 +129,6 @@ func TestInternalClientRequest(t *testing.T) {
 		if equinoxReq.Request.Header.Get("X-Riot-Token") != config.Key {
 			t.Errorf("unexpected X-Riot-Token header, got %s, want %s", equinoxReq.Request.Header.Get("X-Riot-Token"), config.Key)
 		}
-		if equinoxReq.Request.Header.Get("User-Agent") != "equinox - https://github.com/Kyagara/equinox" {
-			t.Errorf("unexpected User-Agent header, got %s, want equinox - https://github.com/Kyagara/equinox", equinoxReq.Request.Header.Get("User-Agent"))
-		}
 	})
 
 	t.Run("Request without body", func(t *testing.T) {
@@ -155,9 +152,6 @@ func TestInternalClientRequest(t *testing.T) {
 		}
 		if equinoxReq.Request.Header.Get("X-Riot-Token") != config.Key {
 			t.Errorf("unexpected X-Riot-Token header, got %s, want %s", equinoxReq.Request.Header.Get("X-Riot-Token"), config.Key)
-		}
-		if equinoxReq.Request.Header.Get("User-Agent") != "equinox - https://github.com/Kyagara/equinox" {
-			t.Errorf("unexpected User-Agent header, got %s, want equinox - https://github.com/Kyagara/equinox", equinoxReq.Request.Header.Get("User-Agent"))
 		}
 	})
 }
