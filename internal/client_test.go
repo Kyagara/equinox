@@ -61,103 +61,32 @@ func TestNewInternalClient(t *testing.T) {
 	require.True(t, internalClient.IsRetryEnabled)
 }
 
-func TestInternalClientNewRequest(t *testing.T) {
-	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
-	l := internal.Logger("client_endpoint_method")
-	tests := []struct {
-		name    string
-		want    *http.Request
-		wantErr error
-		method  string
-		url     string
-	}{
-		{
-			name: "invalid url",
-			wantErr: &url.Error{
-				Op:  "parse",
-				URL: "https://----.api.riotgames.com\\:invalid:/=",
-				Err: url.InvalidHostError("\\"),
-			},
-			url: "\\:invalid:/=",
+func TestGetURLWithAuthorizationHash(t *testing.T) {
+	t.Parallel()
+
+	req := &http.Request{
+		URL: &url.URL{
+			Scheme: "http",
+			Host:   "example.com",
+			Path:   "/path",
 		},
+		Header: http.Header{},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			ctx := context.Background()
-			_, gotErr := internal.Request(ctx, l, http.MethodGet, []string{"https://", "----", api.RIOT_API_BASE_URL_FORMAT, test.url}, "", nil)
-			require.Equal(t, test.wantErr, gotErr, fmt.Sprintf("want err %v, got %v", test.wantErr, gotErr))
-		})
-	}
-}
+	equinoxReq := api.EquinoxRequest{Request: req}
+	equinoxReq.URL = req.URL.String()
 
-func TestInternalClientRequest(t *testing.T) {
-	body := map[string]any{
-		"message": "cool",
-	}
-	config := util.NewTestEquinoxConfig()
-	client, err := internal.NewInternalClient(config)
+	hash, err := internal.GetURLWithAuthorizationHash(equinoxReq)
 	require.NoError(t, err)
+	require.Equal(t, "http://example.com/path", hash)
 
-	url := "https://cool.and.real.api/post"
-
-	t.Run("Request with body", func(t *testing.T) {
-		expectedBody, err := jsonv2.Marshal(body)
-		require.NoError(t, err)
-		logger := client.Logger("client_endpoint_method")
-		ctx := context.Background()
-		urlComponents := []string{"https://", "", "cool.and.real.api", "/post"}
-		equinoxReq, err := client.Request(ctx, logger, "POST", urlComponents, "", body)
-		require.NoError(t, err)
-
-		if equinoxReq.Request.URL.String() != url {
-			t.Errorf("unexpected URL, got %s, want %s", equinoxReq.Request.URL.String(), url)
-		}
-
-		bodyBytes, err := io.ReadAll(equinoxReq.Request.Body)
-		require.NoError(t, err)
-
-		if string(bodyBytes) != string(expectedBody) {
-			t.Errorf("unexpected body, got %s, want %s", string(bodyBytes), string(expectedBody))
-		}
-		if equinoxReq.Request.Header.Get("Content-Type") != "application/json" {
-			t.Errorf("unexpected Content-Type header, got %s, want application/json", equinoxReq.Request.Header.Get("Content-Type"))
-		}
-		if equinoxReq.Request.Header.Get("Accept") != "application/json" {
-			t.Errorf("unexpected Accept header, got %s, want application/json", equinoxReq.Request.Header.Get("Accept"))
-		}
-		if equinoxReq.Request.Header.Get("X-Riot-Token") != config.Key {
-			t.Errorf("unexpected X-Riot-Token header, got %s, want %s", equinoxReq.Request.Header.Get("X-Riot-Token"), config.Key)
-		}
-	})
-
-	t.Run("Request without body", func(t *testing.T) {
-		logger := client.Logger("client_endpoint_method")
-		ctx := context.Background()
-		urlComponents := []string{"https://", "", "cool.and.real.api", "/post"}
-		equinoxReq, err := client.Request(ctx, logger, "POST", urlComponents, "", nil)
-		require.NoError(t, err)
-
-		if equinoxReq.Request.URL.String() != url {
-			t.Errorf("unexpected URL, got %s, want %s", equinoxReq.Request.URL.String(), url)
-		}
-		if equinoxReq.Request.Body != nil {
-			t.Errorf("unexpected body, got %v, want nil", equinoxReq.Request.Body)
-		}
-		if equinoxReq.Request.Header.Get("Content-Type") != "application/json" {
-			t.Errorf("unexpected Content-Type header, got %s, want application/json", equinoxReq.Request.Header.Get("Content-Type"))
-		}
-		if equinoxReq.Request.Header.Get("Accept") != "application/json" {
-			t.Errorf("unexpected Accept header, got %s, want application/json", equinoxReq.Request.Header.Get("Accept"))
-		}
-		if equinoxReq.Request.Header.Get("X-Riot-Token") != config.Key {
-			t.Errorf("unexpected X-Riot-Token header, got %s, want %s", equinoxReq.Request.Header.Get("X-Riot-Token"), config.Key)
-		}
-	})
+	req.Header.Set("Authorization", "7267ee00-5696-47b8-9cae-8db3d49c8c33")
+	hash, err = internal.GetURLWithAuthorizationHash(equinoxReq)
+	require.NoError(t, err)
+	require.Equal(t, "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d", hash)
 }
 
-func TestInternalClientErrorResponses(t *testing.T) {
+func TestStatusCodeToError(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -190,7 +119,147 @@ func TestInternalClientErrorResponses(t *testing.T) {
 	}
 }
 
-func TestInternalClientRetryableErrors(t *testing.T) {
+func TestRequests(t *testing.T) {
+	config := util.NewTestEquinoxConfig()
+	client, err := internal.NewInternalClient(config)
+	require.NoError(t, err)
+
+	expectedURL := "https://cool.and.real.api/post"
+	logger := client.Logger("client_endpoint_method")
+	ctx := context.Background()
+	urlComponents := []string{"https://", "", "cool.and.real.api", "/post"}
+
+	t.Run("Request with body", func(t *testing.T) {
+		body := map[string]any{
+			"message": "cool",
+		}
+
+		expectedBody, err := jsonv2.Marshal(body)
+		require.NoError(t, err)
+
+		equinoxReq, err := client.Request(ctx, logger, "POST", urlComponents, "", body)
+		require.NoError(t, err)
+
+		require.Equal(t, expectedURL, equinoxReq.Request.URL.String())
+		bodyBytes, err := io.ReadAll(equinoxReq.Request.Body)
+		require.NoError(t, err)
+		require.Equal(t, expectedBody, bodyBytes)
+		require.Equal(t, "application/json", equinoxReq.Request.Header.Get("Content-Type"))
+		require.Equal(t, "application/json", equinoxReq.Request.Header.Get("Accept"))
+		require.Equal(t, config.Key, equinoxReq.Request.Header.Get("X-Riot-Token"))
+	})
+
+	t.Run("Request without body", func(t *testing.T) {
+		equinoxReq, err := client.Request(ctx, logger, "POST", urlComponents, "", nil)
+		require.NoError(t, err)
+
+		require.Equal(t, expectedURL, equinoxReq.Request.URL.String())
+		require.Nil(t, equinoxReq.Request.Body)
+		require.Equal(t, "application/json", equinoxReq.Request.Header.Get("Content-Type"))
+		require.Equal(t, "application/json", equinoxReq.Request.Header.Get("Accept"))
+		require.Equal(t, config.Key, equinoxReq.Request.Header.Get("X-Riot-Token"))
+	})
+
+	t.Run("Request with invalid url", func(t *testing.T) {
+		wantErr := &url.Error{
+			Op:  "parse",
+			URL: "https://----.api.riotgames.com\\:invalid:/=",
+			Err: url.InvalidHostError("\\"),
+		}
+
+		_, err := client.Request(ctx, logger, http.MethodGet, []string{"https://", "----", api.RIOT_API_BASE_URL_FORMAT, "\\:invalid:/="}, "", nil)
+		require.Equal(t, wantErr, err)
+	})
+}
+
+func TestExecutes(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewStringResponder(200, `"response"`))
+
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	require.NoError(t, err)
+
+	ctx := context.Background()
+
+	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
+	equinoxReq, err := internal.Request(ctx, internal.Logger("client_endpoint_method"), http.MethodGet, urlComponents, "", nil)
+	require.NoError(t, err)
+
+	data, err := internal.ExecuteRaw(ctx, equinoxReq)
+	require.NoError(t, err)
+	require.Equal(t, []byte(`"response"`), data)
+
+	var res string
+	err = internal.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+	require.Equal(t, `response`, res)
+
+	l := internal.Logger("client_endpoint_method")
+
+	//lint:ignore SA1012 Testing if ctx is nil
+	//nolint:staticcheck
+	equinoxReq, err = internal.Request(nil, l, http.MethodGet, urlComponents, "", nil)
+	require.Error(t, err)
+	//lint:ignore SA1012 Testing if ctx is nil
+	//nolint:staticcheck
+	err = internal.Execute(nil, equinoxReq, &res)
+	require.Error(t, err)
+	//lint:ignore SA1012 Testing if ctx is nil
+	//nolint:staticcheck
+	_, err = internal.ExecuteRaw(nil, equinoxReq)
+	require.Error(t, err)
+}
+
+func TestExecutesWithCache(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewStringResponder(200, `"response"`))
+
+	httpmock.RegisterResponder("POST", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewStringResponder(200, `"response2"`))
+
+	ctx := context.Background()
+
+	config := util.NewTestEquinoxConfig()
+	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(5*time.Minute))
+	require.NoError(t, err)
+	config.Cache = cache
+	internalClient, err := internal.NewInternalClient(config)
+	require.NoError(t, err)
+	require.True(t, internalClient.IsCacheEnabled)
+
+	l := internalClient.Logger("client_endpoint_method")
+	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
+	equinoxReq, err := internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
+	require.NoError(t, err)
+
+	var res string
+	err = internalClient.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+	require.Equal(t, `response`, res)
+
+	err = internalClient.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+	require.Equal(t, `response`, res)
+
+	equinoxReq, err = internalClient.Request(ctx, l, http.MethodPost, urlComponents, "", nil)
+	require.NoError(t, err)
+	require.Equal(t, "POST", equinoxReq.Request.Method)
+
+	err = internalClient.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+	require.Equal(t, `response2`, res)
+	err = internalClient.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+	require.Equal(t, `response2`, res)
+}
+
+func TestRateLimitRetry(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -260,119 +329,6 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestGetURLWithAuthorizationHash(t *testing.T) {
-	t.Parallel()
-
-	req := &http.Request{
-		URL: &url.URL{
-			Scheme: "http",
-			Host:   "example.com",
-			Path:   "/path",
-		},
-		Header: http.Header{},
-	}
-
-	equinoxReq := api.EquinoxRequest{Request: req}
-	equinoxReq.URL = req.URL.String()
-
-	hash, err := internal.GetURLWithAuthorizationHash(equinoxReq)
-	require.NoError(t, err)
-	require.Equal(t, "http://example.com/path", hash)
-
-	req.Header.Set("Authorization", "7267ee00-5696-47b8-9cae-8db3d49c8c33")
-	hash, err = internal.GetURLWithAuthorizationHash(equinoxReq)
-	require.NoError(t, err)
-	require.Equal(t, "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d", hash)
-}
-
-func TestInternalClientExecutes(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
-		httpmock.NewStringResponder(200, `"response"`))
-
-	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
-
-	ctx := context.Background()
-
-	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
-	equinoxReq, err := internal.Request(ctx, internal.Logger("client_endpoint_method"), http.MethodGet, urlComponents, "", nil)
-	require.NoError(t, err)
-
-	data, err := internal.ExecuteRaw(ctx, equinoxReq)
-	require.NoError(t, err)
-	require.Equal(t, []byte(`"response"`), data)
-
-	var res string
-	err = internal.Execute(ctx, equinoxReq, &res)
-	require.NoError(t, err)
-	require.Equal(t, `response`, res)
-
-	l := internal.Logger("client_endpoint_method")
-
-	//lint:ignore SA1012 Testing if ctx is nil
-	//nolint:staticcheck
-	equinoxReq, err = internal.Request(nil, l, http.MethodGet, urlComponents, "", nil)
-	require.Error(t, err)
-	//lint:ignore SA1012 Testing if ctx is nil
-	//nolint:staticcheck
-	err = internal.Execute(nil, equinoxReq, &res)
-	require.Error(t, err)
-	//lint:ignore SA1012 Testing if ctx is nil
-	//nolint:staticcheck
-	_, err = internal.ExecuteRaw(nil, equinoxReq)
-	require.Error(t, err)
-}
-
-func TestExecutesWithCache(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
-		httpmock.NewStringResponder(200, `"response"`))
-
-	httpmock.RegisterResponder("POST", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
-		httpmock.NewStringResponder(200, `"response2"`))
-
-	ctx := context.Background()
-
-	config := util.NewTestEquinoxConfig()
-	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(5*time.Minute))
-	require.NoError(t, err)
-	config.Cache = cache
-	internalClient, err := internal.NewInternalClient(config)
-	require.NoError(t, err)
-	require.True(t, internalClient.IsCacheEnabled)
-
-	l := internalClient.Logger("client_endpoint_method")
-	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
-	equinoxReq, err := internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
-	require.NoError(t, err)
-	require.Equal(t, "GET", equinoxReq.Request.Method)
-
-	var res string
-	err = internalClient.Execute(ctx, equinoxReq, &res)
-	require.NoError(t, err)
-	require.Equal(t, `response`, res)
-
-	err = internalClient.Execute(ctx, equinoxReq, &res)
-	require.NoError(t, err)
-	require.Equal(t, `response`, res)
-
-	equinoxReq, err = internalClient.Request(ctx, l, http.MethodPost, urlComponents, "", nil)
-	require.NoError(t, err)
-	require.Equal(t, "POST", equinoxReq.Request.Method)
-
-	err = internalClient.Execute(ctx, equinoxReq, &res)
-	require.NoError(t, err)
-	require.Equal(t, `response2`, res)
-	err = internalClient.Execute(ctx, equinoxReq, &res)
-	require.NoError(t, err)
-	require.Equal(t, `response2`, res)
-}
-
 func TestExponentialBackoffRetry(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -393,7 +349,6 @@ func TestExponentialBackoffRetry(t *testing.T) {
 	ctx := context.Background()
 	equinoxReq, err := internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
-	require.Equal(t, "GET", equinoxReq.Request.Method)
 
 	_, err = internalClient.ExecuteRaw(ctx, equinoxReq)
 	require.Error(t, err)

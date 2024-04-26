@@ -14,15 +14,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewLimits(t *testing.T) {
-	t.Parallel()
-
-	limits := ratelimit.NewLimits()
-	require.NotNil(t, limits)
-	require.NotEmpty(t, limits.App)
-	require.NotNil(t, limits.Methods)
-}
-
 func TestNewInternalRateLimit(t *testing.T) {
 	t.Parallel()
 
@@ -45,7 +36,16 @@ func TestNewInternalRateLimit(t *testing.T) {
 	require.Equal(t, time.Second, rateLimit.IntervalOverhead)
 }
 
-func TestRateLimitCheck(t *testing.T) {
+func TestNewLimits(t *testing.T) {
+	t.Parallel()
+
+	limits := ratelimit.NewLimits()
+	require.NotNil(t, limits)
+	require.NotEmpty(t, limits.App)
+	require.NotNil(t, limits.Methods)
+}
+
+func TestCheck(t *testing.T) {
 	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NoError(t, err)
 	equinoxReq := &api.EquinoxRequest{
