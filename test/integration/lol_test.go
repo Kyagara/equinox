@@ -13,6 +13,8 @@ import (
 )
 
 func TestLOLChampionRotation(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 	rotations, err := client.LOL.ChampionV3.Rotation(ctx, lol.JP1)
 	require.NoError(t, err)
@@ -20,6 +22,8 @@ func TestLOLChampionRotation(t *testing.T) {
 }
 
 func TestLOLMatchByID(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 	match, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "BR1_2744215970")
 	require.NoError(t, err)

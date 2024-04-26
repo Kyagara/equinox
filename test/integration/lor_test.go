@@ -12,6 +12,8 @@ import (
 )
 
 func TestLORPlatformStatus(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 	status, err := client.LOR.StatusV1.Platform(ctx, api.EUROPE)
 	require.NoError(t, err)
