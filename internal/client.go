@@ -129,10 +129,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		return ErrContextIsNil
 	}
 
-	url, err := GetURLWithAuthorizationHash(equinoxReq)
-	if err != nil {
-		return err
-	}
+	url := GetURLWithAuthorizationHash(equinoxReq)
 
 	if c.IsCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
 		if item, err := c.cache.Get(ctx, url); err != nil {
@@ -268,15 +265,15 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 }
 
 // Returns an URL with a hashed Authorization key if it exists.
-func GetURLWithAuthorizationHash(req api.EquinoxRequest) (string, error) {
+func GetURLWithAuthorizationHash(req api.EquinoxRequest) string {
 	auth := req.Request.Header.Get("Authorization")
 	if auth == "" {
-		return req.URL, nil
+		return req.URL
 	}
 
 	hash := sha256.New()
-	hash.Write([]byte(auth))
+	_, _ = hash.Write([]byte(auth))
 	hashedAuth := hash.Sum(nil)
 
-	return fmt.Sprintf("%s-%x", req.URL, hashedAuth), nil
+	return fmt.Sprintf("%s-%x", req.URL, hashedAuth)
 }

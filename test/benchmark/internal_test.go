@@ -237,10 +237,7 @@ func BenchmarkURLWithAuthorizationHash(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		url, err := internal.GetURLWithAuthorizationHash(equinoxReq)
-		if err != nil {
-			b.Fatal()
-		}
+		url := internal.GetURLWithAuthorizationHash(equinoxReq)
 		if url != "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d" {
 			b.Fatalf("URL != http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d, got: %s", url)
 		}
