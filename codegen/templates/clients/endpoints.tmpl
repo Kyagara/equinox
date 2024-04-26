@@ -29,17 +29,15 @@ type {{ StructName }} struct {
 // {{ Description|safe }}
 {%- endfor %}
 func (endpoint *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ Method.MethodReturnTuple }} {
-    logger := endpoint.internal.Logger("{{ NormalizedClientName + "_" + StructName + "_" + Method.Name }}")
-    logger.Trace().Msg("Method started execution")
 {%- if Method.Headers|length > 0 %}
     {%- for HeaderCheck in Method.HeaderChecks sorted %}
     {{ HeaderCheck|safe }}
     {%- endfor %}
 {%- endif %}
+    logger := endpoint.internal.Logger("{{ NormalizedClientName + "_" + StructName + "_" + Method.Name }}")
     urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, {{ Method.URLPath|safe }}}
     request, err := endpoint.internal.Request(ctx, logger, http.Method{{ Method.HTTPMethod }}, urlComponents, "{{ Method.OperationID }}", {{ Method.Body }})
     if err != nil {
-        logger.Error().Err(err).Msg("Error creating request")
         return {{ Method.ErrorReturn|safe }}
     }
 {%- if Method.Queries|length > 0 %}
@@ -62,7 +60,6 @@ func (endpoint *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ M
 {%- endif %}
     err = endpoint.internal.Execute(ctx, request, {% if Method.HasReturn %}&data{% else %}nil{% endif %})
     if err != nil {
-        logger.Error().Err(err).Msg("Error executing request")
         return {{ Method.ErrorReturn|safe }}
     }
     return {{ Method.ValueReturn|safe }}

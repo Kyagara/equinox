@@ -27,6 +27,8 @@ func init() {
 		panic("RIOT_GAMES_API_KEY not set")
 	}
 
+	// Default client with a test logger and lower MaxRetries
+
 	ctx := context.Background()
 	cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
 	cacheConfig.Verbose = false

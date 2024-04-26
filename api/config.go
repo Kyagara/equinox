@@ -64,6 +64,6 @@ type Logger struct {
 	Pretty bool
 	// Prints the timestamp.
 	EnableTimestamp bool
-	// Logs configurations objects from the client, includes Cache, Retry and RateLimit.
+	// Logs configurations objects from the client, includes Cache and RateLimit.
 	EnableConfigLogging bool
 }

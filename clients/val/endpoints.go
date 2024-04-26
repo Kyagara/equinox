@@ -42,11 +42,9 @@ type ContentV1 struct {
 // [val-content-v1.getContent]: https://developer.riotgames.com/api-methods/#val-content-v1/GET_getContent
 func (endpoint *ContentV1) Content(ctx context.Context, route PlatformRoute, locale string) (*ContentV1DTO, error) {
 	logger := endpoint.internal.Logger("VAL_ContentV1_Content")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/content/v1/contents"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-content-v1.getContent", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	values := url.Values{}
@@ -57,7 +55,6 @@ func (endpoint *ContentV1) Content(ctx context.Context, route PlatformRoute, loc
 	var data ContentV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -85,17 +82,14 @@ type MatchV1 struct {
 // [val-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatch
 func (endpoint *MatchV1) ByID(ctx context.Context, route PlatformRoute, matchId string) (*MatchV1DTO, error) {
 	logger := endpoint.internal.Logger("VAL_MatchV1_ByID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/match/v1/matches/", matchId}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-match-v1.getMatch", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data MatchV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -114,17 +108,14 @@ func (endpoint *MatchV1) ByID(ctx context.Context, route PlatformRoute, matchId 
 // [val-match-v1.getMatchlist]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getMatchlist
 func (endpoint *MatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, puuid string) (*MatchlistV1DTO, error) {
 	logger := endpoint.internal.Logger("VAL_MatchV1_ListByPUUID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/match/v1/matchlists/by-puuid/", puuid}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-match-v1.getMatchlist", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data MatchlistV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -147,17 +138,14 @@ func (endpoint *MatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, p
 // [val-match-v1.getRecent]: https://developer.riotgames.com/api-methods/#val-match-v1/GET_getRecent
 func (endpoint *MatchV1) Recent(ctx context.Context, route PlatformRoute, queue string) (*MatchRecentMatchesV1DTO, error) {
 	logger := endpoint.internal.Logger("VAL_MatchV1_Recent")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/match/v1/recent-matches/by-queue/", queue}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-match-v1.getRecent", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data MatchRecentMatchesV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -187,11 +175,9 @@ type RankedV1 struct {
 // [val-ranked-v1.getLeaderboard]: https://developer.riotgames.com/api-methods/#val-ranked-v1/GET_getLeaderboard
 func (endpoint *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, size int32, startIndex int32) (*RankedLeaderboardV1DTO, error) {
 	logger := endpoint.internal.Logger("VAL_RankedV1_Leaderboard")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/ranked/v1/leaderboards/by-act/", actId}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-ranked-v1.getLeaderboard", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	values := url.Values{}
@@ -205,7 +191,6 @@ func (endpoint *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, 
 	var data RankedLeaderboardV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -232,17 +217,14 @@ type StatusV1 struct {
 // [val-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#val-status-v1/GET_getPlatformData
 func (endpoint *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*StatusPlatformDataV1DTO, error) {
 	logger := endpoint.internal.Logger("VAL_StatusV1_Platform")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/status/v1/platform-data"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-status-v1.getPlatformData", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data StatusPlatformDataV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
