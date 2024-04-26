@@ -38,13 +38,17 @@ func TestNewLogger(t *testing.T) {
 	require.True(t, logger.Info().Enabled())
 }
 
-func TestLogger(t *testing.T) {
+func TestLogs(t *testing.T) {
 	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NoError(t, err)
+
 	logger := internal.Logger("client_endpoint_method")
 	require.NotEmpty(t, logger)
+
+	// Logger already cached
 	logger = internal.Logger("client_endpoint_method")
 	require.NotEmpty(t, logger)
+
 	logger.Trace().Msg("Trace log")
 	logger.Debug().Msg("Debug log")
 	logger.Info().Msg("Info log")

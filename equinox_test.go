@@ -8,7 +8,6 @@ import (
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
@@ -16,75 +15,31 @@ import (
 )
 
 func TestNewEquinoxClient(t *testing.T) {
-	tests := []struct {
-		name    string
-		want    *equinox.Equinox
-		wantErr error
-		key     string
-	}{
-		{
-			name: "success",
-			key:  "RGAPI-TEST",
-		},
-		{
-			name:    "nil key",
-			key:     "",
-			wantErr: internal.ErrKeyNotProvided,
-		},
-	}
+	_, err := equinox.NewClient("")
+	require.Error(t, err)
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			client, err := equinox.NewClient(test.key)
-			if test.wantErr == nil {
-				require.NotEmpty(t, client.Cache)
-				require.NotEmpty(t, client.LOL)
-				require.NotEmpty(t, client.LOR)
-				require.NotEmpty(t, client.TFT)
-				require.NotEmpty(t, client.VAL)
-				require.NotEmpty(t, client.Riot)
-			} else {
-				require.Equal(t, test.wantErr, err)
-			}
+	client, err := equinox.NewClient("RGAPI-TEST")
+	require.NoError(t, err)
 
-		})
-	}
+	require.NotEmpty(t, client.Cache)
+	require.NotEmpty(t, client.LOL)
+	require.NotEmpty(t, client.LOR)
+	require.NotEmpty(t, client.TFT)
+	require.NotEmpty(t, client.VAL)
+	require.NotEmpty(t, client.Riot)
 }
 
 func TestNewEquinoxClientWithConfig(t *testing.T) {
-	emptyKeyConfig := util.NewTestEquinoxConfig()
-	emptyKeyConfig.Key = ""
-	tests := []struct {
-		name    string
-		want    *equinox.Equinox
-		wantErr error
-		config  api.EquinoxConfig
-	}{
-		{
-			name:   "success",
-			want:   &equinox.Equinox{},
-			config: util.NewTestEquinoxConfig(),
-		},
-		{
-			name:   "no cache",
-			want:   &equinox.Equinox{},
-			config: util.NewTestEquinoxConfig(),
-		},
-	}
+	config := util.NewTestEquinoxConfig()
+	config.Key = ""
+	_, err := equinox.NewClientWithConfig(config)
+	require.Error(t, err)
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			client, err := equinox.NewClientWithConfig(test.config)
-
-			if test.wantErr == nil {
-				require.NoError(t, err)
-			}
-
-			if test.name == "no cache" {
-				require.Equal(t, client.Cache.TTL, time.Duration(0))
-			}
-		})
-	}
+	config.Key = "RGAPI-TEST"
+	config.Cache.TTL = 0
+	client, err := equinox.NewClientWithConfig(config)
+	require.NoError(t, err)
+	require.Equal(t, client.Cache.TTL, time.Duration(0))
 }
 
 func TestRateLimitWithMock(t *testing.T) {
