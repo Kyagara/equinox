@@ -42,17 +42,14 @@ type AccountV1 struct {
 // [account-v1.getActiveShard]: https://developer.riotgames.com/api-methods/#account-v1/GET_getActiveShard
 func (endpoint *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRoute, game string, puuid string) (*AccountActiveShardV1DTO, error) {
 	logger := endpoint.internal.Logger("Riot_AccountV1_ActiveShard")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/riot/account/v1/active-shards/by-game/", game, "/by-puuid/", puuid}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "account-v1.getActiveShard", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data AccountActiveShardV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -70,15 +67,13 @@ func (endpoint *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRo
 //
 // [account-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByAccessToken
 func (endpoint *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
-	logger := endpoint.internal.Logger("Riot_AccountV1_ByAccessToken")
-	logger.Trace().Msg("Method started execution")
 	if authorization == "" {
 		return nil, fmt.Errorf("'authorization' header is required")
 	}
+	logger := endpoint.internal.Logger("Riot_AccountV1_ByAccessToken")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/riot/account/v1/accounts/me"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "account-v1.getByAccessToken", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	request.Request.Header = request.Request.Header.Clone()
@@ -86,7 +81,6 @@ func (endpoint *AccountV1) ByAccessToken(ctx context.Context, route api.Regional
 	var data AccountV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -105,17 +99,14 @@ func (endpoint *AccountV1) ByAccessToken(ctx context.Context, route api.Regional
 // [account-v1.getByPuuid]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByPuuid
 func (endpoint *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute, puuid string) (*AccountV1DTO, error) {
 	logger := endpoint.internal.Logger("Riot_AccountV1_ByPUUID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/riot/account/v1/accounts/by-puuid/", puuid}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "account-v1.getByPuuid", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data AccountV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -135,17 +126,14 @@ func (endpoint *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute,
 // [account-v1.getByRiotId]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByRiotId
 func (endpoint *AccountV1) ByRiotID(ctx context.Context, route api.RegionalRoute, gameName string, tagLine string) (*AccountV1DTO, error) {
 	logger := endpoint.internal.Logger("Riot_AccountV1_ByRiotID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/riot/account/v1/accounts/by-riot-id/", gameName, "/", tagLine}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "account-v1.getByRiotId", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data AccountV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil

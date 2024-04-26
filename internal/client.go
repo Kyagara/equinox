@@ -86,25 +86,27 @@ func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 
 // Creates a new 'EquinoxRequest' object for the 'Execute' and 'ExecuteRaw' methods.
 func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod string, urlComponents []string, methodID string, body any) (api.EquinoxRequest, error) {
-	logger.Debug().Msg("Creating request")
+	logger.Trace().Msg("Request")
 
 	if ctx == nil {
 		return api.EquinoxRequest{}, ErrContextIsNil
 	}
 
-	var buffer io.Reader
+	var bodyReader io.Reader
 	if body != nil {
-		bodyBytes, err := jsonv2.Marshal(body)
+		json, err := jsonv2.Marshal(body)
 		if err != nil {
+			logger.Error().Err(err).Msg("Error marshalling body")
 			return api.EquinoxRequest{}, err
 		}
-		buffer = bytes.NewReader(bodyBytes)
+		bodyReader = bytes.NewReader(json)
 	}
 
 	url := strings.Join(urlComponents, "")
 
-	request, err := http.NewRequestWithContext(ctx, httpMethod, url, buffer)
+	request, err := http.NewRequestWithContext(ctx, httpMethod, url, bodyReader)
 	if err != nil {
+		logger.Error().Err(err).Msg("Error creating HTTP request")
 		return api.EquinoxRequest{}, err
 	}
 
@@ -123,7 +125,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod 
 
 // Executes a 'EquinoxRequest', checks cache and unmarshals the response into 'target'.
 func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, target any) error {
-	equinoxReq.Logger.Debug().Msg("Execute")
+	equinoxReq.Logger.Trace().Msg("Execute")
 
 	if ctx == nil {
 		return ErrContextIsNil
@@ -132,11 +134,21 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	url := GetURLWithAuthorizationHash(equinoxReq)
 
 	if c.IsCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
-		if item, err := c.cache.Get(ctx, url); err != nil {
+		item, err := c.cache.Get(ctx, url)
+		if err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
-		} else if item != nil {
-			equinoxReq.Logger.Trace().Msg("Cache hit")
-			return jsonv2.Unmarshal(item, target)
+		}
+
+		if item != nil {
+			equinoxReq.Logger.Debug().Msg("Cache hit")
+
+			err := jsonv2.Unmarshal(item, target)
+			if err != nil {
+				equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling cached response")
+				return err
+			}
+
+			return nil
 		}
 	}
 
@@ -149,17 +161,25 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 
 	response, err := c.Do(ctx, equinoxReq)
 	if err != nil {
+		equinoxReq.Logger.Error().Err(err).Msg("Do failed")
 		return err
 	}
 	defer response.Body.Close()
 
 	if !c.IsCacheEnabled {
-		return jsonv2.UnmarshalRead(response.Body, target)
+		err := jsonv2.UnmarshalRead(response.Body, target)
+		if err != nil {
+			equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling response")
+			return err
+		}
+
+		return nil
 	}
 
 	if equinoxReq.Request.Method == http.MethodGet {
 		body, err := io.ReadAll(response.Body)
 		if err != nil {
+			equinoxReq.Logger.Error().Err(err).Msg("Error reading response")
 			return err
 		}
 
@@ -167,18 +187,29 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		if err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
 		} else {
-			equinoxReq.Logger.Trace().Msg("Cache set")
+			equinoxReq.Logger.Debug().Msg("Cache set")
 		}
 
-		return jsonv2.Unmarshal(body, target)
+		err = jsonv2.Unmarshal(body, target)
+		if err != nil {
+			equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling body")
+		}
+
+		return nil
 	}
 
-	return jsonv2.UnmarshalRead(response.Body, target)
+	err = jsonv2.UnmarshalRead(response.Body, target)
+	if err != nil {
+		equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling response")
+		return err
+	}
+
+	return nil
 }
 
 // ExecuteRaw executes a request skipping cache and returns []byte.
 func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) ([]byte, error) {
-	equinoxReq.Logger.Debug().Msg("ExecuteRaw")
+	equinoxReq.Logger.Trace().Msg("ExecuteRaw")
 
 	if ctx == nil {
 		return nil, ErrContextIsNil
@@ -193,16 +224,23 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 
 	response, err := c.Do(ctx, equinoxReq)
 	if err != nil {
+		equinoxReq.Logger.Error().Err(err).Msg("Do failed")
 		return nil, err
 	}
 	defer response.Body.Close()
 
-	return io.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		equinoxReq.Logger.Error().Err(err).Msg("Error reading response body")
+		return nil, err
+	}
+
+	return body, nil
 }
 
 // Do sends the request and retry if necessary and enabled.
 func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.Response, error) {
-	equinoxReq.Logger.Debug().Msg("Sending request")
+	equinoxReq.Logger.Trace().Msg("Do")
 
 	var httpErr error
 
@@ -216,12 +254,10 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 
 		delay, retryable, err := c.checkResponse(equinoxReq, response)
 		if err == nil && delay == 0 {
-			equinoxReq.Logger.Debug().Msg("Request successful")
 			return response, nil
 		}
 
 		if !c.IsRetryEnabled || !retryable {
-			equinoxReq.Logger.Error().Err(err).Msg("Request failed")
 			return nil, err
 		}
 
@@ -234,10 +270,10 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 				return nil, err
 			}
 		}
+
 		httpErr = err
 	}
 
-	equinoxReq.Logger.Error().Err(ErrMaxRetries).Msg("Request failed")
 	return nil, fmt.Errorf("%w: %w", ErrMaxRetries, httpErr)
 }
 

@@ -43,17 +43,14 @@ type LeagueV1 struct {
 // [tft-league-v1.getLeagueById]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueById
 func (endpoint *LeagueV1) ByID(ctx context.Context, route PlatformRoute, leagueId string) (*LeagueListV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_LeagueV1_ByID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/leagues/", leagueId}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getLeagueById", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data LeagueListV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -72,11 +69,9 @@ func (endpoint *LeagueV1) ByID(ctx context.Context, route PlatformRoute, leagueI
 // [tft-league-v1.getChallengerLeague]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getChallengerLeague
 func (endpoint *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_LeagueV1_ChallengerByQueue")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/challenger"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getChallengerLeague", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	values := url.Values{}
@@ -87,7 +82,6 @@ func (endpoint *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformR
 	var data LeagueListV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -109,11 +103,9 @@ func (endpoint *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformR
 // [tft-league-v1.getLeagueEntries]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueEntries
 func (endpoint *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, division string, queue string, page int32) ([]LeagueEntryV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_LeagueV1_Entries")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/entries/", tier.String(), "/", division}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getLeagueEntries", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	values := url.Values{}
@@ -127,7 +119,6 @@ func (endpoint *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier
 	var data []LeagueEntryV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return data, nil
@@ -146,11 +137,9 @@ func (endpoint *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier
 // [tft-league-v1.getGrandmasterLeague]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getGrandmasterLeague
 func (endpoint *LeagueV1) GrandmasterByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_LeagueV1_GrandmasterByQueue")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/grandmaster"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getGrandmasterLeague", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	values := url.Values{}
@@ -161,7 +150,6 @@ func (endpoint *LeagueV1) GrandmasterByQueue(ctx context.Context, route Platform
 	var data LeagueListV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -180,11 +168,9 @@ func (endpoint *LeagueV1) GrandmasterByQueue(ctx context.Context, route Platform
 // [tft-league-v1.getMasterLeague]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getMasterLeague
 func (endpoint *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute, queue string) (*LeagueListV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_LeagueV1_MasterByQueue")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/master"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getMasterLeague", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	values := url.Values{}
@@ -195,7 +181,6 @@ func (endpoint *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute
 	var data LeagueListV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -214,17 +199,14 @@ func (endpoint *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute
 // [tft-league-v1.getLeagueEntriesForSummoner]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueEntriesForSummoner
 func (endpoint *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, summonerId string) ([]LeagueEntryV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_LeagueV1_SummonerEntries")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/entries/by-summoner/", summonerId}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getLeagueEntriesForSummoner", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data []LeagueEntryV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return data, nil
@@ -243,17 +225,14 @@ func (endpoint *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRou
 // [tft-league-v1.getTopRatedLadder]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getTopRatedLadder
 func (endpoint *LeagueV1) TopRatedLadder(ctx context.Context, route PlatformRoute, queue QueueType) ([]LeagueTopRatedLadderEntryV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_LeagueV1_TopRatedLadder")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/rated-ladders/", queue.String(), "/top"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getTopRatedLadder", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data []LeagueTopRatedLadderEntryV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return data, nil
@@ -281,17 +260,14 @@ type MatchV1 struct {
 // [tft-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#tft-match-v1/GET_getMatch
 func (endpoint *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matchId string) (*MatchV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_MatchV1_ByID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/match/v1/matches/", matchId}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-match-v1.getMatch", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data MatchV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -314,11 +290,9 @@ func (endpoint *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matc
 // [tft-match-v1.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#tft-match-v1/GET_getMatchIdsByPUUID
 func (endpoint *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, start int32, endTime int64, startTime int64, count int32) ([]string, error) {
 	logger := endpoint.internal.Logger("TFT_MatchV1_ListByPUUID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/match/v1/matches/by-puuid/", puuid, "/ids"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-match-v1.getMatchIdsByPUUID", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	values := url.Values{}
@@ -338,7 +312,6 @@ func (endpoint *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRout
 	var data []string
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return data, nil
@@ -366,17 +339,14 @@ type SpectatorV5 struct {
 // [spectator-tft-v5.getCurrentGameInfoByPuuid]: https://developer.riotgames.com/api-methods/#spectator-tft-v5/GET_getCurrentGameInfoByPuuid
 func (endpoint *SpectatorV5) CurrentGameInfoByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (*SpectatorCurrentGameInfoV5DTO, error) {
 	logger := endpoint.internal.Logger("TFT_SpectatorV5_CurrentGameInfoByPUUID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/tft/v5/active-games/by-puuid/", encryptedPUUID}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "spectator-tft-v5.getCurrentGameInfoByPuuid", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data SpectatorCurrentGameInfoV5DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -394,17 +364,14 @@ func (endpoint *SpectatorV5) CurrentGameInfoByPUUID(ctx context.Context, route P
 // [spectator-tft-v5.getFeaturedGames]: https://developer.riotgames.com/api-methods/#spectator-tft-v5/GET_getFeaturedGames
 func (endpoint *SpectatorV5) Featured(ctx context.Context, route PlatformRoute) (*SpectatorFeaturedGamesV5DTO, error) {
 	logger := endpoint.internal.Logger("TFT_SpectatorV5_Featured")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/tft/v5/featured-games"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "spectator-tft-v5.getFeaturedGames", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data SpectatorFeaturedGamesV5DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -431,17 +398,14 @@ type StatusV1 struct {
 // [tft-status-v1.getPlatformData]: https://developer.riotgames.com/api-methods/#tft-status-v1/GET_getPlatformData
 func (endpoint *StatusV1) Platform(ctx context.Context, route PlatformRoute) (*StatusPlatformDataV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_StatusV1_Platform")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/status/v1/platform-data"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-status-v1.getPlatformData", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data StatusPlatformDataV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -468,15 +432,13 @@ type SummonerV1 struct {
 //
 // [tft-summoner-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByAccessToken
 func (endpoint *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRoute, authorization string) (*SummonerV1DTO, error) {
-	logger := endpoint.internal.Logger("TFT_SummonerV1_ByAccessToken")
-	logger.Trace().Msg("Method started execution")
 	if authorization == "" {
 		return nil, fmt.Errorf("'authorization' header is required")
 	}
+	logger := endpoint.internal.Logger("TFT_SummonerV1_ByAccessToken")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/me"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getByAccessToken", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	request.Request.Header = request.Request.Header.Clone()
@@ -484,7 +446,6 @@ func (endpoint *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRou
 	var data SummonerV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -503,17 +464,14 @@ func (endpoint *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRou
 // [tft-summoner-v1.getByAccountId]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByAccountId
 func (endpoint *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute, encryptedAccountId string) (*SummonerV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_SummonerV1_ByAccountID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/by-account/", encryptedAccountId}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getByAccountId", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data SummonerV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -532,17 +490,14 @@ func (endpoint *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute
 // [tft-summoner-v1.getByPUUID]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByPUUID
 func (endpoint *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (*SummonerV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_SummonerV1_ByPUUID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/by-puuid/", encryptedPUUID}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getByPUUID", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data SummonerV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil
@@ -561,17 +516,14 @@ func (endpoint *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, en
 // [tft-summoner-v1.getBySummonerId]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getBySummonerId
 func (endpoint *SummonerV1) BySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*SummonerV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_SummonerV1_BySummonerID")
-	logger.Trace().Msg("Method started execution")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/", encryptedSummonerId}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getBySummonerId", nil)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error creating request")
 		return nil, err
 	}
 	var data SummonerV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error executing request")
 		return nil, err
 	}
 	return &data, nil

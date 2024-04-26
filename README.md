@@ -65,7 +65,6 @@ func main() {
 
 ## Todo
 
-- Update test data and benchmarks
 - Maybe the context usage throughout the project could be improved
 - Maybe have ExecuteRaw return a Reader instead of []byte, or another method for it
 - RateLimit interface
