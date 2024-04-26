@@ -65,11 +65,12 @@ func main() {
 
 ## Todo
 
-- Create a rate limit interface
-- Add Redis store for rate limit, using a lua script
 - Update test data and benchmarks
 - Maybe the context usage throughout the project could be improved
-- Maybe add more options to customize the rate limiter
+- Maybe have ExecuteRaw return a Reader instead of []byte, or another method for it
+- RateLimit interface
+  - Add Redis store, maybe using a lua script
+  - Maybe add more options (presets?) to customize the rate limiter
 - More tests for the internal client and rate limit
 
 ## Disclaimer
