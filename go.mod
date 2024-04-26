@@ -24,3 +24,7 @@ require (
 	golang.org/x/sys v0.18.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+// Retract all versions before implementing codegen and major fixes to the library.
+// It's recommended to always use the latest version since endpoint methods might not exist anymore.
+retract [v0.0.0-0, v1.0.0]
