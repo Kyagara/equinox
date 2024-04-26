@@ -262,6 +262,8 @@ func TestCheckRetryAfter(t *testing.T) {
 }
 
 func TestWaitN(t *testing.T) {
+	t.Parallel()
+
 	t.Run("deadline not exceeded", func(t *testing.T) {
 		t.Parallel()
 
