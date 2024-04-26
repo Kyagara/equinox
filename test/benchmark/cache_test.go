@@ -96,11 +96,11 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkRedisCachedSummonerByPUUID-16 26541 47643 ns/op 1135 B/op 13 allocs/op
-BenchmarkRedisCachedSummonerByPUUID-16 27054 46633 ns/op 1136 B/op 13 allocs/op
-BenchmarkRedisCachedSummonerByPUUID-16 25658 45578 ns/op 1135 B/op 13 allocs/op
-BenchmarkRedisCachedSummonerByPUUID-16 26203 45947 ns/op 1135 B/op 13 allocs/op
-BenchmarkRedisCachedSummonerByPUUID-16 25495 47976 ns/op 1135 B/op 13 allocs/op
+BenchmarkRedisCachedSummonerByPUUID-16 22063 54087 ns/op 1215 B/op 14 allocs/op
+BenchmarkRedisCachedSummonerByPUUID-16 22524 52973 ns/op 1215 B/op 14 allocs/op
+BenchmarkRedisCachedSummonerByPUUID-16 21811 55251 ns/op 1216 B/op 14 allocs/op
+BenchmarkRedisCachedSummonerByPUUID-16 22330 53808 ns/op 1215 B/op 14 allocs/op
+BenchmarkRedisCachedSummonerByPUUID-16 23632 53847 ns/op 1215 B/op 14 allocs/op
 */
 func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()

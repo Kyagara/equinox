@@ -67,8 +67,9 @@ func main() {
 
 - Maybe the context usage throughout the project could be improved
 - Maybe have ExecuteRaw return a Reader instead of []byte, or another method for it
-- Improve allocations from key concatenation in Redis methods
-- RateLimit interface
+- Improve key concatenation in Redis methods
+- New RateLimit interface
+  - Similar to the cache interface
   - Add Redis store, maybe using a lua script
   - Maybe add more options (presets?) to customize the rate limiter
 - More tests for the internal client and rate limit
