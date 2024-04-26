@@ -161,91 +161,31 @@ func TestInternalClientErrorResponses(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	tests := []struct {
-		name    string
-		wantErr error
-		code    int
-	}{
-		{
-			name:    "bad request",
-			wantErr: api.ErrBadRequest,
-			code:    400,
-		},
-		{
-			name:    "unauthorized",
-			wantErr: api.ErrUnauthorized,
-			code:    401,
-		},
-		{
-			name:    "forbidden",
-			wantErr: api.ErrForbidden,
-			code:    403,
-		},
-		{
-			name:    "not found",
-			wantErr: api.ErrNotFound,
-			code:    404,
-		},
-		{
-			name:    "method not allowed",
-			wantErr: api.ErrMethodNotAllowed,
-			code:    405,
-		},
-		{
-			name:    "unsupported media type",
-			wantErr: api.ErrUnsupportedMediaType,
-			code:    415,
-		},
-		{
-			name:    "too many requests",
-			wantErr: api.ErrTooManyRequests,
-			code:    429,
-		},
-		{
-			name:    "internal server error",
-			wantErr: api.ErrInternalServer,
-			code:    500,
-		},
-		{
-			name:    "bad gateway",
-			wantErr: api.ErrBadGateway,
-			code:    502,
-		},
-		{
-			name:    "service unavailable",
-			wantErr: api.ErrServiceUnavailable,
-			code:    503,
-		},
-		{
-			name:    "gateway timeout",
-			wantErr: api.ErrGatewayTimeout,
-			code:    504,
-		},
-		{
-			name:    "unknown error",
-			wantErr: fmt.Errorf("unexpected status code: %d", 418),
-			code:    418,
-		},
-	}
+	tests := []int{400, 401, 403, 404, 405, 415, 418, 429, 500, 502, 503, 504}
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(fmt.Sprint(test), func(t *testing.T) {
 			httpmock.RegisterResponder("GET", "https://tests.api.riotgames.com/",
-				httpmock.NewBytesResponder(test.code, []byte(`{}`)))
+				httpmock.NewBytesResponder(test, []byte(`{}`)))
 
 			internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 			require.NoError(t, err)
+
 			l := internal.Logger("client_endpoint_method")
 			ctx := context.Background()
 			urlComponents := []string{"https://", "tests", api.RIOT_API_BASE_URL_FORMAT, "/"}
 			equinoxReq, err := internal.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
 			require.NoError(t, err)
-			require.Equal(t, "GET", equinoxReq.Request.Method)
+
+			wantErr := api.StatusCodeToError(test)
+
 			var data interface{}
 			err = internal.Execute(ctx, equinoxReq, data)
-			require.Equal(t, test.wantErr, err)
-			_, err = internal.ExecuteRaw(ctx, equinoxReq)
-			require.Equal(t, test.wantErr, err)
+			if wantErr == nil && test == 418 {
+				require.EqualError(t, err, "unexpected status code: 418")
+			} else {
+				require.Equal(t, wantErr, err)
+			}
 		})
 	}
 }
@@ -279,21 +219,8 @@ func TestInternalClientRetryableErrors(t *testing.T) {
 
 	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
 
-	//lint:ignore SA1012 Testing if ctx is nil
-	//nolint:staticcheck
-	equinoxReq, err := internalClient.Request(nil, l, http.MethodGet, urlComponents, "", nil)
-	require.Error(t, err)
-	//lint:ignore SA1012 Testing if ctx is nil
-	//nolint:staticcheck
-	err = internalClient.Execute(nil, equinoxReq, &res)
-	require.Error(t, err)
-	//lint:ignore SA1012 Testing if ctx is nil
-	//nolint:staticcheck
-	_, err = internalClient.ExecuteRaw(nil, equinoxReq)
-	require.Error(t, err)
-
 	ctx := context.Background()
-	equinoxReq, err = internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
+	equinoxReq, err := internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
 	// Application rate limited
@@ -382,6 +309,21 @@ func TestInternalClientExecutes(t *testing.T) {
 	err = internal.Execute(ctx, equinoxReq, &res)
 	require.NoError(t, err)
 	require.Equal(t, `response`, res)
+
+	l := internal.Logger("client_endpoint_method")
+
+	//lint:ignore SA1012 Testing if ctx is nil
+	//nolint:staticcheck
+	equinoxReq, err = internal.Request(nil, l, http.MethodGet, urlComponents, "", nil)
+	require.Error(t, err)
+	//lint:ignore SA1012 Testing if ctx is nil
+	//nolint:staticcheck
+	err = internal.Execute(nil, equinoxReq, &res)
+	require.Error(t, err)
+	//lint:ignore SA1012 Testing if ctx is nil
+	//nolint:staticcheck
+	_, err = internal.ExecuteRaw(nil, equinoxReq)
+	require.Error(t, err)
 }
 
 func TestExecutesWithCache(t *testing.T) {
@@ -429,4 +371,30 @@ func TestExecutesWithCache(t *testing.T) {
 	err = internalClient.Execute(ctx, equinoxReq, &res)
 	require.NoError(t, err)
 	require.Equal(t, `response2`, res)
+}
+
+func TestExponentialBackoffRetry(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewStringResponder(429, `"response"`))
+
+	config := util.NewTestEquinoxConfig()
+	config.Retry.MaxRetries = 2
+	config.Retry.Jitter = 200 * time.Millisecond
+
+	internalClient, err := internal.NewInternalClient(config)
+	require.NoError(t, err)
+	require.True(t, internalClient.IsRetryEnabled)
+
+	l := internalClient.Logger("client_endpoint_method")
+	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
+	ctx := context.Background()
+	equinoxReq, err := internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
+	require.NoError(t, err)
+	require.Equal(t, "GET", equinoxReq.Request.Method)
+
+	_, err = internalClient.ExecuteRaw(ctx, equinoxReq)
+	require.Error(t, err)
 }

@@ -203,7 +203,7 @@ func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) 
 	return io.ReadAll(response.Body)
 }
 
-// Do sends the request n times from c.maxRetries and returns the response.
+// Do sends the request and retry if necessary and enabled.
 func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.Response, error) {
 	equinoxReq.Logger.Debug().Msg("Sending request")
 
@@ -229,8 +229,8 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 		}
 
 		if i < c.maxRetries {
-			// Exponential backoff
-			sleep := delay*time.Duration(math.Pow(2, float64(i+1))) + c.jitter
+			// Exponential backoff with jitter.
+			sleep := delay*time.Duration(math.Pow(2, float64(i))) + c.jitter
 			equinoxReq.Logger.Warn().Str("status_code", response.Status).Dur("sleep", sleep).Msg("Retrying request")
 			err := ratelimit.WaitN(ctx, time.Now().Add(sleep), sleep)
 			if err != nil {

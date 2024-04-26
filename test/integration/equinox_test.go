@@ -28,7 +28,9 @@ func init() {
 	}
 
 	ctx := context.Background()
-	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(4*time.Minute))
+	cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
+	cacheConfig.Verbose = false
+	cache, err := cache.NewBigCache(ctx, cacheConfig)
 	if err != nil {
 		panic(err)
 	}
