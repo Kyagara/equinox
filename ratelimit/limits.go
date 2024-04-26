@@ -50,9 +50,11 @@ func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route s
 			logger.Warn().Err(err).Msg("Failed to wait for retry after")
 			return err
 		}
+
 		l.retryAfter = 0
 	}
 
+	// Reverse loop, buckets with higher limits will be checked first
 	for i := len(l.buckets) - 1; i >= 0; i-- {
 		bucket := l.buckets[i]
 		bucket.mutex.Lock()

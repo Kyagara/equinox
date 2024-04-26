@@ -17,7 +17,7 @@ import (
 //   - HTTPClient : http.Client{}
 //   - Retry      : api.Retry{}
 //   - Cache      : &cache.Cache{}
-//   - RateLimit  : &ratelimit.RateLimit{Enabled: false}
+//   - RateLimit  : &ratelimit.RateLimit{}
 func NewTestEquinoxConfig() api.EquinoxConfig {
 	return api.EquinoxConfig{
 		Key:        "RGAPI-TEST",
