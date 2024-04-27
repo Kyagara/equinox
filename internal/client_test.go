@@ -123,8 +123,9 @@ func TestRequests(t *testing.T) {
 	require.NoError(t, err)
 
 	expectedURL := "https://cool.and.real.api/post"
-	logger := client.Logger("client_endpoint_method")
+
 	ctx := context.Background()
+	logger := client.Logger("client_endpoint_method")
 	urlComponents := []string{"https://", "", "cool.and.real.api", "/post"}
 
 	t.Run("Request with body", func(t *testing.T) {
@@ -145,6 +146,23 @@ func TestRequests(t *testing.T) {
 		require.Equal(t, "application/json", equinoxReq.Request.Header.Get("Content-Type"))
 		require.Equal(t, "application/json", equinoxReq.Request.Header.Get("Accept"))
 		require.Equal(t, config.Key, equinoxReq.Request.Header.Get("X-Riot-Token"))
+	})
+
+	t.Run("Request with invalid body", func(t *testing.T) {
+		// Errors usually don't have any exported fields to be serialized
+		body := []struct {
+			Error error
+		}{
+			{Error: fmt.Errorf("invalid body")},
+		}
+
+		_, err := jsonv2.Marshal(body)
+		require.Error(t, err)
+
+		equinoxReq, err := client.Request(ctx, logger, "POST", urlComponents, "", body)
+		require.Error(t, err)
+
+		require.Nil(t, equinoxReq.Request)
 	})
 
 	t.Run("Request without body", func(t *testing.T) {
@@ -174,41 +192,64 @@ func TestExecutes(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
-		httpmock.NewStringResponder(200, `"response"`))
-
 	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NoError(t, err)
 
-	ctx := context.Background()
+	// Valid responses
 
+	ctx := context.Background()
+	logger := internal.Logger("client_endpoint_method")
 	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
-	equinoxReq, err := internal.Request(ctx, internal.Logger("client_endpoint_method"), http.MethodGet, urlComponents, "", nil)
+	equinoxReq, err := internal.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewStringResponder(200, `"response"`).Once())
+
+	var target string
+	err = internal.Execute(ctx, equinoxReq, &target)
+	require.NoError(t, err)
+	require.Equal(t, `response`, target)
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewStringResponder(200, `"response"`).Once())
 
 	data, err := internal.ExecuteBytes(ctx, equinoxReq)
 	require.NoError(t, err)
 	require.Equal(t, []byte(`"response"`), data)
 
-	var res string
-	err = internal.Execute(ctx, equinoxReq, &res)
-	require.NoError(t, err)
-	require.Equal(t, `response`, res)
-
-	l := internal.Logger("client_endpoint_method")
+	// Nil context
 
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	equinoxReq, err = internal.Request(nil, l, http.MethodGet, urlComponents, "", nil)
+	equinoxReq, err = internal.Request(nil, logger, http.MethodGet, urlComponents, "", nil)
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	err = internal.Execute(nil, equinoxReq, &res)
+	err = internal.Execute(nil, equinoxReq, &target)
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
 	_, err = internal.ExecuteBytes(nil, equinoxReq)
 	require.Error(t, err)
+
+	// Response has invalid json in Execute
+
+	equinoxReq, err = internal.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
+	require.NoError(t, err)
+
+	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
+		httpmock.NewStringResponder(200, `-{invalid json}-`))
+
+	target = ""
+	err = internal.Execute(ctx, equinoxReq, &target)
+	require.Error(t, err)
+
+	// Body is not marshalled in ExecuteBytes so it wont error
+
+	data, err = internal.ExecuteBytes(ctx, equinoxReq)
+	require.NoError(t, err)
+	require.NotNil(t, data)
 }
 
 func TestExecutesWithCache(t *testing.T) {
