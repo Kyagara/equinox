@@ -34,6 +34,7 @@ func TestNewInternalRateLimit(t *testing.T) {
 	rateLimit = ratelimit.NewInternalRateLimit(-1, -1)
 	require.Equal(t, float64(0.99), rateLimit.LimitUsageFactor)
 	require.Equal(t, time.Second, rateLimit.IntervalOverhead)
+	require.True(t, rateLimit.Enabled)
 }
 
 func TestNewLimits(t *testing.T) {
@@ -257,6 +258,11 @@ func TestCheckRetryAfter(t *testing.T) {
 	require.Equal(t, 2*time.Second, delay)
 
 	headers.Set(ratelimit.RETRY_AFTER_HEADER, "10")
+	delay = r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
+	require.Equal(t, 10*time.Second, delay)
+
+	headers.Set(ratelimit.RETRY_AFTER_HEADER, "10")
+	headers.Set(ratelimit.RATE_LIMIT_TYPE_HEADER, ratelimit.APP_RATE_LIMIT_TYPE)
 	delay = r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
 	require.Equal(t, 10*time.Second, delay)
 }
