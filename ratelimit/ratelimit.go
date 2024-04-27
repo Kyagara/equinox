@@ -131,9 +131,9 @@ func (r *RateLimit) CheckRetryAfter(route string, methodID string, headers http.
 
 	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
 	if limitType == APP_RATE_LIMIT_TYPE {
-		limits.App.setDelay(delay)
+		limits.App.setRetryAfter(delay)
 	} else {
-		limits.Methods[methodID].setDelay(delay)
+		limits.Methods[methodID].setRetryAfter(delay)
 	}
 
 	r.mutex.Unlock()

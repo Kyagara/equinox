@@ -106,7 +106,7 @@ func (l *Limit) limitsMatch(limitHeader string) bool {
 	return true
 }
 
-func (l *Limit) setDelay(delay time.Duration) {
+func (l *Limit) setRetryAfter(delay time.Duration) {
 	l.mutex.Lock()
 	l.retryAfter = delay
 	l.mutex.Unlock()

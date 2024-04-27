@@ -63,6 +63,8 @@ func TestRateLimitWithMock(t *testing.T) {
 	client, err := equinox.NewClientWithConfig(config)
 	require.NoError(t, err)
 
+	require.True(t, client.Internal.IsRateLimitEnabled)
+
 	for i := 1; i <= 4; i++ {
 		ctx := context.Background()
 		_, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
@@ -76,6 +78,12 @@ func TestRateLimitWithMock(t *testing.T) {
 	ctx := context.Background()
 	ctx, c := context.WithTimeout(ctx, 2*time.Second)
 	defer c()
+	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
+
+	// This request should error out, it exceeds the rate limit but a context with a deadline is set
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 
