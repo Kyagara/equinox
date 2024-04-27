@@ -11,6 +11,11 @@ import (
 	"github.com/rs/zerolog"
 )
 
+var (
+	ErrCacheIsDisabled = errors.New("cache is disabled")
+	ErrRedisOptionsNil = errors.New("redis options is nil")
+)
+
 type StoreType string
 
 const (
@@ -31,16 +36,20 @@ func (c Cache) MarshalZerologObject(encoder *zerolog.Event) {
 }
 
 type Store interface {
+	// Returns an item from the cache. If no item is found, returns nil for the item and error.
 	Get(ctx context.Context, key string) ([]byte, error)
+
+	// Saves an item under the key provided.
 	Set(ctx context.Context, key string, value []byte) error
+
+	// Deletes an item from the cache.
 	Delete(ctx context.Context, key string) error
+
+	// Clears the entire cache.
+	//
+	// For Redis, the entire 'cache' namespace under 'equinox' is deleted.
 	Clear(ctx context.Context) error
 }
-
-var (
-	ErrCacheIsDisabled = errors.New("cache is disabled")
-	ErrRedisOptionsNil = errors.New("redis options is nil")
-)
 
 // Creates a new Cache using BigCache.
 //
@@ -80,7 +89,6 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 	return cache, nil
 }
 
-// Returns an item from the cache. If no item is found, returns nil for the item and error.
 func (c *Cache) Get(ctx context.Context, key string) ([]byte, error) {
 	if c.TTL == 0 {
 		return nil, ErrCacheIsDisabled
@@ -88,7 +96,6 @@ func (c *Cache) Get(ctx context.Context, key string) ([]byte, error) {
 	return c.store.Get(ctx, key)
 }
 
-// Saves an item under the key provided.
 func (c *Cache) Set(ctx context.Context, key string, item []byte) error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled
@@ -96,7 +103,6 @@ func (c *Cache) Set(ctx context.Context, key string, item []byte) error {
 	return c.store.Set(ctx, key, item)
 }
 
-// Deletes an item from the cache.
 func (c *Cache) Delete(ctx context.Context, key string) error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled
@@ -104,9 +110,6 @@ func (c *Cache) Delete(ctx context.Context, key string) error {
 	return c.store.Delete(ctx, key)
 }
 
-// Clears the entire cache.
-//
-// For Redis, the entire 'cache' namespace under 'equinox' is deleted.
 func (c *Cache) Clear(ctx context.Context) error {
 	if c.TTL == 0 {
 		return ErrCacheIsDisabled

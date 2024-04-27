@@ -7,14 +7,8 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type RedisClient interface {
-	Get(ctx context.Context, key string) *redis.StringCmd
-	Set(ctx context.Context, key string, value any, ttl time.Duration) *redis.StatusCmd
-	Del(ctx context.Context, keys ...string) *redis.IntCmd
-}
-
 type RedisStore struct {
-	client    RedisClient
+	client    *redis.Client
 	namespace string
 	ttl       time.Duration
 }

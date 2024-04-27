@@ -3,10 +3,7 @@ package ratelimit
 import (
 	"context"
 	"errors"
-	"math"
 	"net/http"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -26,145 +23,75 @@ const (
 	METHOD_RATE_LIMIT_TYPE  = "method"
 	SERVICE_RATE_LIMIT_TYPE = "service"
 
-	DEFAULT_RETRY_AFTER = 2 * time.Second
+	DEFAULT_RETRY_AFTER = 1 * time.Second
 )
 
 var (
 	ErrContextDeadlineExceeded = errors.New("waiting would exceed context deadline")
+
+	ErrRateLimitIsDisabled = errors.New("rate limit is disabled")
 )
 
+type StoreType string
+
+const (
+	InternalRateLimit StoreType = "Internal"
+)
+
+type Store interface {
+	// Reserves one request for the App and Method buckets in a route.
+	//
+	// If rate limited, will block until the next bucket reset.
+	Reserve(ctx context.Context, logger zerolog.Logger, route string, methodID string) error
+
+	// Creates new buckets in a route with the limits provided in the response headers.
+	Update(ctx context.Context, logger zerolog.Logger, route string, methodID string, headers http.Header, delay time.Duration) error
+}
+
 type RateLimit struct {
-	Route   map[string]*Limits
-	Enabled bool
+	store     Store
+	StoreType StoreType
 	// Factor to be applied to the limit. E.g. if set to 0.5, the limit will be reduced by 50%.
 	LimitUsageFactor float64
 	// Delay, in milliseconds, added to reset intervals.
 	IntervalOverhead time.Duration
-	mutex            sync.Mutex
+	Enabled          bool
 }
 
-func (r *RateLimit) MarshalZerologObject(encoder *zerolog.Event) {
+func (r RateLimit) MarshalZerologObject(encoder *zerolog.Event) {
 	if r.Enabled {
-		encoder.Float64("limit_usage_factor", r.LimitUsageFactor).Dur("interval_overhead", r.IntervalOverhead)
+		encoder.Str("store", string(r.StoreType)).Float64("limit_usage_factor", r.LimitUsageFactor).Dur("interval_overhead", r.IntervalOverhead)
 	}
 }
 
 func NewInternalRateLimit(limitUsageFactor float64, intervalOverhead time.Duration) *RateLimit {
-	if limitUsageFactor < 0.0 || limitUsageFactor > 1.0 {
-		limitUsageFactor = 0.99
-	}
-	if intervalOverhead < 0 {
-		intervalOverhead = time.Second
-	}
+	limitUsageFactor, intervalOverhead = ValidateRateLimitOptions(limitUsageFactor, intervalOverhead)
 	return &RateLimit{
-		Route:            make(map[string]*Limits, 1),
+		store: &InternalRateLimitStore{
+			Route:            map[string]*Limits{},
+			limitUsageFactor: limitUsageFactor,
+			intervalOverhead: intervalOverhead,
+			mutex:            sync.Mutex{},
+		},
+		StoreType:        InternalRateLimit,
 		LimitUsageFactor: limitUsageFactor,
 		IntervalOverhead: intervalOverhead,
 		Enabled:          true,
 	}
 }
 
-// Reserves one request for the App and Method buckets in a route.
-//
-// If rate limited, will block until the next bucket reset.
 func (r *RateLimit) Reserve(ctx context.Context, logger zerolog.Logger, route string, methodID string) error {
-	r.mutex.Lock()
-	defer r.mutex.Unlock()
-
-	limits, ok := r.Route[route]
-	if !ok {
-		limits = NewLimits()
-		r.Route[route] = limits
+	if !r.Enabled {
+		return ErrRateLimitIsDisabled
 	}
 
-	methods, ok := limits.Methods[methodID]
-	if !ok {
-		methods = NewLimit(METHOD_RATE_LIMIT_TYPE)
-		limits.Methods[methodID] = methods
-	}
-
-	if err := limits.App.checkBuckets(ctx, logger, route, methodID); err != nil {
-		return err
-	}
-
-	return methods.checkBuckets(ctx, logger, route, methodID)
+	return r.store.Reserve(ctx, logger, route, methodID)
 }
 
-// Update creates new buckets in a route with the limits provided in the response headers.
-func (r *RateLimit) Update(logger zerolog.Logger, route string, methodID string, headers http.Header) {
-	r.mutex.Lock()
-	defer r.mutex.Unlock()
-
-	limits := r.Route[route]
-
-	appRateLimitHeader := headers.Get(APP_RATE_LIMIT_HEADER)
-	appRateLimitCountHeader := headers.Get(APP_RATE_LIMIT_COUNT_HEADER)
-	methodRateLimitHeader := headers.Get(METHOD_RATE_LIMIT_HEADER)
-	methodRateLimitCountHeader := headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER)
-
-	if !limits.App.limitsMatch(appRateLimitHeader) {
-		limits.App = r.parseHeaders(appRateLimitHeader, appRateLimitCountHeader, APP_RATE_LIMIT_TYPE)
-		logger.Debug().Str("route", route).Msg("New Application buckets")
+func (r *RateLimit) Update(ctx context.Context, logger zerolog.Logger, route string, methodID string, headers http.Header, retryAfter time.Duration) error {
+	if !r.Enabled {
+		return ErrRateLimitIsDisabled
 	}
 
-	if !limits.Methods[methodID].limitsMatch(methodRateLimitHeader) {
-		limits.Methods[methodID] = r.parseHeaders(methodRateLimitHeader, methodRateLimitCountHeader, METHOD_RATE_LIMIT_TYPE)
-		logger.Debug().Str("route", route).Str("method", methodID).Msg("New Method buckets")
-	}
-}
-
-// CheckRetryAfter returns the number of seconds to wait from the Retry-After header before retrying, or DEFAULT_RETRY_AFTER if not found.
-func (r *RateLimit) CheckRetryAfter(route string, methodID string, headers http.Header) time.Duration {
-	retryAfter := headers.Get(RETRY_AFTER_HEADER)
-	if retryAfter == "" {
-		return DEFAULT_RETRY_AFTER
-	}
-
-	delayF, err := strconv.Atoi(retryAfter)
-	if err != nil {
-		return DEFAULT_RETRY_AFTER
-	}
-	delay := time.Duration(delayF) * time.Second
-
-	r.mutex.Lock()
-	limits := r.Route[route]
-
-	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
-	if limitType == APP_RATE_LIMIT_TYPE {
-		limits.App.setRetryAfter(delay)
-	} else {
-		limits.Methods[methodID].setRetryAfter(delay)
-	}
-
-	r.mutex.Unlock()
-	return delay
-}
-
-func (r *RateLimit) parseHeaders(limitHeader string, countHeader string, limitType string) *Limit {
-	if limitHeader == "" || countHeader == "" {
-		return NewLimit(limitType)
-	}
-
-	limits := strings.Split(limitHeader, ",")
-	counts := strings.Split(countHeader, ",")
-
-	if len(limits) == 0 {
-		return NewLimit(limitType)
-	}
-
-	limit := &Limit{
-		buckets:    make([]*Bucket, len(limits)),
-		limitType:  limitType,
-		retryAfter: 0,
-		mutex:      sync.Mutex{},
-	}
-
-	for i, limitString := range limits {
-		baseLimit, interval := getNumbersFromPair(limitString)
-		newLimit := int(math.Max(1, float64(baseLimit)*r.LimitUsageFactor))
-		count, _ := getNumbersFromPair(counts[i])
-		limit.buckets[i] = NewBucket(interval, r.IntervalOverhead, baseLimit, newLimit, count)
-	}
-
-	return limit
+	return r.store.Update(ctx, logger, route, methodID, headers, retryAfter)
 }

@@ -67,8 +67,7 @@ func main() {
 
 - Maybe the context usage throughout the project could be improved
 - Improve key concatenation in Redis methods
-- New RateLimit interface
-  - Similar to the cache interface
+- RateLimit
   - Add Redis store, maybe using a lua script
   - Maybe add more options (presets?) to customize the rate limiter
 
