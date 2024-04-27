@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRedisMethods(t *testing.T) {
+func TestRateLimitMethods(t *testing.T) {
 	t.Parallel()
 
 	// Rate limit is disabled

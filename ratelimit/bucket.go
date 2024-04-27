@@ -9,50 +9,50 @@ import (
 
 type Bucket struct {
 	// Next reset.
-	next time.Time
+	Next time.Time
 	// Current number of tokens, starts at limit.
-	tokens int
+	Tokens int
 	// The limit given in the header without any modifications.
-	baseLimit int
+	BaseLimit int
 	// Maximum amount of tokens, modified by the LimitUsageFactor.
-	limit int
+	Limit int
 	// Time interval in seconds.
-	interval         time.Duration
-	intervalOverhead time.Duration
+	Interval         time.Duration
+	IntervalOverhead time.Duration
 	mutex            sync.Mutex
 }
 
 func (b *Bucket) MarshalZerologObject(encoder *zerolog.Event) {
-	encoder.Int("tokens", b.tokens).Int("limit", b.limit).Dur("interval", b.interval).Time("next", b.next)
+	encoder.Int("tokens", b.Tokens).Int("limit", b.Limit).Dur("interval", b.Interval).Time("next", b.Next)
 }
 
 func NewBucket(interval time.Duration, intervalOverhead time.Duration, baseLimit int, limit int, tokens int) *Bucket {
 	return &Bucket{
-		interval:         interval,
-		intervalOverhead: intervalOverhead,
-		baseLimit:        baseLimit,
-		limit:            limit,
-		tokens:           tokens,
-		next:             time.Now().Add(interval + intervalOverhead),
+		Next:             time.Now().Add(interval + intervalOverhead),
+		Tokens:           tokens,
+		BaseLimit:        baseLimit,
+		Limit:            limit,
+		Interval:         interval,
+		IntervalOverhead: intervalOverhead,
 		mutex:            sync.Mutex{},
 	}
 }
 
 // Checks if the 'next' reset is in the past, and if so, resets the bucket tokens and sets the next reset.
-func (b *Bucket) check() {
+func (b *Bucket) Check() {
 	now := time.Now()
-	if b.next.Before(now) {
-		b.tokens = 0
-		b.next = now.Add(b.interval + b.intervalOverhead)
+	if b.Next.Before(now) {
+		b.Tokens = 0
+		b.Next = now.Add(b.Interval + b.IntervalOverhead)
 	}
 }
 
 // Increments the number of tokens in the bucket and returns if the bucket is rate limited.
-func (b *Bucket) isRateLimited() bool {
-	b.check()
-	if b.limit == 0 {
+func (b *Bucket) IsRateLimited() bool {
+	b.Check()
+	if b.BaseLimit == 0 {
 		return false
 	}
-	b.tokens++
-	return b.tokens >= b.limit
+	b.Tokens++
+	return b.Tokens >= b.Limit
 }
