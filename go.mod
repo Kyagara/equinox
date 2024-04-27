@@ -26,5 +26,7 @@ require (
 )
 
 // Retract all versions before implementing codegen and major fixes to the library.
-// It's recommended to always use the latest version since endpoint methods might not exist anymore.
-retract [v0.0.0-0, v1.0.0]
+// It's recommended to always use the latest version since some endpoints or endpoint methods might not exist anymore.
+retract (
+	[v0.0.0-0, v1.0.0]
+)
