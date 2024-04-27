@@ -362,9 +362,24 @@ func TestRateLimitRetry(t *testing.T) {
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
 		httpmock.NewBytesResponder(200, []byte(`{}`)))
 
+	// Rate limited but deadline exceeds
+
+	ctxWithDeadline, c := context.WithDeadline(ctx, time.Now())
+	defer c()
+
+	_, err = internalClient.ExecuteBytes(ctxWithDeadline, equinoxReq)
+	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
+
+	err = internalClient.Execute(ctxWithDeadline, equinoxReq, &res)
+	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
+
 	// Method/Service rate limited
 	// This will take 2.5 seconds since it will retry one time and then succeed. DEFAULT_RETRY_AFTER + 0.5s of jitter
 	err = internalClient.Execute(ctx, equinoxReq, &res)
+	require.NoError(t, err)
+
+	// Wont block
+	_, err = internalClient.ExecuteBytes(ctx, equinoxReq)
 	require.NoError(t, err)
 }
 
