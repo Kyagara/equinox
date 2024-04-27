@@ -11,14 +11,14 @@ import (
 
 // Configuration for the equinox client.
 type EquinoxConfig struct {
-	// http.Client used internally.
-	HTTPClient *http.Client
-	// The Cache used, storing all GET requests done by the client, optional.
-	Cache *cache.Cache
-	// The RateLimit used, only disable it if you know what you're doing.
-	RateLimit *ratelimit.RateLimit
 	// Riot API Key.
 	Key string
+	// http.Client used internally.
+	HTTPClient *http.Client
+	// The Cache store, storing all GET requests done by the client, optional.
+	Cache *cache.Cache
+	// The RateLimit store, only disable it if you know what you're doing.
+	RateLimit *ratelimit.RateLimit
 	// Configuration object for the Logger.
 	Logger Logger
 	// Configuration object for Retry.
@@ -39,7 +39,7 @@ func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
 
 // Retry configuration object.
 //
-// Retries have exponential backoff.
+// Retries have a exponential backoff mechanism.
 type Retry struct {
 	// Maximum number of retries, 0 disables retries.
 	MaxRetries int

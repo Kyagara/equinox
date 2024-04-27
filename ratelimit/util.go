@@ -52,6 +52,7 @@ func GetRetryAfterHeader(retryAfterHeader string) time.Duration {
 	return time.Duration(delayF) * time.Second
 }
 
+// Parses the headers and returns a new Limit with its buckets.
 func ParseHeaders(limitHeader string, countHeader string, limitType string, limitUsageFactor float64, intervalOverhead time.Duration) *Limit {
 	if limitHeader == "" || countHeader == "" {
 		return NewLimit(limitType)

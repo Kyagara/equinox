@@ -45,7 +45,7 @@ func (r *InternalRateLimitStore) Update(ctx context.Context, logger zerolog.Logg
 
 	limits := r.Route[route]
 
-	// If rate limited, set retry after.
+	// If rate limited, set retry after delay based on the rate limit type
 	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
 	if limitType != "" {
 		if limitType == APP_RATE_LIMIT_TYPE {

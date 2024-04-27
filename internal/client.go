@@ -246,11 +246,11 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 
 	var httpErr error
 
-	// MaxRetries+1 to run this loop at least once.
+	// MaxRetries+1 to run this loop at least once
 	for i := 0; i < c.maxRetries+1; i++ {
 		response, err := c.http.Do(equinoxReq.Request)
 		if err != nil {
-			// Stop if the http.Client itself returns any error.
+			// Stop if the http.Client itself returns any error
 			return nil, err
 		}
 
@@ -264,7 +264,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 		}
 
 		if i < c.maxRetries {
-			// Exponential backoff with jitter.
+			// Exponential backoff with jitter
 			sleep := delay*time.Duration(math.Pow(2, float64(i))) + c.jitter
 			equinoxReq.Logger.Warn().Str("status_code", response.Status).Dur("sleep", sleep).Msg("Retrying request")
 			err := ratelimit.WaitN(ctx, time.Now().Add(sleep), sleep)
@@ -279,30 +279,30 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 	return nil, fmt.Errorf("%w: %w", ErrMaxRetries, httpErr)
 }
 
+// Checks the response, check if it contains a 'Retry-After' header and whether it should be retried (StatusCode within range 429-599).
 func (c *Client) checkResponse(ctx context.Context, equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, bool, error) {
-	// Delay in milliseconds.
+	// Delay in milliseconds
 	var retryAfter time.Duration
-	var err error
 
 	if response.StatusCode == http.StatusTooManyRequests {
 		retryAfter = ratelimit.GetRetryAfterHeader(ratelimit.RETRY_AFTER_HEADER)
 	}
 
 	if c.IsRateLimitEnabled {
-		err = c.ratelimit.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, response.Header, retryAfter)
+		err := c.ratelimit.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, response.Header, retryAfter)
 		if err != nil {
 			return 0, false, err
 		}
 	}
 
-	// 2xx responses.
+	// 2xx responses
 	if response.StatusCode >= 200 && response.StatusCode < 300 {
 		return 0, false, nil
 	}
 
-	err = api.StatusCodeToError(response.StatusCode)
+	err := api.StatusCodeToError(response.StatusCode)
 	if err != nil {
-		// 429 and 5xx responses will be retried.
+		// 429 and 5xx responses will be retried
 		if response.StatusCode == http.StatusTooManyRequests || (response.StatusCode >= 500 && response.StatusCode < 600) {
 			return retryAfter, true, err
 		}
