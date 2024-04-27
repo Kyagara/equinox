@@ -46,10 +46,10 @@ func TestNewLimits(t *testing.T) {
 	require.NotNil(t, limits.Methods)
 }
 
-func TestCheck(t *testing.T) {
+func TestReserveUpdate(t *testing.T) {
 	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NoError(t, err)
-	equinoxReq := &api.EquinoxRequest{
+	equinoxReq := api.EquinoxRequest{
 		Route:    "route",
 		MethodID: "method",
 		Logger:   client.Logger("client_endpoint_method"),
