@@ -288,12 +288,12 @@ func TestWaitN(t *testing.T) {
 
 		ctx := context.Background()
 		duration := time.Second
-		ctx, cancel := context.WithTimeout(ctx, duration)
-		estimated := time.Now().Add(2 * time.Second)
+		ctx, c := context.WithTimeout(ctx, duration)
+		defer c()
+		estimated := time.Now().Add(10 * time.Second)
 
 		err := ratelimit.WaitN(ctx, estimated, duration)
 		require.Equal(t, err, ratelimit.ErrContextDeadlineExceeded)
-		cancel()
 	})
 
 	t.Run("context canceled", func(t *testing.T) {

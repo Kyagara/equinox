@@ -71,7 +71,6 @@ func main() {
   - Similar to the cache interface
   - Add Redis store, maybe using a lua script
   - Maybe add more options (presets?) to customize the rate limiter
-- More tests for the internal client and rate limit
 
 ## Disclaimer
 

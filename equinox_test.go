@@ -81,8 +81,8 @@ func TestRateLimitWithMock(t *testing.T) {
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 
-	// This request should error out, it exceeds the rate limit but a context with a deadline is set
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	// This request should error out, it would block because it exceeds the rate limit but a context with a deadline is set
+	ctx, cancel := context.WithTimeout(ctx, time.Second)
 	defer cancel()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
