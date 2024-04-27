@@ -22,7 +22,7 @@ func ValidateRateLimitOptions(limitUsageFactor float64, intervalOverhead time.Du
 	return limitUsageFactor, intervalOverhead
 }
 
-// WaitN waits for the given duration after checking if the context deadline will be exceeded.
+// Waits for the given duration after checking if the context deadline will be exceeded.
 func WaitN(ctx context.Context, estimated time.Time, duration time.Duration) error {
 	deadline, ok := ctx.Deadline()
 	if ok && deadline.Before(estimated) {

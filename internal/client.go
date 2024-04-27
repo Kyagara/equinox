@@ -240,7 +240,7 @@ func (c *Client) ExecuteBytes(ctx context.Context, equinoxReq api.EquinoxRequest
 	return body, nil
 }
 
-// Do sends the request and retry if necessary and enabled.
+// Sends the request, retries if enabled.
 func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.Response, error) {
 	equinoxReq.Logger.Trace().Msg("Do")
 
