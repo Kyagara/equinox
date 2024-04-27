@@ -2,6 +2,7 @@ package ratelimit_test
 
 import (
 	"context"
+	"math"
 	"net/http"
 	"testing"
 	"time"
@@ -30,13 +31,38 @@ func TestNewInternalRateLimit(t *testing.T) {
 	require.True(t, rateLimit.Enabled)
 }
 
-func TestNewLimits(t *testing.T) {
+func TestLimits(t *testing.T) {
 	t.Parallel()
 
 	limits := ratelimit.NewLimits()
 	require.NotNil(t, limits)
 	require.NotEmpty(t, limits.App)
 	require.NotNil(t, limits.Methods)
+}
+
+func TestBucket(t *testing.T) {
+	t.Parallel()
+
+	bucket := ratelimit.NewBucket(2*time.Second, 500*time.Millisecond, 10, int(math.Max(1, 10.0*0.99)), 0)
+	require.NotNil(t, bucket)
+	require.Equal(t, 10, bucket.BaseLimit)
+	require.Equal(t, int(math.Max(1, 10.0*0.99)), bucket.Limit)
+	require.Equal(t, 0, bucket.Tokens)
+	require.Equal(t, 2*time.Second, bucket.Interval)
+	require.Equal(t, 500*time.Millisecond, bucket.IntervalOverhead)
+	require.Greater(t, bucket.Next, time.Now())
+	require.False(t, bucket.IsRateLimited())
+
+	bucket.BaseLimit = 0
+	require.False(t, bucket.IsRateLimited())
+
+	bucket.Tokens = 20
+	bucket.BaseLimit = 10
+	require.True(t, bucket.IsRateLimited())
+
+	bucket.Next = time.Time{}
+	bucket.Check()
+	require.False(t, bucket.IsRateLimited())
 }
 
 func TestReserveAndUpdate(t *testing.T) {

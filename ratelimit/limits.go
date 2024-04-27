@@ -59,7 +59,7 @@ func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route s
 		bucket := l.buckets[i]
 		bucket.mutex.Lock()
 
-		if bucket.isRateLimited() {
+		if bucket.IsRateLimited() {
 			logger.Warn().
 				Str("route", route).
 				Str("method_id", methodID).
@@ -67,16 +67,16 @@ func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route s
 				Object("bucket", bucket).
 				Msg("Rate limited")
 
-			err := WaitN(ctx, bucket.next, time.Until(bucket.next))
+			err := WaitN(ctx, bucket.Next, time.Until(bucket.Next))
 			if err != nil {
 				bucket.mutex.Unlock()
 				logger.Warn().Err(err).Msg("Failed to wait for reset")
 				return err
 			}
 
-			// 'next' reset is now in the past, so reset the bucket
-			bucket.check()
-			bucket.tokens++
+			// next reset is now in the past, so reset the bucket
+			bucket.Check()
+			bucket.Tokens++
 		}
 
 		bucket.mutex.Unlock()
@@ -103,7 +103,7 @@ func (l *Limit) limitsMatch(limitHeader string) bool {
 		}
 
 		limit, interval := getNumbersFromPair(pair)
-		if bucket.baseLimit != limit || bucket.interval != interval {
+		if bucket.BaseLimit != limit || bucket.Interval != interval {
 			return false
 		}
 	}
