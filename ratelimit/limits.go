@@ -22,7 +22,7 @@ func NewLimits() *Limits {
 	}
 }
 
-// Limit represents a collection of buckets and the type of limit (application or method).
+// Represents a collection of buckets and the type of limit (application or method).
 type Limit struct {
 	limitType  string
 	buckets    []*Bucket
