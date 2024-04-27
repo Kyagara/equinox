@@ -8,6 +8,7 @@ import (
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/lol"
+	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
@@ -15,13 +16,17 @@ import (
 )
 
 func TestNewEquinoxClient(t *testing.T) {
-	_, err := equinox.NewClient("")
+	client, err := equinox.NewClient("")
 	require.Error(t, err)
+	require.Empty(t, client)
 
-	client, err := equinox.NewClient("RGAPI-TEST")
+	client, err = equinox.NewClient("RGAPI-TEST")
 	require.NoError(t, err)
 
+	require.NotEmpty(t, client)
+	require.NotEmpty(t, client.Internal)
 	require.NotEmpty(t, client.Cache)
+	require.NotEmpty(t, client.RateLimit)
 	require.NotEmpty(t, client.LOL)
 	require.NotEmpty(t, client.LOR)
 	require.NotEmpty(t, client.TFT)
@@ -32,14 +37,20 @@ func TestNewEquinoxClient(t *testing.T) {
 func TestNewEquinoxClientWithConfig(t *testing.T) {
 	config := util.NewTestEquinoxConfig()
 	config.Key = ""
-	_, err := equinox.NewClientWithConfig(config)
-	require.Error(t, err)
+
+	// Key not provided
+	client, err := equinox.NewClientWithConfig(config)
+	require.Equal(t, internal.ErrKeyNotProvided, err)
+	require.Empty(t, client)
 
 	config.Key = "RGAPI-TEST"
-	config.Cache.TTL = 0
-	client, err := equinox.NewClientWithConfig(config)
+	config.Cache.TTL = 1
+	config.RateLimit.Enabled = true
+
+	client, err = equinox.NewClientWithConfig(config)
 	require.NoError(t, err)
-	require.Equal(t, client.Cache.TTL, time.Duration(0))
+	require.Equal(t, client.Cache.TTL, time.Duration(1))
+	require.True(t, client.RateLimit.Enabled)
 }
 
 func TestRateLimitWithMock(t *testing.T) {
@@ -87,7 +98,7 @@ func TestRateLimitWithMock(t *testing.T) {
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
 
-	// This last request should block until rate limit is reset, this test should take around 3 seconds
+	// This last request should block until rate limit is reset, this test should take around 4 seconds
 	ctx = context.Background()
 	_, err = client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
 	require.NoError(t, err)

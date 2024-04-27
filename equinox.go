@@ -21,13 +21,14 @@ import (
 )
 
 type Equinox struct {
-	Internal *internal.Client
-	Cache    *cache.Cache
-	Riot     *riot.Client
-	LOL      *lol.Client
-	TFT      *tft.Client
-	VAL      *val.Client
-	LOR      *lor.Client
+	Internal  *internal.Client
+	Cache     *cache.Cache
+	RateLimit *ratelimit.RateLimit
+	Riot      *riot.Client
+	LOL       *lol.Client
+	TFT       *tft.Client
+	VAL       *val.Client
+	LOR       *lor.Client
 }
 
 // Creates a new equinox client with the default configuration.
@@ -46,13 +47,14 @@ func NewClientWithConfig(config api.EquinoxConfig) (*Equinox, error) {
 		return nil, err
 	}
 	equinox := &Equinox{
-		Internal: client,
-		Cache:    config.Cache,
-		Riot:     riot.NewRiotClient(client),
-		LOL:      lol.NewLOLClient(client),
-		TFT:      tft.NewTFTClient(client),
-		VAL:      val.NewVALClient(client),
-		LOR:      lor.NewLORClient(client),
+		Internal:  client,
+		Cache:     config.Cache,
+		RateLimit: config.RateLimit,
+		Riot:      riot.NewRiotClient(client),
+		LOL:       lol.NewLOLClient(client),
+		TFT:       tft.NewTFTClient(client),
+		VAL:       val.NewVALClient(client),
+		LOR:       lor.NewLORClient(client),
 	}
 	return equinox, nil
 }
@@ -62,8 +64,8 @@ func NewClientWithConfig(config api.EquinoxConfig) (*Equinox, error) {
 //   - Key  	  : The provided Riot API key.
 //   - HTTPClient : http.Client with a timeout of 15 seconds.
 //   - Cache	  : BigCache with an eviction time of 4 minutes.
-//   - RateLimit  : Internal rate limiter with a limit usage factor of 0.99 and interval overhead of 1 second.
-//   - Logger	  : api.Logger object with zerolog.WarnLevel. Will log if rate limited or when retrying a request (before waiting).
+//   - RateLimit  : InternalRateLimit with a limit usage factor of 0.99 and interval overhead of 1 second.
+//   - Logger	  : api.Logger object with zerolog.WarnLevel. Will log if rate limited or when retrying a request.
 //   - Retry	  : api.Retry object with a limit of 3 and jitter of 500 milliseconds.
 func DefaultConfig(key string) (api.EquinoxConfig, error) {
 	ctx := context.Background()

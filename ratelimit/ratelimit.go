@@ -84,7 +84,6 @@ func (r *RateLimit) Reserve(ctx context.Context, logger zerolog.Logger, route st
 	if !r.Enabled {
 		return ErrRateLimitIsDisabled
 	}
-
 	return r.store.Reserve(ctx, logger, route, methodID)
 }
 
@@ -92,6 +91,5 @@ func (r *RateLimit) Update(ctx context.Context, logger zerolog.Logger, route str
 	if !r.Enabled {
 		return ErrRateLimitIsDisabled
 	}
-
 	return r.store.Update(ctx, logger, route, methodID, headers, retryAfter)
 }

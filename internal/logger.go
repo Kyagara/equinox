@@ -29,11 +29,9 @@ func NewLogger(config api.EquinoxConfig) zerolog.Logger {
 	} else {
 		logger = zerolog.New(os.Stderr).Level(config.Logger.Level)
 	}
-
 	if config.Logger.EnableTimestamp {
 		logger = logger.With().Timestamp().Logger()
 	}
-
 	if config.Logger.EnableConfigLogging {
 		logger = logger.With().Object("equinox", config).Logger()
 	}
@@ -41,13 +39,15 @@ func NewLogger(config api.EquinoxConfig) zerolog.Logger {
 	return logger
 }
 
-// Used to access the internal logger, this is used to log events from other clients.
+// Used to access the internal logger, used to create/retrieve the logger for a specific endpoint method.
 func (c *Client) Logger(id string) zerolog.Logger {
 	c.loggers.mutex.Lock()
 	defer c.loggers.mutex.Unlock()
+
 	if logger, ok := c.loggers.methods[id]; ok {
 		return logger
 	}
+
 	names := strings.Split(id, "_")
 	logger := c.loggers.main.With().Str("client", names[0]).Str("endpoint", names[1]).Str("method", names[2]).Logger()
 	c.loggers.methods[id] = logger

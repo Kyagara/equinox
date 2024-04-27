@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// Base API URLs formats.
+// Base Riot API URLs formats.
 const (
 	RIOT_API_BASE_URL_FORMAT = ".api.riotgames.com"
 )

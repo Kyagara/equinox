@@ -13,11 +13,11 @@ import (
 
 // Creates an EquinoxConfig for tests.
 //
-//   - Logger     : zerolog.TraceLevel prettified
 //   - HTTPClient : http.Client{}
-//   - Retry      : api.Retry{}
 //   - Cache      : &cache.Cache{}
 //   - RateLimit  : &ratelimit.RateLimit{}
+//   - Retry      : api.Retry{}
+//   - Logger     : zerolog.TraceLevel prettified
 func NewTestEquinoxConfig() api.EquinoxConfig {
 	return api.EquinoxConfig{
 		Key:        "RGAPI-TEST",
