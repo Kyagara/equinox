@@ -186,7 +186,7 @@ func TestExecutes(t *testing.T) {
 	equinoxReq, err := internal.Request(ctx, internal.Logger("client_endpoint_method"), http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
-	data, err := internal.ExecuteRaw(ctx, equinoxReq)
+	data, err := internal.ExecuteBytes(ctx, equinoxReq)
 	require.NoError(t, err)
 	require.Equal(t, []byte(`"response"`), data)
 
@@ -207,7 +207,7 @@ func TestExecutes(t *testing.T) {
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	_, err = internal.ExecuteRaw(nil, equinoxReq)
+	_, err = internal.ExecuteBytes(nil, equinoxReq)
 	require.Error(t, err)
 }
 
@@ -348,6 +348,6 @@ func TestExponentialBackoffRetry(t *testing.T) {
 	equinoxReq, err := internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
-	_, err = internalClient.ExecuteRaw(ctx, equinoxReq)
+	_, err = internalClient.ExecuteBytes(ctx, equinoxReq)
 	require.Error(t, err)
 }

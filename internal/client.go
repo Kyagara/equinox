@@ -84,7 +84,7 @@ func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
 	return client, nil
 }
 
-// Creates a new 'EquinoxRequest' object for the 'Execute' and 'ExecuteRaw' methods.
+// Creates a new 'EquinoxRequest' object for the 'Execute' and 'ExecuteBytes' methods.
 func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod string, urlComponents []string, methodID string, body any) (api.EquinoxRequest, error) {
 	logger.Trace().Msg("Request")
 
@@ -207,9 +207,9 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	return nil
 }
 
-// ExecuteRaw executes a request skipping cache and returns []byte.
-func (c *Client) ExecuteRaw(ctx context.Context, equinoxReq api.EquinoxRequest) ([]byte, error) {
-	equinoxReq.Logger.Trace().Msg("ExecuteRaw")
+// Executes a 'EquinoxRequest', skips cache check and returns []byte.
+func (c *Client) ExecuteBytes(ctx context.Context, equinoxReq api.EquinoxRequest) ([]byte, error) {
+	equinoxReq.Logger.Trace().Msg("ExecuteBytes")
 
 	if ctx == nil {
 		return nil, ErrContextIsNil

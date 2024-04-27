@@ -156,13 +156,13 @@ goos: linux - WSL2
 goarch: amd64
 pkg: github.com/Kyagara/equinox/test/benchmark
 cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkExecuteRaw-16 518600 2072 ns/op 1368 B/op 13 allocs/op
-BenchmarkExecuteRaw-16 582710 2033 ns/op 1368 B/op 13 allocs/op
-BenchmarkExecuteRaw-16 519804 2037 ns/op 1368 B/op 13 allocs/op
-BenchmarkExecuteRaw-16 525337 2151 ns/op 1368 B/op 13 allocs/op
-BenchmarkExecuteRaw-16 558279 2050 ns/op 1368 B/op 13 allocs/op
+BenchmarkExecuteBytes-16 518600 2072 ns/op 1368 B/op 13 allocs/op
+BenchmarkExecuteBytes-16 582710 2033 ns/op 1368 B/op 13 allocs/op
+BenchmarkExecuteBytes-16 519804 2037 ns/op 1368 B/op 13 allocs/op
+BenchmarkExecuteBytes-16 525337 2151 ns/op 1368 B/op 13 allocs/op
+BenchmarkExecuteBytes-16 558279 2050 ns/op 1368 B/op 13 allocs/op
 */
-func BenchmarkExecuteRaw(b *testing.B) {
+func BenchmarkExecuteBytes(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -189,7 +189,7 @@ func BenchmarkExecuteRaw(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		data, err := client.ExecuteRaw(ctx, equinoxReq)
+		data, err := client.ExecuteBytes(ctx, equinoxReq)
 		if err != nil {
 			b.Fatal(err)
 		}

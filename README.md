@@ -66,7 +66,6 @@ func main() {
 ## Todo
 
 - Maybe the context usage throughout the project could be improved
-- Maybe have ExecuteRaw return a Reader instead of []byte, or another method for it
 - Improve key concatenation in Redis methods
 - New RateLimit interface
   - Similar to the cache interface
