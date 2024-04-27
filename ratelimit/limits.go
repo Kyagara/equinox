@@ -78,6 +78,7 @@ func (l *Limit) checkBuckets(ctx context.Context, logger zerolog.Logger, route s
 			bucket.check()
 			bucket.tokens++
 		}
+
 		bucket.mutex.Unlock()
 	}
 
@@ -89,20 +90,24 @@ func (l *Limit) limitsMatch(limitHeader string) bool {
 	if limitHeader == "" {
 		return false
 	}
+
 	limits := strings.Split(limitHeader, ",")
 	if len(l.buckets) != len(limits) {
 		return false
 	}
+
 	for i, pair := range limits {
 		bucket := l.buckets[i]
 		if bucket == nil {
 			return false
 		}
+
 		limit, interval := getNumbersFromPair(pair)
 		if bucket.baseLimit != limit || bucket.interval != interval {
 			return false
 		}
 	}
+
 	return true
 }
 

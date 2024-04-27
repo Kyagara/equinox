@@ -250,11 +250,11 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 	for i := 0; i < c.maxRetries+1; i++ {
 		response, err := c.http.Do(equinoxReq.Request)
 		if err != nil {
-			// Stop retrying if the http.Client itself returns any error.
+			// Stop if the http.Client itself returns any error.
 			return nil, err
 		}
 
-		delay, retryable, err := c.checkResponse(equinoxReq, response)
+		delay, retryable, err := c.checkResponse(ctx, equinoxReq, response)
 		if err == nil && delay == 0 {
 			return response, nil
 		}
@@ -279,9 +279,20 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 	return nil, fmt.Errorf("%w: %w", ErrMaxRetries, httpErr)
 }
 
-func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, bool, error) {
+func (c *Client) checkResponse(ctx context.Context, equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, bool, error) {
+	// Delay in milliseconds.
+	var retryAfter time.Duration
+	var err error
+
+	if response.StatusCode == http.StatusTooManyRequests {
+		retryAfter = ratelimit.GetRetryAfterHeader(ratelimit.RETRY_AFTER_HEADER)
+	}
+
 	if c.IsRateLimitEnabled {
-		c.ratelimit.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, response.Header)
+		err = c.ratelimit.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, response.Header, retryAfter)
+		if err != nil {
+			return 0, false, err
+		}
 	}
 
 	// 2xx responses.
@@ -289,11 +300,11 @@ func (c *Client) checkResponse(equinoxReq api.EquinoxRequest, response *http.Res
 		return 0, false, nil
 	}
 
-	err := api.StatusCodeToError(response.StatusCode)
+	err = api.StatusCodeToError(response.StatusCode)
 	if err != nil {
 		// 429 and 5xx responses will be retried.
 		if response.StatusCode == http.StatusTooManyRequests || (response.StatusCode >= 500 && response.StatusCode < 600) {
-			return c.ratelimit.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, response.Header), true, err
+			return retryAfter, true, err
 		}
 
 		return 0, false, err

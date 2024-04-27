@@ -3,313 +3,35 @@ package ratelimit_test
 import (
 	"context"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
-	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
-	"github.com/Kyagara/equinox/test/util"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewInternalRateLimit(t *testing.T) {
+func TestRedisMethods(t *testing.T) {
 	t.Parallel()
 
-	rateLimit := ratelimit.NewInternalRateLimit(0.99, time.Second)
-	require.NotNil(t, rateLimit)
-	require.Empty(t, rateLimit.Route)
-	require.True(t, rateLimit.Enabled)
-	require.Nil(t, rateLimit.Route["route"])
+	// Rate limit is disabled
+	rateStore := &ratelimit.RateLimit{}
+	require.NotNil(t, rateStore)
 
-	err := rateLimit.Reserve(context.Background(), zerolog.Nop(), "route", "method")
-	require.NoError(t, err)
-	require.NotNil(t, rateLimit.Route["route"].App)
-	require.NotEmpty(t, rateLimit.Route["route"])
-	require.NotNil(t, rateLimit.Route["route"].Methods)
-	require.NotEmpty(t, rateLimit.Route["route"].Methods["method"])
+	ctx := context.Background()
 
-	// Test invalid values are being replaced with valid ones
-	rateLimit = ratelimit.NewInternalRateLimit(-1, -1)
-	require.Equal(t, float64(0.99), rateLimit.LimitUsageFactor)
-	require.Equal(t, time.Second, rateLimit.IntervalOverhead)
-	require.True(t, rateLimit.Enabled)
-}
+	err := rateStore.Reserve(ctx, zerolog.Nop(), "route", "method")
+	require.Equal(t, ratelimit.ErrRateLimitIsDisabled, err)
+	err = rateStore.Update(ctx, zerolog.Nop(), "route", "method", http.Header{}, time.Duration(0))
+	require.Equal(t, ratelimit.ErrRateLimitIsDisabled, err)
 
-func TestNewLimits(t *testing.T) {
-	t.Parallel()
+	rateStore.MarshalZerologObject(&zerolog.Event{})
 
-	limits := ratelimit.NewLimits()
-	require.NotNil(t, limits)
-	require.NotEmpty(t, limits.App)
-	require.NotNil(t, limits.Methods)
-}
+	rateStore.StoreType = ratelimit.InternalRateLimit
+	rateStore.Enabled = true
 
-func TestReserveUpdate(t *testing.T) {
-	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
-	equinoxReq := api.EquinoxRequest{
-		Route:    "route",
-		MethodID: "method",
-		Logger:   client.Logger("client_endpoint_method"),
-	}
-
-	t.Run("buckets not created", func(t *testing.T) {
-		t.Parallel()
-		ctx := context.Background()
-
-		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits), LimitUsageFactor: 1.0, Enabled: true}
-
-		require.Nil(t, r.Route[equinoxReq.Route])
-
-		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-
-		require.NotNil(t, r.Route[equinoxReq.Route].Methods)
-		require.NotNil(t, r.Route[equinoxReq.Route].Methods[equinoxReq.MethodID])
-		require.True(t, r.Enabled)
-		require.Equal(t, r.LimitUsageFactor, 1.0)
-		require.Equal(t, r.IntervalOverhead, time.Duration(0))
-	})
-
-	// These tests should take around 2 seconds each
-
-	t.Run("app rate limited", func(t *testing.T) {
-		t.Parallel()
-		ctx := context.Background()
-
-		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits), LimitUsageFactor: 1.0}
-
-		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-
-		headers := http.Header{
-			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
-			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"19:2"},
-		}
-
-		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
-
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-	})
-
-	t.Run("method rate limited", func(t *testing.T) {
-		t.Parallel()
-		ctx := context.Background()
-
-		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits), LimitUsageFactor: 1.0}
-
-		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-
-		headers := http.Header{
-			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"100:2,200:2"},
-			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:2,199:2"},
-		}
-
-		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
-
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-	})
-
-	t.Run("waiting bucket to reset", func(t *testing.T) {
-		t.Parallel()
-		ctx := context.Background()
-
-		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits), LimitUsageFactor: 1.0}
-
-		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-
-		headers := http.Header{
-			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
-			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"20:2"},
-		}
-
-		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
-
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-	})
-
-	t.Run("waiting retry after", func(t *testing.T) {
-		t.Parallel()
-		ctx := context.Background()
-
-		r := &ratelimit.RateLimit{Route: make(map[string]*ratelimit.Limits), LimitUsageFactor: 1.0}
-
-		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-
-		headers := http.Header{
-			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
-			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"10:2"},
-		}
-
-		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
-
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-
-		headers = http.Header{
-			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
-			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"11:2"},
-			ratelimit.RETRY_AFTER_HEADER:          []string{"2"},
-		}
-
-		r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
-
-		delay := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
-		require.Equal(t, 2*time.Second, delay)
-
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-	})
-}
-
-func TestLimitsDontMatch(t *testing.T) {
-	t.Parallel()
-
-	config := util.NewTestEquinoxConfig()
-	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
-	client, err := internal.NewInternalClient(config)
-	require.NoError(t, err)
-
-	equinoxReq := &api.EquinoxRequest{
-		Route:    "route",
-		MethodID: "method",
-		Logger:   client.Logger("client_endpoint_method"),
-	}
-
-	r := config.RateLimit
-	headers := http.Header{
-		ratelimit.APP_RATE_LIMIT_HEADER:          []string{"20:2"},
-		ratelimit.APP_RATE_LIMIT_COUNT_HEADER:    []string{"1:2"},
-		ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"20:2"},
-		ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},
-	}
-
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second))
-	defer cancel()
-
-	// Used here just to populate the Limits
-	err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-	require.NoError(t, err)
-
-	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
-
-	// Both requests shouldn't be rate limited or block
-	err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-	require.NoError(t, err)
-	err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-	require.NoError(t, err)
-
-	headers = http.Header{
-		ratelimit.APP_RATE_LIMIT_HEADER:       []string{"4:2"},
-		ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"1:2"},
-	}
-
-	// Updating limits
-	r.Update(equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers)
-
-	// Should have no issue
-	err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-	require.NoError(t, err)
-
-	// The buckets should've been updated, so this request should be rate limited and block
-	// Since we have a deadline, this should return a DeadlineExceeded error
-	err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-	require.Equal(t, ratelimit.ErrContextDeadlineExceeded, err)
-}
-
-func TestCheckRetryAfter(t *testing.T) {
-	t.Parallel()
-
-	r := &ratelimit.RateLimit{
-		Route: map[string]*ratelimit.Limits{
-			"route": {
-				App: ratelimit.NewLimit(ratelimit.APP_RATE_LIMIT_TYPE),
-				Methods: map[string]*ratelimit.Limit{
-					"method": ratelimit.NewLimit(ratelimit.METHOD_RATE_LIMIT_TYPE),
-				},
-			},
-		},
-		LimitUsageFactor: 1.0,
-	}
-
-	headers := http.Header{}
-	equinoxReq := &api.EquinoxRequest{
-		Route:    "route",
-		MethodID: "method",
-	}
-
-	headers.Set(ratelimit.RETRY_AFTER_HEADER, "")
-	delay := r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
-	require.Equal(t, 2*time.Second, delay)
-
-	headers.Set(ratelimit.RETRY_AFTER_HEADER, "asdf")
-	delay = r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
-	require.Equal(t, 2*time.Second, delay)
-
-	headers.Set(ratelimit.RETRY_AFTER_HEADER, "10")
-	delay = r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
-	require.Equal(t, 10*time.Second, delay)
-
-	headers.Set(ratelimit.RETRY_AFTER_HEADER, "10")
-	headers.Set(ratelimit.RATE_LIMIT_TYPE_HEADER, ratelimit.APP_RATE_LIMIT_TYPE)
-	delay = r.CheckRetryAfter(equinoxReq.Route, equinoxReq.MethodID, headers)
-	require.Equal(t, 10*time.Second, delay)
-}
-
-func TestWaitN(t *testing.T) {
-	t.Parallel()
-
-	t.Run("deadline not exceeded", func(t *testing.T) {
-		t.Parallel()
-
-		ctx := context.Background()
-		estimated := time.Now().Add(time.Second)
-		duration := 2 * time.Second
-
-		err := ratelimit.WaitN(ctx, estimated, duration)
-		require.NoError(t, err)
-	})
-
-	t.Run("deadline exceeded", func(t *testing.T) {
-		t.Parallel()
-
-		ctx := context.Background()
-		duration := time.Second
-		ctx, c := context.WithTimeout(ctx, duration)
-		defer c()
-		estimated := time.Now().Add(10 * time.Second)
-
-		err := ratelimit.WaitN(ctx, estimated, duration)
-		require.Equal(t, err, ratelimit.ErrContextDeadlineExceeded)
-	})
-
-	t.Run("context canceled", func(t *testing.T) {
-		t.Parallel()
-
-		ctx := context.Background()
-		ctx, cancel := context.WithCancel(ctx)
-		estimated := time.Now().Add(10 * time.Second)
-		duration := 5 * time.Second
-
-		go func() {
-			time.Sleep(2 * time.Second)
-			cancel()
-		}()
-
-		err := ratelimit.WaitN(ctx, estimated, duration)
-		require.Equal(t, context.Canceled, err)
-	})
+	var logger zerolog.Logger
+	logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Object("ratelimit", rateStore).Logger()
+	logger.Info().Msg("Testing rate limit marshal")
 }

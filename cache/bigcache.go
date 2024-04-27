@@ -6,15 +6,8 @@ import (
 	"github.com/allegro/bigcache/v3"
 )
 
-type BigCacheClient interface {
-	Get(key string) ([]byte, error)
-	Set(key string, entry []byte) error
-	Delete(key string) error
-	Reset() error
-}
-
 type BigCacheStore struct {
-	client BigCacheClient
+	client *bigcache.BigCache
 }
 
 func (s *BigCacheStore) Get(_ctx context.Context, key string) ([]byte, error) {
