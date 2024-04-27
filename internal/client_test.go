@@ -90,24 +90,32 @@ func TestStatusCodeToError(t *testing.T) {
 
 	tests := []int{400, 401, 403, 404, 405, 415, 418, 429, 500, 502, 503, 504}
 
+	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	require.NoError(t, err)
+
+	logger := internal.Logger("client_endpoint_method")
+	ctx := context.Background()
+	urlComponents := []string{"https://", "tests", api.RIOT_API_BASE_URL_FORMAT, "/"}
+	equinoxReq, err := internal.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
+	require.NoError(t, err)
+
 	for _, test := range tests {
 		t.Run(fmt.Sprint(test), func(t *testing.T) {
 			httpmock.RegisterResponder("GET", "https://tests.api.riotgames.com/",
-				httpmock.NewBytesResponder(test, []byte(`{}`)))
-
-			internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-			require.NoError(t, err)
-
-			l := internal.Logger("client_endpoint_method")
-			ctx := context.Background()
-			urlComponents := []string{"https://", "tests", api.RIOT_API_BASE_URL_FORMAT, "/"}
-			equinoxReq, err := internal.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
-			require.NoError(t, err)
+				httpmock.NewStringResponder(test, `"response"`).Times(2))
 
 			wantErr := api.StatusCodeToError(test)
 
-			var data interface{}
+			var data string
 			err = internal.Execute(ctx, equinoxReq, data)
+
+			if wantErr == nil && test == 418 {
+				require.EqualError(t, err, "unexpected status code: 418")
+			} else {
+				require.Equal(t, wantErr, err)
+			}
+
+			_, err = internal.ExecuteBytes(ctx, equinoxReq)
 			if wantErr == nil && test == 418 {
 				require.EqualError(t, err, "unexpected status code: 418")
 			} else {
@@ -204,15 +212,12 @@ func TestExecutes(t *testing.T) {
 	require.NoError(t, err)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
-		httpmock.NewStringResponder(200, `"response"`).Once())
+		httpmock.NewStringResponder(200, `"response"`).Times(2))
 
 	var target string
 	err = internal.Execute(ctx, equinoxReq, &target)
 	require.NoError(t, err)
 	require.Equal(t, `response`, target)
-
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
-		httpmock.NewStringResponder(200, `"response"`).Once())
 
 	data, err := internal.ExecuteBytes(ctx, equinoxReq)
 	require.NoError(t, err)
@@ -272,9 +277,12 @@ func TestExecutesWithCache(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, internalClient.IsCacheEnabled)
 
-	l := internalClient.Logger("client_endpoint_method")
+	logger := internalClient.Logger("client_endpoint_method")
 	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
-	equinoxReq, err := internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
+
+	// Get
+
+	equinoxReq, err := internalClient.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
 	var res string
@@ -286,13 +294,12 @@ func TestExecutesWithCache(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, `response`, res)
 
-	equinoxReq, err = internalClient.Request(ctx, l, http.MethodPost, urlComponents, "", nil)
+	// Post or any other method
+
+	equinoxReq, err = internalClient.Request(ctx, logger, http.MethodPost, urlComponents, "", nil)
 	require.NoError(t, err)
 	require.Equal(t, "POST", equinoxReq.Request.Method)
 
-	err = internalClient.Execute(ctx, equinoxReq, &res)
-	require.NoError(t, err)
-	require.Equal(t, `response2`, res)
 	err = internalClient.Execute(ctx, equinoxReq, &res)
 	require.NoError(t, err)
 	require.Equal(t, `response2`, res)
@@ -322,13 +329,13 @@ func TestRateLimitRetry(t *testing.T) {
 			"Retry-After":               {"1"},
 		}).Times(2))
 
-	res := lol.StatusPlatformDataV4DTO{}
-	l := internalClient.Logger("client_endpoint_method")
-
+	ctx := context.Background()
+	logger := internalClient.Logger("client_endpoint_method")
 	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
 
-	ctx := context.Background()
-	equinoxReq, err := internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
+	var res lol.StatusPlatformDataV4DTO
+
+	equinoxReq, err := internalClient.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
 	// Application rate limited
@@ -398,12 +405,14 @@ func TestExponentialBackoffRetry(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, internalClient.IsRetryEnabled)
 
-	l := internalClient.Logger("client_endpoint_method")
-	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
 	ctx := context.Background()
-	equinoxReq, err := internalClient.Request(ctx, l, http.MethodGet, urlComponents, "", nil)
+	logger := internalClient.Logger("client_endpoint_method")
+	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
+
+	equinoxReq, err := internalClient.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
+	// Should error out and take around 6.4 seconds
 	_, err = internalClient.ExecuteBytes(ctx, equinoxReq)
 	require.Error(t, err)
 }
