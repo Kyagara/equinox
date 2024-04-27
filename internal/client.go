@@ -142,11 +142,8 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		if item != nil {
 			equinoxReq.Logger.Debug().Msg("Cache hit")
 
-			err := jsonv2.Unmarshal(item, target)
-			if err != nil {
-				equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling cached response")
-				return err
-			}
+			// Only valid json is cached, so unmarshal shouldn't fail
+			_ = jsonv2.Unmarshal(item, target)
 
 			return nil
 		}
@@ -176,6 +173,8 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		return nil
 	}
 
+	// Cache is enabled
+
 	if equinoxReq.Request.Method == http.MethodGet {
 		body, err := io.ReadAll(response.Body)
 		if err != nil {
@@ -183,16 +182,19 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 			return err
 		}
 
-		err = c.cache.Set(ctx, url, body)
-		if err != nil {
-			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
-		} else {
-			equinoxReq.Logger.Debug().Msg("Cache set")
-		}
-
 		err = jsonv2.Unmarshal(body, target)
 		if err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling body")
+			return err
+		}
+
+		// Only cache valid json responses
+
+		err = c.cache.Set(ctx, url, body)
+		if err == nil {
+			equinoxReq.Logger.Debug().Msg("Cache set")
+		} else {
+			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
 		}
 
 		return nil
