@@ -23,6 +23,7 @@ func TestRateLimitMethods(t *testing.T) {
 
 	err := rateStore.Reserve(ctx, zerolog.Nop(), "route", "method")
 	require.Equal(t, ratelimit.ErrRateLimitIsDisabled, err)
+
 	err = rateStore.Update(ctx, zerolog.Nop(), "route", "method", http.Header{}, time.Duration(0))
 	require.Equal(t, ratelimit.ErrRateLimitIsDisabled, err)
 

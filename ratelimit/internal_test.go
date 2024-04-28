@@ -24,7 +24,7 @@ func TestNewInternalRateLimit(t *testing.T) {
 	err := rateLimit.Reserve(context.Background(), zerolog.Nop(), "route", "method")
 	require.NoError(t, err)
 
-	// Test invalid values are being replaced with valid ones
+	// Test if invalid values are being replaced with valid ones
 	rateLimit = ratelimit.NewInternalRateLimit(-1, -1)
 	require.Equal(t, float64(0.99), rateLimit.LimitUsageFactor)
 	require.Equal(t, time.Second, rateLimit.IntervalOverhead)
@@ -38,6 +38,39 @@ func TestLimits(t *testing.T) {
 	require.NotNil(t, limits)
 	require.NotEmpty(t, limits.App)
 	require.NotNil(t, limits.Methods)
+	require.Empty(t, limits.Methods)
+	require.Equal(t, ratelimit.APP_RATE_LIMIT_TYPE, limits.App.Type)
+
+	limits.App = ratelimit.ParseHeaders("10:1,10:2", "1:1,1:2", ratelimit.APP_RATE_LIMIT_TYPE, 0.99, time.Second)
+	require.NotEmpty(t, limits.App.Buckets)
+	limits.Methods["method"] = ratelimit.ParseHeaders("10:1,10:2", "1:1,1:2", ratelimit.APP_RATE_LIMIT_TYPE, 0.99, time.Second)
+	require.NotEmpty(t, limits.Methods["method"].Buckets)
+
+	limitsMatch := limits.App.LimitsMatch("10:1,10:2")
+	require.True(t, limitsMatch)
+
+	ctx := context.Background()
+	logger := zerolog.Nop()
+
+	err := limits.App.CheckBuckets(ctx, logger, "route", "method")
+	require.NoError(t, err)
+
+	limits.App = ratelimit.ParseHeaders("10:10,10:20", "1000:10,1000:20", ratelimit.APP_RATE_LIMIT_TYPE, 0.99, time.Second)
+	require.NotEmpty(t, limits.App.Buckets)
+
+	ctx, c := context.WithDeadline(ctx, time.Now().Add(time.Second))
+	defer c()
+
+	err = limits.App.CheckBuckets(ctx, logger, "route", "method")
+	require.Error(t, err)
+
+	limits.App.SetRetryAfter(10 * time.Second)
+	err = limits.App.CheckBuckets(ctx, logger, "route", "method")
+	require.Error(t, err)
+
+	limits.Methods["method"].SetRetryAfter(10 * time.Second)
+	err = limits.Methods["method"].CheckBuckets(ctx, logger, "route", "method")
+	require.Error(t, err)
 }
 
 func TestBucket(t *testing.T) {
@@ -66,6 +99,8 @@ func TestBucket(t *testing.T) {
 }
 
 func TestReserveAndUpdate(t *testing.T) {
+	t.Parallel()
+
 	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
 	require.NoError(t, err)
 	equinoxReq := api.EquinoxRequest{
@@ -190,5 +225,37 @@ func TestReserveAndUpdate(t *testing.T) {
 
 		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
+
+		headers.Set(ratelimit.RATE_LIMIT_TYPE_HEADER, "method")
+
+		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, 2*time.Second)
+		require.NoError(t, err)
+
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		require.NoError(t, err)
+	})
+
+	t.Run("CheckBuckets failed in reserve because of deadline", func(t *testing.T) {
+		t.Parallel()
+		ctx := context.Background()
+
+		r := ratelimit.NewInternalRateLimit(0.99, time.Second)
+
+		// Initializing the rate limit
+		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		require.NoError(t, err)
+
+		headers := http.Header{
+			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:20"},
+			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"20:20"},
+		}
+
+		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, time.Duration(0))
+		require.NoError(t, err)
+
+		ctx, c := context.WithDeadline(ctx, time.Now().Add(time.Second))
+		defer c()
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		require.Error(t, err)
 	})
 }

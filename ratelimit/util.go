@@ -66,24 +66,24 @@ func ParseHeaders(limitHeader string, countHeader string, limitType string, limi
 	}
 
 	limit := &Limit{
-		buckets:    make([]*Bucket, len(limits)),
-		limitType:  limitType,
-		retryAfter: 0,
+		Type:       limitType,
+		Buckets:    make([]*Bucket, len(limits)),
+		RetryAfter: 0,
 		mutex:      sync.Mutex{},
 	}
 
 	for i, limitString := range limits {
-		baseLimit, interval := getNumbersFromPair(limitString)
+		baseLimit, interval := GetNumbersFromPair(limitString)
 		newLimit := int(math.Max(1, float64(baseLimit)*limitUsageFactor))
-		count, _ := getNumbersFromPair(counts[i])
-		limit.buckets[i] = NewBucket(interval, intervalOverhead, baseLimit, newLimit, count)
+		count, _ := GetNumbersFromPair(counts[i])
+		limit.Buckets[i] = NewBucket(interval, intervalOverhead, baseLimit, newLimit, count)
 	}
 
 	return limit
 }
 
 // Returns the limit and interval in seconds from a pair of numbers separated by a colon.
-func getNumbersFromPair(pair string) (int, time.Duration) {
+func GetNumbersFromPair(pair string) (int, time.Duration) {
 	numbers := strings.Split(pair, ":")
 	interval, _ := strconv.Atoi(numbers[1])
 	limitOrCount, _ := strconv.Atoi(numbers[0])
