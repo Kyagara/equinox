@@ -32,11 +32,11 @@ func (r *InternalRateLimitStore) Reserve(ctx context.Context, logger zerolog.Log
 		limits.Methods[methodID] = methods
 	}
 
-	if err := limits.App.checkBuckets(ctx, logger, route, methodID); err != nil {
+	if err := limits.App.CheckBuckets(ctx, logger, route, methodID); err != nil {
 		return err
 	}
 
-	return methods.checkBuckets(ctx, logger, route, methodID)
+	return methods.CheckBuckets(ctx, logger, route, methodID)
 }
 
 func (r *InternalRateLimitStore) Update(ctx context.Context, logger zerolog.Logger, route string, methodID string, headers http.Header, delay time.Duration) error {
@@ -49,22 +49,22 @@ func (r *InternalRateLimitStore) Update(ctx context.Context, logger zerolog.Logg
 	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
 	if limitType != "" {
 		if limitType == APP_RATE_LIMIT_TYPE {
-			limits.App.setRetryAfter(delay)
+			limits.App.SetRetryAfter(delay)
 		} else {
-			limits.Methods[methodID].setRetryAfter(delay)
+			limits.Methods[methodID].SetRetryAfter(delay)
 		}
 	}
 
 	appRateLimitHeader := headers.Get(APP_RATE_LIMIT_HEADER)
 	methodRateLimitHeader := headers.Get(METHOD_RATE_LIMIT_HEADER)
 
-	if !limits.App.limitsMatch(appRateLimitHeader) {
+	if !limits.App.LimitsMatch(appRateLimitHeader) {
 		appRateLimitCountHeader := headers.Get(APP_RATE_LIMIT_COUNT_HEADER)
 		limits.App = ParseHeaders(appRateLimitHeader, appRateLimitCountHeader, APP_RATE_LIMIT_TYPE, r.limitUsageFactor, r.intervalOverhead)
 		logger.Debug().Str("route", route).Msg("New Application buckets")
 	}
 
-	if !limits.Methods[methodID].limitsMatch(methodRateLimitHeader) {
+	if !limits.Methods[methodID].LimitsMatch(methodRateLimitHeader) {
 		methodRateLimitCountHeader := headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER)
 		limits.Methods[methodID] = ParseHeaders(methodRateLimitHeader, methodRateLimitCountHeader, METHOD_RATE_LIMIT_TYPE, r.limitUsageFactor, r.intervalOverhead)
 		logger.Debug().Str("route", route).Str("method", methodID).Msg("New Method buckets")
