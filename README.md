@@ -67,10 +67,11 @@ func main() {
 
 - Maybe the context usage throughout the project could be improved
 - Improve key concatenation in Redis methods
+- Maybe add a Logger to the Cache and RateLimit interfaces, removing the logger argument from methods
 - RateLimit
   - Add Redis store, maybe using a lua script
   - Maybe add more options (presets?) to customize the rate limiter
-  - Move the blocking logic to the client
+  - Move the blocking to the client
   - Try to reduce amount of arguments
 
 ## Disclaimer
