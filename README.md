@@ -70,6 +70,8 @@ func main() {
 - RateLimit
   - Add Redis store, maybe using a lua script
   - Maybe add more options (presets?) to customize the rate limiter
+  - Move the blocking logic to the client
+  - Try to reduce amount of arguments
 
 ## Disclaimer
 
