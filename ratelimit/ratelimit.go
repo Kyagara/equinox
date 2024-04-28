@@ -51,7 +51,7 @@ type Store interface {
 type RateLimit struct {
 	store     Store
 	StoreType StoreType
-	// Factor to be applied to the limit. E.g. if set to 0.5, the limit will be reduced by 50%.
+	// Factor to be applied to any Limit. E.g. If set to 0.5, the limit will be reduced by 50%.
 	LimitUsageFactor float64
 	// Delay, in milliseconds, added to reset intervals.
 	IntervalOverhead time.Duration
