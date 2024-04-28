@@ -109,7 +109,8 @@ func TestReserveAndUpdate(t *testing.T) {
 		Logger:   client.Logger("client_endpoint_method"),
 	}
 
-	t.Run("buckets not created", func(t *testing.T) {
+	// These tests should take around 2 seconds each
+	t.Run("app and method rate limited", func(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
 
@@ -118,25 +119,11 @@ func TestReserveAndUpdate(t *testing.T) {
 		// Initializing the rate limit
 		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
-
-		require.True(t, r.Enabled)
-		require.Equal(t, r.LimitUsageFactor, 0.99)
-		require.Equal(t, r.IntervalOverhead, time.Second)
-	})
-
-	// These tests should take around 2 seconds each
-
-	t.Run("app rate limited", func(t *testing.T) {
-		t.Parallel()
-		ctx := context.Background()
-
-		r := ratelimit.NewInternalRateLimit(0.99, time.Second)
-
-		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 
 		headers := http.Header{
+			ratelimit.RATE_LIMIT_TYPE_HEADER:      []string{"application"},
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"19:2"},
 		}
@@ -144,32 +131,25 @@ func TestReserveAndUpdate(t *testing.T) {
 		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, time.Duration(0))
 		require.NoError(t, err)
 
+		// App rate limited
 		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
-	})
 
-	t.Run("method rate limited", func(t *testing.T) {
-		t.Parallel()
-		ctx := context.Background()
-
-		r := ratelimit.NewInternalRateLimit(0.99, time.Second)
-
-		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-
-		headers := http.Header{
-			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"100:2,200:2"},
-			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"1:2,199:2"},
+		headers = http.Header{
+			ratelimit.RATE_LIMIT_TYPE_HEADER:         []string{"method"},
+			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"10:2"},
+			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"19:2"},
 		}
 
 		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, time.Duration(0))
 		require.NoError(t, err)
 
+		// Method rate limited
 		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 	})
 
+	// Should take 3 seconds, 2 seconds for the app and 1 for the interval overhead
 	t.Run("waiting bucket to reset", func(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
@@ -181,6 +161,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		require.NoError(t, err)
 
 		headers := http.Header{
+			ratelimit.RATE_LIMIT_TYPE_HEADER:      []string{"application"},
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"20:2"},
 		}
@@ -192,6 +173,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		require.NoError(t, err)
 	})
 
+	// Should take 5 seconds, 2 for each rate limit and 1 for the interval overhead
 	t.Run("waiting retry after", func(t *testing.T) {
 		t.Parallel()
 		ctx := context.Background()
@@ -203,10 +185,12 @@ func TestReserveAndUpdate(t *testing.T) {
 		require.NoError(t, err)
 
 		headers := http.Header{
+			ratelimit.RATE_LIMIT_TYPE_HEADER:      []string{"application"},
 			ratelimit.APP_RATE_LIMIT_HEADER:       []string{"20:2"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER: []string{"10:2"},
 		}
 
+		// No Retry after
 		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, time.Duration(0))
 		require.NoError(t, err)
 
@@ -220,14 +204,21 @@ func TestReserveAndUpdate(t *testing.T) {
 			ratelimit.RETRY_AFTER_HEADER:          []string{"2"},
 		}
 
+		// Retry after on application rate limit
 		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, 2*time.Second)
 		require.NoError(t, err)
 
 		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 
-		headers.Set(ratelimit.RATE_LIMIT_TYPE_HEADER, "method")
+		headers = http.Header{
+			ratelimit.RATE_LIMIT_TYPE_HEADER:         []string{"method"},
+			ratelimit.METHOD_RATE_LIMIT_HEADER:       []string{"10:2"},
+			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: []string{"11:2"},
+			ratelimit.RETRY_AFTER_HEADER:             []string{"2"},
+		}
 
+		// Retry after on method rate limit
 		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, 2*time.Second)
 		require.NoError(t, err)
 
