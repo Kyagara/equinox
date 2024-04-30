@@ -82,7 +82,7 @@ func (l *Limit) CheckBuckets(ctx context.Context, logger zerolog.Logger, route s
 				return err
 			}
 
-			// next reset is now in the past, so reset the bucket
+			// 'Next' is now in the past, the bucket should reset now
 			bucket.Check()
 			bucket.Tokens++
 		}
