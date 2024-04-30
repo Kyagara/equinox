@@ -43,7 +43,7 @@ func TestLimits(t *testing.T) {
 
 	limits.App = ratelimit.ParseHeaders(ratelimit.APP_RATE_LIMIT_TYPE, "10:1,10:2", "1:1,1:2", 0.99, time.Second)
 	require.NotEmpty(t, limits.App.Buckets)
-	limits.Methods["method"] = ratelimit.ParseHeaders(ratelimit.APP_RATE_LIMIT_TYPE, "10:1,10:2", "1:1,1:2", 0.99, time.Second)
+	limits.Methods["method"] = ratelimit.ParseHeaders(ratelimit.METHOD_RATE_LIMIT_TYPE, "10:1,10:2", "1:1,1:2", 0.99, time.Second)
 	require.NotEmpty(t, limits.Methods["method"].Buckets)
 
 	limitsMatch := limits.App.LimitsMatch("10:1,10:2")
