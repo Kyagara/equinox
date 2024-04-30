@@ -41,9 +41,9 @@ func TestLimits(t *testing.T) {
 	require.Empty(t, limits.Methods)
 	require.Equal(t, ratelimit.APP_RATE_LIMIT_TYPE, limits.App.Type)
 
-	limits.App = ratelimit.ParseHeaders("10:1,10:2", "1:1,1:2", ratelimit.APP_RATE_LIMIT_TYPE, 0.99, time.Second)
+	limits.App = ratelimit.ParseHeaders(ratelimit.APP_RATE_LIMIT_TYPE, "10:1,10:2", "1:1,1:2", 0.99, time.Second)
 	require.NotEmpty(t, limits.App.Buckets)
-	limits.Methods["method"] = ratelimit.ParseHeaders("10:1,10:2", "1:1,1:2", ratelimit.APP_RATE_LIMIT_TYPE, 0.99, time.Second)
+	limits.Methods["method"] = ratelimit.ParseHeaders(ratelimit.APP_RATE_LIMIT_TYPE, "10:1,10:2", "1:1,1:2", 0.99, time.Second)
 	require.NotEmpty(t, limits.Methods["method"].Buckets)
 
 	limitsMatch := limits.App.LimitsMatch("10:1,10:2")
@@ -55,7 +55,7 @@ func TestLimits(t *testing.T) {
 	err := limits.App.CheckBuckets(ctx, logger, "route", "method")
 	require.NoError(t, err)
 
-	limits.App = ratelimit.ParseHeaders("10:10,10:20", "1000:10,1000:20", ratelimit.APP_RATE_LIMIT_TYPE, 0.99, time.Second)
+	limits.App = ratelimit.ParseHeaders(ratelimit.APP_RATE_LIMIT_TYPE, "10:10,10:20", "1000:10,1000:20", 0.99, time.Second)
 	require.NotEmpty(t, limits.App.Buckets)
 
 	ctx, c := context.WithDeadline(ctx, time.Now().Add(time.Second))

@@ -30,6 +30,14 @@ type Limit struct {
 	mutex      sync.Mutex
 }
 
+func (l *Limit) MarshalZerologObject(encoder *zerolog.Event) {
+	buckets := zerolog.Arr()
+	for _, bucket := range l.Buckets {
+		buckets.Object(bucket)
+	}
+	encoder.Str("type", l.Type).Array("buckets", buckets).Dur("retry_after", l.RetryAfter)
+}
+
 func NewLimit(limitType string) *Limit {
 	return &Limit{
 		Type:       limitType,

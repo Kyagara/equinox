@@ -2,10 +2,8 @@ package ratelimit
 
 import (
 	"context"
-	"math"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -50,36 +48,6 @@ func GetRetryAfterHeader(retryAfterHeader string) time.Duration {
 	}
 
 	return time.Duration(delayF) * time.Second
-}
-
-// Parses the headers and returns a new Limit with its buckets.
-func ParseHeaders(limitHeader string, countHeader string, limitType string, limitUsageFactor float64, intervalOverhead time.Duration) *Limit {
-	if limitHeader == "" || countHeader == "" {
-		return NewLimit(limitType)
-	}
-
-	limits := strings.Split(limitHeader, ",")
-	counts := strings.Split(countHeader, ",")
-
-	if len(limits) == 0 {
-		return NewLimit(limitType)
-	}
-
-	limit := &Limit{
-		Type:       limitType,
-		Buckets:    make([]*Bucket, len(limits)),
-		RetryAfter: 0,
-		mutex:      sync.Mutex{},
-	}
-
-	for i, limitString := range limits {
-		baseLimit, interval := GetNumbersFromPair(limitString)
-		newLimit := int(math.Max(1, float64(baseLimit)*limitUsageFactor))
-		count, _ := GetNumbersFromPair(counts[i])
-		limit.Buckets[i] = NewBucket(interval, intervalOverhead, baseLimit, newLimit, count)
-	}
-
-	return limit
 }
 
 // Returns the limit and interval in seconds from a pair of numbers separated by a colon.

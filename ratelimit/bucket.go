@@ -23,7 +23,7 @@ type Bucket struct {
 }
 
 func (b *Bucket) MarshalZerologObject(encoder *zerolog.Event) {
-	encoder.Int("tokens", b.Tokens).Int("limit", b.Limit).Dur("interval", b.Interval).Time("next", b.Next)
+	encoder.Int("t", b.Tokens).Int("l", b.Limit).Dur("i", b.Interval).Time("n", b.Next)
 }
 
 func NewBucket(interval time.Duration, intervalOverhead time.Duration, baseLimit int, limit int, tokens int) *Bucket {
