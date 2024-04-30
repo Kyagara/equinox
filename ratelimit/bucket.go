@@ -38,7 +38,7 @@ func NewBucket(interval time.Duration, intervalOverhead time.Duration, baseLimit
 	}
 }
 
-// Checks if the 'next' reset is in the past, and if so, resets the bucket tokens and sets the next reset.
+// Checks if the next reset is in the past, and if so, reset the bucket and set the next reset.
 func (b *Bucket) Check() {
 	now := time.Now()
 	if b.Next.Before(now) {
