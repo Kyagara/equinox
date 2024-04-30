@@ -45,7 +45,7 @@ func (r *InternalRateLimitStore) Update(ctx context.Context, logger zerolog.Logg
 
 	limits := r.Route[route]
 
-	// If rate limited, set retry after delay based on the rate limit type
+	// If rate limited, set RetryAfter delay based on the rate limit type
 	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
 	if limitType != "" {
 		if limitType == APP_RATE_LIMIT_TYPE {
@@ -55,19 +55,21 @@ func (r *InternalRateLimitStore) Update(ctx context.Context, logger zerolog.Logg
 		}
 	}
 
-	appRateLimitHeader := headers.Get(APP_RATE_LIMIT_HEADER)
-	methodRateLimitHeader := headers.Get(METHOD_RATE_LIMIT_HEADER)
+	appLimitHeader := headers.Get(APP_RATE_LIMIT_HEADER)
+	methodLimitHeader := headers.Get(METHOD_RATE_LIMIT_HEADER)
 
-	if !limits.App.LimitsMatch(appRateLimitHeader) {
-		appRateLimitCountHeader := headers.Get(APP_RATE_LIMIT_COUNT_HEADER)
-		limits.App = ParseHeaders(appRateLimitHeader, appRateLimitCountHeader, APP_RATE_LIMIT_TYPE, r.limitUsageFactor, r.intervalOverhead)
-		logger.Debug().Str("route", route).Msg("New Application buckets")
+	if !limits.App.LimitsMatch(appLimitHeader) {
+		countHeader := headers.Get(APP_RATE_LIMIT_COUNT_HEADER)
+		newLimit := ParseHeaders(APP_RATE_LIMIT_TYPE, appLimitHeader, countHeader, r.limitUsageFactor, r.intervalOverhead)
+		limits.App = newLimit
+		logger.Debug().Str("route", route).Object("limit", newLimit).Msg("New application limit")
 	}
 
-	if !limits.Methods[methodID].LimitsMatch(methodRateLimitHeader) {
-		methodRateLimitCountHeader := headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER)
-		limits.Methods[methodID] = ParseHeaders(methodRateLimitHeader, methodRateLimitCountHeader, METHOD_RATE_LIMIT_TYPE, r.limitUsageFactor, r.intervalOverhead)
-		logger.Debug().Str("route", route).Str("method", methodID).Msg("New Method buckets")
+	if !limits.Methods[methodID].LimitsMatch(methodLimitHeader) {
+		countHeader := headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER)
+		newLimit := ParseHeaders(METHOD_RATE_LIMIT_TYPE, methodLimitHeader, countHeader, r.limitUsageFactor, r.intervalOverhead)
+		limits.Methods[methodID] = newLimit
+		logger.Debug().Str("route", route).Str("method", methodID).Object("limit", newLimit).Msg("New method limit")
 	}
 
 	return nil

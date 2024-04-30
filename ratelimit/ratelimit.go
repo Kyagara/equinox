@@ -3,7 +3,9 @@ package ratelimit
 import (
 	"context"
 	"errors"
+	"math"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -92,4 +94,34 @@ func (r *RateLimit) Update(ctx context.Context, logger zerolog.Logger, route str
 		return ErrRateLimitIsDisabled
 	}
 	return r.store.Update(ctx, logger, route, methodID, headers, retryAfter)
+}
+
+// Parses the headers and returns a new Limit with its buckets.
+func ParseHeaders(limitType string, limitHeader string, countHeader string, limitUsageFactor float64, intervalOverhead time.Duration) *Limit {
+	if limitHeader == "" || countHeader == "" {
+		return NewLimit(limitType)
+	}
+
+	limits := strings.Split(limitHeader, ",")
+	counts := strings.Split(countHeader, ",")
+
+	if len(limits) == 0 {
+		return NewLimit(limitType)
+	}
+
+	limit := &Limit{
+		Type:       limitType,
+		Buckets:    make([]*Bucket, len(limits)),
+		RetryAfter: 0,
+		mutex:      sync.Mutex{},
+	}
+
+	for i, limitString := range limits {
+		baseLimit, interval := GetNumbersFromPair(limitString)
+		newLimit := int(math.Max(1, float64(baseLimit)*limitUsageFactor))
+		count, _ := GetNumbersFromPair(counts[i])
+		limit.Buckets[i] = NewBucket(interval, intervalOverhead, baseLimit, newLimit, count)
+	}
+
+	return limit
 }
