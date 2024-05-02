@@ -53,6 +53,13 @@ func (l *Limit) CheckBuckets(ctx context.Context, logger zerolog.Logger, route s
 	defer l.mutex.Unlock()
 
 	if l.RetryAfter > 0 {
+		logger.Warn().
+			Str("route", route).
+			Str("method_id", methodID).
+			Str("type", l.Type).
+			Dur("wait", l.RetryAfter).
+			Msg("Rate limited, RetryAfter set")
+
 		err := WaitN(ctx, time.Now().Add(l.RetryAfter), l.RetryAfter)
 		if err != nil {
 			logger.Warn().Err(err).Msg("Failed to wait for retry after")
@@ -68,14 +75,16 @@ func (l *Limit) CheckBuckets(ctx context.Context, logger zerolog.Logger, route s
 		bucket.mutex.Lock()
 
 		if bucket.IsRateLimited() {
+			wait := time.Until(bucket.Next)
 			logger.Warn().
 				Str("route", route).
 				Str("method_id", methodID).
-				Str("limit_type", l.Type).
+				Str("type", l.Type).
+				Dur("wait", wait).
 				Object("bucket", bucket).
 				Msg("Rate limited")
 
-			err := WaitN(ctx, bucket.Next, time.Until(bucket.Next))
+			err := WaitN(ctx, bucket.Next, wait)
 			if err != nil {
 				bucket.mutex.Unlock()
 				logger.Warn().Err(err).Msg("Failed to wait for reset")
