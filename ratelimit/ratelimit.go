@@ -105,10 +105,6 @@ func ParseHeaders(limitType string, limitHeader string, countHeader string, limi
 	limits := strings.Split(limitHeader, ",")
 	counts := strings.Split(countHeader, ",")
 
-	if len(limits) == 0 {
-		return NewLimit(limitType)
-	}
-
 	limit := &Limit{
 		Type:       limitType,
 		Buckets:    make([]*Bucket, len(limits)),

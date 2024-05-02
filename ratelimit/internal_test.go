@@ -71,6 +71,14 @@ func TestLimits(t *testing.T) {
 	limits.Methods["method"].SetRetryAfter(10 * time.Second)
 	err = limits.Methods["method"].CheckBuckets(ctx, logger, "route", "method")
 	require.Error(t, err)
+
+	limits.App.Buckets[0].BaseLimit = 0
+	limitsMatch = limits.App.LimitsMatch("10:1,10:2")
+	require.False(t, limitsMatch)
+
+	limits.App.Buckets[0] = nil
+	limitsMatch = limits.App.LimitsMatch("10:1,10:2")
+	require.False(t, limitsMatch)
 }
 
 func TestBucket(t *testing.T) {
