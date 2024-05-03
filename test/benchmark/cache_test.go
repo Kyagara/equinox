@@ -18,7 +18,7 @@ func BenchmarkCacheSummonerByPUUIDNoCache(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
@@ -26,12 +26,12 @@ func BenchmarkCacheSummonerByPUUIDNoCache(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
-		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 		if err != nil {
 			b.Fatal(err)
 		}
-		if data.ProfileIconID != 1386 {
-			b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
+		if data.ProfileIconID != 4933 {
+			b.Fatalf("ProfileIconID != 4933, got %d", data.ProfileIconID)
 		}
 	}
 }
@@ -41,7 +41,7 @@ func BenchmarkCacheBigCacheSummonerByPUUID(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	client, err := equinox.NewClient("RGAPI-TEST")
@@ -52,12 +52,12 @@ func BenchmarkCacheBigCacheSummonerByPUUID(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
-		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 		if err != nil {
 			b.Fatal(err)
 		}
-		if data.ProfileIconID != 1386 {
-			b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
+		if data.ProfileIconID != 4933 {
+			b.Fatalf("ProfileIconID != 4933, got %d", data.ProfileIconID)
 		}
 	}
 }
@@ -67,7 +67,7 @@ func BenchmarkCacheRedisSummonerByPUUID(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	ctx := context.Background()
@@ -90,12 +90,12 @@ func BenchmarkCacheRedisSummonerByPUUID(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
-		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 		if err != nil {
 			b.Fatal(err)
 		}
-		if data.ProfileIconID != 1386 {
-			b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
+		if data.ProfileIconID != 4933 {
+			b.Fatalf("ProfileIconID != 4933, got %d", data.ProfileIconID)
 		}
 	}
 }

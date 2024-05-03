@@ -22,7 +22,7 @@ func BenchmarkParallelTestRateLimit(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")).HeaderSet(http.Header{
 			ratelimit.APP_RATE_LIMIT_HEADER:          {"20:1,40:4"},
 			ratelimit.APP_RATE_LIMIT_COUNT_HEADER:    {"1:1,1:4"},
@@ -41,12 +41,12 @@ func BenchmarkParallelTestRateLimit(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
-			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 			if err != nil {
 				b.Fatal(err)
 			}
-			if data.ProfileIconID != 1386 {
-				b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
+			if data.ProfileIconID != 4933 {
+				b.Fatalf("ProfileIconID != 4933, got %d", data.ProfileIconID)
 			}
 		}
 	})
@@ -57,7 +57,7 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
@@ -66,12 +66,12 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
-			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 			if err != nil {
 				b.Fatal(err)
 			}
-			if data.ProfileIconID != 1386 {
-				b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
+			if data.ProfileIconID != 4933 {
+				b.Fatalf("ProfileIconID != 4933, got %d", data.ProfileIconID)
 			}
 		}
 	})
@@ -82,7 +82,7 @@ func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	ctx := context.Background()
@@ -105,12 +105,12 @@ func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
-			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.BR1, "puuid")
+			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 			if err != nil {
 				b.Fatal(err)
 			}
-			if data.ProfileIconID != 1386 {
-				b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
+			if data.ProfileIconID != 4933 {
+				b.Fatalf("ProfileIconID != 4933, got %d", data.ProfileIconID)
 			}
 		}
 	})
@@ -122,7 +122,7 @@ func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/me",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/me",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
@@ -131,12 +131,12 @@ func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
-			data, err := client.LOL.SummonerV4.ByAccessToken(ctx, lol.BR1, "accesstoken")
+			data, err := client.LOL.SummonerV4.ByAccessToken(ctx, lol.KR, "accesstoken")
 			if err != nil {
 				b.Fatal(err)
 			}
-			if data.ProfileIconID != 1386 {
-				b.Fatalf("ProfileIconID != 1386, got %d", data.ProfileIconID)
+			if data.ProfileIconID != 4933 {
+				b.Fatalf("ProfileIconID != 4933, got %d", data.ProfileIconID)
 			}
 		}
 	})
@@ -161,8 +161,8 @@ func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 			if err != nil {
 				b.Fatal(err)
 			}
-			if data[0] != "KR_6841523755" {
-				b.Fatalf("data[0] != KR_6841523755, got %s", data[0])
+			if data[0] != "KR_7050905124" {
+				b.Fatalf("data[0] != KR_7050905124, got %s", data[0])
 			}
 		}
 	})
