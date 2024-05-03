@@ -32,7 +32,7 @@ To update the specs, you can do either:
 
 ```bash
 # from the root of equinox
-UPDATE_SPECS=1 go generate ./...
+UPDATE_SPECS=1 go generate .
 # or from inside the codegen folder
 go run . -update
 ```

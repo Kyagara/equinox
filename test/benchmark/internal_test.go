@@ -12,19 +12,7 @@ import (
 	"github.com/jarcoal/httpmock"
 )
 
-/*
-Simulating an endpoint method
-
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkInternals-16 301467 3775 ns/op 1402 B/op 17 allocs/op
-BenchmarkInternals-16 287043 3790 ns/op 1402 B/op 17 allocs/op
-BenchmarkInternals-16 303676 3782 ns/op 1402 B/op 17 allocs/op
-BenchmarkInternals-16 289886 3777 ns/op 1402 B/op 17 allocs/op
-BenchmarkInternals-16 290647 3792 ns/op 1402 B/op 17 allocs/op
-*/
+// Simulating an endpoint method.
 func BenchmarkInternals(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
@@ -59,20 +47,8 @@ func BenchmarkInternals(b *testing.B) {
 	}
 }
 
-/*
-equinoxReq.Request.URL.String() causes 3 allocs, the alloc results are not modified to account for that
-
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkRequest-16 724022 1602 ns/op 648 B/op 7 allocs/op
-BenchmarkRequest-16 751404 1597 ns/op 648 B/op 7 allocs/op
-BenchmarkRequest-16 631826 1594 ns/op 648 B/op 7 allocs/op
-BenchmarkRequest-16 693741 1616 ns/op 648 B/op 7 allocs/op
-BenchmarkRequest-16 633535 1611 ns/op 648 B/op 7 allocs/op
-*/
-func BenchmarkRequest(b *testing.B) {
+// equinoxReq.Request.URL.String() causes 3 allocs, the alloc results are not modified to account for that
+func BenchmarkInternalRequest(b *testing.B) {
 	b.ReportAllocs()
 
 	config := equinox.DefaultConfig("RGAPI-TEST")
@@ -97,18 +73,7 @@ func BenchmarkRequest(b *testing.B) {
 	}
 }
 
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkExecute-16 427688 2455 ns/op 873 B/op 13 allocs/op
-BenchmarkExecute-16 451112 2455 ns/op 873 B/op 13 allocs/op
-BenchmarkExecute-16 468093 2439 ns/op 873 B/op 13 allocs/op
-BenchmarkExecute-16 440035 2450 ns/op 873 B/op 13 allocs/op
-BenchmarkExecute-16 460554 2440 ns/op 873 B/op 13 allocs/op
-*/
-func BenchmarkExecute(b *testing.B) {
+func BenchmarkInternalExecute(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -144,18 +109,7 @@ func BenchmarkExecute(b *testing.B) {
 	}
 }
 
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkExecuteBytes-16 518600 2072 ns/op 1368 B/op 13 allocs/op
-BenchmarkExecuteBytes-16 582710 2033 ns/op 1368 B/op 13 allocs/op
-BenchmarkExecuteBytes-16 519804 2037 ns/op 1368 B/op 13 allocs/op
-BenchmarkExecuteBytes-16 525337 2151 ns/op 1368 B/op 13 allocs/op
-BenchmarkExecuteBytes-16 558279 2050 ns/op 1368 B/op 13 allocs/op
-*/
-func BenchmarkExecuteBytes(b *testing.B) {
+func BenchmarkInternalExecuteBytes(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -190,18 +144,7 @@ func BenchmarkExecuteBytes(b *testing.B) {
 	}
 }
 
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkURLWithAuthorizationHash-16 2008862 597.8 ns/op 216 B/op 5 allocs/op
-BenchmarkURLWithAuthorizationHash-16 2007656 592.6 ns/op 216 B/op 5 allocs/op
-BenchmarkURLWithAuthorizationHash-16 2016522 594.7 ns/op 216 B/op 5 allocs/op
-BenchmarkURLWithAuthorizationHash-16 1999180 593.0 ns/op 216 B/op 5 allocs/op
-BenchmarkURLWithAuthorizationHash-16 1991668 603.5 ns/op 216 B/op 5 allocs/op
-*/
-func BenchmarkURLWithAuthorizationHash(b *testing.B) {
+func BenchmarkInternalURLWithAuthorizationHash(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

@@ -16,20 +16,8 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-/*
-The only thing that really matters here for benchmark purposes is B/op and allocs/op.
-
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelRateLimit-16 100 100046964 ns/op 2817 B/op 31 allocs/op
-BenchmarkParallelRateLimit-16 100 100046359 ns/op 2795 B/op 31 allocs/op
-BenchmarkParallelRateLimit-16 100 100051542 ns/op 2965 B/op 31 allocs/op
-BenchmarkParallelRateLimit-16 100 100048269 ns/op 2755 B/op 31 allocs/op
-BenchmarkParallelRateLimit-16 100 100044937 ns/op 2770 B/op 31 allocs/op
-*/
-func BenchmarkParallelRateLimit(b *testing.B) {
+// The only thing that really matters here for benchmark purposes is B/op and allocs/op.
+func BenchmarkParallelTestRateLimit(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -64,17 +52,6 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 	})
 }
 
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelSummonerByPUUID-16 297469 3876 ns/op 1507 B/op 17 allocs/op
-BenchmarkParallelSummonerByPUUID-16 262147 3895 ns/op 1508 B/op 17 allocs/op
-BenchmarkParallelSummonerByPUUID-16 295494 3960 ns/op 1508 B/op 17 allocs/op
-BenchmarkParallelSummonerByPUUID-16 286360 3919 ns/op 1509 B/op 17 allocs/op
-BenchmarkParallelSummonerByPUUID-16 260604 3953 ns/op 1508 B/op 17 allocs/op
-*/
 func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
@@ -100,17 +77,6 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	})
 }
 
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelRedisCachedSummonerByPUUID-16 130348 8137 ns/op 1142 B/op 13 allocs/op
-BenchmarkParallelRedisCachedSummonerByPUUID-16 130482 8131 ns/op 1147 B/op 13 allocs/op
-BenchmarkParallelRedisCachedSummonerByPUUID-16 137911 8058 ns/op 1147 B/op 13 allocs/op
-BenchmarkParallelRedisCachedSummonerByPUUID-16 136819 8066 ns/op 1147 B/op 13 allocs/op
-BenchmarkParallelRedisCachedSummonerByPUUID-16 136263 8157 ns/op 1146 B/op 13 allocs/op
-*/
 func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
@@ -150,19 +116,7 @@ func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 	})
 }
 
-/*
-This function clones apiHeaders and adds a new Authorization header.
-
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelSummonerByAccessToken-16 242644 4476 ns/op 2182 B/op 25 allocs/op
-BenchmarkParallelSummonerByAccessToken-16 234915 4703 ns/op 2183 B/op 25 allocs/op
-BenchmarkParallelSummonerByAccessToken-16 259096 4523 ns/op 2182 B/op 25 allocs/op
-BenchmarkParallelSummonerByAccessToken-16 262804 4422 ns/op 2182 B/op 25 allocs/op
-BenchmarkParallelSummonerByAccessToken-16 251022 4775 ns/op 2184 B/op 25 allocs/op
-*/
+// This endpoint method clones apiHeaders and adds a new Authorization header.
 func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
@@ -188,19 +142,7 @@ func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 	})
 }
 
-/*
-This function has multiple http queries.
-
-goos: linux
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkParallelMatchListByPUUID-16 240529 5072 ns/op 2802 B/op 33 allocs/op
-BenchmarkParallelMatchListByPUUID-16 232051 4994 ns/op 2802 B/op 33 allocs/op
-BenchmarkParallelMatchListByPUUID-16 234236 5013 ns/op 2803 B/op 33 allocs/op
-BenchmarkParallelMatchListByPUUID-16 218185 5074 ns/op 2804 B/op 33 allocs/op
-BenchmarkParallelMatchListByPUUID-16 222524 5005 ns/op 2805 B/op 33 allocs/op
-*/
+// This endpoint method has multiple http queries.
 func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()

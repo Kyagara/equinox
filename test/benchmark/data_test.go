@@ -10,18 +10,7 @@ import (
 	"github.com/jarcoal/httpmock"
 )
 
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkMatchByID-16 1940 605811 ns/op 70219 B/op 143 allocs/op
-BenchmarkMatchByID-16 1929 600429 ns/op 70211 B/op 143 allocs/op
-BenchmarkMatchByID-16 1981 597861 ns/op 70225 B/op 143 allocs/op
-BenchmarkMatchByID-16 1868 599994 ns/op 70206 B/op 143 allocs/op
-BenchmarkMatchByID-16 1902 600510 ns/op 70204 B/op 143 allocs/op
-*/
-func BenchmarkMatchByID(b *testing.B) {
+func BenchmarkDataMatchByID(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -44,18 +33,7 @@ func BenchmarkMatchByID(b *testing.B) {
 	}
 }
 
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkMatchTimeline-16 276 4267819 ns/op 1106977 B/op 826 allocs/op
-BenchmarkMatchTimeline-16 271 4270326 ns/op 1107037 B/op 827 allocs/op
-BenchmarkMatchTimeline-16 277 4295245 ns/op 1107033 B/op 827 allocs/op
-BenchmarkMatchTimeline-16 278 4271286 ns/op 1106980 B/op 826 allocs/op
-BenchmarkMatchTimeline-16 278 4328674 ns/op 1106978 B/op 826 allocs/op
-*/
-func BenchmarkMatchTimeline(b *testing.B) {
+func BenchmarkDataMatchTimeline(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -78,19 +56,8 @@ func BenchmarkMatchTimeline(b *testing.B) {
 	}
 }
 
-/*
-goos: linux - WSL2
-goarch: amd64
-pkg: github.com/Kyagara/equinox/test/benchmark
-cpu: AMD Ryzen 7 2700 Eight-Core Processor
-BenchmarkVALContentAllLocales-16 24 49510713 ns/op 11582650 B/op 131494 allocs/op
-BenchmarkVALContentAllLocales-16 22 49665224 ns/op 11582552 B/op 131494 allocs/op
-BenchmarkVALContentAllLocales-16 24 49389100 ns/op 11582479 B/op 131494 allocs/op
-BenchmarkVALContentAllLocales-16 21 49429627 ns/op 11582548 B/op 131494 allocs/op
-BenchmarkVALContentAllLocales-16 22 49535290 ns/op 11582562 B/op 131494 allocs/op
-*/
-// Probably the largest response you can get with the Riot API.
-func BenchmarkVALContentAllLocales(b *testing.B) {
+// Probably the largest response you can get with the Riot API, very good to test json deserialization.
+func BenchmarkDataVALContentAllLocales(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
