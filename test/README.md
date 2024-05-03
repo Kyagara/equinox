@@ -3,7 +3,9 @@
 ## Benchmark
 
 > [!WARNING]
-> Benchmarks are currently not automated, take the results in the code comments with a grain of salt.
+> Benchmarks are not automated, take the results in the code comments with a grain of salt.
+
+Keep in mind that since requests are mocked using `httpmock`, results (time, bytes, allocs) will be different from production, specially since you can't make 300000 requests in 1 second to the Riot Games API.
 
 Benchmarks are separated in four files: parallel, data, cache and internal.
 
@@ -12,9 +14,7 @@ Benchmarks are separated in four files: parallel, data, cache and internal.
 - data: Benchmarks that use data from the live Riot Games API.
 - internal: Focused on InternalClient functions.
 
-Benchmarks should be using a configuration close to the one used in production. `HTTPClient` timeout is disabled as I believe the context should be used instead (the request is even created with `http.NewRequestWithContext(ctx, ...)`).
-
-Keep in mind that since requests are mocked using `httpmock`, results (time, bytes, allocs) will be different than in production, specially since you can't make 300000 requests in 1 second to the Riot Games API.
+Benchmarks should be using a configuration close to the one used in production.
 
 ## Integration
 

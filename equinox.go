@@ -34,7 +34,7 @@ type Equinox struct {
 // Creates a new equinox client with the default configuration.
 //
 //   - Key  	  : The provided Riot API key.
-//   - HTTPClient : http.Client with a timeout of 15 seconds.
+//   - HTTPClient : Default http.Client.
 //   - Cache	  : BigCache with an eviction time of 4 minutes.
 //   - RateLimit  : InternalRateLimit with a limit usage factor of 0.99 and interval overhead of 1 second.
 //   - Logger	  : Logger with zerolog.WarnLevel. Will log if rate limited or when retrying a request.
@@ -52,7 +52,7 @@ func NewClient(key string) (*Equinox, error) {
 // Creates a new equinox client using a custom configuration.
 //
 //   - Config     : The equinox config.
-//   - HTTPClient : Can be nil, will default to a client with a timeout of 15 seconds.
+//   - HTTPClient : Can be nil, will default to a default http.Client.
 //   - Cache      : Can be nil.
 //   - RateLimit  : Can be nil, only disable it if you know what you're doing.
 func NewCustomClient(config api.EquinoxConfig, httpClient *http.Client, cache *cache.Cache, rateLimit *ratelimit.RateLimit) (*Equinox, error) {
