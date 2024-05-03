@@ -66,9 +66,8 @@ func main() {
 ## Todo
 
 - Maybe the context usage throughout the project could be improved
-- Improve key concatenation in Redis methods
 - Maybe add a Logger to the Cache and RateLimit interfaces, removing the logger argument from methods
-- Add checks for duration of tests that include any WaitN/blocking
+- Add checks for duration of tests that include any WaitN/any blocking
 - RateLimit
   - Add Redis store, maybe using a lua script
   - Maybe add more options (presets?) to customize the rate limiter

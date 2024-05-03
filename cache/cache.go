@@ -81,7 +81,7 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 		store: &RedisStore{
 			client:    redis,
 			ttl:       ttl,
-			namespace: "equinox:cache:",
+			namespace: "equinox:cache",
 		},
 		TTL:       ttl,
 		StoreType: RedisCache,
