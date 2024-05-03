@@ -18,7 +18,7 @@ func BenchmarkInternals(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewStringResponder(200, `"response"`))
 
 	config := equinox.DefaultConfig("RGAPI-TEST")
@@ -31,7 +31,7 @@ func BenchmarkInternals(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		logger := client.Logger("LOL_SummonerV4_ByPUUID")
 		ctx := context.Background()
-		urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
+		urlComponents := []string{"https://", "kr", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
 		equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 		if err != nil {
 			b.Fatal(err)
@@ -59,7 +59,7 @@ func BenchmarkInternalRequest(b *testing.B) {
 
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
 	ctx := context.Background()
-	urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
+	urlComponents := []string{"https://", "kr", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -67,8 +67,8 @@ func BenchmarkInternalRequest(b *testing.B) {
 		if err != nil {
 			b.Fatal(err)
 		}
-		if equinoxReq.Request.URL.String() != "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid" {
-			b.Fatalf("URL != https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid, got: %s", equinoxReq.Request.URL.String())
+		if equinoxReq.Request.URL.String() != "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid" {
+			b.Fatalf("URL != https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid, got: %s", equinoxReq.Request.URL.String())
 		}
 	}
 }
@@ -78,7 +78,7 @@ func BenchmarkInternalExecute(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewStringResponder(200, `"response"`))
 
 	config := equinox.DefaultConfig("RGAPI-TEST")
@@ -90,7 +90,7 @@ func BenchmarkInternalExecute(b *testing.B) {
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
 	ctx := context.Background()
 
-	urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
+	urlComponents := []string{"https://", "kr", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
 	equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 	if err != nil {
 		b.Fatal(err)
@@ -114,7 +114,7 @@ func BenchmarkInternalExecuteBytes(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewStringResponder(200, `"response"`))
 
 	config := equinox.DefaultConfig("RGAPI-TEST")
@@ -126,7 +126,7 @@ func BenchmarkInternalExecuteBytes(b *testing.B) {
 	logger := client.Logger("LOL_SummonerV4_ByPUUID")
 	ctx := context.Background()
 
-	urlComponents := []string{"https://", "br1", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/", "puuid"}
+	urlComponents := []string{"https://", "kr", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/", "puuid"}
 	equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 	if err != nil {
 		b.Fatal(err)
@@ -149,7 +149,7 @@ func BenchmarkInternalURLWithAuthorizationHash(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
+	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewStringResponder(200, `"response"`))
 
 	req := &http.Request{

@@ -27,22 +27,22 @@ go test -v ./test/benchmark/ -bench=. -benchmem | grep '^Benchmark.*-16'
 ## Results
 
 ```
-BenchmarkInternals-16                                     319524              3704 ns/op            1418 B/op         17 allocs/op
-BenchmarkInternalRequest-16                               658626              1618 ns/op             680 B/op          7 allocs/op
-BenchmarkInternalExecute-16                               433489              2422 ns/op             857 B/op         13 allocs/op
-BenchmarkInternalExecuteBytes-16                          537806              2005 ns/op            1352 B/op         13 allocs/op
-BenchmarkInternalURLWithAuthorizationHash-16             1948528               597.3 ns/op           216 B/op          5 allocs/op
-BenchmarkCacheSummonerByPUUIDNoCache-16                   212210              5158 ns/op            1498 B/op         17 allocs/op
-BenchmarkCacheBigCacheSummonerByPUUID-16                  343641              3381 ns/op            1008 B/op          7 allocs/op
-BenchmarkCacheRedisSummonerByPUUID-16                      22898             55347 ns/op            1212 B/op         14 allocs/op
-BenchmarkDataMatchByID-16                                   1940            583458 ns/op           70170 B/op        143 allocs/op
-BenchmarkDataMatchTimeline-16                                284           4325004 ns/op         1044960 B/op       1155 allocs/op
-BenchmarkDataVALContentAllLocales-16                          22          48749630 ns/op        11581305 B/op     131492 allocs/op
-BenchmarkParallelTestRateLimit-16                            100         100045533 ns/op            2812 B/op         31 allocs/op
-BenchmarkParallelSummonerByPUUID-16                       338798              3323 ns/op            1496 B/op         17 allocs/op
-BenchmarkParallelRedisCachedSummonerByPUUID-16            130627              8568 ns/op            1213 B/op         14 allocs/op
-BenchmarkParallelSummonerByAccessToken-16                 318332              3816 ns/op            2144 B/op         25 allocs/op
-BenchmarkParallelMatchListByPUUID-16                      277953              4198 ns/op            2768 B/op         32 allocs/op
+BenchmarkInternals-16                                     325980              3739 ns/op            1418 B/op         17 allocs/op
+BenchmarkInternalRequest-16                               682623              1630 ns/op             680 B/op          7 allocs/op
+BenchmarkInternalExecute-16                               451694              2495 ns/op             857 B/op         13 allocs/op
+BenchmarkInternalExecuteBytes-16                          546505              2016 ns/op            1352 B/op         13 allocs/op
+BenchmarkInternalURLWithAuthorizationHash-16             1977759               602.6 ns/op           216 B/op          5 allocs/op
+BenchmarkCacheSummonerByPUUIDNoCache-16                   217107              5299 ns/op            1499 B/op         17 allocs/op
+BenchmarkCacheBigCacheSummonerByPUUID-16                  339098              3470 ns/op            1008 B/op          7 allocs/op
+BenchmarkCacheRedisSummonerByPUUID-16                      22164             56318 ns/op            1212 B/op         14 allocs/op
+BenchmarkDataMatchByID-16                                   1869            684389 ns/op           70330 B/op        166 allocs/op
+BenchmarkDataMatchTimeline-16                                180           6420727 ns/op         1624715 B/op       1681 allocs/op
+BenchmarkDataVALContentAllLocales-16                          18          62570122 ns/op        14865476 B/op     155491 allocs/op
+BenchmarkParallelTestRateLimit-16                            100         100028115 ns/op            2813 B/op         31 allocs/op
+BenchmarkParallelSummonerByPUUID-16                       354766              3285 ns/op            1496 B/op         17 allocs/op
+BenchmarkParallelRedisCachedSummonerByPUUID-16            131782              9168 ns/op            1213 B/op         14 allocs/op
+BenchmarkParallelSummonerByAccessToken-16                 280219              4000 ns/op            2144 B/op         25 allocs/op
+BenchmarkParallelMatchListByPUUID-16                      274206              4173 ns/op            2768 B/op         32 allocs/op
 ```
 
 ## Integration

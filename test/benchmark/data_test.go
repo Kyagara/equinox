@@ -15,7 +15,7 @@ func BenchmarkDataMatchByID(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://americas.api.riotgames.com/lol/match/v5/matches/BR1_2744215970",
+	httpmock.RegisterResponder("GET", "https://asia.api.riotgames.com/lol/match/v5/matches/KR_7014499581",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
@@ -23,12 +23,12 @@ func BenchmarkDataMatchByID(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
-		data, err := client.LOL.MatchV5.ByID(ctx, api.AMERICAS, "BR1_2744215970")
+		data, err := client.LOL.MatchV5.ByID(ctx, api.ASIA, "KR_7014499581")
 		if err != nil {
 			b.Fatal(err)
 		}
-		if data.Info.GameCreation != 1686266124922 {
-			b.Fatalf("GameCreation != 1686266124922, got: %d", data.Info.GameCreation)
+		if data.Info.GameCreation != 1712161609888 {
+			b.Fatalf("GameCreation != 1712161609888, got: %d", data.Info.GameCreation)
 		}
 	}
 }
@@ -38,7 +38,7 @@ func BenchmarkDataMatchTimeline(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://americas.api.riotgames.com/lol/match/v5/matches/BR1_2744215970/timeline",
+	httpmock.RegisterResponder("GET", "https://asia.api.riotgames.com/lol/match/v5/matches/KR_7014499581/timeline",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.timeline.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
@@ -46,12 +46,12 @@ func BenchmarkDataMatchTimeline(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
-		data, err := client.LOL.MatchV5.Timeline(ctx, api.AMERICAS, "BR1_2744215970")
+		data, err := client.LOL.MatchV5.Timeline(ctx, api.ASIA, "KR_7014499581")
 		if err != nil {
 			b.Fatal()
 		}
-		if data.Info.GameID != 2744215970 {
-			b.Fatalf("GameID != 2744215970, got %d", data.Info.GameID)
+		if data.Info.GameID != 7014499581 {
+			b.Fatalf("GameID != 7014499581, got %d", data.Info.GameID)
 		}
 	}
 }
@@ -62,7 +62,7 @@ func BenchmarkDataVALContentAllLocales(b *testing.B) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder("GET", "https://br.api.riotgames.com/val/content/v1/contents",
+	httpmock.RegisterResponder("GET", "https://na.api.riotgames.com/val/content/v1/contents",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/val.content.all_locales.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
@@ -70,12 +70,12 @@ func BenchmarkDataVALContentAllLocales(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		ctx := context.Background()
-		data, err := client.VAL.ContentV1.Content(ctx, val.BR, "")
+		data, err := client.VAL.ContentV1.Content(ctx, val.NA, "")
 		if err != nil {
 			b.Fatal()
 		}
-		if data.Version != "release-07.10" {
-			b.Fatalf("Version != release-07.10, got %s", data.Version)
+		if data.Version != "release-08.08" {
+			b.Fatalf("Version != release-08.08, got %s", data.Version)
 		}
 	}
 }

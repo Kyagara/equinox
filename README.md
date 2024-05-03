@@ -66,7 +66,7 @@ func main() {
 ## Todo
 
 - Maybe the context usage throughout the project could be improved
-- Maybe add a Logger to the Cache and RateLimit interfaces, removing the logger argument from methods
+- Maybe add a Logger to the Cache and RateLimit interfaces
 - Add checks for duration of tests that include any WaitN/any blocking
 - RateLimit
   - Add Redis store, maybe using a lua script
