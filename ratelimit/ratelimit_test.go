@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox/ratelimit"
+	"github.com/Kyagara/equinox/test/util"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
@@ -21,10 +22,10 @@ func TestRateLimitMethods(t *testing.T) {
 
 	ctx := context.Background()
 
-	err := rateStore.Reserve(ctx, zerolog.Nop(), "route", "method")
+	err := rateStore.Reserve(ctx, util.NewTestLogger(), "route", "method")
 	require.Equal(t, ratelimit.ErrRateLimitIsDisabled, err)
 
-	err = rateStore.Update(ctx, zerolog.Nop(), "route", "method", http.Header{}, time.Duration(0))
+	err = rateStore.Update(ctx, util.NewTestLogger(), "route", "method", http.Header{}, time.Duration(0))
 	require.Equal(t, ratelimit.ErrRateLimitIsDisabled, err)
 
 	rateStore.MarshalZerologObject(&zerolog.Event{})
@@ -40,16 +41,9 @@ func TestRateLimitMethods(t *testing.T) {
 func TestParseHeaders(t *testing.T) {
 	t.Parallel()
 
-	emptyLimit := ratelimit.NewLimit(ratelimit.APP_RATE_LIMIT_TYPE)
-	require.Empty(t, emptyLimit.Buckets)
-	require.Len(t, emptyLimit.Buckets, 0)
-	require.Equal(t, emptyLimit.RetryAfter, time.Duration(0))
-	require.Equal(t, emptyLimit.Type, ratelimit.APP_RATE_LIMIT_TYPE)
-
 	limit := ratelimit.ParseHeaders(ratelimit.APP_RATE_LIMIT_TYPE, "", "", 0.99, time.Second)
 	require.Equal(t, ratelimit.APP_RATE_LIMIT_TYPE, limit.Type)
 	require.Empty(t, limit.Buckets)
-	require.Equal(t, emptyLimit, limit)
 	require.Len(t, limit.Buckets, 0)
 
 	limit = ratelimit.ParseHeaders(ratelimit.METHOD_RATE_LIMIT_TYPE, "10:10,10:20", "1000:10,1000:20", 0.99, time.Second)

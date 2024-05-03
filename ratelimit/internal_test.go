@@ -8,27 +8,23 @@ import (
 	"time"
 
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewInternalRateLimit(t *testing.T) {
 	t.Parallel()
 
-	rateLimit := ratelimit.NewInternalRateLimit(0.99, time.Second)
-	require.NotNil(t, rateLimit)
-
-	err := rateLimit.Reserve(context.Background(), zerolog.Nop(), "route", "method")
-	require.NoError(t, err)
-
 	// Test if invalid values are being replaced with valid ones
-	rateLimit = ratelimit.NewInternalRateLimit(-1, -1)
+	rateLimit := ratelimit.NewInternalRateLimit(-1, -1)
+	require.Equal(t, ratelimit.InternalRateLimit, rateLimit.StoreType)
 	require.Equal(t, float64(0.99), rateLimit.LimitUsageFactor)
 	require.Equal(t, time.Second, rateLimit.IntervalOverhead)
 	require.True(t, rateLimit.Enabled)
+
+	err := rateLimit.Reserve(context.Background(), util.NewTestLogger(), "route", "method")
+	require.NoError(t, err)
 }
 
 func TestLimits(t *testing.T) {
@@ -50,9 +46,9 @@ func TestLimits(t *testing.T) {
 	require.True(t, limitsMatch)
 
 	ctx := context.Background()
-	logger := internal.NewLogger(util.NewTestEquinoxConfig())
+	logger := util.NewTestLogger()
 
-	err := limits.App.CheckBuckets(ctx, logger, "route", "method")
+	err := limits.App.CheckBuckets(ctx, logger, "route")
 	require.NoError(t, err)
 
 	limits.App = ratelimit.ParseHeaders(ratelimit.APP_RATE_LIMIT_TYPE, "10:10,10:20", "1000:10,1000:20", 0.99, time.Second)
@@ -61,15 +57,15 @@ func TestLimits(t *testing.T) {
 	ctx, c := context.WithDeadline(ctx, time.Now().Add(time.Second))
 	defer c()
 
-	err = limits.App.CheckBuckets(ctx, logger, "route", "method")
+	err = limits.App.CheckBuckets(ctx, logger, "route")
 	require.Error(t, err)
 
 	limits.App.SetRetryAfter(10 * time.Second)
-	err = limits.App.CheckBuckets(ctx, logger, "route", "method")
+	err = limits.App.CheckBuckets(ctx, logger, "route")
 	require.Error(t, err)
 
 	limits.Methods["method"].SetRetryAfter(10 * time.Second)
-	err = limits.Methods["method"].CheckBuckets(ctx, logger, "route", "method")
+	err = limits.Methods["method"].CheckBuckets(ctx, logger, "route")
 	require.Error(t, err)
 
 	limits.App.Buckets[0].BaseLimit = 0
@@ -109,13 +105,10 @@ func TestBucket(t *testing.T) {
 func TestReserveAndUpdate(t *testing.T) {
 	t.Parallel()
 
-	config := util.NewTestEquinoxConfig()
-	client, err := internal.NewInternalClient(config, nil, nil, nil)
-	require.NoError(t, err)
 	equinoxReq := api.EquinoxRequest{
 		Route:    "route",
 		MethodID: "method",
-		Logger:   client.Logger("client_endpoint_method"),
+		Logger:   util.NewTestLogger(),
 	}
 
 	// These tests should take around 2 seconds each

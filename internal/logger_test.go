@@ -33,7 +33,7 @@ func TestNewLogger(t *testing.T) {
 	require.True(t, logger.Info().Enabled())
 }
 
-func TestLogs(t *testing.T) {
+func TestLogging(t *testing.T) {
 	internal := util.NewTestInternalClient(t)
 
 	logger := internal.Logger("client_endpoint_method")
