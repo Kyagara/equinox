@@ -21,19 +21,6 @@ import (
 	"github.com/Kyagara/equinox/ratelimit"
 )
 
-type Client struct {
-	http               *http.Client
-	loggers            Loggers
-	cache              *cache.Cache
-	ratelimit          *ratelimit.RateLimit
-	key                string
-	maxRetries         int
-	jitter             time.Duration
-	IsCacheEnabled     bool
-	IsRateLimitEnabled bool
-	IsRetryEnabled     bool
-}
-
 var (
 	ErrMaxRetries     = errors.New("max retries reached")
 	ErrContextIsNil   = errors.New("context must be non-nil")
@@ -47,6 +34,19 @@ var (
 		"Content-Type": {"application/json"},
 	}
 )
+
+type Client struct {
+	http               *http.Client
+	cache              *cache.Cache
+	ratelimit          *ratelimit.RateLimit
+	loggers            loggers
+	key                string
+	maxRetries         int
+	jitter             time.Duration
+	IsCacheEnabled     bool
+	IsRateLimitEnabled bool
+	IsRetryEnabled     bool
+}
 
 func NewInternalClient(config api.EquinoxConfig, h *http.Client, c *cache.Cache, r *ratelimit.RateLimit) (*Client, error) {
 	if config.Key == "" {
@@ -66,7 +66,7 @@ func NewInternalClient(config api.EquinoxConfig, h *http.Client, c *cache.Cache,
 	client := &Client{
 		key:  config.Key,
 		http: h,
-		loggers: Loggers{
+		loggers: loggers{
 			main:    NewLogger(config),
 			methods: make(map[string]zerolog.Logger, 1),
 			mutex:   sync.Mutex{},

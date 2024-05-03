@@ -9,12 +9,14 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type Loggers struct {
+type loggers struct {
+	// The main logger the others will be created from.
 	main    zerolog.Logger
 	methods map[string]zerolog.Logger
 	mutex   sync.Mutex
 }
 
+// Creates a new zerolog.Logger from an EquinoxConfig.
 func NewLogger(config api.EquinoxConfig) zerolog.Logger {
 	if config == (api.EquinoxConfig{}) || config.Logger.Level == zerolog.Disabled {
 		return zerolog.Nop()
@@ -37,7 +39,7 @@ func NewLogger(config api.EquinoxConfig) zerolog.Logger {
 	return logger
 }
 
-// Used to access the internal logger, used to create/retrieve the logger for a specific endpoint method.
+// Used to create/retrieve the zerolog.Logger for the specified endpoint method.
 func (c *Client) Logger(id string) zerolog.Logger {
 	c.loggers.mutex.Lock()
 	defer c.loggers.mutex.Unlock()
