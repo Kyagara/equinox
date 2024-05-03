@@ -3,7 +3,6 @@ package ratelimit_test
 import (
 	"context"
 	"net/http"
-	"os"
 	"testing"
 	"time"
 
@@ -33,9 +32,8 @@ func TestRateLimitMethods(t *testing.T) {
 	rateStore.StoreType = ratelimit.InternalRateLimit
 	rateStore.Enabled = true
 
-	var logger zerolog.Logger
-	logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Object("ratelimit", rateStore).Logger()
-	logger.Info().Msg("Testing rate limit marshal")
+	logger := util.NewTestLogger()
+	logger.Debug().Object("ratelimit", rateStore).Msg("Testing rate limit marshal")
 }
 
 func TestParseHeaders(t *testing.T) {

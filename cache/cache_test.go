@@ -2,10 +2,10 @@ package cache_test
 
 import (
 	"context"
-	"os"
 	"testing"
 
 	"github.com/Kyagara/equinox/cache"
+	"github.com/Kyagara/equinox/test/util"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
@@ -36,7 +36,6 @@ func TestCacheMethods(t *testing.T) {
 	cacheStore.StoreType = cache.BigCache
 	cacheStore.TTL = 1
 
-	var logger zerolog.Logger
-	logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Object("cache", cacheStore).Logger()
-	logger.Info().Msg("Testing cache marshal")
+	logger := util.NewTestLogger()
+	logger.Debug().Object("cache", cacheStore).Msg("Testing cache marshal")
 }

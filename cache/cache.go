@@ -60,7 +60,7 @@ func NewBigCache(ctx context.Context, config bigcache.Config) (*Cache, error) {
 		return nil, err
 	}
 	cache := &Cache{
-		store:     &BigCacheStore{client: bigcache},
+		store:     BigCacheStore{client: bigcache},
 		TTL:       config.LifeWindow,
 		StoreType: BigCache,
 	}
@@ -78,7 +78,7 @@ func NewRedis(ctx context.Context, options *redis.Options, ttl time.Duration) (*
 		return nil, err
 	}
 	cache := &Cache{
-		store: &RedisStore{
+		store: RedisStore{
 			client:    redis,
 			ttl:       ttl,
 			namespace: "equinox:cache",

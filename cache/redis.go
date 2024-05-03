@@ -14,7 +14,7 @@ type RedisStore struct {
 	ttl       time.Duration
 }
 
-func (s *RedisStore) Get(ctx context.Context, key string) ([]byte, error) {
+func (s RedisStore) Get(ctx context.Context, key string) ([]byte, error) {
 	keys := []string{s.namespace, key}
 	newKey := strings.Join(keys, ":")
 	item, err := s.client.Get(ctx, newKey).Bytes()
@@ -24,19 +24,19 @@ func (s *RedisStore) Get(ctx context.Context, key string) ([]byte, error) {
 	return item, err
 }
 
-func (s *RedisStore) Set(ctx context.Context, key string, value []byte) error {
+func (s RedisStore) Set(ctx context.Context, key string, value []byte) error {
 	keys := []string{s.namespace, key}
 	newKey := strings.Join(keys, ":")
 	return s.client.Set(ctx, newKey, value, s.ttl).Err()
 }
 
-func (s *RedisStore) Delete(ctx context.Context, key string) error {
+func (s RedisStore) Delete(ctx context.Context, key string) error {
 	keys := []string{s.namespace, key}
 	newKey := strings.Join(keys, ":")
 	return s.client.Del(ctx, newKey).Err()
 }
 
-func (s *RedisStore) Clear(ctx context.Context) error {
+func (s RedisStore) Clear(ctx context.Context) error {
 	keys := []string{s.namespace, "*"}
 	cache := strings.Join(keys, ":")
 	return s.client.Del(ctx, cache).Err()
