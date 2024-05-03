@@ -54,8 +54,6 @@ func (l *Limit) CheckBuckets(ctx context.Context, logger zerolog.Logger, route s
 
 	if l.RetryAfter > 0 {
 		logger.Warn().
-			Str("route", route).
-			Str("method_id", methodID).
 			Str("type", l.Type).
 			Dur("wait", l.RetryAfter).
 			Msg("Rate limited, RetryAfter set")
@@ -77,8 +75,6 @@ func (l *Limit) CheckBuckets(ctx context.Context, logger zerolog.Logger, route s
 		if bucket.IsRateLimited() {
 			wait := time.Until(bucket.Next)
 			logger.Warn().
-				Str("route", route).
-				Str("method_id", methodID).
 				Str("type", l.Type).
 				Dur("wait", wait).
 				Object("bucket", bucket).
