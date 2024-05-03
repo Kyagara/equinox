@@ -113,15 +113,17 @@ func DefaultRetry() api.Retry {
 
 // Returns the default Logger config.
 //
-//   - Level		   : zerolog.WarnLevel
-//   - Pretty		   : false
-//   - TimeFieldFormat : zerolog.TimeFormatUnix
-//   - EnableTimestamp : true
+//   - Level		              : zerolog.WarnLevel
+//   - Pretty		              : false
+//   - TimeFieldFormat            : zerolog.TimeFormatUnix
+//   - EnableTimestamp            : true
+//   - EnableConfigurationLogging : false
 func DefaultLogger() api.Logger {
 	return api.Logger{
-		Level:           zerolog.WarnLevel,
-		Pretty:          false,
-		TimeFieldFormat: zerolog.TimeFormatUnix,
-		EnableTimestamp: true,
+		Level:                      zerolog.WarnLevel,
+		Pretty:                     false,
+		TimeFieldFormat:            zerolog.TimeFormatUnix,
+		EnableTimestamp:            true,
+		EnableConfigurationLogging: false,
 	}
 }

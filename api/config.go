@@ -34,4 +34,6 @@ type Logger struct {
 	Pretty bool
 	// Prints the timestamp.
 	EnableTimestamp bool
+	// Will log cache, rate limit and retry configuration, might be useful for debugging.
+	EnableConfigurationLogging bool
 }

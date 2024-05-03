@@ -19,7 +19,7 @@ func NewTestEquinoxConfig() api.EquinoxConfig {
 	return api.EquinoxConfig{
 		Key:    "RGAPI-TEST",
 		Retry:  api.Retry{},
-		Logger: api.Logger{Pretty: true, EnableTimestamp: true, Level: zerolog.TraceLevel},
+		Logger: api.Logger{Pretty: true, EnableTimestamp: true, Level: zerolog.TraceLevel, EnableConfigurationLogging: true},
 	}
 }
 

@@ -67,7 +67,7 @@ func NewInternalClient(config api.EquinoxConfig, h *http.Client, c *cache.Cache,
 		key:  config.Key,
 		http: h,
 		loggers: loggers{
-			main:    NewLogger(config),
+			main:    NewLogger(config, c, r),
 			methods: make(map[string]zerolog.Logger, 1),
 			mutex:   sync.Mutex{},
 		},

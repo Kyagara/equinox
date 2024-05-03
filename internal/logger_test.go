@@ -11,7 +11,7 @@ import (
 )
 
 func TestNewLogger(t *testing.T) {
-	logger := internal.NewLogger(api.EquinoxConfig{})
+	logger := internal.NewLogger(api.EquinoxConfig{}, nil, nil)
 	require.Equal(t, zerolog.Disabled, logger.GetLevel())
 
 	config := api.EquinoxConfig{
@@ -20,16 +20,16 @@ func TestNewLogger(t *testing.T) {
 		},
 	}
 
-	logger = internal.NewLogger(config)
+	logger = internal.NewLogger(config, nil, nil)
 	require.NotEmpty(t, logger)
 
 	config.Logger.Level = zerolog.TraceLevel
-	logger = internal.NewLogger(config)
+	logger = internal.NewLogger(config, nil, nil)
 	require.True(t, logger.Trace().Enabled())
 
 	config.Logger.Level = zerolog.InfoLevel
 	config.Logger.TimeFieldFormat = zerolog.TimeFormatUnix
-	logger = internal.NewLogger(config)
+	logger = internal.NewLogger(config, nil, nil)
 	require.True(t, logger.Info().Enabled())
 }
 
