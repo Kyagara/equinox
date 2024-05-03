@@ -140,7 +140,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		}
 
 		if item != nil {
-			equinoxReq.Logger.Debug().Msg("Cache hit")
+			equinoxReq.Logger.Debug().Str("route", equinoxReq.Route).Msg("Cache hit")
 
 			// Only valid json is cached, so unmarshal shouldn't fail
 			_ = jsonv2.Unmarshal(item, target)
@@ -192,7 +192,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 
 		err = c.cache.Set(ctx, url, body)
 		if err == nil {
-			equinoxReq.Logger.Debug().Msg("Cache set")
+			equinoxReq.Logger.Debug().Str("route", equinoxReq.Route).Msg("Cache set")
 		} else {
 			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
 		}
