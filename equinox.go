@@ -32,24 +32,38 @@ type Equinox struct {
 }
 
 // Creates a new equinox client with the default configuration.
+//
+//   - Key  	  : The provided Riot API key.
+//   - HTTPClient : http.Client with a timeout of 15 seconds.
+//   - Cache	  : BigCache with an eviction time of 4 minutes.
+//   - RateLimit  : InternalRateLimit with a limit usage factor of 0.99 and interval overhead of 1 second.
+//   - Logger	  : Logger with zerolog.WarnLevel. Will log if rate limited or when retrying a request.
+//   - Retry	  : Will retry a request a maximum of 3 times and jitter of 500 milliseconds.
 func NewClient(key string) (*Equinox, error) {
-	config, err := DefaultConfig(key)
+	config := DefaultConfig(key)
+	cache, err := DefaultCache()
 	if err != nil {
 		return nil, err
 	}
-	return NewClientWithConfig(config)
+	rateLimit := DefaultRateLimit()
+	return NewCustomClient(config, nil, cache, rateLimit)
 }
 
 // Creates a new equinox client using a custom configuration.
-func NewClientWithConfig(config api.EquinoxConfig) (*Equinox, error) {
-	client, err := internal.NewInternalClient(config)
+//
+//   - Config     : The equinox config.
+//   - HTTPClient : Can be nil, will default to a client with a timeout of 15 seconds.
+//   - Cache      : Can be nil.
+//   - RateLimit  : Can be nil, only disable it if you know what you're doing.
+func NewCustomClient(config api.EquinoxConfig, httpClient *http.Client, cache *cache.Cache, rateLimit *ratelimit.RateLimit) (*Equinox, error) {
+	client, err := internal.NewInternalClient(config, httpClient, cache, rateLimit)
 	if err != nil {
 		return nil, err
 	}
 	equinox := &Equinox{
 		Internal:  client,
-		Cache:     config.Cache,
-		RateLimit: config.RateLimit,
+		Cache:     cache,
+		RateLimit: rateLimit,
 		Riot:      riot.NewRiotClient(client),
 		LOL:       lol.NewLOLClient(client),
 		TFT:       tft.NewTFTClient(client),
@@ -59,33 +73,34 @@ func NewClientWithConfig(config api.EquinoxConfig) (*Equinox, error) {
 	return equinox, nil
 }
 
-// Returns the default equinox config with a provided key.
+// Returns the default equinox config.
 //
-//   - Key  	  : The provided Riot API key.
-//   - HTTPClient : http.Client with a timeout of 15 seconds.
-//   - Cache	  : BigCache with an eviction time of 4 minutes.
-//   - RateLimit  : InternalRateLimit with a limit usage factor of 0.99 and interval overhead of 1 second.
-//   - Logger	  : api.Logger object with zerolog.WarnLevel. Will log if rate limited or when retrying a request.
-//   - Retry	  : api.Retry object with a limit of 3 and jitter of 500 milliseconds.
-func DefaultConfig(key string) (api.EquinoxConfig, error) {
+// Logger with zerolog.WarnLevel. Retry with a limit of 3 and jitter of 500 milliseconds.
+func DefaultConfig(key string) api.EquinoxConfig {
+	return api.EquinoxConfig{
+		Key:    key,
+		Retry:  DefaultRetry(),
+		Logger: DefaultLogger(),
+	}
+}
+
+// Returns the default Cache.
+//
+// BigCache with an eviction time of 4 minutes.
+func DefaultCache() (*cache.Cache, error) {
 	ctx := context.Background()
 	cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
 	cacheConfig.Verbose = false
-	cache, err := cache.NewBigCache(ctx, cacheConfig)
-	if err != nil {
-		return api.EquinoxConfig{}, err
-	}
-	config := api.EquinoxConfig{
-		Key: key,
-		HTTPClient: &http.Client{
-			Timeout: 15 * time.Second,
-		},
-		Cache:     cache,
-		RateLimit: ratelimit.NewInternalRateLimit(0.99, time.Second),
-		Retry:     DefaultRetry(),
-		Logger:    DefaultLogger(),
-	}
-	return config, nil
+	return cache.NewBigCache(ctx, cacheConfig)
+}
+
+// Returns the default RateLimit.
+//
+//   - StoreType        : InternalRateLimit
+//   - LimitUsageFactor : 0.99
+//   - IntervalOverhead : 1 second
+func DefaultRateLimit() *ratelimit.RateLimit {
+	return ratelimit.NewInternalRateLimit(0.99, time.Second)
 }
 
 // Returns the default Retry config.
@@ -98,17 +113,15 @@ func DefaultRetry() api.Retry {
 
 // Returns the default Logger config.
 //
-//   - Level			   : zerolog.WarnLevel
-//   - Pretty			   : false
-//   - TimeFieldFormat	   : zerolog.TimeFormatUnix
-//   - EnableConfigLogging : true
-//   - EnableTimestamp	   : true
+//   - Level		   : zerolog.WarnLevel
+//   - Pretty		   : false
+//   - TimeFieldFormat : zerolog.TimeFormatUnix
+//   - EnableTimestamp : true
 func DefaultLogger() api.Logger {
 	return api.Logger{
-		Level:               zerolog.WarnLevel,
-		Pretty:              false,
-		TimeFieldFormat:     zerolog.TimeFormatUnix,
-		EnableConfigLogging: true,
-		EnableTimestamp:     true,
+		Level:           zerolog.WarnLevel,
+		Pretty:          false,
+		TimeFieldFormat: zerolog.TimeFormatUnix,
+		EnableTimestamp: true,
 	}
 }

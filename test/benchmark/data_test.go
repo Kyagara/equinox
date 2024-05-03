@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/clients/val"
 	"github.com/Kyagara/equinox/test/util"
@@ -30,13 +29,7 @@ func BenchmarkMatchByID(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://americas.api.riotgames.com/lol/match/v5/matches/BR1_2744215970",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.json")))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := equinox.NewClientWithConfig(config)
-	if err != nil {
-		b.Fatal(err)
-	}
+	client := util.NewBenchmarkEquinoxClient(b)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -70,13 +63,7 @@ func BenchmarkMatchTimeline(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://americas.api.riotgames.com/lol/match/v5/matches/BR1_2744215970/timeline",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.timeline.json")))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := equinox.NewClientWithConfig(config)
-	if err != nil {
-		b.Fatal(err)
-	}
+	client := util.NewBenchmarkEquinoxClient(b)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -111,13 +98,7 @@ func BenchmarkVALContentAllLocales(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://br.api.riotgames.com/val/content/v1/contents",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/val.content.all_locales.json")))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := equinox.NewClientWithConfig(config)
-	if err != nil {
-		b.Fatal(err)
-	}
+	client := util.NewBenchmarkEquinoxClient(b)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

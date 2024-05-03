@@ -29,11 +29,9 @@ func NewLogger(config api.EquinoxConfig) zerolog.Logger {
 	} else {
 		logger = zerolog.New(os.Stderr).Level(config.Logger.Level)
 	}
+
 	if config.Logger.EnableTimestamp {
 		logger = logger.With().Timestamp().Logger()
-	}
-	if config.Logger.EnableConfigLogging {
-		logger = logger.With().Object("equinox", config).Logger()
 	}
 
 	return logger

@@ -47,7 +47,7 @@ type Store interface {
 	Reserve(ctx context.Context, logger zerolog.Logger, route string, methodID string) error
 
 	// Creates new buckets in a route with the limits provided in the response headers.
-	Update(ctx context.Context, logger zerolog.Logger, route string, methodID string, headers http.Header, delay time.Duration) error
+	Update(ctx context.Context, logger zerolog.Logger, route string, methodID string, headers http.Header, retryAfter time.Duration) error
 }
 
 type RateLimit struct {

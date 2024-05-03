@@ -4,17 +4,12 @@
 package integration
 
 import (
-	"context"
-	"net/http"
 	"os"
 	"time"
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/cache"
-	"github.com/Kyagara/equinox/ratelimit"
-	"github.com/Kyagara/equinox/test/util"
-	"github.com/allegro/bigcache/v3"
+	"github.com/rs/zerolog"
 )
 
 var (
@@ -27,28 +22,19 @@ func init() {
 		panic("RIOT_GAMES_API_KEY not set")
 	}
 
-	// Default client with a test logger and lower MaxRetries
+	// Default client with pretty logging and lower MaxRetries
+	config := equinox.DefaultConfig(key)
+	config.Retry = api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond}
+	config.Logger = api.Logger{Pretty: true, Level: zerolog.TraceLevel, EnableTimestamp: true}
 
-	ctx := context.Background()
-	cacheConfig := bigcache.DefaultConfig(4 * time.Minute)
-	cacheConfig.Verbose = false
-	cache, err := cache.NewBigCache(ctx, cacheConfig)
+	cache, err := equinox.DefaultCache()
 	if err != nil {
 		panic(err)
 	}
 
-	config := api.EquinoxConfig{
-		Key: key,
-		HTTPClient: &http.Client{
-			Timeout: 15 * time.Second,
-		},
-		Cache:     cache,
-		RateLimit: ratelimit.NewInternalRateLimit(0.99, time.Second),
-		Retry:     api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond},
-		Logger:    util.TestLogger(),
-	}
+	ratelimit := equinox.DefaultRateLimit()
 
-	client, err = equinox.NewClientWithConfig(config)
+	client, err = equinox.NewCustomClient(config, nil, cache, ratelimit)
 	if err != nil {
 		panic(err)
 	}
