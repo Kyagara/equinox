@@ -1,11 +1,8 @@
 package api
 
 import (
-	"net/http"
 	"time"
 
-	"github.com/Kyagara/equinox/cache"
-	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/rs/zerolog"
 )
 
@@ -13,28 +10,10 @@ import (
 type EquinoxConfig struct {
 	// Riot API Key.
 	Key string
-	// http.Client used internally.
-	HTTPClient *http.Client
-	// The Cache store, storing all GET requests done by the client, optional.
-	Cache *cache.Cache
-	// The RateLimit store, only disable it if you know what you're doing.
-	RateLimit *ratelimit.RateLimit
-	// Configuration object for the Logger.
+	// Log Level, Pretty print, Timestamp logging, etc.
 	Logger Logger
-	// Configuration object for Retry.
+	// Maximum number of retries, Jitter.
 	Retry Retry
-}
-
-func (c EquinoxConfig) MarshalZerologObject(encoder *zerolog.Event) {
-	if c.Retry.MaxRetries > 0 {
-		encoder.Object("retry", c.Retry)
-	}
-	if c.Cache.TTL != 0 {
-		encoder.Object("cache", c.Cache)
-	}
-	if c.RateLimit.Enabled {
-		encoder.Object("ratelimit", c.RateLimit)
-	}
 }
 
 // Retry configuration object.
@@ -47,15 +26,6 @@ type Retry struct {
 	Jitter time.Duration
 }
 
-func (r Retry) MarshalZerologObject(encoder *zerolog.Event) {
-	if r.MaxRetries > 0 {
-		encoder.Int("max_retries", r.MaxRetries)
-	}
-	if r.Jitter > 0 {
-		encoder.Dur("jitter", r.Jitter)
-	}
-}
-
 // Logger configuration object.
 type Logger struct {
 	TimeFieldFormat string
@@ -64,6 +34,4 @@ type Logger struct {
 	Pretty bool
 	// Prints the timestamp.
 	EnableTimestamp bool
-	// Logs configurations objects from the client, includes Cache and RateLimit.
-	EnableConfigLogging bool
 }

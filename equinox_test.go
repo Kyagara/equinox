@@ -7,6 +7,7 @@ import (
 
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
@@ -39,15 +40,13 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 	config.Key = ""
 
 	// Key not provided
-	client, err := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewCustomClient(config, nil, nil, nil)
 	require.Equal(t, internal.ErrKeyNotProvided, err)
 	require.Empty(t, client)
 
 	config.Key = "RGAPI-TEST"
-	config.Cache.TTL = 1
-	config.RateLimit.Enabled = true
 
-	client, err = equinox.NewClientWithConfig(config)
+	client, err = equinox.NewCustomClient(config, nil, &cache.Cache{TTL: 1}, &ratelimit.RateLimit{Enabled: true})
 	require.NoError(t, err)
 	require.Equal(t, client.Cache.TTL, time.Duration(1))
 	require.True(t, client.RateLimit.Enabled)
@@ -68,10 +67,9 @@ func TestRateLimitWithMock(t *testing.T) {
 		httpmock.NewBytesResponder(200, []byte(`{}`)).HeaderSet(headers))
 
 	config := util.NewTestEquinoxConfig()
-	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
 	config.Retry = api.Retry{MaxRetries: 3}
 
-	client, err := equinox.NewClientWithConfig(config)
+	client, err := equinox.NewCustomClient(config, nil, nil, ratelimit.NewInternalRateLimit(0.99, time.Second))
 	require.NoError(t, err)
 
 	require.True(t, client.Internal.IsRateLimitEnabled)

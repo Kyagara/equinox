@@ -9,7 +9,6 @@ import (
 	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/internal"
-	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
 )
 
@@ -34,10 +33,8 @@ func BenchmarkInternals(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewStringResponder(200, `"response"`))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := internal.NewInternalClient(config)
+	config := equinox.DefaultConfig("RGAPI-TEST")
+	client, err := internal.NewInternalClient(config, nil, nil, nil)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -78,10 +75,8 @@ BenchmarkRequest-16 633535 1611 ns/op 648 B/op 7 allocs/op
 func BenchmarkRequest(b *testing.B) {
 	b.ReportAllocs()
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := internal.NewInternalClient(config)
+	config := equinox.DefaultConfig("RGAPI-TEST")
+	client, err := internal.NewInternalClient(config, nil, nil, nil)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -121,10 +116,8 @@ func BenchmarkExecute(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewStringResponder(200, `"response"`))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := internal.NewInternalClient(config)
+	config := equinox.DefaultConfig("RGAPI-TEST")
+	client, err := internal.NewInternalClient(config, nil, nil, nil)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -170,10 +163,8 @@ func BenchmarkExecuteBytes(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewStringResponder(200, `"response"`))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := internal.NewInternalClient(config)
+	config := equinox.DefaultConfig("RGAPI-TEST")
+	client, err := internal.NewInternalClient(config, nil, nil, nil)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -217,10 +208,6 @@ func BenchmarkURLWithAuthorizationHash(b *testing.B) {
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewStringResponder(200, `"response"`))
-
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
 
 	req := &http.Request{
 		URL: &url.URL{

@@ -10,13 +10,13 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/Kyagara/equinox"
 	"github.com/Kyagara/equinox/api"
 	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/clients/lol"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/ratelimit"
 	"github.com/Kyagara/equinox/test/util"
-	"github.com/allegro/bigcache/v3"
 	jsonv2 "github.com/go-json-experiment/json"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/require"
@@ -25,35 +25,28 @@ import (
 func TestNewInternalClient(t *testing.T) {
 	t.Parallel()
 
-	internalClient, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
+	internalClient := util.NewTestInternalClient(t)
 	require.False(t, internalClient.IsCacheEnabled)
 	require.False(t, internalClient.IsRateLimitEnabled)
 	require.False(t, internalClient.IsRetryEnabled)
 
 	config := util.NewTestEquinoxConfig()
-	config.HTTPClient = nil
-	config.Cache = nil
-	config.RateLimit = nil
 
-	internalClient, err = internal.NewInternalClient(config)
-	require.NoError(t, err)
+	internalClient = util.NewTestCustomInternalClient(t, config)
 	require.False(t, internalClient.IsCacheEnabled)
 	require.False(t, internalClient.IsRateLimitEnabled)
 	require.False(t, internalClient.IsRetryEnabled)
 
 	config = util.NewTestEquinoxConfig()
-	config.Cache.TTL = 1
 	config.Retry.MaxRetries = 1
-	config.RateLimit.Enabled = true
 	config.Key = ""
 
-	_, err = internal.NewInternalClient(config)
+	_, err := internal.NewInternalClient(config, nil, nil, nil)
 	require.Equal(t, internal.ErrKeyNotProvided, err)
 
 	config.Key = "RGAPI-TEST"
 
-	internalClient, err = internal.NewInternalClient(config)
+	internalClient, err = internal.NewInternalClient(config, nil, &cache.Cache{TTL: 1}, &ratelimit.RateLimit{Enabled: true})
 	require.NoError(t, err)
 
 	require.True(t, internalClient.IsCacheEnabled)
@@ -90,8 +83,7 @@ func TestStatusCodeToError(t *testing.T) {
 
 	tests := []int{400, 401, 403, 404, 405, 415, 418, 429, 500, 502, 503, 504}
 
-	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
+	internal := util.NewTestInternalClient(t)
 
 	logger := internal.Logger("client_endpoint_method")
 	ctx := context.Background()
@@ -127,8 +119,7 @@ func TestStatusCodeToError(t *testing.T) {
 
 func TestRequests(t *testing.T) {
 	config := util.NewTestEquinoxConfig()
-	client, err := internal.NewInternalClient(config)
-	require.NoError(t, err)
+	client := util.NewTestInternalClient(t)
 
 	expectedURL := "https://cool.and.real.api/post"
 
@@ -200,26 +191,25 @@ func TestExecutes(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
+	internalClient := util.NewTestInternalClient(t)
 
 	// Valid responses
 
 	ctx := context.Background()
-	logger := internal.Logger("client_endpoint_method")
+	logger := internalClient.Logger("client_endpoint_method")
 	urlComponents := []string{"https://", lol.BR1.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/status/v4/platform-data"}
-	equinoxReq, err := internal.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
+	equinoxReq, err := internalClient.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
 		httpmock.NewStringResponder(200, `"response"`).Times(2))
 
 	var target string
-	err = internal.Execute(ctx, equinoxReq, &target)
+	err = internalClient.Execute(ctx, equinoxReq, &target)
 	require.NoError(t, err)
 	require.Equal(t, `response`, target)
 
-	data, err := internal.ExecuteBytes(ctx, equinoxReq)
+	data, err := internalClient.ExecuteBytes(ctx, equinoxReq)
 	require.NoError(t, err)
 	require.Equal(t, []byte(`"response"`), data)
 
@@ -227,32 +217,32 @@ func TestExecutes(t *testing.T) {
 
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	equinoxReq, err = internal.Request(nil, logger, http.MethodGet, urlComponents, "", nil)
+	equinoxReq, err = internalClient.Request(nil, logger, http.MethodGet, urlComponents, "", nil)
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	err = internal.Execute(nil, equinoxReq, &target)
+	err = internalClient.Execute(nil, equinoxReq, &target)
 	require.Error(t, err)
 	//lint:ignore SA1012 Testing if ctx is nil
 	//nolint:staticcheck
-	_, err = internal.ExecuteBytes(nil, equinoxReq)
+	_, err = internalClient.ExecuteBytes(nil, equinoxReq)
 	require.Error(t, err)
 
 	// Response has invalid json in Execute
 
-	equinoxReq, err = internal.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
+	equinoxReq, err = internalClient.Request(ctx, logger, http.MethodGet, urlComponents, "", nil)
 	require.NoError(t, err)
 
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/status/v4/platform-data",
 		httpmock.NewStringResponder(200, `-{invalid json}-`))
 
 	target = ""
-	err = internal.Execute(ctx, equinoxReq, &target)
+	err = internalClient.Execute(ctx, equinoxReq, &target)
 	require.Error(t, err)
 
 	// Body is not marshalled in ExecuteBytes so it wont error
 
-	data, err = internal.ExecuteBytes(ctx, equinoxReq)
+	data, err = internalClient.ExecuteBytes(ctx, equinoxReq)
 	require.NoError(t, err)
 	require.NotNil(t, data)
 }
@@ -270,10 +260,9 @@ func TestExecutesWithCache(t *testing.T) {
 	ctx := context.Background()
 
 	config := util.NewTestEquinoxConfig()
-	cache, err := cache.NewBigCache(ctx, bigcache.DefaultConfig(5*time.Minute))
+	cache, err := equinox.DefaultCache()
 	require.NoError(t, err)
-	config.Cache = cache
-	internalClient, err := internal.NewInternalClient(config)
+	internalClient, err := internal.NewInternalClient(config, nil, cache, nil)
 	require.NoError(t, err)
 	require.True(t, internalClient.IsCacheEnabled)
 
@@ -311,8 +300,7 @@ func TestRateLimitRetry(t *testing.T) {
 
 	config := util.NewTestEquinoxConfig()
 	config.Retry = api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond}
-	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
-	internalClient, err := internal.NewInternalClient(config)
+	internalClient, err := internal.NewInternalClient(config, nil, nil, ratelimit.NewInternalRateLimit(0.99, time.Second))
 	require.NoError(t, err)
 
 	require.True(t, internalClient.IsRetryEnabled)
@@ -401,8 +389,7 @@ func TestExponentialBackoffRetry(t *testing.T) {
 	config.Retry.MaxRetries = 2
 	config.Retry.Jitter = 200 * time.Millisecond
 
-	internalClient, err := internal.NewInternalClient(config)
-	require.NoError(t, err)
+	internalClient := util.NewTestCustomInternalClient(t, config)
 	require.True(t, internalClient.IsRetryEnabled)
 
 	ctx := context.Background()

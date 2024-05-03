@@ -11,7 +11,6 @@ import (
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/jarcoal/httpmock"
 	"github.com/redis/go-redis/v9"
-	"github.com/stretchr/testify/require"
 )
 
 /*
@@ -33,13 +32,7 @@ func BenchmarkSummonerByPUUID(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := equinox.NewClientWithConfig(config)
-	if err != nil {
-		b.Fatal(err)
-	}
+	client := util.NewBenchmarkEquinoxClient(b)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -115,14 +108,14 @@ func BenchmarkRedisCachedSummonerByPUUID(b *testing.B) {
 		Network: "tcp",
 		Addr:    "127.0.0.1:6379",
 	}
-	cache, err := cache.NewRedis(ctx, redisConfig, 4*time.Minute)
-	require.NoError(b, err)
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	config.Cache = cache
-	client, err := equinox.NewClientWithConfig(config)
+	cache, err := cache.NewRedis(ctx, redisConfig, 4*time.Minute)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	config := equinox.DefaultConfig("RGAPI-TEST")
+	client, err := equinox.NewCustomClient(config, nil, cache, nil)
 	if err != nil {
 		b.Fatal(err)
 	}

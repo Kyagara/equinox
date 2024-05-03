@@ -48,35 +48,35 @@ var (
 	}
 )
 
-func NewInternalClient(config api.EquinoxConfig) (*Client, error) {
+func NewInternalClient(config api.EquinoxConfig, h *http.Client, c *cache.Cache, r *ratelimit.RateLimit) (*Client, error) {
 	if config.Key == "" {
 		return nil, ErrKeyNotProvided
 	}
 
-	if config.HTTPClient == nil {
-		config.HTTPClient = &http.Client{Timeout: 15 * time.Second}
+	if h == nil {
+		h = &http.Client{Timeout: 15 * time.Second}
 	}
-	if config.Cache == nil {
-		config.Cache = &cache.Cache{}
+	if c == nil {
+		c = &cache.Cache{TTL: 0}
 	}
-	if config.RateLimit == nil {
-		config.RateLimit = &ratelimit.RateLimit{}
+	if r == nil {
+		r = &ratelimit.RateLimit{Enabled: false}
 	}
 
 	client := &Client{
 		key:  config.Key,
-		http: config.HTTPClient,
+		http: h,
 		loggers: Loggers{
 			main:    NewLogger(config),
 			methods: make(map[string]zerolog.Logger, 1),
 			mutex:   sync.Mutex{},
 		},
-		cache:              config.Cache,
-		ratelimit:          config.RateLimit,
+		cache:              c,
+		ratelimit:          r,
 		maxRetries:         config.Retry.MaxRetries,
 		jitter:             config.Retry.Jitter,
-		IsCacheEnabled:     config.Cache.TTL > 0,
-		IsRateLimitEnabled: config.RateLimit.Enabled,
+		IsCacheEnabled:     c.TTL > 0,
+		IsRateLimitEnabled: r.Enabled,
 		IsRetryEnabled:     config.Retry.MaxRetries > 0,
 	}
 
@@ -112,9 +112,9 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod 
 
 	equinoxReq := api.EquinoxRequest{
 		Logger:   logger,
-		MethodID: methodID,
-		Route:    urlComponents[1],
 		URL:      url,
+		Route:    urlComponents[1],
+		MethodID: methodID,
 		Request:  request,
 	}
 

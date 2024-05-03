@@ -39,7 +39,7 @@ func (r *InternalRateLimitStore) Reserve(ctx context.Context, logger zerolog.Log
 	return methods.CheckBuckets(ctx, logger, route, methodID)
 }
 
-func (r *InternalRateLimitStore) Update(ctx context.Context, logger zerolog.Logger, route string, methodID string, headers http.Header, delay time.Duration) error {
+func (r *InternalRateLimitStore) Update(ctx context.Context, logger zerolog.Logger, route string, methodID string, headers http.Header, retryAfter time.Duration) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -49,9 +49,9 @@ func (r *InternalRateLimitStore) Update(ctx context.Context, logger zerolog.Logg
 	limitType := headers.Get(RATE_LIMIT_TYPE_HEADER)
 	if limitType != "" {
 		if limitType == APP_RATE_LIMIT_TYPE {
-			limits.App.SetRetryAfter(delay)
+			limits.App.SetRetryAfter(retryAfter)
 		} else {
-			limits.Methods[methodID].SetRetryAfter(delay)
+			limits.Methods[methodID].SetRetryAfter(retryAfter)
 		}
 	}
 

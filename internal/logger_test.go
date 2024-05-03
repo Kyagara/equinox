@@ -1,12 +1,9 @@
 package internal_test
 
 import (
-	"net/http"
 	"testing"
-	"time"
 
 	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/cache"
 	"github.com/Kyagara/equinox/internal"
 	"github.com/Kyagara/equinox/test/util"
 	"github.com/rs/zerolog"
@@ -21,8 +18,6 @@ func TestNewLogger(t *testing.T) {
 		Logger: api.Logger{
 			Level: zerolog.Disabled,
 		},
-		Cache:      &cache.Cache{TTL: 60 * time.Second},
-		HTTPClient: &http.Client{Timeout: 15 * time.Second},
 	}
 
 	logger = internal.NewLogger(config)
@@ -39,8 +34,7 @@ func TestNewLogger(t *testing.T) {
 }
 
 func TestLogs(t *testing.T) {
-	internal, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
-	require.NoError(t, err)
+	internal := util.NewTestInternalClient(t)
 
 	logger := internal.Logger("client_endpoint_method")
 	require.NotEmpty(t, logger)

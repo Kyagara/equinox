@@ -50,7 +50,7 @@ func TestLimits(t *testing.T) {
 	require.True(t, limitsMatch)
 
 	ctx := context.Background()
-	logger := zerolog.Nop()
+	logger := internal.NewLogger(util.NewTestEquinoxConfig())
 
 	err := limits.App.CheckBuckets(ctx, logger, "route", "method")
 	require.NoError(t, err)
@@ -109,7 +109,8 @@ func TestBucket(t *testing.T) {
 func TestReserveAndUpdate(t *testing.T) {
 	t.Parallel()
 
-	client, err := internal.NewInternalClient(util.NewTestEquinoxConfig())
+	config := util.NewTestEquinoxConfig()
+	client, err := internal.NewInternalClient(config, nil, nil, nil)
 	require.NoError(t, err)
 	equinoxReq := api.EquinoxRequest{
 		Route:    "route",
@@ -126,8 +127,6 @@ func TestReserveAndUpdate(t *testing.T) {
 
 		// Initializing the rate limit
 		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
-		require.NoError(t, err)
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
 		require.NoError(t, err)
 
 		headers := http.Header{

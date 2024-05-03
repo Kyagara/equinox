@@ -42,11 +42,9 @@ func BenchmarkParallelRateLimit(b *testing.B) {
 			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: {"1:60"},
 		}))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	config.RateLimit = ratelimit.NewInternalRateLimit(0.99, time.Second)
-	client, err := equinox.NewClientWithConfig(config)
+	config := equinox.DefaultConfig("RGAPI-TEST")
+	rateLimit := ratelimit.NewInternalRateLimit(0.99, time.Second)
+	client, err := equinox.NewCustomClient(config, nil, nil, rateLimit)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -85,13 +83,7 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := equinox.NewClientWithConfig(config)
-	if err != nil {
-		b.Fatal(err)
-	}
+	client := util.NewBenchmarkEquinoxClient(b)
 
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
@@ -137,11 +129,8 @@ func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 		b.Fatal(err)
 	}
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	config.Cache = cache
-	client, err := equinox.NewClientWithConfig(config)
+	config := equinox.DefaultConfig("RGAPI-TEST")
+	client, err := equinox.NewCustomClient(config, nil, cache, nil)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -182,13 +171,7 @@ func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://br1.api.riotgames.com/lol/summoner/v4/summoners/me",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := equinox.NewClientWithConfig(config)
-	if err != nil {
-		b.Fatal(err)
-	}
+	client := util.NewBenchmarkEquinoxClient(b)
 
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
@@ -226,13 +209,7 @@ func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/puuid/ids?count=20&queue=420&type=ranked",
 		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.list.json")))
 
-	config := util.NewTestEquinoxConfig()
-	config.Logger = equinox.DefaultLogger()
-	config.Retry = equinox.DefaultRetry()
-	client, err := equinox.NewClientWithConfig(config)
-	if err != nil {
-		b.Fatal(err)
-	}
+	client := util.NewBenchmarkEquinoxClient(b)
 
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
