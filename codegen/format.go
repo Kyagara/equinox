@@ -228,7 +228,12 @@ func cleanDTOPropType(prop gjson.Result, version string, endpoint string, propTy
 
 		if strings.Contains(propType, "map") {
 			match := mapTypeRegex.FindStringSubmatch(propType)
-			return strings.Replace(propType, "]"+match[1], "]"+endpoint+match[1], 1)
+			new := strings.Replace(propType, "]"+match[1], "]"+endpoint+match[1], 1)
+			// Replacing potential MatchMatchTimeline...
+			if strings.Contains(new, endpoint+endpoint) {
+				return strings.Replace(new, endpoint+endpoint, endpoint, 1)
+			}
+			return new
 		}
 
 		if endpoint == "TournamentStub" && strings.HasPrefix(propType, "Tournament") {
