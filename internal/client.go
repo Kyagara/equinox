@@ -266,7 +266,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 		if i < c.maxRetries {
 			// Exponential backoff with jitter
 			wait := delay*time.Duration(math.Pow(2, float64(i))) + c.jitter
-			equinoxReq.Logger.Warn().Str("status_code", response.Status).Dur("wait", wait).Int("retries", i).Msg("Retrying request")
+			equinoxReq.Logger.Warn().Str("route", equinoxReq.Route).Str("status_code", response.Status).Dur("wait", wait).Int("retries", i).Msg("Retrying request")
 			err := ratelimit.WaitN(ctx, time.Now().Add(wait), wait)
 			if err != nil {
 				return nil, err

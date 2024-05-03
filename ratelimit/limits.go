@@ -33,7 +33,9 @@ type Limit struct {
 func (l *Limit) MarshalZerologObject(encoder *zerolog.Event) {
 	buckets := zerolog.Arr()
 	for _, bucket := range l.Buckets {
+		bucket.mutex.Lock()
 		buckets.Object(bucket)
+		bucket.mutex.Unlock()
 	}
 	encoder.Str("type", l.Type).Array("buckets", buckets).Dur("retry_after", l.RetryAfter)
 }
@@ -48,12 +50,13 @@ func NewLimit(limitType string) *Limit {
 }
 
 // Checks if any of the buckets provided are rate limited, and if so, blocks until the next reset.
-func (l *Limit) CheckBuckets(ctx context.Context, logger zerolog.Logger, route string, methodID string) error {
+func (l *Limit) CheckBuckets(ctx context.Context, logger zerolog.Logger, route string) error {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 
 	if l.RetryAfter > 0 {
 		logger.Warn().
+			Str("route", route).
 			Str("type", l.Type).
 			Dur("wait", l.RetryAfter).
 			Msg("Rate limited, RetryAfter set")
@@ -75,6 +78,7 @@ func (l *Limit) CheckBuckets(ctx context.Context, logger zerolog.Logger, route s
 		if bucket.IsRateLimited() {
 			wait := time.Until(bucket.Next)
 			logger.Warn().
+				Str("route", route).
 				Str("type", l.Type).
 				Dur("wait", wait).
 				Object("bucket", bucket).

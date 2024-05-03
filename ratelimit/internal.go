@@ -32,11 +32,11 @@ func (r *InternalRateLimitStore) Reserve(ctx context.Context, logger zerolog.Log
 		limits.Methods[methodID] = methods
 	}
 
-	if err := limits.App.CheckBuckets(ctx, logger, route, methodID); err != nil {
+	if err := limits.App.CheckBuckets(ctx, logger, route); err != nil {
 		return err
 	}
 
-	return methods.CheckBuckets(ctx, logger, route, methodID)
+	return methods.CheckBuckets(ctx, logger, route)
 }
 
 func (r *InternalRateLimitStore) Update(ctx context.Context, logger zerolog.Logger, route string, methodID string, headers http.Header, retryAfter time.Duration) error {
@@ -62,14 +62,14 @@ func (r *InternalRateLimitStore) Update(ctx context.Context, logger zerolog.Logg
 		countHeader := headers.Get(APP_RATE_LIMIT_COUNT_HEADER)
 		newLimit := ParseHeaders(APP_RATE_LIMIT_TYPE, appLimitHeader, countHeader, r.limitUsageFactor, r.intervalOverhead)
 		limits.App = newLimit
-		logger.Debug().Object("limit", newLimit).Msg("New application limit")
+		logger.Debug().Str("route", route).Object("limit", newLimit).Msg("New application limit")
 	}
 
 	if !limits.Methods[methodID].LimitsMatch(methodLimitHeader) {
 		countHeader := headers.Get(METHOD_RATE_LIMIT_COUNT_HEADER)
 		newLimit := ParseHeaders(METHOD_RATE_LIMIT_TYPE, methodLimitHeader, countHeader, r.limitUsageFactor, r.intervalOverhead)
 		limits.Methods[methodID] = newLimit
-		logger.Debug().Object("limit", newLimit).Msg("New method limit")
+		logger.Debug().Str("route", route).Object("limit", newLimit).Msg("New method limit")
 	}
 
 	return nil
