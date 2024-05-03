@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3d364f8efe1fc3090102af41f8d7fec1554abf45
+// Spec version = a70746fcf353ba0ad0aceceafcc70d4ba8de4431
 
 // LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
@@ -363,7 +363,7 @@ func (gameMode GameMode) String() string {
 type QueueType string
 
 const (
-	// 2v2v2v2 "Arena" games
+	// "Arena" games
 	CHERRY_QUEUETYPE QueueType = "CHERRY"
 	// 5v5 Ranked Flex games
 	RANKED_FLEX_SR QueueType = "RANKED_FLEX_SR"

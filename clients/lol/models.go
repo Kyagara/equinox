@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3d364f8efe1fc3090102af41f8d7fec1554abf45
+// Spec version = a70746fcf353ba0ad0aceceafcc70d4ba8de4431
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -96,9 +96,7 @@ type ChampionMasteryV4DTO struct {
 	// Champion level for specified player and champion combination.
 	ChampionLevel int32 `json:"championLevel,omitempty"`
 	// Total number of champion points for this player and champion combination - they are used to determine championLevel.
-	ChampionPoints           int32 `json:"championPoints,omitempty"`
-	ChampionSeasonMilestone  int32 `json:"championSeasonMilestone,omitempty"`
-	MarkRequiredForNextLevel int32 `json:"markRequiredForNextLevel,omitempty"`
+	ChampionPoints int32 `json:"championPoints,omitempty"`
 	// The token earned for this champion at the current championLevel. When the championLevel is advanced the tokensEarned resets to 0.
 	TokensEarned int32 `json:"tokensEarned,omitempty"`
 	// Is chest granted for this champion or not in current season.
@@ -762,27 +760,11 @@ type MatchTimelineInfoFrameParticipantFrameV5DTO struct {
 	XP                       int32                                                    `json:"xp,omitempty"`
 }
 
-// match-v5.MatchTimelineInfoFrameParticipantFrames
-type MatchTimelineInfoFrameParticipantFramesV5DTO struct {
-	X1 MatchTimelineInfoFrameParticipantFrameV5DTO `json:"1,omitempty"`
-	// Possibly null for the Arena 2v2v2v2 (`CHERRY`) game mode.
-	X10 MatchTimelineInfoFrameParticipantFrameV5DTO `json:"10,omitempty"`
-	X2  MatchTimelineInfoFrameParticipantFrameV5DTO `json:"2,omitempty"`
-	X3  MatchTimelineInfoFrameParticipantFrameV5DTO `json:"3,omitempty"`
-	X4  MatchTimelineInfoFrameParticipantFrameV5DTO `json:"4,omitempty"`
-	X5  MatchTimelineInfoFrameParticipantFrameV5DTO `json:"5,omitempty"`
-	X6  MatchTimelineInfoFrameParticipantFrameV5DTO `json:"6,omitempty"`
-	X7  MatchTimelineInfoFrameParticipantFrameV5DTO `json:"7,omitempty"`
-	X8  MatchTimelineInfoFrameParticipantFrameV5DTO `json:"8,omitempty"`
-	// Possibly null for the Arena 2v2v2v2 (`CHERRY`) game mode.
-	X9 MatchTimelineInfoFrameParticipantFrameV5DTO `json:"9,omitempty"`
-}
-
 // match-v5.MatchTimelineInfoFrame
 type MatchTimelineInfoFrameV5DTO struct {
-	Events            []MatchTimelineInfoFrameEventV5DTO           `json:"events,omitempty"`
-	ParticipantFrames MatchTimelineInfoFrameParticipantFramesV5DTO `json:"participantFrames,omitempty"`
-	Timestamp         int32                                        `json:"timestamp,omitempty"`
+	ParticipantFrames map[int32]MatchTimelineInfoFrameParticipantFrameV5DTO `json:"participantFrames,omitempty"`
+	Events            []MatchTimelineInfoFrameEventV5DTO                    `json:"events,omitempty"`
+	Timestamp         int32                                                 `json:"timestamp,omitempty"`
 }
 
 // match-v5.MatchTimelineInfoParticipant

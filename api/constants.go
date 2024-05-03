@@ -8,7 +8,7 @@ package api
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3d364f8efe1fc3090102af41f8d7fec1554abf45
+// Spec version = a70746fcf353ba0ad0aceceafcc70d4ba8de4431
 
 // Regional routes, used in tournament services, Legends of Runeterra (LoR), and some other endpoints.
 type RegionalRoute string
