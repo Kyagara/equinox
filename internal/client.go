@@ -54,7 +54,7 @@ func NewInternalClient(config api.EquinoxConfig, h *http.Client, c *cache.Cache,
 	}
 
 	if h == nil {
-		h = &http.Client{Timeout: 15 * time.Second}
+		h = &http.Client{}
 	}
 	if c == nil {
 		c = &cache.Cache{TTL: 0}
