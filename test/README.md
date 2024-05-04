@@ -28,23 +28,23 @@ go test -v ./test/benchmark/ -bench=. -benchmem | ./benchmark.sh
 
 Using WSL2 on a Ryzen 7 2700.
 
-| Benchmark                             | ops     | ns/op     | bytes/op | allocs/op |
-| ------------------------------------- | ------- | --------- | -------- | --------- |
-| Internals-16                          | 325980  | 3739      | 1418     | 17        |
-| InternalRequest-16                    | 682623  | 1630      | 680      | 7         |
-| InternalExecute-16                    | 451694  | 2495      | 857      | 13        |
-| InternalExecuteBytes-16               | 546505  | 2016      | 1352     | 13        |
-| InternalURLWithAuthorizationHash-16   | 1977759 | 602.6     | 216      | 5         |
-| CacheSummonerByPUUIDNoCache-16        | 217107  | 5299      | 1499     | 17        |
-| CacheBigCacheSummonerByPUUID-16       | 339098  | 3470      | 1008     | 7         |
-| CacheRedisSummonerByPUUID-16          | 22164   | 56318     | 1212     | 14        |
-| DataMatchByID-16                      | 1869    | 684389    | 70330    | 166       |
-| DataMatchTimeline-16                  | 180     | 6420727   | 1624715  | 1681      |
-| DataVALContentAllLocales-16           | 18      | 62570122  | 14865476 | 155491    |
-| ParallelTestRateLimit-16              | 100     | 100028115 | 2813     | 31        |
-| ParallelSummonerByPUUID-16            | 354766  | 3285      | 1496     | 17        |
-| ParallelRedisCachedSummonerByPUUID-16 | 131782  | 9168      | 1213     | 14        |
-| ParallelSummonerByAccessToken-16      | 280219  | 4000      | 2144     | 25        |
+| Benchmark                          |     ops |     ns/op | bytes/op | allocs/op |
+| ---------------------------------- | ------: | --------: | -------: | --------: |
+| Internals                          |  325980 |      3739 |     1418 |        17 |
+| InternalRequest                    |  682623 |      1630 |      680 |         7 |
+| InternalExecute                    |  451694 |      2495 |      857 |        13 |
+| InternalExecuteBytes               |  546505 |      2016 |     1352 |        13 |
+| InternalURLWithAuthorizationHash   | 1977759 |     602.6 |      216 |         5 |
+| CacheSummonerByPUUIDNoCache        |  217107 |      5299 |     1499 |        17 |
+| CacheBigCacheSummonerByPUUID       |  339098 |      3470 |     1008 |         7 |
+| CacheRedisSummonerByPUUID          |   22164 |     56318 |     1212 |        14 |
+| DataMatchByID                      |    1869 |    684389 |    70330 |       166 |
+| DataMatchTimeline                  |     180 |   6420727 |  1624715 |      1681 |
+| DataVALContentAllLocales           |      18 |  62570122 | 14865476 |    155491 |
+| ParallelTestRateLimit              |     100 | 100028115 |     2813 |        31 |
+| ParallelSummonerByPUUID            |  354766 |      3285 |     1496 |        17 |
+| ParallelRedisCachedSummonerByPUUID |  131782 |      9168 |     1213 |        14 |
+| ParallelSummonerByAccessToken      |  280219 |      4000 |     2144 |        25 |
 
 ## Integration
 
