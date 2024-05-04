@@ -1,6 +1,7 @@
 package benchmark
 
 import (
+	"bytes"
 	"context"
 	"net/http"
 	"net/url"
@@ -47,7 +48,6 @@ func BenchmarkInternals(b *testing.B) {
 	}
 }
 
-// equinoxReq.Request.URL.String() causes 3 allocs, the alloc results are not modified to account for that
 func BenchmarkInternalRequest(b *testing.B) {
 	b.ReportAllocs()
 
@@ -67,7 +67,7 @@ func BenchmarkInternalRequest(b *testing.B) {
 		if err != nil {
 			b.Fatal(err)
 		}
-		if equinoxReq.Request.URL.String() != "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid" {
+		if equinoxReq.URL != "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid" {
 			b.Fatalf("URL != https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid, got: %s", equinoxReq.Request.URL.String())
 		}
 	}
@@ -132,14 +132,16 @@ func BenchmarkInternalExecuteBytes(b *testing.B) {
 		b.Fatal(err)
 	}
 
+	res := []byte(`"response"`)
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		data, err := client.ExecuteBytes(ctx, equinoxReq)
 		if err != nil {
 			b.Fatal(err)
 		}
-		if len(data) != 10 {
-			b.Fatalf("data length != 10, got: %d", len(data))
+		if !bytes.Equal(data, res) {
+			b.Fatal("data != response")
 		}
 	}
 }
