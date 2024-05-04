@@ -3,9 +3,9 @@ package internal_test
 import (
 	"testing"
 
-	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/internal"
-	"github.com/Kyagara/equinox/test/util"
+	"github.com/Kyagara/equinox/v2/api"
+	"github.com/Kyagara/equinox/v2/internal"
+	"github.com/Kyagara/equinox/v2/test/util"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )

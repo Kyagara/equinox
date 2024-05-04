@@ -1,4 +1,4 @@
-module github.com/Kyagara/equinox/codegen
+module codegen
 
 go 1.21
 

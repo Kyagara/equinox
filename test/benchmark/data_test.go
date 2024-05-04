@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/clients/val"
-	"github.com/Kyagara/equinox/test/util"
+	"github.com/Kyagara/equinox/v2/api"
+	"github.com/Kyagara/equinox/v2/clients/val"
+	"github.com/Kyagara/equinox/v2/test/util"
 	"github.com/jarcoal/httpmock"
 )
 

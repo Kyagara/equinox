@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/cache"
-	"github.com/Kyagara/equinox/ratelimit"
+	"github.com/Kyagara/equinox/v2/api"
+	"github.com/Kyagara/equinox/v2/cache"
+	"github.com/Kyagara/equinox/v2/ratelimit"
 	"github.com/rs/zerolog"
 )
 

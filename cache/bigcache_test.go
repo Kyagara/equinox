@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Kyagara/equinox/cache"
+	"github.com/Kyagara/equinox/v2/cache"
 	"github.com/allegro/bigcache/v3"
 	"github.com/stretchr/testify/require"
 )

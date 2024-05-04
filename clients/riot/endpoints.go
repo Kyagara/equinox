@@ -15,8 +15,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/v2/api"
+	"github.com/Kyagara/equinox/v2/internal"
 )
 
 // # Riot API Reference

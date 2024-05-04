@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Kyagara/equinox"
-	"github.com/Kyagara/equinox/cache"
-	"github.com/Kyagara/equinox/clients/lol"
-	"github.com/Kyagara/equinox/test/util"
+	"github.com/Kyagara/equinox/v2"
+	"github.com/Kyagara/equinox/v2/cache"
+	"github.com/Kyagara/equinox/v2/clients/lol"
+	"github.com/Kyagara/equinox/v2/test/util"
 	"github.com/jarcoal/httpmock"
 	"github.com/redis/go-redis/v9"
 )

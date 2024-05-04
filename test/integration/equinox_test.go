@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/Kyagara/equinox"
-	"github.com/Kyagara/equinox/api"
+	"github.com/Kyagara/equinox/v2"
+	"github.com/Kyagara/equinox/v2/api"
 	"github.com/rs/zerolog"
 )
 
