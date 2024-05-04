@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Kyagara/equinox/ratelimit"
+	"github.com/Kyagara/equinox/v2/ratelimit"
 	"github.com/stretchr/testify/require"
 )
 

@@ -4,9 +4,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Kyagara/equinox"
-	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/internal"
+	"github.com/Kyagara/equinox/v2"
+	"github.com/Kyagara/equinox/v2/api"
+	"github.com/Kyagara/equinox/v2/internal"
 	"github.com/rs/zerolog"
 )
 

@@ -7,8 +7,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Kyagara/equinox/api"
-	"github.com/Kyagara/equinox/clients/lol"
+	"github.com/Kyagara/equinox/v2/api"
+	"github.com/Kyagara/equinox/v2/clients/lol"
 	"github.com/stretchr/testify/require"
 )
 

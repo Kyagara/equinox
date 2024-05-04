@@ -7,7 +7,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Kyagara/equinox/clients/val"
+	"github.com/Kyagara/equinox/v2/clients/val"
 	"github.com/stretchr/testify/require"
 )
 

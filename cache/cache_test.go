@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Kyagara/equinox/cache"
-	"github.com/Kyagara/equinox/test/util"
+	"github.com/Kyagara/equinox/v2/cache"
+	"github.com/Kyagara/equinox/v2/test/util"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )

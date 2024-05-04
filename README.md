@@ -39,8 +39,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/Kyagara/equinox"
-	"github.com/Kyagara/equinox/clients/lol"
+	"github.com/Kyagara/equinox/v2/"
+	"github.com/Kyagara/equinox/v2/clients/lol"
 )
 
 func main() {
@@ -72,6 +72,16 @@ func main() {
   - Add Redis store, using a lua script
   - Maybe add more options (presets?) to customize the rate limiter
   - Try to reduce amount of method arguments
+
+## Versioning
+
+Breaking changes in the library itself (client reworks, removal/rename of internal methods) will require a major version (n.x.x) bump, fixes will occur in a patch (x.x.n).
+
+The Riot API does not follow semver, breaking changes such as removal of endpoints methods or even entire endpoints will require a **minor** version (x.n.x) bump.
+
+In `go`, new major versions are an annoyance, requiring adding to **every** import path the new version, so I want to keep them to a minimum. For example, `github.com/Kyagara/equinox/internal/client` will be `github.com/Kyagara/equinox/v2/internal/client`.
+
+Older versions are not supported (versions before v1 are outright broken), always keep the library up-to-date with the latest version.
 
 ## Disclaimer
 

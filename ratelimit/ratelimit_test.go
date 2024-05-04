@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Kyagara/equinox/ratelimit"
-	"github.com/Kyagara/equinox/test/util"
+	"github.com/Kyagara/equinox/v2/ratelimit"
+	"github.com/Kyagara/equinox/v2/test/util"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
