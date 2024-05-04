@@ -7,7 +7,8 @@
 	<p>
 		<a href="https://github.com/Kyagara/equinox/wiki">Wiki</a> •
 		<a href="#example">Example</a> •
-		<a href="#todo">Todo</a>
+		<a href="#todo">Todo</a> •
+		<a href="#versioning">Versioning</a>
 	</p>
 </div>
 
