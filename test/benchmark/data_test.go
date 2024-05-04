@@ -56,7 +56,7 @@ func BenchmarkDataMatchTimeline(b *testing.B) {
 	}
 }
 
-// Probably the largest response you can get with the Riot API, very good to test json deserialization.
+// Probably the largest response you can get with the Riot API, very good for benchmarking json unmarshaling.
 func BenchmarkDataVALContentAllLocales(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()

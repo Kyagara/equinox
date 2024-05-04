@@ -69,9 +69,9 @@ func main() {
 - Maybe add a Logger to the Cache and RateLimit interfaces
 - Add checks for duration of tests that include any WaitN/any blocking
 - RateLimit
-  - Add Redis store, maybe using a lua script
+  - Add Redis store, using a lua script
   - Maybe add more options (presets?) to customize the rate limiter
-  - Try to reduce amount of arguments
+  - Try to reduce amount of method arguments
 
 ## Disclaimer
 

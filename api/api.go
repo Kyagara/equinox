@@ -13,7 +13,7 @@ const (
 	RIOT_API_BASE_URL_FORMAT = ".api.riotgames.com"
 )
 
-// Contains the http.Request to the Riot API and all necessary information about it.
+// Contains the *http.Request to the Riot API and all necessary information about it.
 type EquinoxRequest struct {
 	Logger   zerolog.Logger
 	Request  *http.Request
