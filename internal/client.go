@@ -303,7 +303,7 @@ func (c *Client) checkResponse(ctx context.Context, equinoxReq api.EquinoxReques
 	err := api.StatusCodeToError(response.StatusCode)
 	if err != nil {
 		// 429 and 5xx responses will be retried
-		if response.StatusCode == http.StatusTooManyRequests || (response.StatusCode >= 500 && response.StatusCode < 600) {
+		if response.StatusCode == http.StatusTooManyRequests || (response.StatusCode > 499 && response.StatusCode < 600) {
 			return retryAfter, true, err
 		}
 
