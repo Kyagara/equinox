@@ -16,7 +16,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// The only thing that really matters here for benchmark purposes is B/op and allocs/op.
+// The only thing that really matters here for benchmark purposes is bytes/op and allocs/op.
 func BenchmarkParallelTestRateLimit(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()

@@ -13,7 +13,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func BenchmarkCacheSummonerByPUUIDNoCache(b *testing.B) {
+func BenchmarkCacheDisabledSummonerByPUUID(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
