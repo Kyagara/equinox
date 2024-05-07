@@ -13,6 +13,14 @@ const (
 	RIOT_API_BASE_URL_FORMAT = ".api.riotgames.com"
 )
 
+// Options to be used when executing requests.
+type ExecuteOptions bool
+
+const (
+	// Skips checking the cache then updates the cache with new data.
+	Revalidate ExecuteOptions = true
+)
+
 // Contains the *http.Request to the Riot API and all necessary information about it.
 type EquinoxRequest struct {
 	Logger   zerolog.Logger
