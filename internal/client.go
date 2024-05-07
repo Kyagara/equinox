@@ -131,10 +131,10 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		return ErrContextIsNil
 	}
 
-	url := GetURLWithAuthorizationHash(equinoxReq)
+	key := GetCacheKey(equinoxReq)
 
 	if c.IsCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
-		item, err := c.cache.Get(ctx, url)
+		item, err := c.cache.Get(ctx, key)
 		if err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
 			return err
@@ -190,7 +190,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 
 		// Only cache valid json responses
 
-		err = c.cache.Set(ctx, url, body)
+		err = c.cache.Set(ctx, key, body)
 		if err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
 			return err
@@ -313,8 +313,26 @@ func (c *Client) checkResponse(ctx context.Context, equinoxReq api.EquinoxReques
 	return 0, false, fmt.Errorf("unexpected status code: %d", response.StatusCode)
 }
 
-// Returns an URL with a hashed Authorization key if it exists.
-func GetURLWithAuthorizationHash(req api.EquinoxRequest) string {
+// Returns the Cache key with a hash of the access token if it exists.
+func GetCacheKey(req api.EquinoxRequest) string {
+	// I plan to use xxhash instead of sha256 in the future since it is already imported by `go-redis`.
+	//
+	// Issues with this:
+	// 	- I want to keep the Cache accessible to other clients without having to add hashing to them just to reuse the Cache.
+	//	- I don't know about xxhash support in other languages.
+	//	- Some operations(in go) use unsafe, can be avoided but it would be slower.
+	//
+	// Cache keys should be URLs with the exception of the hashed portion included in methods requiring `accessToken`, meaning,
+	// you would need to hash something to get the Cache key ONLY for those methods.
+	//
+	// Example:
+	//
+	// "https://asia.api.riotgames.com/riot/account/v1/accounts/me-ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7"
+	//
+	//	- URL = "https://asia.api.riotgames.com/riot/account/v1/accounts/me"
+	//	- Separator = "-"
+	//	- Hash of the access token = "ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7"
+
 	auth := req.Request.Header.Get("Authorization")
 	if auth == "" {
 		return req.URL
