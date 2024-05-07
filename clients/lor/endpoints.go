@@ -8,12 +8,12 @@ package lor
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = a70746fcf353ba0ad0aceceafcc70d4ba8de4431
+// Spec version = 92f57e3e7279cc02ec6a5ce6665ca08354d6a178
 
 import (
 	"context"
-	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/Kyagara/equinox/v2/api"
 	"github.com/Kyagara/equinox/v2/internal"
@@ -31,18 +31,15 @@ type DeckV1 struct {
 // Create a new deck for the calling user.
 //
 // # Parameters
-//   - route : Route to query.
-//   - Authorization
+//   - route: Route to query.
+//   - accessToken: RSO access token.
 //
 // # Riot API Reference
 //
 // [lor-deck-v1.createDeck]
 //
 // [lor-deck-v1.createDeck]: https://developer.riotgames.com/api-methods/#lor-deck-v1/POST_createDeck
-func (endpoint *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, body *DeckNewDeckV1DTO, authorization string) (string, error) {
-	if authorization == "" {
-		return "", fmt.Errorf("'authorization' header is required")
-	}
+func (endpoint *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute, accessToken string, body *DeckNewDeckV1DTO) (string, error) {
 	logger := endpoint.internal.Logger("LOR_DeckV1_CreateDeck")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/deck/v1/decks/me"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodPost, urlComponents, "lor-deck-v1.createDeck", body)
@@ -50,7 +47,9 @@ func (endpoint *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute,
 		return "", err
 	}
 	request.Request.Header = request.Request.Header.Clone()
-	request.Request.Header.Add("Authorization", authorization)
+	request.Request.Header.Del("X-Riot-Token")
+	headerValue := []string{"Bearer ", accessToken}
+	request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
 	var data string
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
@@ -62,18 +61,15 @@ func (endpoint *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute,
 // Get a list of the calling user's decks.
 //
 // # Parameters
-//   - route : Route to query.
-//   - Authorization
+//   - route: Route to query.
+//   - accessToken: RSO access token.
 //
 // # Riot API Reference
 //
 // [lor-deck-v1.getDecks]
 //
 // [lor-deck-v1.getDecks]: https://developer.riotgames.com/api-methods/#lor-deck-v1/GET_getDecks
-func (endpoint *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, authorization string) ([]DeckV1DTO, error) {
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
+func (endpoint *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, accessToken string) ([]DeckV1DTO, error) {
 	logger := endpoint.internal.Logger("LOR_DeckV1_Decks")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/deck/v1/decks/me"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lor-deck-v1.getDecks", nil)
@@ -81,7 +77,9 @@ func (endpoint *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, auth
 		return nil, err
 	}
 	request.Request.Header = request.Request.Header.Clone()
-	request.Request.Header.Add("Authorization", authorization)
+	request.Request.Header.Del("X-Riot-Token")
+	headerValue := []string{"Bearer ", accessToken}
+	request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
 	var data []DeckV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
@@ -102,18 +100,15 @@ type InventoryV1 struct {
 // Return a list of cards owned by the calling user.
 //
 // # Parameters
-//   - route : Route to query.
-//   - Authorization
+//   - route: Route to query.
+//   - accessToken: RSO access token.
 //
 // # Riot API Reference
 //
 // [lor-inventory-v1.getCards]
 //
 // [lor-inventory-v1.getCards]: https://developer.riotgames.com/api-methods/#lor-inventory-v1/GET_getCards
-func (endpoint *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, authorization string) ([]InventoryCardV1DTO, error) {
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
+func (endpoint *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute, accessToken string) ([]InventoryCardV1DTO, error) {
 	logger := endpoint.internal.Logger("LOR_InventoryV1_Cards")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lor/inventory/v1/cards/me"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lor-inventory-v1.getCards", nil)
@@ -121,7 +116,9 @@ func (endpoint *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute,
 		return nil, err
 	}
 	request.Request.Header = request.Request.Header.Clone()
-	request.Request.Header.Add("Authorization", authorization)
+	request.Request.Header.Del("X-Riot-Token")
+	headerValue := []string{"Bearer ", accessToken}
+	request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
 	var data []InventoryCardV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
@@ -142,7 +139,7 @@ type MatchV1 struct {
 // Get match by id
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //   - matchId
 //
 // # Riot API Reference
@@ -168,7 +165,7 @@ func (endpoint *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matc
 // Get a list of match ids by PUUID
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //   - puuid
 //
 // # Riot API Reference
@@ -203,7 +200,7 @@ type RankedV1 struct {
 // Get the players in Master tier.
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //
 // # Riot API Reference
 //
@@ -237,7 +234,7 @@ type StatusV1 struct {
 // Get Legends of Runeterra status for the given platform.
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //
 // # Riot API Reference
 //

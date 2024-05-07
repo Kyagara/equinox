@@ -44,7 +44,7 @@ Using WSL2 on a Ryzen 7 2700.
 | ParallelTestRateLimit              |     100 | 100028115 |     2813 |        31 |
 | ParallelSummonerByPUUID            |  354766 |      3285 |     1496 |        17 |
 | ParallelRedisCachedSummonerByPUUID |  131782 |      9168 |     1213 |        14 |
-| ParallelSummonerByAccessToken      |  280219 |      4000 |     2144 |        25 |
+| ParallelSummonerByAccessToken      |  272334 |      4571 |     2178 |        26 |
 
 ## Integration
 
