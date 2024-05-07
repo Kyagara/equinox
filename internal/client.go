@@ -131,9 +131,10 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		return ErrContextIsNil
 	}
 
+	revalidate := ctx.Value(api.Revalidate)
 	key := GetCacheKey(equinoxReq)
 
-	if c.IsCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
+	if c.IsCacheEnabled && equinoxReq.Request.Method == http.MethodGet && revalidate == nil {
 		item, err := c.cache.Get(ctx, key)
 		if err != nil {
 			equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
@@ -209,7 +210,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	return nil
 }
 
-// Executes a 'EquinoxRequest', skips cache check and returns []byte.
+// Executes a 'EquinoxRequest', skips checking cache and returns []byte.
 func (c *Client) ExecuteBytes(ctx context.Context, equinoxReq api.EquinoxRequest) ([]byte, error) {
 	equinoxReq.Logger.Trace().Msg("ExecuteBytes")
 
