@@ -146,7 +146,7 @@ func BenchmarkInternalExecuteBytes(b *testing.B) {
 	}
 }
 
-func BenchmarkInternalURLWithAuthorizationHash(b *testing.B) {
+func BenchmarkInternalGetCacheKey(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -165,13 +165,15 @@ func BenchmarkInternalURLWithAuthorizationHash(b *testing.B) {
 
 	equinoxReq := api.EquinoxRequest{Request: req}
 	equinoxReq.URL = req.URL.String()
-	req.Header.Set("Authorization", "7267ee00-5696-47b8-9cae-8db3d49c8c33")
+
+	// Random JWT I asked ChatGPT, its invalid, also around 300 characters longer than the access token I used for testing.
+	req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghij")
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		url := internal.GetURLWithAuthorizationHash(equinoxReq)
-		if url != "http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d" {
-			b.Fatalf("URL != http://example.com/path-45da11db1ebd17ee0c32aca62e08923ea4f15590058ff1e15661bc13ed33df9d, got: %s", url)
+		url := internal.GetCacheKey(equinoxReq)
+		if url != "http://example.com/path-ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7" {
+			b.Fatalf("URL != http://example.com/path-ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7, got: %s", url)
 		}
 	}
 }
