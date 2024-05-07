@@ -40,5 +40,4 @@ go run . -update
 ## Todo
 
 - Improve flow, currently a lot of functions are being reused and edge cases that might pop up can be really annoying to fix.
-- Add checks for required fields (queries and headers), returning errors if they are missing, for now only Authorization headers are required so it's not a big deal.
 - Generating code may allow for some performance improvements.

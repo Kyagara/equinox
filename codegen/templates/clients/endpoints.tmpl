@@ -29,11 +29,6 @@ type {{ StructName }} struct {
 // {{ Description|safe }}
 {%- endfor %}
 func (endpoint *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ Method.MethodReturnTuple }} {
-{%- if Method.Headers|length > 0 %}
-    {%- for HeaderCheck in Method.HeaderChecks sorted %}
-    {{ HeaderCheck|safe }}
-    {%- endfor %}
-{%- endif %}
     logger := endpoint.internal.Logger("{{ NormalizedClientName + "_" + StructName + "_" + Method.Name }}")
     urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, {{ Method.URLPath|safe }}}
     request, err := endpoint.internal.Request(ctx, logger, http.Method{{ Method.HTTPMethod }}, urlComponents, "{{ Method.OperationID }}", {{ Method.Body }})
@@ -49,12 +44,12 @@ func (endpoint *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ M
 {%- if Method.Queries|length > 0 %}
     request.Request.URL.RawQuery = values.Encode()
 {%- endif %}
-{%- if Method.Headers|length > 0 %}
+{%- if Method.IsRSO %}
     request.Request.Header = request.Request.Header.Clone()
+    request.Request.Header.Del("X-Riot-Token")
+    headerValue := []string{"Bearer ", accessToken}
+    request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
 {%- endif %}
-{%- for HeaderParam in Method.Headers sorted %}
-    {{ HeaderParam|safe }}
-{%- endfor %}
 {%- if Method.HasReturn %}
     var data {{ Method.ReturnType }}
 {%- endif %}

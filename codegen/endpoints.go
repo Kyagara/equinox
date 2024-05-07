@@ -71,10 +71,9 @@ type Methods struct {
 	URLPath           string
 	Body              string
 	Description       []string
-	Headers           []string
-	HeaderChecks      []string
 	Queries           []string
 	HasReturn         bool
+	IsRSO             bool
 }
 
 func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Methods {
@@ -98,6 +97,7 @@ func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Meth
 
 				methodName := getMethodName(operationID)
 				resp200 := operation.Get("responses.200")
+				isRso := operation.Get("security").Exists() && operation.Get("security.0.rso").Exists()
 
 				var returnType string
 				if resp200.Exists() && resp200.Get("content").Exists() {
@@ -116,6 +116,10 @@ func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Meth
 					"route " + normalizedRoute + "Route",
 				}
 
+				if isRso {
+					argBuilder = append(argBuilder, "accessToken string")
+				}
+
 				body := "nil"
 				if bodyType != "" {
 					argBuilder = append(argBuilder, "body *"+bodyType)
@@ -124,14 +128,12 @@ func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Meth
 
 				allParams := operation.Get("parameters")
 				var queryParams []gjson.Result
-				var headerParams []gjson.Result
 				var routeArgument string
 				if allParams.Exists() {
 					pathParams := getSortedParams(allParams, "path", route)
 					queryParams = getParams(allParams, "query")
-					headerParams = getParams(allParams, "header")
 
-					for _, paramList := range [][]gjson.Result{pathParams, queryParams, headerParams} {
+					for _, paramList := range [][]gjson.Result{pathParams, queryParams} {
 						for _, param := range paramList {
 							argBuilder = append(argBuilder,
 								normalizePropName(param.Get("name").String())+
@@ -160,8 +162,14 @@ func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Meth
 				descArr = append(descArr,
 					"",
 					"# Parameters",
-					"   - route : Route to query.",
+					"   - route: Route to query.",
 				)
+
+				if isRso {
+					descArr = append(descArr,
+						"   - accessToken: RSO access token.",
+					)
+				}
 
 				if len(allParams.Array()) > 0 {
 					for _, param := range allParams.Array() {
@@ -173,7 +181,7 @@ func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Meth
 
 						desc := param.Get("description").String()
 						if desc != "" {
-							requiredStr += " :"
+							requiredStr += ":"
 						}
 
 						descArr = append(descArr,
@@ -224,8 +232,7 @@ func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Meth
 					ValueReturn:       valueReturn,
 					ErrorReturn:       errorReturn,
 					Queries:           formatAddQueryParam(queryParams),
-					Headers:           formatAddHeaderParam(headerParams),
-					HeaderChecks:      formatAddHeadersChecks(headerParams, nilValue),
+					IsRSO:             isRso,
 				})
 			}
 		}
@@ -334,31 +341,6 @@ func formatRouteArgument(pathParams []gjson.Result, route string) string {
 		result = result[:len(result)-3]
 	}
 	return result
-}
-
-func formatAddHeadersChecks(params []gjson.Result, nilValue string) []string {
-	checks := make([]string, 0, len(params))
-	for _, param := range params {
-		name := normalizePropName(param.Get("name").String())
-		checks = append(checks, fmt.Sprintf(
-			`if %s == "" {
-    return %s, fmt.Errorf("'%s' header is required")
-}`, name, nilValue, name))
-	}
-	return checks
-}
-
-func formatAddHeaderParam(params []gjson.Result) []string {
-	headers := make([]string, 0, len(params))
-	for _, param := range params {
-		name := normalizePropName(param.Get("name").String())
-		headerName := name
-		if headerName == "authorization" {
-			headerName = "Authorization"
-		}
-		headers = append(headers, fmt.Sprintf(`request.Request.Header.Add("%s", %s)`, headerName, name))
-	}
-	return headers
 }
 
 func formatAddQueryParam(params []gjson.Result) []string {

@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = a70746fcf353ba0ad0aceceafcc70d4ba8de4431
+// Spec version = 92f57e3e7279cc02ec6a5ce6665ca08354d6a178
 
 import (
 	"context"
@@ -32,7 +32,7 @@ type ContentV1 struct {
 // Get content optionally filtered by locale
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //   - locale (optional)
 //
 // # Riot API Reference
@@ -72,7 +72,7 @@ type MatchV1 struct {
 // Get match by id
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //   - matchId
 //
 // # Riot API Reference
@@ -98,7 +98,7 @@ func (endpoint *MatchV1) ByID(ctx context.Context, route PlatformRoute, matchId 
 // Get matchlist for games played by puuid
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //   - puuid
 //
 // # Riot API Reference
@@ -128,7 +128,7 @@ func (endpoint *MatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, p
 // Returns a list of match ids that have completed in the last 10 minutes for live regions and 12 hours for the esports routing value. NA/LATAM/BR share a match history deployment. As such, recent matches will return a combined list of matches from those three regions. Requests are load balanced so you may see some inconsistencies as matches are added/removed from the list.
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //   - queue
 //
 // # Riot API Reference
@@ -163,10 +163,10 @@ type RankedV1 struct {
 // Get leaderboard for the competitive queue
 //
 // # Parameters
-//   - route : Route to query.
-//   - actId : Act ids can be found using the val-content API.
-//   - size (optional) : Defaults to 200. Valid values: 1 to 200.
-//   - startIndex (optional) : Defaults to 0.
+//   - route: Route to query.
+//   - actId: Act ids can be found using the val-content API.
+//   - size (optional): Defaults to 200. Valid values: 1 to 200.
+//   - startIndex (optional): Defaults to 0.
 //
 // # Riot API Reference
 //
@@ -208,7 +208,7 @@ type StatusV1 struct {
 // Get VALORANT status for the given platform.
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //
 // # Riot API Reference
 //

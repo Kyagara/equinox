@@ -8,12 +8,12 @@ package riot
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = a70746fcf353ba0ad0aceceafcc70d4ba8de4431
+// Spec version = 92f57e3e7279cc02ec6a5ce6665ca08354d6a178
 
 import (
 	"context"
-	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/Kyagara/equinox/v2/api"
 	"github.com/Kyagara/equinox/v2/internal"
@@ -31,7 +31,7 @@ type AccountV1 struct {
 // Get active shard for a player
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //   - game
 //   - puuid
 //
@@ -58,18 +58,15 @@ func (endpoint *AccountV1) ActiveShard(ctx context.Context, route api.RegionalRo
 // Get account by access token
 //
 // # Parameters
-//   - route : Route to query.
-//   - Authorization
+//   - route: Route to query.
+//   - accessToken: RSO access token.
 //
 // # Riot API Reference
 //
 // [account-v1.getByAccessToken]
 //
 // [account-v1.getByAccessToken]: https://developer.riotgames.com/api-methods/#account-v1/GET_getByAccessToken
-func (endpoint *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, authorization string) (*AccountV1DTO, error) {
-	if authorization == "" {
-		return nil, fmt.Errorf("'authorization' header is required")
-	}
+func (endpoint *AccountV1) ByAccessToken(ctx context.Context, route api.RegionalRoute, accessToken string) (*AccountV1DTO, error) {
 	logger := endpoint.internal.Logger("Riot_AccountV1_ByAccessToken")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/riot/account/v1/accounts/me"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "account-v1.getByAccessToken", nil)
@@ -77,7 +74,9 @@ func (endpoint *AccountV1) ByAccessToken(ctx context.Context, route api.Regional
 		return nil, err
 	}
 	request.Request.Header = request.Request.Header.Clone()
-	request.Request.Header.Add("Authorization", authorization)
+	request.Request.Header.Del("X-Riot-Token")
+	headerValue := []string{"Bearer ", accessToken}
+	request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
 	var data AccountV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
@@ -89,7 +88,7 @@ func (endpoint *AccountV1) ByAccessToken(ctx context.Context, route api.Regional
 // Get account by puuid
 //
 // # Parameters
-//   - route : Route to query.
+//   - route: Route to query.
 //   - puuid
 //
 // # Riot API Reference
@@ -115,9 +114,9 @@ func (endpoint *AccountV1) ByPUUID(ctx context.Context, route api.RegionalRoute,
 // Get account by riot id
 //
 // # Parameters
-//   - route : Route to query.
-//   - tagLine : When querying for a player by their riot id, the gameName and tagLine query params are required.
-//   - gameName : When querying for a player by their riot id, the gameName and tagLine query params are required.
+//   - route: Route to query.
+//   - tagLine: When querying for a player by their riot id, the gameName and tagLine query params are required.
+//   - gameName: When querying for a player by their riot id, the gameName and tagLine query params are required.
 //
 // # Riot API Reference
 //
