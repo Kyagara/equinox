@@ -16,7 +16,7 @@ type InternalRateLimitStore struct {
 	mutex            sync.Mutex
 }
 
-func (r *InternalRateLimitStore) Reserve(ctx context.Context, logger zerolog.Logger, route string, methodID string) error {
+func (r *InternalRateLimitStore) Reserve(ctx context.Context, logger zerolog.Logger, route string, methodID string, isRSO bool) error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -32,8 +32,10 @@ func (r *InternalRateLimitStore) Reserve(ctx context.Context, logger zerolog.Log
 		limits.Methods[methodID] = methods
 	}
 
-	if err := limits.App.CheckBuckets(ctx, logger, route); err != nil {
-		return err
+	if !isRSO {
+		if err := limits.App.CheckBuckets(ctx, logger, route); err != nil {
+			return err
+		}
 	}
 
 	return methods.CheckBuckets(ctx, logger, route)

@@ -23,7 +23,7 @@ func TestNewInternalRateLimit(t *testing.T) {
 	require.Equal(t, time.Second, rateLimit.IntervalOverhead)
 	require.True(t, rateLimit.Enabled)
 
-	err := rateLimit.Reserve(context.Background(), util.NewTestLogger(), "route", "method")
+	err := rateLimit.Reserve(context.Background(), util.NewTestLogger(), "route", "method", false)
 	require.NoError(t, err)
 }
 
@@ -119,7 +119,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		r := ratelimit.NewInternalRateLimit(0.99, time.Second)
 
 		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.NoError(t, err)
 
 		headers := http.Header{
@@ -132,7 +132,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		require.NoError(t, err)
 
 		// App rate limited
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.NoError(t, err)
 
 		headers = http.Header{
@@ -145,7 +145,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		require.NoError(t, err)
 
 		// Method rate limited
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.NoError(t, err)
 	})
 
@@ -157,7 +157,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		r := ratelimit.NewInternalRateLimit(0.99, time.Second)
 
 		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.NoError(t, err)
 
 		headers := http.Header{
@@ -169,7 +169,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, time.Duration(0))
 		require.NoError(t, err)
 
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.NoError(t, err)
 	})
 
@@ -181,7 +181,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		r := ratelimit.NewInternalRateLimit(0.99, time.Second)
 
 		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.NoError(t, err)
 
 		headers := http.Header{
@@ -194,7 +194,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, time.Duration(0))
 		require.NoError(t, err)
 
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.NoError(t, err)
 
 		headers = http.Header{
@@ -208,7 +208,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, 2*time.Second)
 		require.NoError(t, err)
 
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.NoError(t, err)
 
 		headers = http.Header{
@@ -222,7 +222,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		err = r.Update(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, headers, 2*time.Second)
 		require.NoError(t, err)
 
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.NoError(t, err)
 	})
 
@@ -233,7 +233,7 @@ func TestReserveAndUpdate(t *testing.T) {
 		r := ratelimit.NewInternalRateLimit(0.99, time.Second)
 
 		// Initializing the rate limit
-		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.NoError(t, err)
 
 		headers := http.Header{
@@ -246,7 +246,7 @@ func TestReserveAndUpdate(t *testing.T) {
 
 		ctx, c := context.WithDeadline(ctx, time.Now().Add(time.Second))
 		defer c()
-		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err = r.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, false)
 		require.Error(t, err)
 	})
 }

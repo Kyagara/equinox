@@ -132,7 +132,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	}
 
 	revalidate := ctx.Value(api.Revalidate)
-	key := GetCacheKey(equinoxReq)
+	key, isRSO := GetCacheKey(equinoxReq)
 
 	if c.IsCacheEnabled && equinoxReq.Request.Method == http.MethodGet && revalidate == nil {
 		item, err := c.cache.Get(ctx, key)
@@ -151,7 +151,7 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	}
 
 	if c.IsRateLimitEnabled {
-		err := c.ratelimit.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		err := c.ratelimit.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, isRSO)
 		if err != nil {
 			return err
 		}
@@ -219,7 +219,8 @@ func (c *Client) ExecuteBytes(ctx context.Context, equinoxReq api.EquinoxRequest
 	}
 
 	if c.IsRateLimitEnabled {
-		err := c.ratelimit.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID)
+		isRSO := equinoxReq.Request.Header.Get("Authorization") != ""
+		err := c.ratelimit.Reserve(ctx, equinoxReq.Logger, equinoxReq.Route, equinoxReq.MethodID, isRSO)
 		if err != nil {
 			return nil, err
 		}
@@ -315,7 +316,7 @@ func (c *Client) checkResponse(ctx context.Context, equinoxReq api.EquinoxReques
 }
 
 // Returns the Cache key with a hash of the access token if it exists.
-func GetCacheKey(req api.EquinoxRequest) string {
+func GetCacheKey(req api.EquinoxRequest) (string, bool) {
 	// I plan to use xxhash instead of sha256 in the future since it is already imported by `go-redis`.
 	//
 	// Issues with this:
@@ -336,12 +337,12 @@ func GetCacheKey(req api.EquinoxRequest) string {
 
 	auth := req.Request.Header.Get("Authorization")
 	if auth == "" {
-		return req.URL
+		return req.URL, false
 	}
 
 	hash := sha256.New()
 	_, _ = hash.Write([]byte(auth))
 	hashedAuth := hash.Sum(nil)
 
-	return fmt.Sprintf("%s-%x", req.URL, hashedAuth)
+	return fmt.Sprintf("%s-%x", req.URL, hashedAuth), true
 }

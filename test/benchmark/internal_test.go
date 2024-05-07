@@ -171,9 +171,12 @@ func BenchmarkInternalGetCacheKey(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		url := internal.GetCacheKey(equinoxReq)
+		url, isRSO := internal.GetCacheKey(equinoxReq)
 		if url != "http://example.com/path-ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7" {
 			b.Fatalf("URL != http://example.com/path-ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7, got: %s", url)
+		}
+		if !isRSO {
+			b.Fatal("isRSO != true")
 		}
 	}
 }
