@@ -44,7 +44,7 @@ type Store interface {
 	// Reserves one request for the App and Method buckets in a route.
 	//
 	// If rate limited, will block until the next bucket reset.
-	Reserve(ctx context.Context, logger zerolog.Logger, route string, methodID string) error
+	Reserve(ctx context.Context, logger zerolog.Logger, route string, methodID string, isRSO bool) error
 
 	// Creates new buckets in a route with the limits provided in the response headers.
 	Update(ctx context.Context, logger zerolog.Logger, route string, methodID string, headers http.Header, retryAfter time.Duration) error
@@ -82,11 +82,11 @@ func NewInternalRateLimit(limitUsageFactor float64, intervalOverhead time.Durati
 	}
 }
 
-func (r *RateLimit) Reserve(ctx context.Context, logger zerolog.Logger, route string, methodID string) error {
+func (r *RateLimit) Reserve(ctx context.Context, logger zerolog.Logger, route string, methodID string, isRSO bool) error {
 	if !r.Enabled {
 		return ErrRateLimitIsDisabled
 	}
-	return r.store.Reserve(ctx, logger, route, methodID)
+	return r.store.Reserve(ctx, logger, route, methodID, isRSO)
 }
 
 func (r *RateLimit) Update(ctx context.Context, logger zerolog.Logger, route string, methodID string, headers http.Header, retryAfter time.Duration) error {
