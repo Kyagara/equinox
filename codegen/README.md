@@ -14,6 +14,11 @@ Changes had to be made to translate the Rust output to Golang (I miss Option<>),
 
 Changes includes all libraries used, such as pongo2 for templating, strcase for case conversion and gjson for navigating through the JSON files.
 
+## Todo
+
+- Improve flow, currently a lot of functions are being reused and edge cases that might pop up can be really annoying to fix.
+- Generating code may allow for some performance improvements.
+
 ## Usage
 
 First, install `betteralign` and `goimports`:
@@ -36,8 +41,3 @@ UPDATE_SPECS=1 go generate .
 # or from inside the codegen folder
 go run . -update
 ```
-
-## Todo
-
-- Improve flow, currently a lot of functions are being reused and edge cases that might pop up can be really annoying to fix.
-- Generating code may allow for some performance improvements.
