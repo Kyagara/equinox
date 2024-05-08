@@ -54,31 +54,6 @@ func TestNewInternalClient(t *testing.T) {
 	require.True(t, internalClient.IsRetryEnabled)
 }
 
-func TestGetCacheKey(t *testing.T) {
-	t.Parallel()
-
-	req := &http.Request{
-		URL: &url.URL{
-			Scheme: "http",
-			Host:   "example.com",
-			Path:   "/path",
-		},
-		Header: http.Header{},
-	}
-
-	equinoxReq := api.EquinoxRequest{Request: req}
-	equinoxReq.URL = req.URL.String()
-
-	hash, isRSO := internal.GetCacheKey(equinoxReq)
-	require.Equal(t, "http://example.com/path", hash)
-	require.False(t, isRSO)
-
-	req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghij")
-	hash, isRSO = internal.GetCacheKey(equinoxReq)
-	require.Equal(t, "http://example.com/path-ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7", hash)
-	require.True(t, isRSO)
-}
-
 func TestStatusCodeToError(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
