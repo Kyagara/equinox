@@ -3,7 +3,6 @@ package internal
 import (
 	"bytes"
 	"context"
-	"crypto/sha256"
 	"errors"
 	"fmt"
 	"io"
@@ -124,6 +123,8 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod 
 }
 
 // Executes a 'EquinoxRequest', checks cache and unmarshals the response into 'target'.
+//
+// ctx accepts 'api.ExecuteOptions', 'api.Revalidate' for example can be used to revalidate the cache, forcing an update to it.
 func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, target any) error {
 	equinoxReq.Logger.Trace().Msg("Execute")
 
@@ -131,22 +132,24 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		return ErrContextIsNil
 	}
 
-	revalidate := ctx.Value(api.Revalidate)
-	key, isRSO := GetCacheKey(equinoxReq)
+	key, isRSO := cache.GetCacheKey(equinoxReq.URL, equinoxReq.Request.Header.Get("Authorization"))
 
-	if c.IsCacheEnabled && equinoxReq.Request.Method == http.MethodGet && revalidate == nil {
-		item, err := c.cache.Get(ctx, key)
-		if err != nil {
-			equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
-			return err
-		}
+	if c.IsCacheEnabled && equinoxReq.Request.Method == http.MethodGet {
+		revalidate := ctx.Value(api.Revalidate)
+		if revalidate == nil {
+			item, err := c.cache.Get(ctx, key)
+			if err != nil {
+				equinoxReq.Logger.Error().Err(err).Msg("Error retrieving cached response")
+				return err
+			}
 
-		if item != nil {
-			equinoxReq.Logger.Debug().Str("route", equinoxReq.Route).Msg("Cache hit")
+			if item != nil {
+				equinoxReq.Logger.Debug().Str("route", equinoxReq.Route).Msg("Cache hit")
 
-			// Only valid json is cached, so unmarshal shouldn't fail
-			_ = jsonv2.Unmarshal(item, target)
-			return nil
+				// Only valid json is cached, so unmarshal shouldn't fail
+				_ = jsonv2.Unmarshal(item, target)
+				return nil
+			}
 		}
 	}
 
@@ -201,6 +204,8 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 		return nil
 	}
 
+	// UnmarshalRead any other http methods
+
 	err = jsonv2.UnmarshalRead(response.Body, target)
 	if err != nil {
 		equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling response")
@@ -242,7 +247,7 @@ func (c *Client) ExecuteBytes(ctx context.Context, equinoxReq api.EquinoxRequest
 	return body, nil
 }
 
-// Sends the request, retries if enabled.
+// Sends the request using the internal http.Client, retries if enabled.
 func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.Response, error) {
 	equinoxReq.Logger.Trace().Msg("Do")
 
@@ -258,6 +263,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 
 		delay, retryable, err := c.checkResponse(ctx, equinoxReq, response)
 		if err == nil && delay == 0 {
+			equinoxReq.Logger.Trace().Str("route", equinoxReq.Route).Msg("Success")
 			return response, nil
 		}
 
@@ -281,7 +287,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 	return nil, fmt.Errorf("%w: %w", ErrMaxRetries, httpErr)
 }
 
-// Checks the response, check if it contains a 'Retry-After' header and whether it should be retried (StatusCode within range 429-599).
+// Checks if the response contains a 'Retry-After' header and if it should be retried (StatusCode within range 429-599).
 func (c *Client) checkResponse(ctx context.Context, equinoxReq api.EquinoxRequest, response *http.Response) (time.Duration, bool, error) {
 	// Delay in milliseconds
 	var retryAfter time.Duration
@@ -313,36 +319,4 @@ func (c *Client) checkResponse(ctx context.Context, equinoxReq api.EquinoxReques
 	}
 
 	return 0, false, fmt.Errorf("unexpected status code: %d", response.StatusCode)
-}
-
-// Returns the Cache key with a hash of the access token if it exists.
-func GetCacheKey(req api.EquinoxRequest) (string, bool) {
-	// I plan to use xxhash instead of sha256 in the future since it is already imported by `go-redis`.
-	//
-	// Issues with this:
-	// 	- I want to keep the Cache accessible to other clients without having to add hashing to them just to reuse the Cache.
-	//	- I don't know about xxhash support in other languages.
-	//	- Some operations(in go) use unsafe, can be avoided but it would be slower.
-	//
-	// Cache keys should be URLs with the exception of the hashed portion included in methods requiring `accessToken`, meaning,
-	// you would need to hash something to get the Cache key ONLY for those methods.
-	//
-	// Example:
-	//
-	// "https://asia.api.riotgames.com/riot/account/v1/accounts/me-ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7"
-	//
-	//	- URL = "https://asia.api.riotgames.com/riot/account/v1/accounts/me"
-	//	- Separator = "-"
-	//	- Hash of the access token = "ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7"
-
-	auth := req.Request.Header.Get("Authorization")
-	if auth == "" {
-		return req.URL, false
-	}
-
-	hash := sha256.New()
-	_, _ = hash.Write([]byte(auth))
-	hashedAuth := hash.Sum(nil)
-
-	return fmt.Sprintf("%s-%x", req.URL, hashedAuth), true
 }
