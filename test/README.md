@@ -2,10 +2,9 @@
 
 ## Benchmark
 
-> [!WARNING]
-> Benchmarks are not automated, take the results in the code comments with a grain of salt.
-
 Keep in mind that since requests are mocked using `httpmock`, results (time, bytes, allocs) will be different from production, specially since you can't make 300000 requests in 1 second to the Riot Games API.
+
+Benchmarks clients should be using a configuration close to the one used in production, some are mainly used for testing purposes, check comments.
 
 Benchmarks are separated in four files: parallel, data, cache and internal.
 
@@ -13,10 +12,6 @@ Benchmarks are separated in four files: parallel, data, cache and internal.
 - cache: Cache benchmarks for both BigCache and Redis.
 - data: Benchmarks that use data from the live Riot Games API.
 - internal: Focused on InternalClient functions.
-
-Benchmarks clients should be using a configuration close to the one used in production.
-
-Some benchmarks are mainly used for testing purposes, some have notes in their descriptions.
 
 Command to run benchmarks and generate a markdown table:
 
@@ -30,28 +25,29 @@ Using WSL2 on a Ryzen 7 2700.
 
 | Benchmark                          |     ops |     ns/op | bytes/op | allocs/op |
 | ---------------------------------- | ------: | --------: | -------: | --------: |
-| Internals                          |  325980 |      3739 |     1418 |        17 |
-| InternalRequest                    | 1000000 |      1105 |      560 |         4 |
-| InternalExecute                    |  451694 |      2495 |      857 |        13 |
-| InternalExecuteBytes               |  594973 |      2035 |     1352 |        13 |
-| InternalGetCacheKey                |  758509 |      1585 |     1321 |         5 |
-| CacheDisabledSummonerByPUUID       |  217107 |      5299 |     1499 |        17 |
-| CacheBigCacheSummonerByPUUID       |  339098 |      3470 |     1008 |         7 |
-| CacheRedisSummonerByPUUID          |   22164 |     56318 |     1212 |        14 |
-| DataMatchByID                      |    1869 |    684389 |    70330 |       166 |
-| DataMatchTimeline                  |     180 |   6420727 |  1624715 |      1681 |
-| DataVALContentAllLocales           |      18 |  62570122 | 14865476 |    155491 |
-| ParallelTestRateLimit              |     100 | 100028115 |     2813 |        31 |
-| ParallelSummonerByPUUID            |  354766 |      3285 |     1496 |        17 |
-| ParallelRedisCachedSummonerByPUUID |  131782 |      9168 |     1213 |        14 |
-| ParallelSummonerByAccessToken      |  272334 |      4571 |     2178 |        26 |
+| Internals                          |  314580 |      3791 |     1418 |        17 |
+| InternalRequest                    | 1086412 |      1101 |      560 |         4 |
+| InternalExecute                    |  462622 |      2490 |      857 |        13 |
+| InternalExecuteBytes               |  547890 |      2070 |     1352 |        13 |
+| CacheDisabledSummonerByPUUID       |  214899 |      5494 |     1498 |        17 |
+| CacheBigCacheSummonerByPUUID       |  336384 |      3587 |     1008 |         7 |
+| CacheRedisSummonerByPUUID          |   21764 |     56377 |     1212 |        14 |
+| CacheGetKey                        |  803038 |      1848 |     1320 |         5 |
+| DataMatchByID                      |    1744 |    658620 |    70331 |       166 |
+| DataMatchTimeline                  |     187 |   6577700 |  1624708 |      1681 |
+| DataVALContentAllLocales           |      16 |  64658314 | 14866372 |    155492 |
+| ParallelTestRateLimit              |     100 | 100028519 |     3001 |        31 |
+| ParallelSummonerByPUUID            |  351018 |      3563 |     1496 |        17 |
+| ParallelRedisCachedSummonerByPUUID |  128907 |      9666 |     1213 |        14 |
+| ParallelSummonerByAccessToken      |  308845 |      4221 |     2152 |        26 |
+| ParallelMatchListByPUUID           |  266372 |      4869 |     2768 |        32 |
 
 ## Integration
 
 > [!NOTE]
-> Integration tests are meant to be run manually.
+> Integration tests are only meant to be run manually.
 
-The objective of these tests is to test some methods from different games against the live Riot Games API, making sure the different HTTP methods are working as intended. Ideally, these tests should only contain methods allowed by a development key and should be only a handful of tests to avoid getting rate limited.
+The objective of these tests is to test some methods from different games against the live Riot Games API, making sure the different HTTP methods are working as intended.
 
 Run tests using:
 
