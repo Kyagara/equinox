@@ -49,7 +49,7 @@ func (endpoint *DeckV1) CreateDeck(ctx context.Context, route api.RegionalRoute,
 	request.Request.Header = request.Request.Header.Clone()
 	request.Request.Header.Del("X-Riot-Token")
 	headerValue := []string{"Bearer ", accessToken}
-	request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
+	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
 	var data string
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
@@ -79,7 +79,7 @@ func (endpoint *DeckV1) Decks(ctx context.Context, route api.RegionalRoute, acce
 	request.Request.Header = request.Request.Header.Clone()
 	request.Request.Header.Del("X-Riot-Token")
 	headerValue := []string{"Bearer ", accessToken}
-	request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
+	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
 	var data []DeckV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
@@ -118,7 +118,7 @@ func (endpoint *InventoryV1) Cards(ctx context.Context, route api.RegionalRoute,
 	request.Request.Header = request.Request.Header.Clone()
 	request.Request.Header.Del("X-Riot-Token")
 	headerValue := []string{"Bearer ", accessToken}
-	request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
+	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
 	var data []InventoryCardV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {

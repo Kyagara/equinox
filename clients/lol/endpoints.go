@@ -154,7 +154,7 @@ func (endpoint *ChallengesV1) ChallengeLeaderboards(ctx context.Context, route P
 	}
 	values := url.Values{}
 	if limit != -1 {
-		values.Add("limit", strconv.FormatInt(int64(limit), 10))
+		values.Set("limit", strconv.FormatInt(int64(limit), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []ChallengesApexPlayerInfoV1DTO
@@ -300,7 +300,7 @@ func (endpoint *ChampionMasteryV4) TopMasteriesByPUUID(ctx context.Context, rout
 	}
 	values := url.Values{}
 	if count != -1 {
-		values.Add("count", strconv.FormatInt(int64(count), 10))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []ChampionMasteryV4DTO
@@ -519,7 +519,7 @@ func (endpoint *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, q
 	}
 	values := url.Values{}
 	if page != -1 {
-		values.Add("page", strconv.FormatInt(int64(page), 10))
+		values.Set("page", strconv.FormatInt(int64(page), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []LeagueExpLeagueEntryV4DTO
@@ -614,7 +614,7 @@ func (endpoint *LeagueV4) Entries(ctx context.Context, route PlatformRoute, queu
 	}
 	values := url.Values{}
 	if page != -1 {
-		values.Add("page", strconv.FormatInt(int64(page), 10))
+		values.Set("page", strconv.FormatInt(int64(page), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []LeagueEntryV4DTO
@@ -764,22 +764,22 @@ func (endpoint *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRout
 	}
 	values := url.Values{}
 	if count != -1 {
-		values.Add("count", strconv.FormatInt(int64(count), 10))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	if endTime != -1 {
-		values.Add("endTime", strconv.FormatInt(endTime, 10))
+		values.Set("endTime", strconv.FormatInt(endTime, 10))
 	}
 	if queue != -1 {
-		values.Add("queue", strconv.FormatInt(int64(queue), 10))
+		values.Set("queue", strconv.FormatInt(int64(queue), 10))
 	}
 	if start != -1 {
-		values.Add("start", strconv.FormatInt(int64(start), 10))
+		values.Set("start", strconv.FormatInt(int64(start), 10))
 	}
 	if startTime != -1 {
-		values.Add("startTime", strconv.FormatInt(startTime, 10))
+		values.Set("startTime", strconv.FormatInt(startTime, 10))
 	}
 	if type_ != "" {
-		values.Add("type", type_)
+		values.Set("type", type_)
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []string
@@ -940,7 +940,7 @@ func (endpoint *SummonerV4) ByAccessToken(ctx context.Context, route PlatformRou
 	request.Request.Header = request.Request.Header.Clone()
 	request.Request.Header.Del("X-Riot-Token")
 	headerValue := []string{"Bearer ", accessToken}
-	request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
+	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
 	var data SummonerV4DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
@@ -1083,10 +1083,10 @@ func (endpoint *TournamentStubV5) CreateTournamentCode(ctx context.Context, rout
 	}
 	values := url.Values{}
 	if count != -1 {
-		values.Add("count", strconv.FormatInt(int64(count), 10))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	if tournamentId != -1 {
-		values.Add("tournamentId", strconv.FormatInt(tournamentId, 10))
+		values.Set("tournamentId", strconv.FormatInt(tournamentId, 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []string
@@ -1233,10 +1233,10 @@ func (endpoint *TournamentV5) CreateTournamentCode(ctx context.Context, route ap
 	}
 	values := url.Values{}
 	if count != -1 {
-		values.Add("count", strconv.FormatInt(int64(count), 10))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	if tournamentId != -1 {
-		values.Add("tournamentId", strconv.FormatInt(tournamentId, 10))
+		values.Set("tournamentId", strconv.FormatInt(tournamentId, 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []string

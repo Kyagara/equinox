@@ -76,7 +76,7 @@ func (endpoint *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformR
 	}
 	values := url.Values{}
 	if queue != "" {
-		values.Add("queue", queue)
+		values.Set("queue", queue)
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data LeagueListV1DTO
@@ -110,10 +110,10 @@ func (endpoint *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier
 	}
 	values := url.Values{}
 	if page != -1 {
-		values.Add("page", strconv.FormatInt(int64(page), 10))
+		values.Set("page", strconv.FormatInt(int64(page), 10))
 	}
 	if queue != "" {
-		values.Add("queue", queue)
+		values.Set("queue", queue)
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []LeagueEntryV1DTO
@@ -144,7 +144,7 @@ func (endpoint *LeagueV1) GrandmasterByQueue(ctx context.Context, route Platform
 	}
 	values := url.Values{}
 	if queue != "" {
-		values.Add("queue", queue)
+		values.Set("queue", queue)
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data LeagueListV1DTO
@@ -175,7 +175,7 @@ func (endpoint *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute
 	}
 	values := url.Values{}
 	if queue != "" {
-		values.Add("queue", queue)
+		values.Set("queue", queue)
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data LeagueListV1DTO
@@ -297,16 +297,16 @@ func (endpoint *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRout
 	}
 	values := url.Values{}
 	if count != -1 {
-		values.Add("count", strconv.FormatInt(int64(count), 10))
+		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	if endTime != -1 {
-		values.Add("endTime", strconv.FormatInt(endTime, 10))
+		values.Set("endTime", strconv.FormatInt(endTime, 10))
 	}
 	if start != -1 {
-		values.Add("start", strconv.FormatInt(int64(start), 10))
+		values.Set("start", strconv.FormatInt(int64(start), 10))
 	}
 	if startTime != -1 {
-		values.Add("startTime", strconv.FormatInt(startTime, 10))
+		values.Set("startTime", strconv.FormatInt(startTime, 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []string
@@ -441,7 +441,7 @@ func (endpoint *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRou
 	request.Request.Header = request.Request.Header.Clone()
 	request.Request.Header.Del("X-Riot-Token")
 	headerValue := []string{"Bearer ", accessToken}
-	request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
+	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
 	var data SummonerV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
