@@ -76,7 +76,7 @@ func (endpoint *AccountV1) ByAccessToken(ctx context.Context, route api.Regional
 	request.Request.Header = request.Request.Header.Clone()
 	request.Request.Header.Del("X-Riot-Token")
 	headerValue := []string{"Bearer ", accessToken}
-	request.Request.Header.Add("Authorization", strings.Join(headerValue, ""))
+	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
 	var data AccountV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {

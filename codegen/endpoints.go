@@ -383,7 +383,7 @@ func formatAddQueryParam(params []gjson.Result) []string {
 		}
 
 		queries = append(queries, fmt.Sprintf(`if %s {
-    values.Add("%s", %s)
+    values.Set("%s", %s)
 }`, condition, letHeaderName, value))
 	}
 	return queries

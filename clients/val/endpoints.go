@@ -49,7 +49,7 @@ func (endpoint *ContentV1) Content(ctx context.Context, route PlatformRoute, loc
 	}
 	values := url.Values{}
 	if locale != "" {
-		values.Add("locale", locale)
+		values.Set("locale", locale)
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data ContentV1DTO
@@ -182,10 +182,10 @@ func (endpoint *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, 
 	}
 	values := url.Values{}
 	if size != -1 {
-		values.Add("size", strconv.FormatInt(int64(size), 10))
+		values.Set("size", strconv.FormatInt(int64(size), 10))
 	}
 	if startIndex != -1 {
-		values.Add("startIndex", strconv.FormatInt(int64(startIndex), 10))
+		values.Set("startIndex", strconv.FormatInt(int64(startIndex), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data RankedLeaderboardV1DTO

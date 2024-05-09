@@ -53,7 +53,7 @@ func NewInternalClient(config api.EquinoxConfig, h *http.Client, c *cache.Cache,
 	}
 
 	if h == nil {
-		h = &http.Client{}
+		h = http.DefaultClient
 	}
 	if c == nil {
 		c = &cache.Cache{TTL: 0}
@@ -109,6 +109,8 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod 
 		return api.EquinoxRequest{}, err
 	}
 
+	request.Header = apiHeaders
+
 	equinoxReq := api.EquinoxRequest{
 		Logger:   logger,
 		Request:  request,
@@ -116,8 +118,6 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod 
 		Route:    urlComponents[1],
 		MethodID: methodID,
 	}
-
-	request.Header = apiHeaders
 
 	return equinoxReq, nil
 }
