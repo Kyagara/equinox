@@ -8,7 +8,6 @@ import (
 
 	"github.com/Kyagara/equinox/v2/ratelimit"
 	"github.com/Kyagara/equinox/v2/test/util"
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -26,14 +25,6 @@ func TestRateLimitMethods(t *testing.T) {
 
 	err = rateStore.Update(ctx, util.NewTestLogger(), "route", "method", http.Header{}, time.Duration(0))
 	require.Equal(t, ratelimit.ErrRateLimitIsDisabled, err)
-
-	rateStore.MarshalZerologObject(&zerolog.Event{})
-
-	rateStore.StoreType = ratelimit.InternalRateLimit
-	rateStore.Enabled = true
-
-	logger := util.NewTestLogger()
-	logger.Debug().Object("ratelimit", rateStore).Msg("Testing rate limit marshal")
 }
 
 func TestParseHeaders(t *testing.T) {

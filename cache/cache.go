@@ -10,7 +10,6 @@ import (
 
 	"github.com/allegro/bigcache/v3"
 	"github.com/redis/go-redis/v9"
-	"github.com/rs/zerolog"
 )
 
 var (
@@ -29,12 +28,6 @@ type Cache struct {
 	store     Store
 	StoreType StoreType
 	TTL       time.Duration
-}
-
-func (c Cache) MarshalZerologObject(encoder *zerolog.Event) {
-	if c.TTL > 0 {
-		encoder.Str("store", string(c.StoreType)).Dur("ttl", c.TTL)
-	}
 }
 
 type Store interface {

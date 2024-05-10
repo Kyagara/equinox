@@ -16,7 +16,7 @@ Benchmarks are separated in four files: parallel, data, cache and internal.
 Command to run benchmarks and generate a markdown table:
 
 ```bash
-go test -v ./test/benchmark/ -bench=. -benchmem | ./benchmark.sh
+go test ./test/benchmark/ -bench=. -benchmem -v | ./test/benchmark.sh
 ```
 
 ### Results
@@ -52,11 +52,11 @@ The objective of these tests is to test some methods from different games agains
 Run tests using:
 
 ```bash
-RIOT_GAMES_API_KEY=RGAPI... go test -v -tags=integration ./test/integration
+RIOT_GAMES_API_KEY=RGAPI... go test -tags=integration ./test/integration -v -failfast
 ```
 
 or if using PowerShell:
 
 ```powershell
-$env:RIOT_GAMES_API_KEY="RGAPI..."; go test -v -tags=integration ./test/integration; Remove-Item Env:RIOT_GAMES_API_KEY
+$env:RIOT_GAMES_API_KEY="RGAPI..."; go test -tags=integration ./test/integration -v -failfast; Remove-Item Env:RIOT_GAMES_API_KEY
 ```

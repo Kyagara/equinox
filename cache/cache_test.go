@@ -8,8 +8,6 @@ import (
 
 	"github.com/Kyagara/equinox/v2/api"
 	"github.com/Kyagara/equinox/v2/cache"
-	"github.com/Kyagara/equinox/v2/test/util"
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,14 +31,6 @@ func TestCacheMethods(t *testing.T) {
 	require.Equal(t, cache.ErrCacheIsDisabled, err)
 	err = cacheStore.Clear(ctx)
 	require.Equal(t, cache.ErrCacheIsDisabled, err)
-
-	cacheStore.MarshalZerologObject(&zerolog.Event{})
-
-	cacheStore.StoreType = cache.BigCache
-	cacheStore.TTL = 1
-
-	logger := util.NewTestLogger()
-	logger.Debug().Object("cache", cacheStore).Msg("Testing cache marshal")
 }
 
 func TestGetCacheKey(t *testing.T) {

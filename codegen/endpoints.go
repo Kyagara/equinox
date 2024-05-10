@@ -279,9 +279,6 @@ func formatRouteArgument(pathParams []gjson.Result, route string) string {
 	args := make([]string, len(pathParams))
 	for i, param := range pathParams {
 		name := param.Get("name").String()
-		if name == "Authorization" {
-			name = "authorization"
-		}
 		if name == "type" {
 			name = "type_"
 		}
@@ -393,9 +390,6 @@ func normalizePropName(propName string) string {
 	out := propName
 	if digitRegex.MatchString(out) {
 		out = "X" + out
-	}
-	if out == "Authorization" {
-		return "authorization"
 	}
 	if out == "type" {
 		return out + "_"
