@@ -16,7 +16,7 @@ func BenchmarkDataMatchByID(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://asia.api.riotgames.com/lol/match/v5/matches/KR_7014499581",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.json")))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/match.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
@@ -39,7 +39,7 @@ func BenchmarkDataMatchTimeline(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://asia.api.riotgames.com/lol/match/v5/matches/KR_7014499581/timeline",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.timeline.json")))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/match.timeline.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
@@ -63,7 +63,7 @@ func BenchmarkDataVALContentAllLocales(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://na.api.riotgames.com/val/content/v1/contents",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/val.content.all_locales.json")))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/val.content.all_locales.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
 

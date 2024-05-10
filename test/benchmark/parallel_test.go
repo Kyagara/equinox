@@ -23,12 +23,13 @@ func BenchmarkParallelTestRateLimit(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")).HeaderSet(http.Header{
-			ratelimit.APP_RATE_LIMIT_HEADER:          {"20:1,40:4"},
-			ratelimit.APP_RATE_LIMIT_COUNT_HEADER:    {"1:1,1:4"},
-			ratelimit.METHOD_RATE_LIMIT_HEADER:       {"1300:60"},
-			ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: {"1:60"},
-		}))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/summoner.json")).
+			HeaderSet(http.Header{
+				ratelimit.APP_RATE_LIMIT_HEADER:          {"20:1,40:4"},
+				ratelimit.APP_RATE_LIMIT_COUNT_HEADER:    {"1:1,1:4"},
+				ratelimit.METHOD_RATE_LIMIT_HEADER:       {"1300:60"},
+				ratelimit.METHOD_RATE_LIMIT_COUNT_HEADER: {"1:60"},
+			}))
 
 	config := equinox.DefaultConfig("RGAPI-TEST")
 	rateLimit := ratelimit.NewInternalRateLimit(0.99, time.Second)
@@ -58,7 +59,7 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/summoner.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
@@ -83,7 +84,7 @@ func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/summoner.json")))
 
 	ctx := context.Background()
 	redisConfig := &redis.Options{
@@ -123,7 +124,7 @@ func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/me",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/summoner.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
@@ -149,7 +150,7 @@ func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/puuid/ids?count=20&queue=420&type=ranked",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/match.list.json")))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/match.list.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
