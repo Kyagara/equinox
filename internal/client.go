@@ -167,6 +167,13 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 	}
 	defer response.Body.Close()
 
+	// There is only one endpoint method that is a Put and it also returns nothing.
+	// For now it should be okay to just return.
+	if equinoxReq.Request.Method == http.MethodPut {
+		return nil
+	}
+
+	// If cache is not enabled, the method does not matter, unmarshal and return
 	if !c.IsCacheEnabled {
 		err := jsonv2.UnmarshalRead(response.Body, target)
 		if err != nil {
@@ -179,39 +186,38 @@ func (c *Client) Execute(ctx context.Context, equinoxReq api.EquinoxRequest, tar
 
 	// Cache is enabled
 
-	if equinoxReq.Request.Method == http.MethodGet {
-		body, err := io.ReadAll(response.Body)
+	// Unmarshal and return any method that isn't Get
+	if equinoxReq.Request.Method != http.MethodGet {
+		err = jsonv2.UnmarshalRead(response.Body, target)
 		if err != nil {
-			equinoxReq.Logger.Error().Err(err).Msg("Error reading response")
+			equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling response")
 			return err
 		}
 
-		err = jsonv2.Unmarshal(body, target)
-		if err != nil {
-			equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling body")
-			return err
-		}
-
-		// Only cache valid json responses
-
-		err = c.cache.Set(ctx, key, body)
-		if err != nil {
-			equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
-			return err
-		}
-
-		equinoxReq.Logger.Debug().Str("route", equinoxReq.Route).Msg("Cache set")
 		return nil
 	}
 
-	// UnmarshalRead any other http methods
+	// Method is a get, unmarshal and cache only valid json
 
-	err = jsonv2.UnmarshalRead(response.Body, target)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling response")
+		equinoxReq.Logger.Error().Err(err).Msg("Error reading response")
 		return err
 	}
 
+	err = jsonv2.Unmarshal(body, target)
+	if err != nil {
+		equinoxReq.Logger.Error().Err(err).Msg("Error unmarshalling body")
+		return err
+	}
+
+	err = c.cache.Set(ctx, key, body)
+	if err != nil {
+		equinoxReq.Logger.Error().Err(err).Msg("Error caching item")
+		return err
+	}
+
+	equinoxReq.Logger.Debug().Str("route", equinoxReq.Route).Msg("Cache set")
 	return nil
 }
 

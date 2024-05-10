@@ -35,7 +35,7 @@ func TestNewEquinoxClient(t *testing.T) {
 	require.NotEmpty(t, client.Riot)
 }
 
-func TestNewEquinoxClientWithConfig(t *testing.T) {
+func TestNewCustomClient(t *testing.T) {
 	config := util.NewTestEquinoxConfig()
 	config.Key = ""
 
@@ -50,6 +50,32 @@ func TestNewEquinoxClientWithConfig(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, client.Cache.TTL, time.Duration(1))
 	require.True(t, client.RateLimit.Enabled)
+}
+
+func TestClientMethods(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	client, err := equinox.NewCustomClient(util.NewTestEquinoxConfig(), nil, nil, nil)
+	require.NoError(t, err)
+
+	// Using match.list as an example since its a []string
+	httpmock.RegisterResponder("POST", "https://americas.api.riotgames.com/lol/tournament/v5/codes",
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("./test/data/match.list.json")).Once())
+
+	// Post with a body
+	ctx := context.Background()
+	codes, err := client.LOL.TournamentV5.CreateTournamentCode(ctx, api.AMERICAS, &lol.TournamentCodeParametersV5DTO{MapType: "SUMMONERS_RIFT"}, 420, 20)
+	require.NoError(t, err)
+	require.NotEmpty(t, codes)
+	require.Len(t, codes, 20)
+
+	// Put, also this endpoint method returns nothing. Reusing match.list result as an example, a valid tournamentCode should be used instead
+	httpmock.RegisterResponder("PUT", "https://americas.api.riotgames.com/lol/tournament/v5/codes/KR_7050905124",
+		httpmock.NewStringResponder(200, "").Once())
+
+	err = client.LOL.TournamentV5.UpdateCode(ctx, api.AMERICAS, &lol.TournamentCodeUpdateParametersV5DTO{MapType: "HOWLING_ABYSS"}, codes[0])
+	require.NoError(t, err)
 }
 
 func TestRateLimitWithMock(t *testing.T) {

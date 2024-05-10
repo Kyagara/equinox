@@ -56,13 +56,3 @@ func NewBenchmarkEquinoxClient(b *testing.B) *equinox.Equinox {
 func NewTestLogger() zerolog.Logger {
 	return zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).Level(zerolog.TraceLevel)
 }
-
-// Reads a json file and returns its content as []byte.
-func ReadFile(b *testing.B, filename string) []byte {
-	b.Helper()
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		b.Fatal(err)
-	}
-	return data
-}

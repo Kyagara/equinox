@@ -22,7 +22,7 @@ func BenchmarkCacheDisabledSummonerByPUUID(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/summoner.json")))
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
@@ -45,7 +45,7 @@ func BenchmarkCacheBigCacheSummonerByPUUID(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/summoner.json")))
 
 	client, err := equinox.NewClient("RGAPI-TEST")
 	if err != nil {
@@ -71,7 +71,7 @@ func BenchmarkCacheRedisSummonerByPUUID(b *testing.B) {
 	defer httpmock.DeactivateAndReset()
 
 	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
-		httpmock.NewBytesResponder(200, util.ReadFile(b, "../data/summoner.json")))
+		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/summoner.json")))
 
 	ctx := context.Background()
 	redisConfig := &redis.Options{
