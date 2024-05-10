@@ -25,7 +25,7 @@ func init() {
 	// Default client with pretty logging and lower MaxRetries
 	config := equinox.DefaultConfig(key)
 	config.Retry = api.Retry{MaxRetries: 1, Jitter: 500 * time.Millisecond}
-	config.Logger = api.Logger{Pretty: true, Level: zerolog.TraceLevel, EnableTimestamp: true}
+	config.Logger = api.Logger{Pretty: true, Level: zerolog.TraceLevel, EnableTimestamp: true, EnableConfigurationLogging: true}
 
 	cache, err := equinox.DefaultCache()
 	if err != nil {

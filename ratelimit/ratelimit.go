@@ -60,12 +60,6 @@ type RateLimit struct {
 	Enabled          bool
 }
 
-func (r RateLimit) MarshalZerologObject(encoder *zerolog.Event) {
-	if r.Enabled {
-		encoder.Str("store", string(r.StoreType)).Float64("limit_usage_factor", r.LimitUsageFactor).Dur("interval_overhead", r.IntervalOverhead)
-	}
-}
-
 func NewInternalRateLimit(limitUsageFactor float64, intervalOverhead time.Duration) *RateLimit {
 	limitUsageFactor, intervalOverhead = ValidateRateLimitOptions(limitUsageFactor, intervalOverhead)
 	return &RateLimit{

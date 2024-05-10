@@ -4,7 +4,6 @@ import (
 	"os"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/Kyagara/equinox/v2/api"
 	"github.com/Kyagara/equinox/v2/cache"
@@ -27,19 +26,19 @@ type configuration struct {
 
 type cacheConfiguration struct {
 	store string
-	ttl   time.Duration
+	ttl   float64
 }
 
 type rateLimitConfiguration struct {
 	storeType        string
-	intervalOverhead time.Duration
+	intervalOverhead float64
 	usageFactor      float64
 	enabled          bool
 }
 
 type retryConfiguration struct {
 	maxRetries int
-	jitter     time.Duration
+	jitter     float64
 }
 
 func (c configuration) MarshalZerologObject(encoder *zerolog.Event) {
@@ -55,15 +54,15 @@ func (c configuration) MarshalZerologObject(encoder *zerolog.Event) {
 }
 
 func (c cacheConfiguration) MarshalZerologObject(encoder *zerolog.Event) {
-	encoder.Dur("ttl", c.ttl).Str("store", c.store)
+	encoder.Str("store", c.store).Float64("ttl", c.ttl)
 }
 
 func (r rateLimitConfiguration) MarshalZerologObject(encoder *zerolog.Event) {
-	encoder.Str("store", r.storeType).Dur("interval_overhead", r.intervalOverhead).Float64("limit_usage_factor", r.usageFactor)
+	encoder.Str("store", r.storeType).Float64("interval_overhead", r.intervalOverhead).Float64("limit_usage_factor", r.usageFactor)
 }
 
 func (r retryConfiguration) MarshalZerologObject(encoder *zerolog.Event) {
-	encoder.Int("max_retries", r.maxRetries).Dur("jitter", r.jitter)
+	encoder.Int("max_retries", r.maxRetries).Float64("jitter", r.jitter)
 }
 
 // Creates a new zerolog.Logger from an EquinoxConfig.
@@ -91,7 +90,7 @@ func NewLogger(config api.EquinoxConfig, cache *cache.Cache, ratelimit *ratelimi
 
 	if cache != nil {
 		equinoxConfig.cache = cacheConfiguration{
-			ttl:   cache.TTL,
+			ttl:   cache.TTL.Seconds(),
 			store: string(cache.StoreType),
 		}
 		emptyConfig = false
@@ -100,7 +99,7 @@ func NewLogger(config api.EquinoxConfig, cache *cache.Cache, ratelimit *ratelimi
 	if ratelimit != nil {
 		equinoxConfig.rateLimit = rateLimitConfiguration{
 			storeType:        string(ratelimit.StoreType),
-			intervalOverhead: ratelimit.IntervalOverhead,
+			intervalOverhead: ratelimit.IntervalOverhead.Seconds(),
 			usageFactor:      ratelimit.LimitUsageFactor,
 			enabled:          ratelimit.Enabled,
 		}
@@ -110,7 +109,7 @@ func NewLogger(config api.EquinoxConfig, cache *cache.Cache, ratelimit *ratelimi
 	if config.Retry.MaxRetries > 0 {
 		equinoxConfig.retry = retryConfiguration{
 			maxRetries: config.Retry.MaxRetries,
-			jitter:     config.Retry.Jitter,
+			jitter:     config.Retry.Jitter.Seconds(),
 		}
 		emptyConfig = false
 	}
