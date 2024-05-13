@@ -29,8 +29,6 @@ var (
 var (
 	apiHeaders = http.Header{
 		"X-Riot-Token": {""},
-		"Accept":       {"application/json"},
-		"Content-Type": {"application/json"},
 	}
 )
 
