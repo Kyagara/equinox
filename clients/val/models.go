@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 92f57e3e7279cc02ec6a5ce6665ca08354d6a178
+// Spec version = 6461993a9c4165ddca053929f19f6d0e3eb1ca14
 
 // val-content-v1.ActDto
 type ContentActV1DTO struct {
