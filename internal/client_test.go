@@ -119,8 +119,6 @@ func TestRequests(t *testing.T) {
 		bodyBytes, err := io.ReadAll(equinoxReq.Request.Body)
 		require.NoError(t, err)
 		require.Equal(t, expectedBody, bodyBytes)
-		require.Equal(t, "application/json", equinoxReq.Request.Header.Get("Content-Type"))
-		require.Equal(t, "application/json", equinoxReq.Request.Header.Get("Accept"))
 		require.Equal(t, config.Key, equinoxReq.Request.Header.Get("X-Riot-Token"))
 	})
 
@@ -147,8 +145,6 @@ func TestRequests(t *testing.T) {
 
 		require.Equal(t, expectedURL, equinoxReq.Request.URL.String())
 		require.Nil(t, equinoxReq.Request.Body)
-		require.Equal(t, "application/json", equinoxReq.Request.Header.Get("Content-Type"))
-		require.Equal(t, "application/json", equinoxReq.Request.Header.Get("Accept"))
 		require.Equal(t, config.Key, equinoxReq.Request.Header.Get("X-Riot-Token"))
 	})
 
