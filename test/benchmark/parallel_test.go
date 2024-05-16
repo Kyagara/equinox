@@ -158,7 +158,7 @@ func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			ctx := context.Background()
-			data, err := client.LOL.MatchV5.ListByPUUID(ctx, api.ASIA, "puuid", -1, -1, 420, "ranked", -1, 20)
+			data, err := client.LOL.MatchV5.ListByPUUID(ctx, api.ASIA, "puuid", -1, -1, lol.SUMMONERS_RIFT_5V5_RANKED_SOLO_QUEUE, "ranked", -1, 20)
 			if err != nil {
 				b.Fatal(err)
 			}

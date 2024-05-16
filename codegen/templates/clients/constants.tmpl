@@ -1,17 +1,17 @@
 {{ Preamble }}
 
-{%- macro NewConstants(Type, Table, IsInteger) %}
+{%- macro NewConstants(Type, Table) %}
 {%- for Name, Details in Table sorted %}
     {%- if Details.Deprecated %}
     // # Deprecated
     //
     {%- endif %}
     // {{ Details.Description|safe }}
-    {{ Name }} {{ Type }} = {%- if IsInteger %}{{ Details.Value }}{% else %}"{{ Details.Value }}"{% endif %}
+    {{ Name }} {{ Type }} = {%- if Details.IsInteger %}{{ Details.Value }}{% else %}"{{ Details.Value }}"{% endif %}
 {%- endfor %}
 {%- endmacro %}
 
-{%- macro Stringer(VarName, Type, Table, IsInt64) %}
+{%- macro Stringer(VarName, Type, Table, IsInteger=false) %}
 func ({{ VarName }} {{ Type }}) String() string {
 	switch {{ VarName }} {
     {%- for Name, Details in Table sorted %}
@@ -19,7 +19,7 @@ func ({{ VarName }} {{ Type }}) String() string {
         return "{{ Details.Value }}"
     {%- endfor %}
     default:
-        return {% if IsInt64 %}strconv.FormatInt(int64({{ VarName }}), 10){% else %}string({{ VarName }}){% endif %}
+        return {% if IsInteger %}strconv.FormatInt(int64({{ VarName }}), 10){% else %}string({{ VarName }}){% endif %}
 	}
 }
 {%- endmacro %}
@@ -36,7 +36,7 @@ const (
 {%- endif %}
 
 {% if ClientName == "lol" or ClientName == "tft" %}
-// Platform routes for League of Legends and Teamfight Tactics.
+// Platform routes for {{ GetGameName(ClientName) }}.
 type PlatformRoute string
 
 const (
@@ -77,7 +77,7 @@ func (route TournamentRegion) String() string {
 }
 {%- endif %}
 
-// League of Legends and Teamfight Tactics ranked tiers, such as gold, diamond, challenger, etc.
+// {{ GetGameName(ClientName) }} ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
 
 const (
@@ -120,7 +120,7 @@ func (tier Tier) String() string {
 	}
 }
 
-// League of Legends and Teamfight Tactics rank divisions, I, II, III, IV, and (deprecated) V.
+// {{ GetGameName(ClientName) }} rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
 const (
@@ -149,7 +149,38 @@ func (division Division) String() string {
     }
 }
 
-// League of Legends and Teamfight Tactics game types: matched game, custom game, or tutorial game.
+// Team IDs for {{ GetGameName(ClientName) }}.
+type Team int32
+
+// https://github.com/MingweiSamuel/Riven/blob/v/2.x.x/riven/src/consts/team.rs
+
+const (
+    // Team ID zero for 2v2v2v2 Arena `CHERRY` game mode. (TODO: SUBJECT TO CHANGE?)
+    ZERO  Team = 0
+    // Blue team (bottom left on Summoner's Rift).
+    BLUE  Team = 100
+    // Red team (top right on Summoner's Rift).
+    RED   Team = 200
+    // "killerTeamId" when Baron Nashor spawns and kills Rift Herald.
+    OTHER Team = 300
+)
+
+func (team Team) String() string {
+    switch team {
+    case ZERO:
+        return "0"
+    case BLUE:
+        return "100"
+    case RED:
+        return "200"
+    case OTHER:
+        return "300"
+    default:
+        return strconv.FormatInt(int64(team), 10)
+    }
+}
+
+// {{ GetGameName(ClientName) }} game types: matched game, custom game, or tutorial game.
 type GameType string
 
 const (
@@ -158,16 +189,16 @@ const (
 
 {{- Stringer("gameType", "GameType", GameTypes) }}
 
-// League of Legends and Teamfight Tactics ranked queue types.
-type QueueType int32
+// {{ GetGameName(ClientName) }} ranked queue types.
+type QueueType string
 
 const (
-{{- NewConstants("QueueType", FilterTFT(QueueTypes, ClientName == "lol"), true) }}
+{{- NewConstants("QueueType", FilterTFT(QueueTypes, ClientName == "lol")) }}
 )
 
 {{- Stringer("queueType", "QueueType", FilterTFT(QueueTypes, ClientName == "lol")) }}
 
-// League of Legends and Teamfight Tactics game modes, such as Classic,
+// {{ GetGameName(ClientName) }} game modes, such as Classic,
 // ARAM, URF, One For All, Ascension, etc.
 type GameMode string
 
@@ -177,20 +208,20 @@ const (
 
 {{- Stringer("gameMode", "GameMode", FilterTFT(GameModes, ClientName == "lol")) }}
 
-// League of Legends and Teamfight Tactics maps.
+// {{ GetGameName(ClientName) }} maps.
 type Map int64
 
 const (
-{{- NewConstants("Map", FilterTFT(Maps, ClientName == "lol"), true) }}
+{{- NewConstants("Map", FilterTFT(Maps, ClientName == "lol")) }}
 )
 
-{{- Stringer("lolMap", "Map", FilterTFT(Maps, ClientName == "lol"), true) }}
+{{- Stringer("gameMap", "Map", FilterTFT(Maps, ClientName == "lol"), true) }}
 
-// League of Legends and Teamfight Tactics queues.
+// {{ GetGameName(ClientName) }} queues.
 type Queue int32
 
 const (
-{{- NewConstants("Queue", FilterTFT(Queues, ClientName == "lol"), true) }}
+{{- NewConstants("Queue", FilterTFT(Queues, ClientName == "lol")) }}
 )
 
 {{- Stringer("queue", "Queue", FilterTFT(Queues, ClientName == "lol")) }}

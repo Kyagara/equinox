@@ -12,7 +12,7 @@ import "strconv"
 
 // Spec version = 6461993a9c4165ddca053929f19f6d0e3eb1ca14
 
-// Platform routes for League of Legends and Teamfight Tactics.
+// Platform routes for League of Legends.
 type PlatformRoute string
 
 const (
@@ -146,7 +146,7 @@ func (route TournamentRegion) String() string {
 	}
 }
 
-// League of Legends and Teamfight Tactics ranked tiers, such as gold, diamond, challenger, etc.
+// League of Legends ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
 
 const (
@@ -189,7 +189,7 @@ func (tier Tier) String() string {
 	}
 }
 
-// League of Legends and Teamfight Tactics rank divisions, I, II, III, IV, and (deprecated) V.
+// League of Legends rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
 const (
@@ -218,63 +218,94 @@ func (division Division) String() string {
 	}
 }
 
-// League of Legends and Teamfight Tactics game types: matched game, custom game, or tutorial game.
+// Team IDs for League of Legends.
+type Team int32
+
+// https://github.com/MingweiSamuel/Riven/blob/v/2.x.x/riven/src/consts/team.rs
+
+const (
+	// Team ID zero for 2v2v2v2 Arena `CHERRY` game mode. (TODO: SUBJECT TO CHANGE?)
+	ZERO Team = 0
+	// Blue team (bottom left on Summoner's Rift).
+	BLUE Team = 100
+	// Red team (top right on Summoner's Rift).
+	RED Team = 200
+	// "killerTeamId" when Baron Nashor spawns and kills Rift Herald.
+	OTHER Team = 300
+)
+
+func (team Team) String() string {
+	switch team {
+	case ZERO:
+		return "0"
+	case BLUE:
+		return "100"
+	case RED:
+		return "200"
+	case OTHER:
+		return "300"
+	default:
+		return strconv.FormatInt(int64(team), 10)
+	}
+}
+
+// League of Legends game types: matched game, custom game, or tutorial game.
 type GameType string
 
 const (
 	// Custom games
-	CUSTOM_GAME_GAMETYPE GameType = "CUSTOM_GAME"
+	CUSTOM_GAME_GAMETYPE GameType = "CUSTOM"
 	// all other games
-	MATCHED_GAME_GAMETYPE GameType = "MATCHED_GAME"
+	MATCHED_GAME_GAMETYPE GameType = "MATCHED"
 	// Tutorial games
-	TUTORIAL_GAME_GAMETYPE GameType = "TUTORIAL_GAME"
+	TUTORIAL_GAME_GAMETYPE GameType = "TUTORIAL"
 )
 
 func (gameType GameType) String() string {
 	switch gameType {
 	case CUSTOM_GAME_GAMETYPE:
-		return "CUSTOM_GAME"
+		return "CUSTOM"
 	case MATCHED_GAME_GAMETYPE:
-		return "MATCHED_GAME"
+		return "MATCHED"
 	case TUTORIAL_GAME_GAMETYPE:
-		return "TUTORIAL_GAME"
+		return "TUTORIAL"
 	default:
 		return string(gameType)
 	}
 }
 
-// League of Legends and Teamfight Tactics ranked queue types.
-type QueueType int32
+// League of Legends ranked queue types.
+type QueueType string
 
 const (
 	// "Arena" games
-	CHERRY_QUEUETYPE QueueType = 1710
+	CHERRY_QUEUETYPE QueueType = "CHERRY"
 	// 5v5 Ranked Flex games
-	RANKED_FLEX_SR_QUEUETYPE QueueType = 440
+	RANKED_FLEX_SR_QUEUETYPE QueueType = "RANKED_FLEX_SR"
 	// # Deprecated
 	//
 	// 3v3 Ranked Flex games
-	RANKED_FLEX_TT_QUEUETYPE QueueType = 470
+	RANKED_FLEX_TT_QUEUETYPE QueueType = "RANKED_FLEX_TT"
 	// 5v5 Ranked Solo games
-	RANKED_SOLO_5X5_QUEUETYPE QueueType = 420
+	RANKED_SOLO_5X5_QUEUETYPE QueueType = "RANKED_SOLO_5X5"
 )
 
 func (queueType QueueType) String() string {
 	switch queueType {
 	case CHERRY_QUEUETYPE:
-		return "1710"
+		return "CHERRY"
 	case RANKED_FLEX_SR_QUEUETYPE:
-		return "440"
+		return "RANKED_FLEX_SR"
 	case RANKED_FLEX_TT_QUEUETYPE:
-		return "470"
+		return "RANKED_FLEX_TT"
 	case RANKED_SOLO_5X5_QUEUETYPE:
-		return "420"
+		return "RANKED_SOLO_5X5"
 	default:
 		return string(queueType)
 	}
 }
 
-// League of Legends and Teamfight Tactics game modes, such as Classic,
+// League of Legends game modes, such as Classic,
 // ARAM, URF, One For All, Ascension, etc.
 type GameMode string
 
@@ -388,7 +419,7 @@ func (gameMode GameMode) String() string {
 	}
 }
 
-// League of Legends and Teamfight Tactics maps.
+// League of Legends maps.
 type Map int64
 
 const (
@@ -460,8 +491,8 @@ const (
 	VALORAN_CITY_PARK_MAP Map = 18
 )
 
-func (lolMap Map) String() string {
-	switch lolMap {
+func (gameMap Map) String() string {
+	switch gameMap {
 	case ARENA_MAP:
 		return "30"
 	case BUTCHERS_BRIDGE_MAP:
@@ -493,11 +524,11 @@ func (lolMap Map) String() string {
 	case VALORAN_CITY_PARK_MAP:
 		return "18"
 	default:
-		return strconv.FormatInt(int64(lolMap), 10)
+		return strconv.FormatInt(int64(gameMap), 10)
 	}
 }
 
-// League of Legends and Teamfight Tactics queues.
+// League of Legends queues.
 type Queue int32
 
 const (

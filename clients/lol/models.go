@@ -154,7 +154,8 @@ type ClashTournamentV1DTO struct {
 
 // league-v4.LeagueEntryDTO
 type LeagueEntryV4DTO struct {
-	LeagueID string `json:"leagueId,omitempty"`
+	LeagueID  string    `json:"leagueId,omitempty"`
+	QueueType QueueType `json:"queueType,omitempty"`
 	// The player's division within a tier.
 	Rank Division `json:"rank,omitempty"`
 	// Player's encrypted summonerId.
@@ -163,8 +164,7 @@ type LeagueEntryV4DTO struct {
 	MiniSeries   LeagueMiniSeriesV4DTO `json:"miniSeries,omitempty"`
 	LeaguePoints int32                 `json:"leaguePoints,omitempty"`
 	// Losing team on Summoners Rift.
-	Losses    int32     `json:"losses,omitempty"`
-	QueueType QueueType `json:"queueType,omitempty"`
+	Losses int32 `json:"losses,omitempty"`
 	// Winning team on Summoners Rift.
 	Wins       int32 `json:"wins,omitempty"`
 	FreshBlood bool  `json:"freshBlood,omitempty"`
@@ -175,7 +175,8 @@ type LeagueEntryV4DTO struct {
 
 // league-exp-v4.LeagueEntryDTO
 type LeagueExpLeagueEntryV4DTO struct {
-	LeagueID string `json:"leagueId,omitempty"`
+	LeagueID  string    `json:"leagueId,omitempty"`
+	QueueType QueueType `json:"queueType,omitempty"`
 	// The player's division within a tier.
 	Rank Division `json:"rank,omitempty"`
 	// Player's summonerId (Encrypted)
@@ -184,8 +185,7 @@ type LeagueExpLeagueEntryV4DTO struct {
 	MiniSeries   LeagueExpMiniSeriesV4DTO `json:"miniSeries,omitempty"`
 	LeaguePoints int32                    `json:"leaguePoints,omitempty"`
 	// Losing team on Summoners Rift. Second through eighth placement in Teamfight Tactics.
-	Losses    int32     `json:"losses,omitempty"`
-	QueueType QueueType `json:"queueType,omitempty"`
+	Losses int32 `json:"losses,omitempty"`
 	// Winning team on Summoners Rift. First placement in Teamfight Tactics.
 	Wins       int32 `json:"wins,omitempty"`
 	FreshBlood bool  `json:"freshBlood,omitempty"`
@@ -223,9 +223,9 @@ type LeagueItemV4DTO struct {
 type LeagueListV4DTO struct {
 	LeagueID string            `json:"leagueId,omitempty"`
 	Name     string            `json:"name,omitempty"`
+	Queue    QueueType         `json:"queue,omitempty"`
 	Tier     Tier              `json:"tier,omitempty"`
 	Entries  []LeagueItemV4DTO `json:"entries,omitempty"`
-	Queue    QueueType         `json:"queue,omitempty"`
 }
 
 // league-v4.MiniSeriesDTO
@@ -453,13 +453,13 @@ type MatchEventsTimeLineV5DTO struct {
 	ItemID                  int32                            `json:"itemId,omitempty"`
 	KillStreakLength        int32                            `json:"killStreakLength,omitempty"`
 	KillerID                int32                            `json:"killerId,omitempty"`
-	KillerTeamID            int32                            `json:"killerTeamId,omitempty"`
+	KillerTeamID            Team                             `json:"killerTeamId,omitempty"`
 	Level                   int32                            `json:"level,omitempty"`
 	MultiKillLength         int32                            `json:"multiKillLength,omitempty"`
 	ParticipantID           int32                            `json:"participantId,omitempty"`
 	ShutdownBounty          int32                            `json:"shutdownBounty,omitempty"`
 	SkillSlot               int32                            `json:"skillSlot,omitempty"`
-	TeamID                  int32                            `json:"teamId,omitempty"`
+	TeamID                  Team                             `json:"teamId,omitempty"`
 	VictimID                int32                            `json:"victimId,omitempty"`
 	WinningTeam             int32                            `json:"winningTeam,omitempty"`
 }
@@ -507,9 +507,9 @@ type MatchInfoV5DTO struct {
 	// Unix timestamp for when match starts on the game server.
 	GameStartTimestamp int64 `json:"gameStartTimestamp,omitempty"`
 	// Refer to the Game Constants documentation.
-	MapID int32 `json:"mapId,omitempty"`
+	MapID Map `json:"mapId,omitempty"`
 	// Refer to the Game Constants documentation.
-	QueueID int32 `json:"queueId,omitempty"`
+	QueueID Queue `json:"queueId,omitempty"`
 }
 
 // match-v5.MetadataTimeLineDto
@@ -714,7 +714,7 @@ type MatchParticipantV5DTO struct {
 	Summoner2Casts                 int32 `json:"summoner2Casts,omitempty"`
 	Summoner2ID                    int32 `json:"summoner2Id,omitempty"`
 	SummonerLevel                  int32 `json:"summonerLevel,omitempty"`
-	TeamID                         int32 `json:"teamId,omitempty"`
+	TeamID                         Team  `json:"teamId,omitempty"`
 	TimeCCingOthers                int32 `json:"timeCCingOthers,omitempty"`
 	TimePlayed                     int32 `json:"timePlayed,omitempty"`
 	TotalAllyJungleMinionsKilled   int32 `json:"totalAllyJungleMinionsKilled,omitempty"`
@@ -791,7 +791,7 @@ type MatchPositionV5DTO struct {
 type MatchTeamV5DTO struct {
 	Bans       []MatchBanV5DTO      `json:"bans,omitempty"`
 	Objectives MatchObjectivesV5DTO `json:"objectives,omitempty"`
-	TeamID     int32                `json:"teamId,omitempty"`
+	TeamID     Team                 `json:"teamId,omitempty"`
 	Win        bool                 `json:"win,omitempty"`
 }
 
@@ -831,7 +831,7 @@ type SpectatorBannedChampionV5DTO struct {
 	// The turn during which the champion was banned
 	PickTurn int32 `json:"pickTurn,omitempty"`
 	// The ID of the team that banned the champion
-	TeamID int64 `json:"teamId,omitempty"`
+	TeamID Team `json:"teamId,omitempty"`
 }
 
 // spectator-v5.CurrentGameInfo
@@ -852,12 +852,12 @@ type SpectatorCurrentGameInfoV5DTO struct {
 	GameID int64 `json:"gameId,omitempty"`
 	// The amount of time in seconds that has passed since the game started
 	GameLength int64 `json:"gameLength,omitempty"`
-	// The queue type (queue types are documented on the Game Constants page)
-	GameQueueConfigID int64 `json:"gameQueueConfigId,omitempty"`
 	// The game start time represented in epoch milliseconds
 	GameStartTime int64 `json:"gameStartTime,omitempty"`
 	// The ID of the map
-	MapID int64 `json:"mapId,omitempty"`
+	MapID Map `json:"mapId,omitempty"`
+	// The queue type (queue types are documented on the Game Constants page)
+	GameQueueConfigID Queue `json:"gameQueueConfigId,omitempty"`
 }
 
 // spectator-v5.CurrentGameParticipant
@@ -880,7 +880,7 @@ type SpectatorCurrentGameParticipantV5DTO struct {
 	// The ID of the second summoner spell used by this participant
 	Spell2ID int64 `json:"spell2Id,omitempty"`
 	// The team ID of this participant, indicating the participant's team
-	TeamID int64 `json:"teamId,omitempty"`
+	TeamID Team `json:"teamId,omitempty"`
 	// Flag indicating whether or not this participant is a bot
 	Bot bool `json:"bot,omitempty"`
 }
@@ -907,10 +907,10 @@ type SpectatorFeaturedGameInfoV5DTO struct {
 	GameID int64 `json:"gameId,omitempty"`
 	// The amount of time in seconds that has passed since the game started
 	GameLength int64 `json:"gameLength,omitempty"`
-	// The queue type (queue types are documented on the Game Constants page)
-	GameQueueConfigID int64 `json:"gameQueueConfigId,omitempty"`
 	// The ID of the map
-	MapID int64 `json:"mapId,omitempty"`
+	MapID Map `json:"mapId,omitempty"`
+	// The queue type (queue types are documented on the Game Constants page)
+	GameQueueConfigID Queue `json:"gameQueueConfigId,omitempty"`
 }
 
 // spectator-v5.FeaturedGames
@@ -951,7 +951,7 @@ type SpectatorParticipantV5DTO struct {
 	// The ID of the second summoner spell used by this participant
 	Spell2ID int64 `json:"spell2Id,omitempty"`
 	// The team ID of this participant, indicating the participant's team
-	TeamID int64 `json:"teamId,omitempty"`
+	TeamID Team `json:"teamId,omitempty"`
 	// Flag indicating whether or not this participant is a bot
 	Bot bool `json:"bot,omitempty"`
 }

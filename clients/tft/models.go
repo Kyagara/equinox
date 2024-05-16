@@ -15,7 +15,8 @@ type LeagueEntryV1DTO struct {
 	// Not included for the RANKED_TFT_TURBO queueType.
 	LeagueID string `json:"leagueId,omitempty"`
 	// Player Universal Unique Identifier. Exact length of 78 characters. (Encrypted)
-	PUUID string `json:"puuid,omitempty"`
+	PUUID     string    `json:"puuid,omitempty"`
+	QueueType QueueType `json:"queueType,omitempty"`
 	// The player's division within a tier. Not included for the RANKED_TFT_TURBO queueType.
 	Rank Division `json:"rank,omitempty"`
 	// Only included for the RANKED_TFT_TURBO queueType.
@@ -31,8 +32,7 @@ type LeagueEntryV1DTO struct {
 	// Not included for the RANKED_TFT_TURBO queueType.
 	LeaguePoints int32 `json:"leaguePoints,omitempty"`
 	// Second through eighth placement.
-	Losses    int32     `json:"losses,omitempty"`
-	QueueType QueueType `json:"queueType,omitempty"`
+	Losses int32 `json:"losses,omitempty"`
 	// Only included for the RANKED_TFT_TURBO queueType.
 	RatedRating int32 `json:"ratedRating,omitempty"`
 	// First placement.
@@ -68,9 +68,9 @@ type LeagueItemV1DTO struct {
 type LeagueListV1DTO struct {
 	LeagueID string            `json:"leagueId,omitempty"`
 	Name     string            `json:"name,omitempty"`
+	Queue    QueueType         `json:"queue,omitempty"`
 	Tier     Tier              `json:"tier,omitempty"`
 	Entries  []LeagueItemV1DTO `json:"entries,omitempty"`
-	Queue    QueueType         `json:"queue,omitempty"`
 }
 
 // tft-league-v1.MiniSeriesDTO
@@ -118,9 +118,9 @@ type MatchInfoV1DTO struct {
 	// Game length in seconds.
 	GameLength float32 `json:"game_length,omitempty"`
 	// Please refer to the League of Legends documentation.
-	QueueID int32 `json:"queueId,omitempty"`
+	QueueID Queue `json:"queueId,omitempty"`
 	// Please refer to the League of Legends documentation.
-	QueueID_ int32 `json:"queue_id,omitempty"`
+	QueueID_ Queue `json:"queue_id,omitempty"`
 	// Teamfight Tactics set number.
 	TFTSetNumber int32 `json:"tft_set_number,omitempty"`
 }
@@ -261,7 +261,7 @@ type SpectatorBannedChampionV5DTO struct {
 	// The turn during which the champion was banned
 	PickTurn int32 `json:"pickTurn,omitempty"`
 	// The ID of the team that banned the champion
-	TeamID int64 `json:"teamId,omitempty"`
+	TeamID Team `json:"teamId,omitempty"`
 }
 
 // spectator-tft-v5.CurrentGameInfo
@@ -282,12 +282,12 @@ type SpectatorCurrentGameInfoV5DTO struct {
 	GameID int64 `json:"gameId,omitempty"`
 	// The amount of time in seconds that has passed since the game started
 	GameLength int64 `json:"gameLength,omitempty"`
-	// The queue type (queue types are documented on the Game Constants page)
-	GameQueueConfigID int64 `json:"gameQueueConfigId,omitempty"`
 	// The game start time represented in epoch milliseconds
 	GameStartTime int64 `json:"gameStartTime,omitempty"`
 	// The ID of the map
-	MapID int64 `json:"mapId,omitempty"`
+	MapID Map `json:"mapId,omitempty"`
+	// The queue type (queue types are documented on the Game Constants page)
+	GameQueueConfigID Queue `json:"gameQueueConfigId,omitempty"`
 }
 
 // spectator-tft-v5.CurrentGameParticipant
@@ -310,7 +310,7 @@ type SpectatorCurrentGameParticipantV5DTO struct {
 	// The ID of the second summoner spell used by this participant
 	Spell2ID int64 `json:"spell2Id,omitempty"`
 	// The team ID of this participant, indicating the participant's team
-	TeamID int64 `json:"teamId,omitempty"`
+	TeamID Team `json:"teamId,omitempty"`
 }
 
 // spectator-tft-v5.FeaturedGameInfo
@@ -335,10 +335,10 @@ type SpectatorFeaturedGameInfoV5DTO struct {
 	GameID int64 `json:"gameId,omitempty"`
 	// The amount of time in seconds that has passed since the game started
 	GameLength int64 `json:"gameLength,omitempty"`
-	// The queue type (queue types are documented on the Game Constants page)
-	GameQueueConfigID int64 `json:"gameQueueConfigId,omitempty"`
 	// The ID of the map
-	MapID int64 `json:"mapId,omitempty"`
+	MapID Map `json:"mapId,omitempty"`
+	// The queue type (queue types are documented on the Game Constants page)
+	GameQueueConfigID Queue `json:"gameQueueConfigId,omitempty"`
 }
 
 // spectator-tft-v5.FeaturedGames
@@ -379,7 +379,7 @@ type SpectatorParticipantV5DTO struct {
 	// The ID of the second summoner spell used by this participant
 	Spell2ID int64 `json:"spell2Id,omitempty"`
 	// The team ID of this participant, indicating the participant's team
-	TeamID int64 `json:"teamId,omitempty"`
+	TeamID Team `json:"teamId,omitempty"`
 }
 
 // spectator-tft-v5.Perks

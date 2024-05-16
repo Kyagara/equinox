@@ -1,6 +1,7 @@
 package main
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/tidwall/gjson"
@@ -15,6 +16,7 @@ type RouteConstant struct {
 
 type GenericConstant struct {
 	Value       string
+	IsInteger   bool
 	Description string
 	Deprecated  bool
 }
@@ -47,18 +49,50 @@ func getGenericConstants(table gjson.Result, constName string) map[string]Generi
 		description := getConstantDescription(item.Get("x-desc").String())
 		name := strings.ToUpper(item.Get("x-name").String())
 		deprecated := item.Get("x-deprecated").Bool()
-		value := item.Get("x-value").String()
+		value := name
+		isInteger := false
+		if slices.Contains([]string{"GameMode", "QueueType", "GameType"}, constName) {
+			if constName == "GameType" {
+				value = strings.Replace(value, "_GAME", "", 1)
+			}
+			isInteger = false
+		} else {
+			value = item.Get("x-value").String()
+			isInteger = true
+		}
 		name += "_" + strings.ToUpper(constName)
 		name = strings.Replace(name, "_DEPRECATED", "", 1)
 
 		consts[name] = GenericConstant{
 			Value:       value,
+			IsInteger:   isInteger,
 			Description: description,
 			Deprecated:  deprecated,
 		}
 	}
 
 	return consts
+}
+
+func filterTFT(table map[string]GenericConstant, removeTFT bool) map[string]GenericConstant {
+	newTable := make(map[string]GenericConstant, len(table))
+	keywords := []string{"tft", "teamfight", "convergence"}
+	for name, v := range table {
+		containsTFT := false
+		for _, keyword := range keywords {
+			if strings.Contains(strings.ToLower(v.Description), keyword) {
+				containsTFT = true
+				break
+			}
+		}
+		n := strings.Replace(name, "TEAMFIGHT_TACTICS", "TFT", 1)
+		if removeTFT && !containsTFT {
+			newTable[n] = v
+		} else if !removeTFT && containsTFT {
+			newTable[n] = v
+		}
+	}
+	return newTable
 }
 
 func getConstantDescription(descriptionString string) string {
