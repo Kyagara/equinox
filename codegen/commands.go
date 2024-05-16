@@ -156,6 +156,8 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 
 		valRoutes := getRouteConstants(specs["routesTable"], "val-platform")
 		LOL_TFT_Routes := getRouteConstants(specs["routesTable"], "platform")
+		maps := getGenericConstants(specs["maps"], "Map")
+		queues := getGenericConstants(specs["queues"], "Queue")
 		gameTypes := getGenericConstants(specs["gameTypes"], "GameType")
 		gameModes := getGenericConstants(specs["gameModes"], "GameMode")
 		queueTypes := getGenericConstants(specs["queueTypes"], "QueueType")
@@ -169,6 +171,7 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 
 		ctx := pongo2.Context{
 			"Split":                strings.Split,
+			"FilterTFT":            filterTFT,
 			"Preamble":             preamble,
 			"ClientName":           clientName,
 			"NormalizedClientName": normalizedClientName,
@@ -177,6 +180,8 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 
 			"VALRoutes":      valRoutes,
 			"LOL_TFT_Routes": LOL_TFT_Routes,
+			"Maps":           maps,
+			"Queues":         queues,
 			"GameTypes":      gameTypes,
 			"GameModes":      gameModes,
 			"QueueTypes":     queueTypes,

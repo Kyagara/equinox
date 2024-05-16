@@ -41,6 +41,26 @@ func preamble(packageName string, version string) string {
 // Spec version = %v`, packageName, version)
 }
 
+func filterTFT(table map[string]GenericConstant, removeTFT bool) map[string]GenericConstant {
+	newTable := make(map[string]GenericConstant, len(table))
+	keywords := []string{"tft", "teamfight", "convergence"}
+	for name, v := range table {
+		containsTFT := false
+		for _, keyword := range keywords {
+			if strings.Contains(strings.ToLower(v.Description), keyword) {
+				containsTFT = true
+				break
+			}
+		}
+		if removeTFT && !containsTFT {
+			newTable[name] = v
+		} else if !removeTFT && containsTFT {
+			newTable[name] = v
+		}
+	}
+	return newTable
+}
+
 func getEndpointGroup(clientName string, spec gjson.Result) map[string][]EndpointGroup {
 	endpoints := make(map[string][]EndpointGroup)
 
