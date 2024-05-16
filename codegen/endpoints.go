@@ -280,7 +280,7 @@ func formatRouteArgument(pathParams []gjson.Result, route string) string {
 	for i, param := range pathParams {
 		name := param.Get("name").String()
 		if name == "type" {
-			name = "type_"
+			name = "matchType"
 		}
 		args[i] = name
 	}
@@ -346,7 +346,7 @@ func formatAddQueryParam(params []gjson.Result) []string {
 		name := normalizePropName(param.Get("name").String())
 		prop := param.Get("schema")
 		letHeaderName := name
-		if letHeaderName == "type_" {
+		if letHeaderName == "matchType" {
 			letHeaderName = "type"
 		}
 
@@ -362,16 +362,21 @@ func formatAddQueryParam(params []gjson.Result) []string {
 
 		var conversion string
 		var end string
-		format := prop.Get("format").String()
-		if format == "int32" {
-			conversion = "strconv.FormatInt(int64("
-			end = "), 10)"
-		} else if format == "int64" {
-			conversion = "strconv.FormatInt("
-			end = ", 10)"
+		if prop.Get("x-enum").Exists() {
+			conversion = ""
+			end = ".String()"
 		} else {
-			conversion = "fmt.Sprint("
-			end = ")"
+			format := prop.Get("format").String()
+			if format == "int32" {
+				conversion = "strconv.FormatInt(int64("
+				end = "), 10)"
+			} else if format == "int64" {
+				conversion = "strconv.FormatInt("
+				end = ", 10)"
+			} else {
+				conversion = "fmt.Sprint("
+				end = ")"
+			}
 		}
 
 		value := name
@@ -392,7 +397,7 @@ func normalizePropName(propName string) string {
 		out = "X" + out
 	}
 	if out == "type" {
-		return out + "_"
+		return "matchType"
 	}
 	return out
 }

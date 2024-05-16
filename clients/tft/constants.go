@@ -12,7 +12,7 @@ import "strconv"
 
 // Spec version = 6461993a9c4165ddca053929f19f6d0e3eb1ca14
 
-// Platform routes for League of Legends and Teamfight Tactics.
+// Platform routes for Teamfight Tactics.
 type PlatformRoute string
 
 const (
@@ -93,7 +93,7 @@ func (route PlatformRoute) String() string {
 	}
 }
 
-// League of Legends and Teamfight Tactics ranked tiers, such as gold, diamond, challenger, etc.
+// Teamfight Tactics ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
 
 const (
@@ -136,7 +136,7 @@ func (tier Tier) String() string {
 	}
 }
 
-// League of Legends and Teamfight Tactics rank divisions, I, II, III, IV, and (deprecated) V.
+// Teamfight Tactics rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
 const (
@@ -165,63 +165,94 @@ func (division Division) String() string {
 	}
 }
 
-// League of Legends and Teamfight Tactics game types: matched game, custom game, or tutorial game.
+// Team IDs for Teamfight Tactics.
+type Team int32
+
+// https://github.com/MingweiSamuel/Riven/blob/v/2.x.x/riven/src/consts/team.rs
+
+const (
+	// Team ID zero for 2v2v2v2 Arena `CHERRY` game mode. (TODO: SUBJECT TO CHANGE?)
+	ZERO Team = 0
+	// Blue team (bottom left on Summoner's Rift).
+	BLUE Team = 100
+	// Red team (top right on Summoner's Rift).
+	RED Team = 200
+	// "killerTeamId" when Baron Nashor spawns and kills Rift Herald.
+	OTHER Team = 300
+)
+
+func (team Team) String() string {
+	switch team {
+	case ZERO:
+		return "0"
+	case BLUE:
+		return "100"
+	case RED:
+		return "200"
+	case OTHER:
+		return "300"
+	default:
+		return strconv.FormatInt(int64(team), 10)
+	}
+}
+
+// Teamfight Tactics game types: matched game, custom game, or tutorial game.
 type GameType string
 
 const (
 	// Custom games
-	CUSTOM_GAME_GAMETYPE GameType = "CUSTOM_GAME"
+	CUSTOM_GAME_GAMETYPE GameType = "CUSTOM"
 	// all other games
-	MATCHED_GAME_GAMETYPE GameType = "MATCHED_GAME"
+	MATCHED_GAME_GAMETYPE GameType = "MATCHED"
 	// Tutorial games
-	TUTORIAL_GAME_GAMETYPE GameType = "TUTORIAL_GAME"
+	TUTORIAL_GAME_GAMETYPE GameType = "TUTORIAL"
 )
 
 func (gameType GameType) String() string {
 	switch gameType {
 	case CUSTOM_GAME_GAMETYPE:
-		return "CUSTOM_GAME"
+		return "CUSTOM"
 	case MATCHED_GAME_GAMETYPE:
-		return "MATCHED_GAME"
+		return "MATCHED"
 	case TUTORIAL_GAME_GAMETYPE:
-		return "TUTORIAL_GAME"
+		return "TUTORIAL"
 	default:
 		return string(gameType)
 	}
 }
 
-// League of Legends and Teamfight Tactics ranked queue types.
-type QueueType int32
+// Teamfight Tactics ranked queue types.
+type QueueType string
 
 const (
 	// Ranked Teamfight Tactics (Double Up Workshop) games
-	RANKED_TFT_DOUBLE_UP_QUEUETYPE QueueType = 1160
+	RANKED_TFT_DOUBLE_UP_QUEUETYPE QueueType = "RANKED_TFT_DOUBLE_UP"
 	// # Deprecated
 	//
 	// Ranked Teamfight Tactics (Double Up Workshop) games
-	RANKED_TFT_PAIRS_QUEUETYPE QueueType = 1150
+	RANKED_TFT_PAIRS_QUEUETYPE QueueType = "RANKED_TFT_PAIRS"
 	// Ranked Teamfight Tactics games
-	RANKED_TFT_QUEUETYPE QueueType = 1100
+	RANKED_TFT_QUEUETYPE QueueType = "RANKED_TFT"
 	// Ranked Teamfight Tactics (Hyper Roll) games
-	RANKED_TFT_TURBO_QUEUETYPE QueueType = 1130
+	RANKED_TFT_TURBO_QUEUETYPE QueueType = "RANKED_TFT_TURBO"
 )
 
 func (queueType QueueType) String() string {
 	switch queueType {
 	case RANKED_TFT_DOUBLE_UP_QUEUETYPE:
-		return "1160"
+		return "RANKED_TFT_DOUBLE_UP"
 	case RANKED_TFT_PAIRS_QUEUETYPE:
-		return "1150"
+		return "RANKED_TFT_PAIRS"
 	case RANKED_TFT_QUEUETYPE:
-		return "1100"
+		return "RANKED_TFT"
 	case RANKED_TFT_TURBO_QUEUETYPE:
-		return "1130"
+		return "RANKED_TFT_TURBO"
 	default:
 		return string(queueType)
 	}
 }
 
-// League of Legends and Teamfight Tactics game modes, such as Classic,
+// Teamfight Tactics game modes, such as Classic,
 // ARAM, URF, One For All, Ascension, etc.
 type GameMode string
 
@@ -239,7 +270,7 @@ func (gameMode GameMode) String() string {
 	}
 }
 
-// League of Legends and Teamfight Tactics maps.
+// Teamfight Tactics maps.
 type Map int64
 
 const (
@@ -249,64 +280,64 @@ const (
 	CONVERGENCE_MAP Map = 22
 )
 
-func (lolMap Map) String() string {
-	switch lolMap {
+func (gameMap Map) String() string {
+	switch gameMap {
 	case CONVERGENCE_MAP:
 		return "22"
 	default:
-		return strconv.FormatInt(int64(lolMap), 10)
+		return strconv.FormatInt(int64(gameMap), 10)
 	}
 }
 
-// League of Legends and Teamfight Tactics queues.
+// Teamfight Tactics queues.
 type Queue int32
 
 const (
 	// # Deprecated
 	//
 	// Ranked Teamfight Tactics (Double Up Workshop) games on Convergence
-	CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_DOUBLE_UP_WORKSHOP_1150_QUEUE Queue = 1150
+	CONVERGENCE_RANKED_TFT_DOUBLE_UP_WORKSHOP_1150_QUEUE Queue = 1150
 	// Ranked Teamfight Tactics (Double Up Workshop) games on Convergence
-	CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_DOUBLE_UP_WORKSHOP_QUEUE Queue = 1160
+	CONVERGENCE_RANKED_TFT_DOUBLE_UP_WORKSHOP_QUEUE Queue = 1160
 	// Ranked Teamfight Tactics (Hyper Roll) games on Convergence
-	CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_HYPER_ROLL_QUEUE Queue = 1130
+	CONVERGENCE_RANKED_TFT_HYPER_ROLL_QUEUE Queue = 1130
 	// Ranked Teamfight Tactics games on Convergence
-	CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_QUEUE Queue = 1100
+	CONVERGENCE_RANKED_TFT_QUEUE Queue = 1100
 	// Teamfight Tactics 1v0 games on Convergence
-	CONVERGENCE_TEAMFIGHT_TACTICS_1V0_QUEUE Queue = 1091
+	CONVERGENCE_TFT_1V0_QUEUE Queue = 1091
 	// Teamfight Tactics 2v0 games on Convergence
-	CONVERGENCE_TEAMFIGHT_TACTICS_2V0_QUEUE Queue = 1092
+	CONVERGENCE_TFT_2V0_QUEUE Queue = 1092
 	// Teamfight Tactics games on Convergence
-	CONVERGENCE_TEAMFIGHT_TACTICS_QUEUE Queue = 1090
+	CONVERGENCE_TFT_QUEUE Queue = 1090
 	// Teamfight Tactics Set 3.5 Revival games on Convergence
-	CONVERGENCE_TEAMFIGHT_TACTICS_SET_3_5_REVIVAL_QUEUE Queue = 6000
+	CONVERGENCE_TFT_SET_3_5_REVIVAL_QUEUE Queue = 6000
 	// Teamfight Tactics Simluation games on Convergence
-	CONVERGENCE_TEAMFIGHT_TACTICS_SIMLUATION_QUEUE Queue = 1111
+	CONVERGENCE_TFT_SIMLUATION_QUEUE Queue = 1111
 	// Teamfight Tactics Tutorial games on Convergence
-	CONVERGENCE_TEAMFIGHT_TACTICS_TUTORIAL_QUEUE Queue = 1110
+	CONVERGENCE_TFT_TUTORIAL_QUEUE Queue = 1110
 )
 
 func (queue Queue) String() string {
 	switch queue {
-	case CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_DOUBLE_UP_WORKSHOP_1150_QUEUE:
+	case CONVERGENCE_RANKED_TFT_DOUBLE_UP_WORKSHOP_1150_QUEUE:
 		return "1150"
-	case CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_DOUBLE_UP_WORKSHOP_QUEUE:
+	case CONVERGENCE_RANKED_TFT_DOUBLE_UP_WORKSHOP_QUEUE:
 		return "1160"
-	case CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_HYPER_ROLL_QUEUE:
+	case CONVERGENCE_RANKED_TFT_HYPER_ROLL_QUEUE:
 		return "1130"
-	case CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_QUEUE:
+	case CONVERGENCE_RANKED_TFT_QUEUE:
 		return "1100"
-	case CONVERGENCE_TEAMFIGHT_TACTICS_1V0_QUEUE:
+	case CONVERGENCE_TFT_1V0_QUEUE:
 		return "1091"
-	case CONVERGENCE_TEAMFIGHT_TACTICS_2V0_QUEUE:
+	case CONVERGENCE_TFT_2V0_QUEUE:
 		return "1092"
-	case CONVERGENCE_TEAMFIGHT_TACTICS_QUEUE:
+	case CONVERGENCE_TFT_QUEUE:
 		return "1090"
-	case CONVERGENCE_TEAMFIGHT_TACTICS_SET_3_5_REVIVAL_QUEUE:
+	case CONVERGENCE_TFT_SET_3_5_REVIVAL_QUEUE:
 		return "6000"
-	case CONVERGENCE_TEAMFIGHT_TACTICS_SIMLUATION_QUEUE:
+	case CONVERGENCE_TFT_SIMLUATION_QUEUE:
 		return "1111"
-	case CONVERGENCE_TEAMFIGHT_TACTICS_TUTORIAL_QUEUE:
+	case CONVERGENCE_TFT_TUTORIAL_QUEUE:
 		return "1110"
 	default:
 		return string(queue)

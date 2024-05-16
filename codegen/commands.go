@@ -176,6 +176,7 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 			"ClientName":           clientName,
 			"NormalizedClientName": normalizedClientName,
 			"FormatEndpointName":   formatEndpointName,
+			"GetGameName":          getFullName,
 			"RemoveGameName":       removeGameName,
 
 			"VALRoutes":      valRoutes,

@@ -755,7 +755,7 @@ func (endpoint *MatchV5) ByID(ctx context.Context, route api.RegionalRoute, matc
 // [match-v5.getMatchIdsByPUUID]
 //
 // [match-v5.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#match-v5/GET_getMatchIdsByPUUID
-func (endpoint *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, startTime int64, endTime int64, queue int32, type_ string, start int32, count int32) ([]string, error) {
+func (endpoint *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, startTime int64, endTime int64, queue Queue, matchType string, start int32, count int32) ([]string, error) {
 	logger := endpoint.internal.Logger("LOL_MatchV5_ListByPUUID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/match/v5/matches/by-puuid/", puuid, "/ids"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "match-v5.getMatchIdsByPUUID", nil)
@@ -769,17 +769,17 @@ func (endpoint *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRout
 	if endTime != -1 {
 		values.Set("endTime", strconv.FormatInt(endTime, 10))
 	}
+	if matchType != "" {
+		values.Set("type", matchType)
+	}
 	if queue != -1 {
-		values.Set("queue", strconv.FormatInt(int64(queue), 10))
+		values.Set("queue", queue.String())
 	}
 	if start != -1 {
 		values.Set("start", strconv.FormatInt(int64(start), 10))
 	}
 	if startTime != -1 {
 		values.Set("startTime", strconv.FormatInt(startTime, 10))
-	}
-	if type_ != "" {
-		values.Set("type", type_)
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []string
