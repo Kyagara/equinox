@@ -1,25 +1,25 @@
 {{ Preamble }}
 
-{%- macro NewConstants(TypeName, Table) %}
+{%- macro NewConstants(Type, Table, IsInteger) %}
 {%- for Name, Details in Table sorted %}
-    // {{ Details.Description|safe }}
-{%- if Details.Deprecated %}
+    {%- if Details.Deprecated %}
+    // # Deprecated
     //
-    // Deprecated
-{%- endif %}
-    {{ Name|upper }} {{ TypeName }} = "{{ Name }}"
+    {%- endif %}
+    // {{ Details.Description|safe }}
+    {{ Name }} {{ Type }} = {%- if IsInteger %}{{ Details.Value }}{% else %}"{{ Details.Value }}"{% endif %}
 {%- endfor %}
 {%- endmacro %}
 
-{%- macro ConstantStringer(VarName, TypeName, Table) %}
-func ({{ VarName }} {{ TypeName }}) String() string {
+{%- macro Stringer(VarName, Type, Table, IsInt64) %}
+func ({{ VarName }} {{ Type }}) String() string {
 	switch {{ VarName }} {
     {%- for Name, Details in Table sorted %}
-    case {{ Name|upper }}:
-        return "{{ Name }}"
+    case {{ Name }}:
+        return "{{ Details.Value }}"
     {%- endfor %}
     default:
-        return string({{ VarName }})
+        return {% if IsInt64 %}strconv.FormatInt(int64({{ VarName }}), 10){% else %}string({{ VarName }}){% endif %}
 	}
 }
 {%- endmacro %}
@@ -32,11 +32,52 @@ const (
 {{- NewConstants("PlatformRoute", VALRoutes) }}
 )
 
-{{- ConstantStringer("route", "PlatformRoute", VALRoutes) }}
+{{- Stringer("route", "PlatformRoute", VALRoutes) }}
 {%- endif %}
 
 {% if ClientName == "lol" or ClientName == "tft" %}
-// LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
+// Platform routes for League of Legends and Teamfight Tactics.
+type PlatformRoute string
+
+const (
+{{- NewConstants("PlatformRoute", LOL_TFT_Routes) }}
+)
+
+{{- Stringer("route", "PlatformRoute", LOL_TFT_Routes) }}
+
+
+{% if ClientName == "lol" %}
+// Tournament regions for League of Legends.
+type TournamentRegion string
+
+const (
+{%- for Name, Details in LOL_TFT_Routes sorted %}
+{%- if Details.TournamentRegion %}
+    {%- if Details.Deprecated %}
+    // # Deprecated
+    //
+    {%- endif %}
+    // {{ Details.Description|safe }}
+    {{ Details.TournamentRegion|upper }} TournamentRegion = "{{ Details.TournamentRegion|lower }}"
+{%- endif %}
+{%- endfor %}
+)
+
+func (route TournamentRegion) String() string {
+	switch route {
+    {%- for Name, Details in LOL_TFT_Routes sorted %}
+    {%- if Details.TournamentRegion %}
+    case {{ Details.TournamentRegion|upper }}:
+        return "{{ Details.TournamentRegion|lower }}"
+    {%- endif %}
+    {%- endfor %}
+    default:
+        return string(route)
+	}
+}
+{%- endif %}
+
+// League of Legends and Teamfight Tactics ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
 
 const (
@@ -79,7 +120,7 @@ func (tier Tier) String() string {
 	}
 }
 
-// LoL and TFT rank divisions, I, II, III, IV, and (deprecated) V.
+// League of Legends and Teamfight Tactics rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
 const (
@@ -87,7 +128,7 @@ const (
 	II  Division = "II"
 	III Division = "III"
 	IV  Division = "IV"
-    // Deprecated
+    // # Deprecated
     V   Division = "V"
 )
 
@@ -108,145 +149,49 @@ func (division Division) String() string {
     }
 }
 
-// Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
-type PlatformRoute string
-
-const (
-{{- NewConstants("PlatformRoute", LOL_TFT_Routes) }}
-)
-
-{{- ConstantStringer("route", "PlatformRoute", LOL_TFT_Routes) }}
-{%- endif %}
-
-{% if ClientName == "lol" %}
-// Tournament regions for League of Legends (LoL).
-type TournamentRegion string
-
-const (
-{%- for Name, Details in LOL_TFT_Routes sorted %}
-{%- if Details.TournamentRegion %}
-    // {{ Details.Description|safe }}
-{%- if Details.Deprecated %}
-    //
-    // Deprecated
-{%- endif %}
-    {{ Details.TournamentRegion|upper }} TournamentRegion = "{{ Details.TournamentRegion|lower }}"
-{%- endif %}
-{%- endfor %}
-)
-
-func (route TournamentRegion) String() string {
-	switch route {
-    {%- for Name, Details in LOL_TFT_Routes sorted %}
-    {%- if Details.TournamentRegion %}
-    case {{ Details.TournamentRegion|upper }}:
-        return "{{ Details.TournamentRegion|lower }}"
-    {%- endif %}
-    {%- endfor %}
-    default:
-        return string(route)
-	}
-}
-
-// League of Legends game type: matched game, custom game, or tutorial game.
+// League of Legends and Teamfight Tactics game types: matched game, custom game, or tutorial game.
 type GameType string
 
 const (
 {{- NewConstants("GameType", GameTypes) }}
 )
 
-{{- ConstantStringer("gameType", "GameType", GameTypes) }}
+{{- Stringer("gameType", "GameType", GameTypes) }}
 
-// League of Legends game mode, such as Classic,
+// League of Legends and Teamfight Tactics ranked queue types.
+type QueueType int32
+
+const (
+{{- NewConstants("QueueType", FilterTFT(QueueTypes, ClientName == "lol"), true) }}
+)
+
+{{- Stringer("queueType", "QueueType", FilterTFT(QueueTypes, ClientName == "lol")) }}
+
+// League of Legends and Teamfight Tactics game modes, such as Classic,
 // ARAM, URF, One For All, Ascension, etc.
 type GameMode string
 
 const (
-{{- NewConstants("GameMode", GameModes) }}
+{{- NewConstants("GameMode", FilterTFT(GameModes, ClientName == "lol")) }}
 )
 
-{{- ConstantStringer("gameMode", "GameMode", GameModes) }}
+{{- Stringer("gameMode", "GameMode", FilterTFT(GameModes, ClientName == "lol")) }}
 
-// LoL ranked queue types.
-type QueueType string
+// League of Legends and Teamfight Tactics maps.
+type Map int64
 
 const (
-{%- for ID, Details in QueueTypes sorted %}
-{%- if not ("TFT" in ID) %}
-    // {{ Details.Description|safe }}
-{%- if Details.Deprecated %}
-    //
-    // Deprecated
-{%- endif %}
-    {{ Details.Name|upper }} QueueType = "{{ ID }}"
-{%- endif %}
-{%- endfor %}
+{{- NewConstants("Map", FilterTFT(Maps, ClientName == "lol"), true) }}
 )
 
-func (queue QueueType) String() string {
-	switch queue {
-    {%- for ID, Details in QueueTypes sorted %}
-    {%- if not ("TFT" in ID) %}
-    {%- if Details.Name %}
-    case {{ Details.Name|upper }}:
-        return "{{ ID }}"
-    {%- endif %}
-    {%- endif %}
-    {%- endfor %}
-    default:
-        return string(queue)
-	}
-}
-{%- endif %}
- 
-{% if ClientName == "tft" %}
-// TFT game type: matched game, custom game, or tutorial game.
-type GameType string
+{{- Stringer("lolMap", "Map", FilterTFT(Maps, ClientName == "lol"), true) }}
+
+// League of Legends and Teamfight Tactics queues.
+type Queue int32
 
 const (
-{{- NewConstants("GameType", GameTypes) }}
+{{- NewConstants("Queue", FilterTFT(Queues, ClientName == "lol"), true) }}
 )
 
-{{- ConstantStringer("gameType", "GameType", GameTypes) }}
-
-// League of Legends game mode, such as Classic,
-// ARAM, URF, One For All, Ascension, etc.
-type GameMode string
-
-const (
-{{- NewConstants("GameMode", GameModes) }}
-)
-
-{{- ConstantStringer("gameMode", "GameMode", GameModes) }}
-
-// TFT ranked queue types.
-type QueueType string
-
-const (
-{%- for ID, Details in QueueTypes sorted %}
-{%- if "TFT" in ID %}
-    // {{ Details.Description }}
-{%- if Details.Deprecated|safe %}
-    //
-    // Deprecated
-{%- endif %}
-    {{ Details.Name|upper }} QueueType = "{{ ID }}"
-{%- endif %}
-{%- endfor %}
-)
-
-func (queue QueueType) String() string {
-	switch queue {
-    {%- for ID, Details in QueueTypes sorted %}
-    {%- if "TFT" in ID %}
-    {%- if Details.Name %}
-    case {{ Details.Name|upper }}:
-        return "{{ ID }}"
-    {%- endif %}
-    {%- endif %}
-    {%- endfor %}
-    default:
-        return string(queue)
-	}
-}
+{{- Stringer("queue", "Queue", FilterTFT(Queues, ClientName == "lol")) }}
 {%- endif %}

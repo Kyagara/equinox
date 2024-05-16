@@ -10,15 +10,15 @@ package api
 
 // Spec version = 6461993a9c4165ddca053929f19f6d0e3eb1ca14
 
-// Regional routes, used in tournament services, Legends of Runeterra (LoR), and some other endpoints.
+// Regional routes, used in tournament services, Legends of Runeterra, and some other endpoints.
 type RegionalRoute string
 
 const (
 	// North and South America.
 	AMERICAS RegionalRoute = "americas"
-	// Asia-Pacific, deprecated, for some old matches in `lor-match-v1`.
+	// # Deprecated
 	//
-	// Deprecated
+	// Asia-Pacific, deprecated, for some old matches in `lor-match-v1`.
 	APAC RegionalRoute = "apac"
 	// Asia, used for LoL matches (`match-v5`) and TFT matches (`tft-match-v1`).
 	ASIA RegionalRoute = "asia"

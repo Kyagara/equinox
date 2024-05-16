@@ -1,17 +1,20 @@
 package main
 
-import "github.com/tidwall/gjson"
+import (
+	"strings"
+
+	"github.com/tidwall/gjson"
+)
 
 type RouteConstant struct {
-	Name             string
-	Description      string
+	Value            string
 	TournamentRegion string
-	QueueType        string
+	Description      string
 	Deprecated       bool
 }
 
 type GenericConstant struct {
-	Name        string
+	Value       string
 	Description string
 	Deprecated  bool
 }
@@ -20,17 +23,17 @@ func getRouteConstants(routesTable gjson.Result, routeType string) map[string]Ro
 	routes := make(map[string]RouteConstant, len(routesTable.Map()))
 
 	for name, details := range routesTable.Get(routeType).Map() {
-		description := details.Get("description").String()
-		deprecated := details.Get("deprecated").Bool()
+		description := getConstantDescription(details.Get("description").String())
 		tournamentRegion := details.Get("tournamentRegion").String()
-		queueType := details.Get("x-name").String()
+		value := name
+		name = strings.ToUpper(name)
+		deprecated := details.Get("deprecated").Bool()
 
 		routes[name] = RouteConstant{
-			Name:             name,
+			Value:            value,
+			TournamentRegion: tournamentRegion,
 			Description:      description,
 			Deprecated:       deprecated,
-			TournamentRegion: tournamentRegion,
-			QueueType:        queueType,
 		}
 	}
 
@@ -41,20 +44,30 @@ func getGenericConstants(table gjson.Result, constName string) map[string]Generi
 	consts := make(map[string]GenericConstant, len(table.Map()))
 
 	for _, item := range table.Array() {
-		desc := item.Get("x-desc").String()
-		name := item.Get("x-name").String()
-		value := name
-		if name == "CHERRY" {
-			name += "_" + constName
-		}
+		description := getConstantDescription(item.Get("x-desc").String())
+		name := strings.ToUpper(item.Get("x-name").String())
 		deprecated := item.Get("x-deprecated").Bool()
+		value := item.Get("x-value").String()
+		name += "_" + strings.ToUpper(constName)
+		name = strings.Replace(name, "_DEPRECATED", "", 1)
 
-		consts[value] = GenericConstant{
-			Name:        name,
-			Description: desc,
+		consts[name] = GenericConstant{
+			Value:       value,
+			Description: description,
 			Deprecated:  deprecated,
 		}
 	}
 
 	return consts
+}
+
+func getConstantDescription(descriptionString string) string {
+	description := make([]string, 0, 4)
+	desc := strings.Split(descriptionString, "\n")
+	for _, s := range desc {
+		description = append(description, s)
+		description = append(description, "")
+	}
+	description = description[:len(description)-1]
+	return strings.Join(description, "\n// ")
 }

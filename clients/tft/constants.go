@@ -1,5 +1,7 @@
 package tft
 
+import "strconv"
+
 ///////////////////////////////////////////////
 //                                           //
 //                     !                     //
@@ -10,79 +12,7 @@ package tft
 
 // Spec version = 6461993a9c4165ddca053929f19f6d0e3eb1ca14
 
-// LoL and TFT ranked tiers, such as gold, diamond, challenger, etc.
-type Tier string
-
-const (
-	IRON        Tier = "IRON"
-	BRONZE      Tier = "BRONZE"
-	SILVER      Tier = "SILVER"
-	GOLD        Tier = "GOLD"
-	PLATINUM    Tier = "PLATINUM"
-	EMERALD     Tier = "EMERALD"
-	DIAMOND     Tier = "DIAMOND"
-	MASTER      Tier = "MASTER"
-	GRANDMASTER Tier = "GRANDMASTER"
-	CHALLENGER  Tier = "CHALLENGER"
-)
-
-func (tier Tier) String() string {
-	switch tier {
-	case IRON:
-		return "IRON"
-	case BRONZE:
-		return "BRONZE"
-	case SILVER:
-		return "SILVER"
-	case GOLD:
-		return "GOLD"
-	case PLATINUM:
-		return "PLATINUM"
-	case EMERALD:
-		return "EMERALD"
-	case DIAMOND:
-		return "DIAMOND"
-	case MASTER:
-		return "MASTER"
-	case GRANDMASTER:
-		return "GRANDMASTER"
-	case CHALLENGER:
-		return "CHALLENGER"
-	default:
-		return string(tier)
-	}
-}
-
-// LoL and TFT rank divisions, I, II, III, IV, and (deprecated) V.
-type Division string
-
-const (
-	I   Division = "I"
-	II  Division = "II"
-	III Division = "III"
-	IV  Division = "IV"
-	// Deprecated
-	V Division = "V"
-)
-
-func (division Division) String() string {
-	switch division {
-	case I:
-		return "I"
-	case II:
-		return "II"
-	case III:
-		return "III"
-	case IV:
-		return "IV"
-	case V:
-		return "V"
-	default:
-		return string(division)
-	}
-}
-
-// Platform routes for League of Legends (LoL), Teamfight Tactics (TFT).
+// Platform routes for League of Legends and Teamfight Tactics.
 type PlatformRoute string
 
 const (
@@ -163,175 +93,221 @@ func (route PlatformRoute) String() string {
 	}
 }
 
-// TFT game type: matched game, custom game, or tutorial game.
+// League of Legends and Teamfight Tactics ranked tiers, such as gold, diamond, challenger, etc.
+type Tier string
+
+const (
+	IRON        Tier = "IRON"
+	BRONZE      Tier = "BRONZE"
+	SILVER      Tier = "SILVER"
+	GOLD        Tier = "GOLD"
+	PLATINUM    Tier = "PLATINUM"
+	EMERALD     Tier = "EMERALD"
+	DIAMOND     Tier = "DIAMOND"
+	MASTER      Tier = "MASTER"
+	GRANDMASTER Tier = "GRANDMASTER"
+	CHALLENGER  Tier = "CHALLENGER"
+)
+
+func (tier Tier) String() string {
+	switch tier {
+	case IRON:
+		return "IRON"
+	case BRONZE:
+		return "BRONZE"
+	case SILVER:
+		return "SILVER"
+	case GOLD:
+		return "GOLD"
+	case PLATINUM:
+		return "PLATINUM"
+	case EMERALD:
+		return "EMERALD"
+	case DIAMOND:
+		return "DIAMOND"
+	case MASTER:
+		return "MASTER"
+	case GRANDMASTER:
+		return "GRANDMASTER"
+	case CHALLENGER:
+		return "CHALLENGER"
+	default:
+		return string(tier)
+	}
+}
+
+// League of Legends and Teamfight Tactics rank divisions, I, II, III, IV, and (deprecated) V.
+type Division string
+
+const (
+	I   Division = "I"
+	II  Division = "II"
+	III Division = "III"
+	IV  Division = "IV"
+	// # Deprecated
+	V Division = "V"
+)
+
+func (division Division) String() string {
+	switch division {
+	case I:
+		return "I"
+	case II:
+		return "II"
+	case III:
+		return "III"
+	case IV:
+		return "IV"
+	case V:
+		return "V"
+	default:
+		return string(division)
+	}
+}
+
+// League of Legends and Teamfight Tactics game types: matched game, custom game, or tutorial game.
 type GameType string
 
 const (
 	// Custom games
-	CUSTOM_GAME GameType = "CUSTOM_GAME"
+	CUSTOM_GAME_GAMETYPE GameType = "CUSTOM_GAME"
 	// all other games
-	MATCHED_GAME GameType = "MATCHED_GAME"
+	MATCHED_GAME_GAMETYPE GameType = "MATCHED_GAME"
 	// Tutorial games
-	TUTORIAL_GAME GameType = "TUTORIAL_GAME"
+	TUTORIAL_GAME_GAMETYPE GameType = "TUTORIAL_GAME"
 )
 
 func (gameType GameType) String() string {
 	switch gameType {
-	case CUSTOM_GAME:
+	case CUSTOM_GAME_GAMETYPE:
 		return "CUSTOM_GAME"
-	case MATCHED_GAME:
+	case MATCHED_GAME_GAMETYPE:
 		return "MATCHED_GAME"
-	case TUTORIAL_GAME:
+	case TUTORIAL_GAME_GAMETYPE:
 		return "TUTORIAL_GAME"
 	default:
 		return string(gameType)
 	}
 }
 
-// League of Legends game mode, such as Classic,
+// League of Legends and Teamfight Tactics ranked queue types.
+type QueueType int32
+
+const (
+	// Ranked Teamfight Tactics (Double Up Workshop) games
+	RANKED_TFT_DOUBLE_UP_QUEUETYPE QueueType = 1160
+	// # Deprecated
+	//
+	// Ranked Teamfight Tactics (Double Up Workshop) games
+	RANKED_TFT_PAIRS_QUEUETYPE QueueType = 1150
+	// Ranked Teamfight Tactics games
+	RANKED_TFT_QUEUETYPE QueueType = 1100
+	// Ranked Teamfight Tactics (Hyper Roll) games
+	RANKED_TFT_TURBO_QUEUETYPE QueueType = 1130
+)
+
+func (queueType QueueType) String() string {
+	switch queueType {
+	case RANKED_TFT_DOUBLE_UP_QUEUETYPE:
+		return "1160"
+	case RANKED_TFT_PAIRS_QUEUETYPE:
+		return "1150"
+	case RANKED_TFT_QUEUETYPE:
+		return "1100"
+	case RANKED_TFT_TURBO_QUEUETYPE:
+		return "1130"
+	default:
+		return string(queueType)
+	}
+}
+
+// League of Legends and Teamfight Tactics game modes, such as Classic,
 // ARAM, URF, One For All, Ascension, etc.
 type GameMode string
 
 const (
-	// ARAM games
-	ARAM GameMode = "ARAM"
-	// All Random Summoner's Rift games
-	ARSR GameMode = "ARSR"
-	// Ascension games
-	ASCENSION GameMode = "ASCENSION"
-	// Blood Hunt Assassin games
-	ASSASSINATE GameMode = "ASSASSINATE"
-	// 2v2v2v2
-	CHERRY GameMode = "CHERRY"
-	// Classic Summoner's Rift and Twisted Treeline games
-	CLASSIC GameMode = "CLASSIC"
-	// Dark Star: Singularity games
-	DARKSTAR GameMode = "DARKSTAR"
-	// Doom Bot games
-	DOOMBOTSTEEMO GameMode = "DOOMBOTSTEEMO"
-	// Snowdown Showdown games
-	FIRSTBLOOD GameMode = "FIRSTBLOOD"
-	// Nexus Blitz games
-	GAMEMODEX GameMode = "GAMEMODEX"
-	// Legend of the Poro King games
-	KINGPORO GameMode = "KINGPORO"
-	// Nexus Blitz games
-	NEXUSBLITZ GameMode = "NEXUSBLITZ"
-	// Dominion/Crystal Scar games
-	ODIN GameMode = "ODIN"
-	// Odyssey: Extraction games
-	ODYSSEY GameMode = "ODYSSEY"
-	// One for All games
-	ONEFORALL GameMode = "ONEFORALL"
-	// Practice tool training games.
-	PRACTICETOOL GameMode = "PRACTICETOOL"
-	// PROJECT: Hunters games
-	PROJECT GameMode = "PROJECT"
-	// Nexus Siege games
-	SIEGE GameMode = "SIEGE"
-	// Star Guardian Invasion games
-	STARGUARDIAN GameMode = "STARGUARDIAN"
 	// Teamfight Tactics.
-	TFT GameMode = "TFT"
-	// Tutorial games
-	TUTORIAL GameMode = "TUTORIAL"
-	// Tutorial: Welcome to League.
-	TUTORIAL_MODULE_1 GameMode = "TUTORIAL_MODULE_1"
-	// Tutorial: Power Up.
-	TUTORIAL_MODULE_2 GameMode = "TUTORIAL_MODULE_2"
-	// Tutorial: Shop for Gear.
-	TUTORIAL_MODULE_3 GameMode = "TUTORIAL_MODULE_3"
-	// Ultimate Spellbook games
-	ULTBOOK GameMode = "ULTBOOK"
-	// URF games
-	URF GameMode = "URF"
+	TFT_GAMEMODE GameMode = "TFT"
 )
 
 func (gameMode GameMode) String() string {
 	switch gameMode {
-	case ARAM:
-		return "ARAM"
-	case ARSR:
-		return "ARSR"
-	case ASCENSION:
-		return "ASCENSION"
-	case ASSASSINATE:
-		return "ASSASSINATE"
-	case CHERRY:
-		return "CHERRY"
-	case CLASSIC:
-		return "CLASSIC"
-	case DARKSTAR:
-		return "DARKSTAR"
-	case DOOMBOTSTEEMO:
-		return "DOOMBOTSTEEMO"
-	case FIRSTBLOOD:
-		return "FIRSTBLOOD"
-	case GAMEMODEX:
-		return "GAMEMODEX"
-	case KINGPORO:
-		return "KINGPORO"
-	case NEXUSBLITZ:
-		return "NEXUSBLITZ"
-	case ODIN:
-		return "ODIN"
-	case ODYSSEY:
-		return "ODYSSEY"
-	case ONEFORALL:
-		return "ONEFORALL"
-	case PRACTICETOOL:
-		return "PRACTICETOOL"
-	case PROJECT:
-		return "PROJECT"
-	case SIEGE:
-		return "SIEGE"
-	case STARGUARDIAN:
-		return "STARGUARDIAN"
-	case TFT:
+	case TFT_GAMEMODE:
 		return "TFT"
-	case TUTORIAL:
-		return "TUTORIAL"
-	case TUTORIAL_MODULE_1:
-		return "TUTORIAL_MODULE_1"
-	case TUTORIAL_MODULE_2:
-		return "TUTORIAL_MODULE_2"
-	case TUTORIAL_MODULE_3:
-		return "TUTORIAL_MODULE_3"
-	case ULTBOOK:
-		return "ULTBOOK"
-	case URF:
-		return "URF"
 	default:
 		return string(gameMode)
 	}
 }
 
-// TFT ranked queue types.
-type QueueType string
+// League of Legends and Teamfight Tactics maps.
+type Map int64
 
 const (
-	// Ranked Teamfight Tactics games
-	RANKED_TFT QueueType = "RANKED_TFT"
-	// Ranked Teamfight Tactics (Double Up Workshop) games
-	RANKED_TFT_DOUBLE_UP QueueType = "RANKED_TFT_DOUBLE_UP"
-	// Ranked Teamfight Tactics (Double Up Workshop) games
+	// Convergence
 	//
-	// Deprecated
-	RANKED_TFT_PAIRS QueueType = "RANKED_TFT_PAIRS"
-	// Ranked Teamfight Tactics (Hyper Roll) games
-	RANKED_TFT_TURBO QueueType = "RANKED_TFT_TURBO"
+	// Teamfight Tactics map
+	CONVERGENCE_MAP Map = 22
 )
 
-func (queue QueueType) String() string {
+func (lolMap Map) String() string {
+	switch lolMap {
+	case CONVERGENCE_MAP:
+		return "22"
+	default:
+		return strconv.FormatInt(int64(lolMap), 10)
+	}
+}
+
+// League of Legends and Teamfight Tactics queues.
+type Queue int32
+
+const (
+	// # Deprecated
+	//
+	// Ranked Teamfight Tactics (Double Up Workshop) games on Convergence
+	CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_DOUBLE_UP_WORKSHOP_1150_QUEUE Queue = 1150
+	// Ranked Teamfight Tactics (Double Up Workshop) games on Convergence
+	CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_DOUBLE_UP_WORKSHOP_QUEUE Queue = 1160
+	// Ranked Teamfight Tactics (Hyper Roll) games on Convergence
+	CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_HYPER_ROLL_QUEUE Queue = 1130
+	// Ranked Teamfight Tactics games on Convergence
+	CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_QUEUE Queue = 1100
+	// Teamfight Tactics 1v0 games on Convergence
+	CONVERGENCE_TEAMFIGHT_TACTICS_1V0_QUEUE Queue = 1091
+	// Teamfight Tactics 2v0 games on Convergence
+	CONVERGENCE_TEAMFIGHT_TACTICS_2V0_QUEUE Queue = 1092
+	// Teamfight Tactics games on Convergence
+	CONVERGENCE_TEAMFIGHT_TACTICS_QUEUE Queue = 1090
+	// Teamfight Tactics Set 3.5 Revival games on Convergence
+	CONVERGENCE_TEAMFIGHT_TACTICS_SET_3_5_REVIVAL_QUEUE Queue = 6000
+	// Teamfight Tactics Simluation games on Convergence
+	CONVERGENCE_TEAMFIGHT_TACTICS_SIMLUATION_QUEUE Queue = 1111
+	// Teamfight Tactics Tutorial games on Convergence
+	CONVERGENCE_TEAMFIGHT_TACTICS_TUTORIAL_QUEUE Queue = 1110
+)
+
+func (queue Queue) String() string {
 	switch queue {
-	case RANKED_TFT:
-		return "RANKED_TFT"
-	case RANKED_TFT_DOUBLE_UP:
-		return "RANKED_TFT_DOUBLE_UP"
-	case RANKED_TFT_PAIRS:
-		return "RANKED_TFT_PAIRS"
-	case RANKED_TFT_TURBO:
-		return "RANKED_TFT_TURBO"
+	case CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_DOUBLE_UP_WORKSHOP_1150_QUEUE:
+		return "1150"
+	case CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_DOUBLE_UP_WORKSHOP_QUEUE:
+		return "1160"
+	case CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_HYPER_ROLL_QUEUE:
+		return "1130"
+	case CONVERGENCE_RANKED_TEAMFIGHT_TACTICS_QUEUE:
+		return "1100"
+	case CONVERGENCE_TEAMFIGHT_TACTICS_1V0_QUEUE:
+		return "1091"
+	case CONVERGENCE_TEAMFIGHT_TACTICS_2V0_QUEUE:
+		return "1092"
+	case CONVERGENCE_TEAMFIGHT_TACTICS_QUEUE:
+		return "1090"
+	case CONVERGENCE_TEAMFIGHT_TACTICS_SET_3_5_REVIVAL_QUEUE:
+		return "6000"
+	case CONVERGENCE_TEAMFIGHT_TACTICS_SIMLUATION_QUEUE:
+		return "1111"
+	case CONVERGENCE_TEAMFIGHT_TACTICS_TUTORIAL_QUEUE:
+		return "1110"
 	default:
 		return string(queue)
 	}

@@ -21,10 +21,12 @@ var (
 
 	SPECS_URLS = [][]string{
 		{"http://www.mingweisamuel.com/riotapi-schema/openapi-3.0.0.json", "./specs/spec.json"},
+		{"http://www.mingweisamuel.com/riotapi-schema/routesTable.json", "./specs/routesTable.json"},
+		{"https://www.mingweisamuel.com/riotapi-schema/enums/maps.json", "./specs/maps.json"},
+		{"https://www.mingweisamuel.com/riotapi-schema/enums/queues.json", "./specs/queues.json"},
 		{"http://www.mingweisamuel.com/riotapi-schema/enums/queueTypes.json", "./specs/queueTypes.json"},
 		{"http://www.mingweisamuel.com/riotapi-schema/enums/gameTypes.json", "./specs/gameTypes.json"},
 		{"http://www.mingweisamuel.com/riotapi-schema/enums/gameModes.json", "./specs/gameModes.json"},
-		{"http://www.mingweisamuel.com/riotapi-schema/routesTable.json", "./specs/routesTable.json"},
 	}
 )
 

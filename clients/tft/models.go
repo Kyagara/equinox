@@ -15,8 +15,7 @@ type LeagueEntryV1DTO struct {
 	// Not included for the RANKED_TFT_TURBO queueType.
 	LeagueID string `json:"leagueId,omitempty"`
 	// Player Universal Unique Identifier. Exact length of 78 characters. (Encrypted)
-	PUUID     string    `json:"puuid,omitempty"`
-	QueueType QueueType `json:"queueType,omitempty"`
+	PUUID string `json:"puuid,omitempty"`
 	// The player's division within a tier. Not included for the RANKED_TFT_TURBO queueType.
 	Rank Division `json:"rank,omitempty"`
 	// Only included for the RANKED_TFT_TURBO queueType.
@@ -32,7 +31,8 @@ type LeagueEntryV1DTO struct {
 	// Not included for the RANKED_TFT_TURBO queueType.
 	LeaguePoints int32 `json:"leaguePoints,omitempty"`
 	// Second through eighth placement.
-	Losses int32 `json:"losses,omitempty"`
+	Losses    int32     `json:"losses,omitempty"`
+	QueueType QueueType `json:"queueType,omitempty"`
 	// Only included for the RANKED_TFT_TURBO queueType.
 	RatedRating int32 `json:"ratedRating,omitempty"`
 	// First placement.
@@ -68,9 +68,9 @@ type LeagueItemV1DTO struct {
 type LeagueListV1DTO struct {
 	LeagueID string            `json:"leagueId,omitempty"`
 	Name     string            `json:"name,omitempty"`
-	Queue    QueueType         `json:"queue,omitempty"`
 	Tier     Tier              `json:"tier,omitempty"`
 	Entries  []LeagueItemV1DTO `json:"entries,omitempty"`
+	Queue    QueueType         `json:"queue,omitempty"`
 }
 
 // tft-league-v1.MiniSeriesDTO

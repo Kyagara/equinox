@@ -154,8 +154,7 @@ type ClashTournamentV1DTO struct {
 
 // league-v4.LeagueEntryDTO
 type LeagueEntryV4DTO struct {
-	LeagueID  string    `json:"leagueId,omitempty"`
-	QueueType QueueType `json:"queueType,omitempty"`
+	LeagueID string `json:"leagueId,omitempty"`
 	// The player's division within a tier.
 	Rank Division `json:"rank,omitempty"`
 	// Player's encrypted summonerId.
@@ -164,7 +163,8 @@ type LeagueEntryV4DTO struct {
 	MiniSeries   LeagueMiniSeriesV4DTO `json:"miniSeries,omitempty"`
 	LeaguePoints int32                 `json:"leaguePoints,omitempty"`
 	// Losing team on Summoners Rift.
-	Losses int32 `json:"losses,omitempty"`
+	Losses    int32     `json:"losses,omitempty"`
+	QueueType QueueType `json:"queueType,omitempty"`
 	// Winning team on Summoners Rift.
 	Wins       int32 `json:"wins,omitempty"`
 	FreshBlood bool  `json:"freshBlood,omitempty"`
@@ -175,8 +175,7 @@ type LeagueEntryV4DTO struct {
 
 // league-exp-v4.LeagueEntryDTO
 type LeagueExpLeagueEntryV4DTO struct {
-	LeagueID  string    `json:"leagueId,omitempty"`
-	QueueType QueueType `json:"queueType,omitempty"`
+	LeagueID string `json:"leagueId,omitempty"`
 	// The player's division within a tier.
 	Rank Division `json:"rank,omitempty"`
 	// Player's summonerId (Encrypted)
@@ -185,7 +184,8 @@ type LeagueExpLeagueEntryV4DTO struct {
 	MiniSeries   LeagueExpMiniSeriesV4DTO `json:"miniSeries,omitempty"`
 	LeaguePoints int32                    `json:"leaguePoints,omitempty"`
 	// Losing team on Summoners Rift. Second through eighth placement in Teamfight Tactics.
-	Losses int32 `json:"losses,omitempty"`
+	Losses    int32     `json:"losses,omitempty"`
+	QueueType QueueType `json:"queueType,omitempty"`
 	// Winning team on Summoners Rift. First placement in Teamfight Tactics.
 	Wins       int32 `json:"wins,omitempty"`
 	FreshBlood bool  `json:"freshBlood,omitempty"`
@@ -223,9 +223,9 @@ type LeagueItemV4DTO struct {
 type LeagueListV4DTO struct {
 	LeagueID string            `json:"leagueId,omitempty"`
 	Name     string            `json:"name,omitempty"`
-	Queue    QueueType         `json:"queue,omitempty"`
 	Tier     Tier              `json:"tier,omitempty"`
 	Entries  []LeagueItemV4DTO `json:"entries,omitempty"`
+	Queue    QueueType         `json:"queue,omitempty"`
 }
 
 // league-v4.MiniSeriesDTO

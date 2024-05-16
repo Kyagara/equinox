@@ -1,24 +1,24 @@
 {{ Preamble }}
 
-// Regional routes, used in tournament services, Legends of Runeterra (LoR), and some other endpoints.
+// Regional routes, used in tournament services, Legends of Runeterra, and some other endpoints.
 type RegionalRoute string
 
 const (
 {%- for Name, Details in RegionalRoutes sorted %}
-    // {{ Details.Description|safe }}
-{%- if Details.Deprecated %}
+    {%- if Details.Deprecated %}
+    // # Deprecated
     //
-    // Deprecated
-{%- endif %}
-    {{ Name|upper }} RegionalRoute = "{{ Name }}"
+    {%- endif %}
+    // {{ Details.Description|safe }}
+    {{ Name }} RegionalRoute = "{{ Details.Value }}"
 {%- endfor %}
 )
 
 func (route RegionalRoute) String() string {
 	switch route {
     {%- for Name, Details in RegionalRoutes sorted %}
-    case {{ Name|upper }}:
-        return "{{ Name }}"
+    case {{ Name }}:
+        return "{{ Details.Value }}"
     {%- endfor %}
     default:
         return string(route)
