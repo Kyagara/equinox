@@ -40,8 +40,8 @@ type ChallengesV1 struct {
 // [lol-challenges-v1.getAllChallengeConfigs]
 //
 // [lol-challenges-v1.getAllChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getAllChallengeConfigs
-func (endpoint *ChallengesV1) AllChallengeConfigs(ctx context.Context, route PlatformRoute) ([]ChallengesChallengeConfigInfoV1DTO, error) {
-	logger := endpoint.internal.Logger("LOL_ChallengesV1_AllChallengeConfigs")
+func (endpoint *ChallengesV1) AllConfigs(ctx context.Context, route PlatformRoute) ([]ChallengesChallengeConfigInfoV1DTO, error) {
+	logger := endpoint.internal.Logger("LOL_ChallengesV1_AllConfigs")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/config"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-challenges-v1.getAllChallengeConfigs", nil)
 	if err != nil {
@@ -65,8 +65,8 @@ func (endpoint *ChallengesV1) AllChallengeConfigs(ctx context.Context, route Pla
 // [lol-challenges-v1.getAllChallengePercentiles]
 //
 // [lol-challenges-v1.getAllChallengePercentiles]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getAllChallengePercentiles
-func (endpoint *ChallengesV1) AllChallengePercentiles(ctx context.Context, route PlatformRoute) (map[int64]map[Tier]float64, error) {
-	logger := endpoint.internal.Logger("LOL_ChallengesV1_AllChallengePercentiles")
+func (endpoint *ChallengesV1) AllPercentiles(ctx context.Context, route PlatformRoute) (map[int64]map[Tier]float64, error) {
+	logger := endpoint.internal.Logger("LOL_ChallengesV1_AllPercentiles")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/percentiles"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-challenges-v1.getAllChallengePercentiles", nil)
 	if err != nil {
@@ -117,8 +117,8 @@ func (endpoint *ChallengesV1) ByPUUID(ctx context.Context, route PlatformRoute, 
 // [lol-challenges-v1.getChallengeConfigs]
 //
 // [lol-challenges-v1.getChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeConfigs
-func (endpoint *ChallengesV1) ChallengeConfigs(ctx context.Context, route PlatformRoute, challengeId int64) (*ChallengesChallengeConfigInfoV1DTO, error) {
-	logger := endpoint.internal.Logger("LOL_ChallengesV1_ChallengeConfigs")
+func (endpoint *ChallengesV1) Configs(ctx context.Context, route PlatformRoute, challengeId int64) (*ChallengesChallengeConfigInfoV1DTO, error) {
+	logger := endpoint.internal.Logger("LOL_ChallengesV1_Configs")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(challengeId, 10), "/config"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-challenges-v1.getChallengeConfigs", nil)
 	if err != nil {
@@ -145,8 +145,8 @@ func (endpoint *ChallengesV1) ChallengeConfigs(ctx context.Context, route Platfo
 // [lol-challenges-v1.getChallengeLeaderboards]
 //
 // [lol-challenges-v1.getChallengeLeaderboards]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeLeaderboards
-func (endpoint *ChallengesV1) ChallengeLeaderboards(ctx context.Context, route PlatformRoute, challengeId int64, level Tier, limit int32) ([]ChallengesApexPlayerInfoV1DTO, error) {
-	logger := endpoint.internal.Logger("LOL_ChallengesV1_ChallengeLeaderboards")
+func (endpoint *ChallengesV1) Leaderboards(ctx context.Context, route PlatformRoute, challengeId int64, level Tier, limit int32) ([]ChallengesApexPlayerInfoV1DTO, error) {
+	logger := endpoint.internal.Logger("LOL_ChallengesV1_Leaderboards")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(challengeId, 10), "/leaderboards/by-level/", level.String()}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-challenges-v1.getChallengeLeaderboards", nil)
 	if err != nil {
@@ -176,14 +176,14 @@ func (endpoint *ChallengesV1) ChallengeLeaderboards(ctx context.Context, route P
 // [lol-challenges-v1.getChallengePercentiles]
 //
 // [lol-challenges-v1.getChallengePercentiles]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengePercentiles
-func (endpoint *ChallengesV1) ChallengePercentiles(ctx context.Context, route PlatformRoute, challengeId int64) (map[Tier]float64, error) {
-	logger := endpoint.internal.Logger("LOL_ChallengesV1_ChallengePercentiles")
+func (endpoint *ChallengesV1) Percentiles(ctx context.Context, route PlatformRoute, challengeId int64) (map[Tier]float64, error) {
+	logger := endpoint.internal.Logger("LOL_ChallengesV1_Percentiles")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(challengeId, 10), "/percentiles"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-challenges-v1.getChallengePercentiles", nil)
 	if err != nil {
 		return nil, err
 	}
-	var data map[Tier]float64
+	data := make(map[Tier]float64, 10)
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err
@@ -303,7 +303,7 @@ func (endpoint *ChampionMasteryV4) TopMasteriesByPUUID(ctx context.Context, rout
 		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
-	var data []ChampionMasteryV4DTO
+	data := make([]ChampionMasteryV4DTO, 0, 3)
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err
@@ -782,7 +782,7 @@ func (endpoint *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRout
 		values.Set("startTime", strconv.FormatInt(startTime, 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
-	var data []string
+	data := make([]string, 0, 20)
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err
