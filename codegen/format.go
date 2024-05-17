@@ -253,3 +253,35 @@ func cleanDTOPropType(prop gjson.Result, version string, endpoint string, propTy
 
 	return propType
 }
+
+func filterTFT(table map[string]GenericConstant, removeTFT bool) map[string]GenericConstant {
+	newTable := make(map[string]GenericConstant, len(table))
+	keywords := []string{"tft", "teamfight", "convergence"}
+	for name, v := range table {
+		containsTFT := false
+		for _, keyword := range keywords {
+			if strings.Contains(strings.ToLower(v.Description), keyword) {
+				containsTFT = true
+				break
+			}
+		}
+		n := strings.Replace(name, "TEAMFIGHT_TACTICS", "TFT", 1)
+		if removeTFT && !containsTFT {
+			newTable[n] = v
+		} else if !removeTFT && containsTFT {
+			newTable[n] = v
+		}
+	}
+	return newTable
+}
+
+func normalizeDescription(descriptionString string) string {
+	description := make([]string, 0, 4)
+	desc := strings.Split(descriptionString, "\n")
+	for _, s := range desc {
+		description = append(description, strings.TrimSpace(s))
+		description = append(description, "")
+	}
+	description = description[:len(description)-1]
+	return strings.Join(description, "\n// ")
+}

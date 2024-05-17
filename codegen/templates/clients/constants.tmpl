@@ -24,6 +24,9 @@ func ({{ VarName }} {{ Type }}) String() string {
 }
 {%- endmacro %}
 
+{% set CurrentGameName = GetGameName(ClientName) %}
+{% set IsLOL = ClientName == "lol" %}
+
 {% if ClientName == "val" %}
 // Platform routes for Valorant.
 type PlatformRoute string
@@ -35,8 +38,8 @@ const (
 {{- Stringer("route", "PlatformRoute", VALRoutes) }}
 {%- endif %}
 
-{% if ClientName == "lol" or ClientName == "tft" %}
-// Platform routes for {{ GetGameName(ClientName) }}.
+{% if IsLOL or ClientName == "tft" %}
+// Platform routes for {{ CurrentGameName }}.
 type PlatformRoute string
 
 const (
@@ -46,7 +49,7 @@ const (
 {{- Stringer("route", "PlatformRoute", LOL_TFT_Routes) }}
 
 
-{% if ClientName == "lol" %}
+{% if IsLOL %}
 // Tournament regions for League of Legends.
 type TournamentRegion string
 
@@ -77,7 +80,7 @@ func (route TournamentRegion) String() string {
 }
 {%- endif %}
 
-// {{ GetGameName(ClientName) }} ranked tiers, such as gold, diamond, challenger, etc.
+// {{ CurrentGameName }} ranked tiers, such as gold, diamond, challenger, etc.
 type Tier string
 
 const (
@@ -120,7 +123,7 @@ func (tier Tier) String() string {
 	}
 }
 
-// {{ GetGameName(ClientName) }} rank divisions, I, II, III, IV, and (deprecated) V.
+// {{ CurrentGameName }} rank divisions, I, II, III, IV, and (deprecated) V.
 type Division string
 
 const (
@@ -149,7 +152,7 @@ func (division Division) String() string {
     }
 }
 
-// Team IDs for {{ GetGameName(ClientName) }}.
+// Team IDs for {{ CurrentGameName }}.
 type Team int32
 
 // https://github.com/MingweiSamuel/Riven/blob/v/2.x.x/riven/src/consts/team.rs
@@ -180,7 +183,7 @@ func (team Team) String() string {
     }
 }
 
-// {{ GetGameName(ClientName) }} game types: matched game, custom game, or tutorial game.
+// {{ CurrentGameName }} game types: matched game, custom game, or tutorial game.
 type GameType string
 
 const (
@@ -189,40 +192,40 @@ const (
 
 {{- Stringer("gameType", "GameType", GameTypes) }}
 
-// {{ GetGameName(ClientName) }} ranked queue types.
+// {{ CurrentGameName }} ranked queue types.
 type QueueType string
 
 const (
-{{- NewConstants("QueueType", FilterTFT(QueueTypes, ClientName == "lol")) }}
+{{- NewConstants("QueueType", FilterTFT(QueueTypes, IsLOL)) }}
 )
 
-{{- Stringer("queueType", "QueueType", FilterTFT(QueueTypes, ClientName == "lol")) }}
+{{- Stringer("queueType", "QueueType", FilterTFT(QueueTypes, IsLOL)) }}
 
-// {{ GetGameName(ClientName) }} game modes, such as Classic,
+// {{ CurrentGameName }} game modes, such as Classic,
 // ARAM, URF, One For All, Ascension, etc.
 type GameMode string
 
 const (
-{{- NewConstants("GameMode", FilterTFT(GameModes, ClientName == "lol")) }}
+{{- NewConstants("GameMode", FilterTFT(GameModes, IsLOL)) }}
 )
 
-{{- Stringer("gameMode", "GameMode", FilterTFT(GameModes, ClientName == "lol")) }}
+{{- Stringer("gameMode", "GameMode", FilterTFT(GameModes, IsLOL)) }}
 
-// {{ GetGameName(ClientName) }} maps.
+// {{ CurrentGameName }} maps.
 type Map int64
 
 const (
-{{- NewConstants("Map", FilterTFT(Maps, ClientName == "lol")) }}
+{{- NewConstants("Map", FilterTFT(Maps, IsLOL)) }}
 )
 
-{{- Stringer("gameMap", "Map", FilterTFT(Maps, ClientName == "lol"), true) }}
+{{- Stringer("gameMap", "Map", FilterTFT(Maps, IsLOL), true) }}
 
-// {{ GetGameName(ClientName) }} queues.
+// {{ CurrentGameName }} queues.
 type Queue int32
 
 const (
-{{- NewConstants("Queue", FilterTFT(Queues, ClientName == "lol")) }}
+{{- NewConstants("Queue", FilterTFT(Queues, IsLOL)) }}
 )
 
-{{- Stringer("queue", "Queue", FilterTFT(Queues, ClientName == "lol")) }}
+{{- Stringer("queue", "Queue", FilterTFT(Queues, IsLOL)) }}
 {%- endif %}
