@@ -309,7 +309,7 @@ func (endpoint *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRout
 		values.Set("startTime", strconv.FormatInt(startTime, 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
-	var data []string
+	data := make([]string, 0, 20)
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err

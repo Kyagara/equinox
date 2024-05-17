@@ -50,6 +50,13 @@ var (
 		"TournamentByTeam":            "ByTeamID",
 		"Match":                       "ByID",
 	}
+
+	preallocMapping = map[string]string{
+		"match-v5.getMatchIdsByPUUID":                        "0, 20",
+		"tft-match-v1.getMatchIdsByPUUID":                    "0, 20",
+		"champion-mastery-v4.getTopChampionMasteriesByPUUID": "0, 3",
+		"lol-challenges-v1.getChallengePercentiles":          "10",
+	}
 )
 
 type EndpointGroup struct {
@@ -69,6 +76,7 @@ type Methods struct {
 	ValueReturn       string
 	ErrorReturn       string
 	URLPath           string
+	Prealloc          string
 	Body              string
 	Description       []string
 	Queries           []string
@@ -231,6 +239,7 @@ func getAPIEndpoints(endpointGroup map[string][]EndpointGroup) map[string][]Meth
 					ReturnType:        returnType,
 					ValueReturn:       valueReturn,
 					ErrorReturn:       errorReturn,
+					Prealloc:          preallocMapping[operationID],
 					Queries:           formatAddQueryParam(queryParams),
 					IsRSO:             isRso,
 				})
@@ -485,6 +494,9 @@ func getMethodName(operationID string) string {
 	temp = regexp.MustCompile("Rsopuuid$").ReplaceAllString(temp, "RSOPUUID")
 	if name, ok := methodNamesMapping[temp]; ok {
 		return name
+	}
+	if temp != "Challenger" {
+		temp = strings.Replace(temp, "Challenge", "", 1)
 	}
 	return temp
 }

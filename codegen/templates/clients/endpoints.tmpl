@@ -51,7 +51,11 @@ func (endpoint *{{ StructName }}) {{ Method.Name }}({{ Method.Arguments }}) {{ M
     request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
 {%- endif %}
 {%- if Method.HasReturn %}
+    {%- if Method.Prealloc %}
+    data := make({{ Method.ReturnType }}, {{ Method.Prealloc }})
+    {%- else %}
     var data {{ Method.ReturnType }}
+    {%- endif %}
 {%- endif %}
     err = endpoint.internal.Execute(ctx, request, {% if Method.HasReturn %}&data{% else %}nil{% endif %})
     if err != nil {
