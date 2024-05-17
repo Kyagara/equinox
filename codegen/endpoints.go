@@ -345,9 +345,9 @@ func formatAddQueryParam(params []gjson.Result) []string {
 	for _, param := range params {
 		name := normalizePropName(param.Get("name").String())
 		prop := param.Get("schema")
-		letHeaderName := name
-		if letHeaderName == "matchType" {
-			letHeaderName = "type"
+		queryName := name
+		if queryName == "matchType" {
+			queryName = "type"
 		}
 
 		var condition string
@@ -386,7 +386,7 @@ func formatAddQueryParam(params []gjson.Result) []string {
 
 		queries = append(queries, fmt.Sprintf(`if %s {
     values.Set("%s", %s)
-}`, condition, letHeaderName, value))
+}`, condition, queryName, value))
 	}
 	return queries
 }

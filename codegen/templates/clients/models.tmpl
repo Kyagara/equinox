@@ -2,10 +2,6 @@
 
 {% for DTO, Model in Models sorted %}
 // {{ Model.DTO }}
-{%- if model.Description %}
-//
-// {{ Model.Description|safe }}
-{%- endif %}
 type {{ DTO }} struct {
 {%- for Prop in Model.Props sorted %}
 {%- if Prop.Description %}

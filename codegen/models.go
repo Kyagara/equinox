@@ -11,9 +11,8 @@ import (
 )
 
 type Model struct {
-	Description string
-	DTO         string
-	Props       []ModelProperty
+	DTO   string
+	Props []ModelProperty
 }
 
 type ModelProperty struct {
@@ -38,7 +37,6 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 			}
 
 			schema := schema[rawDTO]
-			schemaDescription := normalizeDescription(schema.Get("description").String())
 
 			properties := schema.Get("properties").Map()
 			var sortedKeys []string
@@ -60,7 +58,7 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 					fmt.Printf("Duplicate property name for property '%s' in '%s'. Renamed: '%s'\n", propKey, rawDTO, name)
 
 					if slices.Contains(namesUsed, name) {
-						panic(fmt.Errorf("duplicate property name '%s' for property '%s'", name, propKey))
+						panic(fmt.Errorf("found another duplicate for property '%s', '%s'", propKey, name))
 					}
 				}
 				namesUsed = append(namesUsed, name)
@@ -82,9 +80,8 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 			})
 
 			apiModels[dto] = Model{
-				Description: schemaDescription,
-				DTO:         rawDTO,
-				Props:       props,
+				DTO:   rawDTO,
+				Props: props,
 			}
 		}
 	}
@@ -94,20 +91,6 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 	}
 
 	return apiModels
-}
-
-func normalizeDescription(desc string) string {
-	if desc == "" {
-		return ""
-	}
-	lines := strings.Split(desc, "\n")
-
-	trimmedLines := make([]string, 0, len(lines))
-	for _, line := range lines {
-		trimmedLines = append(trimmedLines, strings.TrimSpace(line))
-	}
-
-	return strings.Join(trimmedLines, "\r\n    //\n    // ")
 }
 
 func getDTOAndVersion(rawDTO string) (string, string) {

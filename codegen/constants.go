@@ -25,7 +25,7 @@ func getRouteConstants(routesTable gjson.Result, routeType string) map[string]Ro
 	routes := make(map[string]RouteConstant, len(routesTable.Map()))
 
 	for name, details := range routesTable.Get(routeType).Map() {
-		description := getConstantDescription(details.Get("description").String())
+		description := normalizeDescription(details.Get("description").String())
 		tournamentRegion := details.Get("tournamentRegion").String()
 		value := name
 		name = strings.ToUpper(name)
@@ -46,7 +46,7 @@ func getGenericConstants(table gjson.Result, constName string) map[string]Generi
 	consts := make(map[string]GenericConstant, len(table.Map()))
 
 	for _, item := range table.Array() {
-		description := getConstantDescription(item.Get("x-desc").String())
+		description := normalizeDescription(item.Get("x-desc").String())
 		name := strings.ToUpper(item.Get("x-name").String())
 		deprecated := item.Get("x-deprecated").Bool()
 		value := name
@@ -72,36 +72,4 @@ func getGenericConstants(table gjson.Result, constName string) map[string]Generi
 	}
 
 	return consts
-}
-
-func filterTFT(table map[string]GenericConstant, removeTFT bool) map[string]GenericConstant {
-	newTable := make(map[string]GenericConstant, len(table))
-	keywords := []string{"tft", "teamfight", "convergence"}
-	for name, v := range table {
-		containsTFT := false
-		for _, keyword := range keywords {
-			if strings.Contains(strings.ToLower(v.Description), keyword) {
-				containsTFT = true
-				break
-			}
-		}
-		n := strings.Replace(name, "TEAMFIGHT_TACTICS", "TFT", 1)
-		if removeTFT && !containsTFT {
-			newTable[n] = v
-		} else if !removeTFT && containsTFT {
-			newTable[n] = v
-		}
-	}
-	return newTable
-}
-
-func getConstantDescription(descriptionString string) string {
-	description := make([]string, 0, 4)
-	desc := strings.Split(descriptionString, "\n")
-	for _, s := range desc {
-		description = append(description, s)
-		description = append(description, "")
-	}
-	description = description[:len(description)-1]
-	return strings.Join(description, "\n// ")
 }
