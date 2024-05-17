@@ -1,12 +1,16 @@
 package util
 
 import (
+	"context"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/Kyagara/equinox/v2"
 	"github.com/Kyagara/equinox/v2/api"
+	"github.com/Kyagara/equinox/v2/cache"
 	"github.com/Kyagara/equinox/v2/internal"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -33,20 +37,33 @@ func NewTestInternalClient(t *testing.T) *internal.Client {
 	return internal
 }
 
-// Returns a custom equinox client, without caching or rate limiting.
-func NewTestCustomInternalClient(t *testing.T, config api.EquinoxConfig) *internal.Client {
-	internal, err := internal.NewInternalClient(config, nil, nil, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return internal
-}
-
-// Returns a equinox client close to the default one but without caching or rate limiting.
+// Returns a equinox client close to the default one but without caching and rate limiting.
 func NewBenchmarkEquinoxClient(b *testing.B) *equinox.Equinox {
 	b.Helper()
 	config := equinox.DefaultConfig("RGAPI-TEST")
 	client, err := equinox.NewCustomClient(config, nil, nil, nil)
+	if err != nil {
+		b.Fatal(err)
+	}
+	return client
+}
+
+// Returns a equinox client close to the default one but with RedisCache, no rate limiting.
+func NewBenchmarkRedisCacheEquinoxClient(b *testing.B) *equinox.Equinox {
+	b.Helper()
+	redisConfig := &redis.Options{
+		Network: "tcp",
+		Addr:    "127.0.0.1:6379",
+	}
+
+	ctx := context.Background()
+	cache, err := cache.NewRedis(ctx, redisConfig, 4*time.Minute)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	config := equinox.DefaultConfig("RGAPI-TEST")
+	client, err := equinox.NewCustomClient(config, nil, cache, nil)
 	if err != nil {
 		b.Fatal(err)
 	}

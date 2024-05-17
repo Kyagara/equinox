@@ -8,12 +8,10 @@ import (
 
 	"github.com/Kyagara/equinox/v2"
 	"github.com/Kyagara/equinox/v2/api"
-	"github.com/Kyagara/equinox/v2/cache"
 	"github.com/Kyagara/equinox/v2/clients/lol"
 	"github.com/Kyagara/equinox/v2/ratelimit"
 	"github.com/Kyagara/equinox/v2/test/util"
 	"github.com/jarcoal/httpmock"
-	"github.com/redis/go-redis/v9"
 )
 
 // The only thing that really matters here for benchmark purposes is bytes/op and allocs/op.
@@ -38,10 +36,11 @@ func BenchmarkParallelTestRateLimit(b *testing.B) {
 		b.Fatal(err)
 	}
 
+	ctx := context.Background()
+
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 			if err != nil {
 				b.Fatal(err)
@@ -63,10 +62,11 @@ func BenchmarkParallelSummonerByPUUID(b *testing.B) {
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
+	ctx := context.Background()
+
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 			if err != nil {
 				b.Fatal(err)
@@ -86,26 +86,13 @@ func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
 		httpmock.NewJsonResponderOrPanic(200, httpmock.File("../data/summoner.json")))
 
-	ctx := context.Background()
-	redisConfig := &redis.Options{
-		Network: "tcp",
-		Addr:    "127.0.0.1:6379",
-	}
-	cache, err := cache.NewRedis(ctx, redisConfig, 4*time.Minute)
-	if err != nil {
-		b.Fatal(err)
-	}
+	client := util.NewBenchmarkRedisCacheEquinoxClient(b)
 
-	config := equinox.DefaultConfig("RGAPI-TEST")
-	client, err := equinox.NewCustomClient(config, nil, cache, nil)
-	if err != nil {
-		b.Fatal(err)
-	}
+	ctx := context.Background()
 
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 			if err != nil {
 				b.Fatal(err)
@@ -128,10 +115,11 @@ func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
+	ctx := context.Background()
+
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			ctx := context.Background()
 			data, err := client.LOL.SummonerV4.ByAccessToken(ctx, lol.KR, "accesstoken")
 			if err != nil {
 				b.Fatal(err)
@@ -154,10 +142,11 @@ func BenchmarkParallelMatchListByPUUID(b *testing.B) {
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
+	ctx := context.Background()
+
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			ctx := context.Background()
 			data, err := client.LOL.MatchV5.ListByPUUID(ctx, api.ASIA, "puuid", -1, -1, lol.SUMMONERS_RIFT_5V5_RANKED_SOLO_QUEUE, "ranked", -1, 20)
 			if err != nil {
 				b.Fatal(err)

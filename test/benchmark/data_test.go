@@ -20,9 +20,10 @@ func BenchmarkDataMatchByID(b *testing.B) {
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
+	ctx := context.Background()
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		ctx := context.Background()
 		data, err := client.LOL.MatchV5.ByID(ctx, api.ASIA, "KR_7014499581")
 		if err != nil {
 			b.Fatal(err)
@@ -43,9 +44,10 @@ func BenchmarkDataMatchTimeline(b *testing.B) {
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
+	ctx := context.Background()
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		ctx := context.Background()
 		data, err := client.LOL.MatchV5.Timeline(ctx, api.ASIA, "KR_7014499581")
 		if err != nil {
 			b.Fatal()
@@ -67,9 +69,10 @@ func BenchmarkDataVALContentAllLocales(b *testing.B) {
 
 	client := util.NewBenchmarkEquinoxClient(b)
 
+	ctx := context.Background()
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		ctx := context.Background()
 		data, err := client.VAL.ContentV1.Content(ctx, val.NA, "")
 		if err != nil {
 			b.Fatal()
