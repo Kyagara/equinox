@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 6461993a9c4165ddca053929f19f6d0e3eb1ca14
+// Spec version = 26952273dd9de767dc805b41d363fe8ff8cd0510
 
 // Platform routes for Valorant.
 type PlatformRoute string

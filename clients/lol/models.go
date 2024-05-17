@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 6461993a9c4165ddca053929f19f6d0e3eb1ca14
+// Spec version = 26952273dd9de767dc805b41d363fe8ff8cd0510
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -79,12 +79,29 @@ type ChallengesStateV1DTO struct {
 type ChallengesTrackingV1DTO struct {
 }
 
+// champion-mastery-v4.NextSeasonMilestone
+type ChampionMasteryNextSeasonMilestoneV4DTO struct {
+	RequireGradeCounts map[string]int32                 `json:"requireGradeCounts,omitempty"`
+	RewardConfig       ChampionMasteryRewardConfigV4DTO `json:"rewardConfig,omitempty"`
+	RewardMarks        int32                            `json:"rewardMarks,omitempty"`
+	Bonus              bool                             `json:"bonus,omitempty"`
+}
+
+// champion-mastery-v4.RewardConfig
+type ChampionMasteryRewardConfigV4DTO struct {
+	RewardType    string `json:"rewardType,omitempty"`
+	RewardValue   string `json:"rewardValue,omitempty"`
+	MaximumReward int32  `json:"maximumReward,omitempty"`
+}
+
 // champion-mastery-v4.ChampionMasteryDto
 type ChampionMasteryV4DTO struct {
 	// Player Universal Unique Identifier. Exact length of 78 characters. (Encrypted)
 	PUUID string `json:"puuid,omitempty"`
 	// Summoner ID for this entry. (Encrypted)
-	SummonerID string `json:"summonerId,omitempty"`
+	SummonerID          string                                  `json:"summonerId,omitempty"`
+	MilestoneGrades     []string                                `json:"milestoneGrades,omitempty"`
+	NextSeasonMilestone ChampionMasteryNextSeasonMilestoneV4DTO `json:"nextSeasonMilestone,omitempty"`
 	// Champion ID for this entry.
 	ChampionID int64 `json:"championId,omitempty"`
 	// Number of points earned since current level has been achieved.
@@ -96,7 +113,9 @@ type ChampionMasteryV4DTO struct {
 	// Champion level for specified player and champion combination.
 	ChampionLevel int32 `json:"championLevel,omitempty"`
 	// Total number of champion points for this player and champion combination - they are used to determine championLevel.
-	ChampionPoints int32 `json:"championPoints,omitempty"`
+	ChampionPoints           int32 `json:"championPoints,omitempty"`
+	ChampionSeasonMilestone  int32 `json:"championSeasonMilestone,omitempty"`
+	MarkRequiredForNextLevel int32 `json:"markRequiredForNextLevel,omitempty"`
 	// The token earned for this champion at the current championLevel. When the championLevel is advanced the tokensEarned resets to 0.
 	TokensEarned int32 `json:"tokensEarned,omitempty"`
 	// Is chest granted for this champion or not in current season.
