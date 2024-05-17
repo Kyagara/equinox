@@ -25,7 +25,6 @@ Using WSL2 on a Ryzen 7 2700.
 
 | Benchmark                          |     ops |     ns/op | bytes/op | allocs/op |
 | ---------------------------------- | ------: | --------: | -------: | --------: |
-| Internals                          |  314580 |      3791 |     1418 |        17 |
 | InternalRequest                    | 1086412 |      1101 |      560 |         4 |
 | InternalExecute                    |  462622 |      2490 |      857 |        13 |
 | InternalExecuteBytes               |  547890 |      2070 |     1352 |        13 |

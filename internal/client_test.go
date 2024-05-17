@@ -32,7 +32,8 @@ func TestNewInternalClient(t *testing.T) {
 
 	config := util.NewTestEquinoxConfig()
 
-	internalClient = util.NewTestCustomInternalClient(t, config)
+	internalClient, err := internal.NewInternalClient(config, nil, nil, nil)
+	require.NoError(t, err)
 	require.False(t, internalClient.IsCacheEnabled)
 	require.False(t, internalClient.IsRateLimitEnabled)
 	require.False(t, internalClient.IsRetryEnabled)
@@ -41,7 +42,7 @@ func TestNewInternalClient(t *testing.T) {
 	config.Retry.MaxRetries = 1
 	config.Key = ""
 
-	_, err := internal.NewInternalClient(config, nil, nil, nil)
+	_, err = internal.NewInternalClient(config, nil, nil, nil)
 	require.Equal(t, internal.ErrKeyNotProvided, err)
 
 	config.Key = "RGAPI-TEST"
@@ -362,7 +363,8 @@ func TestExponentialBackoffRetry(t *testing.T) {
 	config.Retry.MaxRetries = 2
 	config.Retry.Jitter = 200 * time.Millisecond
 
-	internalClient := util.NewTestCustomInternalClient(t, config)
+	internalClient, err := internal.NewInternalClient(config, nil, nil, nil)
+	require.NoError(t, err)
 	require.True(t, internalClient.IsRetryEnabled)
 
 	ctx := context.Background()

@@ -12,41 +12,6 @@ import (
 	"github.com/jarcoal/httpmock"
 )
 
-// Simulating an endpoint method.
-func BenchmarkInternals(b *testing.B) {
-	b.ReportAllocs()
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
-	httpmock.RegisterResponder("GET", "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid",
-		httpmock.NewStringResponder(200, `"response"`))
-
-	config := equinox.DefaultConfig("RGAPI-TEST")
-	client, err := internal.NewInternalClient(config, nil, nil, nil)
-	if err != nil {
-		b.Fatal(err)
-	}
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		logger := client.Logger("LOL_SummonerV4_ByPUUID")
-		ctx := context.Background()
-		urlComponents := []string{"https://", "kr", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
-		equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
-		if err != nil {
-			b.Fatal(err)
-		}
-		var data string
-		err = client.Execute(ctx, equinoxReq, &data)
-		if err != nil {
-			b.Fatal(err)
-		}
-		if data != "response" {
-			b.Fatalf("data != response, got: %s", data)
-		}
-	}
-}
-
 func BenchmarkInternalRequest(b *testing.B) {
 	b.ReportAllocs()
 
@@ -95,9 +60,10 @@ func BenchmarkInternalExecute(b *testing.B) {
 		b.Fatal(err)
 	}
 
+	var data string
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		var data string
 		err = client.Execute(ctx, equinoxReq, &data)
 		if err != nil {
 			b.Fatal(err)
