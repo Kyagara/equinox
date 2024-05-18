@@ -7,6 +7,12 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+type Endpoint struct {
+	Method string
+	Path   string
+	ID     string
+}
+
 type RouteConstant struct {
 	Value            string
 	TournamentRegion string
@@ -72,4 +78,26 @@ func getGenericConstants(table gjson.Result, constName string) map[string]Generi
 	}
 
 	return consts
+}
+
+func getAllEndpoints(paths gjson.Result) []Endpoint {
+	endpoints := make([]Endpoint, 0, len(paths.Map()))
+	for path, groups := range paths.Map() {
+		for verb, method := range groups.Map() {
+			if strings.HasPrefix(verb, "x-") {
+				continue
+			}
+
+			verb = strings.ToUpper(verb)
+			methodID := method.Get("operationId").String()
+
+			endpoints = append(endpoints, Endpoint{
+				Method: verb,
+				Path:   path,
+				ID:     methodID,
+			})
+		}
+	}
+
+	return endpoints
 }

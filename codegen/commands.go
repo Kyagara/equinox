@@ -105,9 +105,12 @@ func runCommand(cmd *exec.Cmd) error {
 func compileApi(specs map[string]gjson.Result, specVersion string) error {
 	preamble := preamble("api", specVersion)
 	regionalRoutes := getRouteConstants(specs["routesTable"], "regional")
+	endpoints := getAllEndpoints(specs["spec"].Get("paths"))
+
 	ctx := pongo2.Context{
 		"Preamble":       preamble,
 		"RegionalRoutes": regionalRoutes,
+		"Endpoints":      endpoints,
 	}
 
 	// Reading api templates
