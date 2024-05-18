@@ -26,20 +26,20 @@ Using WSL2 on a Ryzen 7 2700.
 | Benchmark                          |     ops |     ns/op | bytes/op | allocs/op |
 | ---------------------------------- | ------: | --------: | -------: | --------: |
 | InternalRequest                    | 1086412 |      1101 |      560 |         4 |
-| InternalExecute                    |  462622 |      2490 |      857 |        13 |
-| InternalExecuteBytes               |  547890 |      2070 |     1352 |        13 |
+| InternalExecute                    |  525964 |      2305 |      809 |        12 |
+| InternalExecuteBytes               |  583923 |      1944 |     1320 |        13 |
 | CacheDisabledSummonerByPUUID       |  214899 |      5494 |     1498 |        17 |
 | CacheBigCacheSummonerByPUUID       |  336384 |      3587 |     1008 |         7 |
 | CacheRedisSummonerByPUUID          |   21764 |     56377 |     1212 |        14 |
 | CacheGetKey                        |  803038 |      1848 |     1320 |         5 |
-| DataMatchByID                      |    1744 |    658620 |    70331 |       166 |
+| DataMatchByID                      |    1792 |    679945 |    54478 |       166 |
 | DataMatchTimeline                  |     187 |   6577700 |  1624708 |      1681 |
 | DataVALContentAllLocales           |      16 |  64658314 | 14866372 |    155492 |
 | ParallelTestRateLimit              |     100 | 100028519 |     3001 |        31 |
 | ParallelSummonerByPUUID            |  351018 |      3563 |     1496 |        17 |
 | ParallelRedisCachedSummonerByPUUID |  128907 |      9666 |     1213 |        14 |
-| ParallelSummonerByAccessToken      |  308845 |      4221 |     2152 |        26 |
-| ParallelMatchListByPUUID           |  266372 |      4869 |     2768 |        32 |
+| ParallelSummonerByAccessToken      |  300252 |      4185 |     2113 |        26 |
+| ParallelMatchListByPUUID           |  273434 |      4643 |     2062 |        26 |
 
 ## Integration
 
