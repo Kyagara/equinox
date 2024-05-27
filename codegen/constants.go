@@ -2,6 +2,7 @@ package main
 
 import (
 	"slices"
+	"sort"
 	"strings"
 
 	"github.com/tidwall/gjson"
@@ -98,6 +99,10 @@ func getAllEndpoints(paths gjson.Result) []Endpoint {
 			})
 		}
 	}
+
+	sort.Slice(endpoints, func(i, j int) bool {
+		return endpoints[i].Path < endpoints[j].Path
+	})
 
 	return endpoints
 }

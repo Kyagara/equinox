@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 26952273dd9de767dc805b41d363fe8ff8cd0510
+// Spec version = 965a512f06ece005d0879258a6234ff0765d9a35
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -97,9 +97,7 @@ type ChampionMasteryRewardConfigV4DTO struct {
 // champion-mastery-v4.ChampionMasteryDto
 type ChampionMasteryV4DTO struct {
 	// Player Universal Unique Identifier. Exact length of 78 characters. (Encrypted)
-	PUUID string `json:"puuid,omitempty"`
-	// Summoner ID for this entry. (Encrypted)
-	SummonerID          string                                  `json:"summonerId,omitempty"`
+	PUUID               string                                  `json:"puuid,omitempty"`
 	MilestoneGrades     []string                                `json:"milestoneGrades,omitempty"`
 	NextSeasonMilestone ChampionMasteryNextSeasonMilestoneV4DTO `json:"nextSeasonMilestone,omitempty"`
 	// Champion ID for this entry.
@@ -282,6 +280,7 @@ type MatchChallengesV5DTO struct {
 	HighestChampionDamage                     float64 `json:"highestChampionDamage,omitempty"`
 	HighestCrowdControlScore                  float64 `json:"highestCrowdControlScore,omitempty"`
 	HighestWardKills                          float64 `json:"highestWardKills,omitempty"`
+	InfernalScalePickup                       float64 `json:"InfernalScalePickup,omitempty"`
 	JungleCsBefore10Minutes                   float64 `json:"jungleCsBefore10Minutes,omitempty"`
 	JunglerKillsEarlyJungle                   float64 `json:"junglerKillsEarlyJungle,omitempty"`
 	Kda                                       float64 `json:"kda,omitempty"`
@@ -326,6 +325,7 @@ type MatchChallengesV5DTO struct {
 	EpicMonsterStolenWithoutSmite             int32   `json:"epicMonsterStolenWithoutSmite,omitempty"`
 	FirstTurretKilled                         int32   `json:"firstTurretKilled,omitempty"`
 	FirstTurretKilledTime                     float32 `json:"firstTurretKilledTime,omitempty"`
+	FistBumpParticipation                     int32   `json:"fistBumpParticipation,omitempty"`
 	FlawlessAces                              int32   `json:"flawlessAces,omitempty"`
 	FullTeamTakedown                          int32   `json:"fullTeamTakedown,omitempty"`
 	GetTakedownsInAllLanesEarlyJungleAsLaner  int32   `json:"getTakedownsInAllLanesEarlyJungleAsLaner,omitempty"`
@@ -392,6 +392,7 @@ type MatchChallengesV5DTO struct {
 	TwentyMinionsIn3SecondsCount              int32   `json:"twentyMinionsIn3SecondsCount,omitempty"`
 	TwoWardsOneSweeperCount                   int32   `json:"twoWardsOneSweeperCount,omitempty"`
 	UnseenRecalls                             int32   `json:"unseenRecalls,omitempty"`
+	VoidMonsterKill                           int32   `json:"voidMonsterKill,omitempty"`
 	WardTakedowns                             int32   `json:"wardTakedowns,omitempty"`
 	WardTakedownsBefore20M                    int32   `json:"wardTakedownsBefore20M,omitempty"`
 	WardsGuarded                              int32   `json:"wardsGuarded,omitempty"`

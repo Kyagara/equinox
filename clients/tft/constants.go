@@ -10,7 +10,7 @@ import "strconv"
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 26952273dd9de767dc805b41d363fe8ff8cd0510
+// Spec version = 965a512f06ece005d0879258a6234ff0765d9a35
 
 // Platform routes for Teamfight Tactics.
 type PlatformRoute string
@@ -307,6 +307,8 @@ const (
 	CONVERGENCE_TFT_1V0_QUEUE Queue = 1091
 	// Teamfight Tactics 2v0 games on Convergence
 	CONVERGENCE_TFT_2V0_QUEUE Queue = 1092
+	// Teamfight Tactics (Choncc's Treasure) games on Convergence
+	CONVERGENCE_TFT_CHONCCS_TREASURE_QUEUE Queue = 1210
 	// Teamfight Tactics games on Convergence
 	CONVERGENCE_TFT_QUEUE Queue = 1090
 	// Teamfight Tactics Set 3.5 Revival games on Convergence
@@ -331,6 +333,8 @@ func (queue Queue) String() string {
 		return "1091"
 	case CONVERGENCE_TFT_2V0_QUEUE:
 		return "1092"
+	case CONVERGENCE_TFT_CHONCCS_TREASURE_QUEUE:
+		return "1210"
 	case CONVERGENCE_TFT_QUEUE:
 		return "1090"
 	case CONVERGENCE_TFT_SET_3_5_REVIVAL_QUEUE:

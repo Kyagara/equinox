@@ -10,7 +10,7 @@ import "strconv"
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 26952273dd9de767dc805b41d363fe8ff8cd0510
+// Spec version = 965a512f06ece005d0879258a6234ff0765d9a35
 
 // Platform routes for League of Legends.
 type PlatformRoute string
