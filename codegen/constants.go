@@ -101,7 +101,7 @@ func getAllEndpoints(paths gjson.Result) []Endpoint {
 	}
 
 	sort.Slice(endpoints, func(i, j int) bool {
-		return endpoints[i].Path < endpoints[j].Path
+		return endpoints[i].ID < endpoints[j].ID
 	})
 
 	return endpoints

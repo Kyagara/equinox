@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 965a512f06ece005d0879258a6234ff0765d9a35
+// Spec version = 9fef246d3ece1da9515c8941f7a3c7cd57e330fc
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -274,6 +274,7 @@ type MatchChallengesV5DTO struct {
 	EnemyJungleMonsterKills                   float64 `json:"enemyJungleMonsterKills,omitempty"`
 	FasterSupportQuestCompletion              float64 `json:"fasterSupportQuestCompletion,omitempty"`
 	FastestLegendary                          float64 `json:"fastestLegendary,omitempty"`
+	FirstTurretKilled                         float64 `json:"firstTurretKilled,omitempty"`
 	GameLength                                float64 `json:"gameLength,omitempty"`
 	GoldPerMinute                             float64 `json:"goldPerMinute,omitempty"`
 	HadAfkTeammate                            float64 `json:"hadAfkTeammate,omitempty"`
@@ -323,7 +324,6 @@ type MatchChallengesV5DTO struct {
 	EpicMonsterKillsWithin30SecondsOfSpawn    int32   `json:"epicMonsterKillsWithin30SecondsOfSpawn,omitempty"`
 	EpicMonsterSteals                         int32   `json:"epicMonsterSteals,omitempty"`
 	EpicMonsterStolenWithoutSmite             int32   `json:"epicMonsterStolenWithoutSmite,omitempty"`
-	FirstTurretKilled                         int32   `json:"firstTurretKilled,omitempty"`
 	FirstTurretKilledTime                     float32 `json:"firstTurretKilledTime,omitempty"`
 	FistBumpParticipation                     int32   `json:"fistBumpParticipation,omitempty"`
 	FlawlessAces                              int32   `json:"flawlessAces,omitempty"`
