@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 9fef246d3ece1da9515c8941f7a3c7cd57e330fc
+// Spec version = 8096d0e7127558ddf4df50a0227b4100b5d54a2f
 
 // tft-league-v1.LeagueEntryDTO
 type LeagueEntryV1DTO struct {

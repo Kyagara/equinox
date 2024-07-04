@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 9fef246d3ece1da9515c8941f7a3c7cd57e330fc
+// Spec version = 8096d0e7127558ddf4df50a0227b4100b5d54a2f
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -79,27 +79,33 @@ type ChallengesStateV1DTO struct {
 type ChallengesTrackingV1DTO struct {
 }
 
-// champion-mastery-v4.NextSeasonMilestone
-type ChampionMasteryNextSeasonMilestoneV4DTO struct {
-	RequireGradeCounts map[string]int32                 `json:"requireGradeCounts,omitempty"`
-	RewardConfig       ChampionMasteryRewardConfigV4DTO `json:"rewardConfig,omitempty"`
-	RewardMarks        int32                            `json:"rewardMarks,omitempty"`
-	Bonus              bool                             `json:"bonus,omitempty"`
+// champion-mastery-v4.NextSeasonMilestonesDto
+type ChampionMasteryNextSeasonMilestonesV4DTO struct {
+	RequireGradeCounts map[string]int32 `json:"requireGradeCounts,omitempty"`
+	// Reward configuration.
+	RewardConfig ChampionMasteryRewardConfigV4DTO `json:"rewardConfig,omitempty"`
+	// Reward marks.
+	RewardMarks int32 `json:"rewardMarks,omitempty"`
+	// Bonus.
+	Bonus bool `json:"bonus,omitempty"`
 }
 
-// champion-mastery-v4.RewardConfig
+// champion-mastery-v4.RewardConfigDto
 type ChampionMasteryRewardConfigV4DTO struct {
-	RewardType    string `json:"rewardType,omitempty"`
-	RewardValue   string `json:"rewardValue,omitempty"`
-	MaximumReward int32  `json:"maximumReward,omitempty"`
+	// Reward type
+	RewardType string `json:"rewardType,omitempty"`
+	// Reward value
+	RewardValue string `json:"rewardValue,omitempty"`
+	// Maximun reward
+	MaximumReward int32 `json:"maximumReward,omitempty"`
 }
 
 // champion-mastery-v4.ChampionMasteryDto
 type ChampionMasteryV4DTO struct {
 	// Player Universal Unique Identifier. Exact length of 78 characters. (Encrypted)
-	PUUID               string                                  `json:"puuid,omitempty"`
-	MilestoneGrades     []string                                `json:"milestoneGrades,omitempty"`
-	NextSeasonMilestone ChampionMasteryNextSeasonMilestoneV4DTO `json:"nextSeasonMilestone,omitempty"`
+	PUUID               string                                   `json:"puuid,omitempty"`
+	MilestoneGrades     []string                                 `json:"milestoneGrades,omitempty"`
+	NextSeasonMilestone ChampionMasteryNextSeasonMilestonesV4DTO `json:"nextSeasonMilestone,omitempty"`
 	// Champion ID for this entry.
 	ChampionID int64 `json:"championId,omitempty"`
 	// Number of points earned since current level has been achieved.
@@ -349,54 +355,56 @@ type MatchChallengesV5DTO struct {
 	LostAnInhibitor                           int32   `json:"lostAnInhibitor,omitempty"`
 	MaxKillDeficit                            int32   `json:"maxKillDeficit,omitempty"`
 	MejaisFullStackInTime                     int32   `json:"mejaisFullStackInTime,omitempty"`
-	MultiKillOneSpell                         int32   `json:"multiKillOneSpell,omitempty"`
-	MultiTurretRiftHeraldCount                int32   `json:"multiTurretRiftHeraldCount,omitempty"`
-	Multikills                                int32   `json:"multikills,omitempty"`
-	MultikillsAfterAggressiveFlash            int32   `json:"multikillsAfterAggressiveFlash,omitempty"`
-	OuterTurretExecutesBefore10Minutes        int32   `json:"outerTurretExecutesBefore10Minutes,omitempty"`
-	OutnumberedKills                          int32   `json:"outnumberedKills,omitempty"`
-	OutnumberedNexusKill                      int32   `json:"outnumberedNexusKill,omitempty"`
-	PerfectDragonSoulsTaken                   int32   `json:"perfectDragonSoulsTaken,omitempty"`
-	PerfectGame                               int32   `json:"perfectGame,omitempty"`
-	PickKillWithAlly                          int32   `json:"pickKillWithAlly,omitempty"`
-	PoroExplosions                            int32   `json:"poroExplosions,omitempty"`
-	QuickCleanse                              int32   `json:"quickCleanse,omitempty"`
-	QuickFirstTurret                          int32   `json:"quickFirstTurret,omitempty"`
-	QuickSoloKills                            int32   `json:"quickSoloKills,omitempty"`
-	RiftHeraldTakedowns                       int32   `json:"riftHeraldTakedowns,omitempty"`
-	SaveAllyFromDeath                         int32   `json:"saveAllyFromDeath,omitempty"`
-	ScuttleCrabKills                          int32   `json:"scuttleCrabKills,omitempty"`
-	ShortestTimeToAceFromFirstTakedown        float32 `json:"shortestTimeToAceFromFirstTakedown,omitempty"`
-	SkillshotsDodged                          int32   `json:"skillshotsDodged,omitempty"`
-	SkillshotsHit                             int32   `json:"skillshotsHit,omitempty"`
-	SnowballsHit                              int32   `json:"snowballsHit,omitempty"`
-	SoloBaronKills                            int32   `json:"soloBaronKills,omitempty"`
-	SoloKills                                 int32   `json:"soloKills,omitempty"`
-	StealthWardsPlaced                        int32   `json:"stealthWardsPlaced,omitempty"`
-	SurvivedSingleDigitHpCount                int32   `json:"survivedSingleDigitHpCount,omitempty"`
-	SurvivedThreeImmobilizesInFight           int32   `json:"survivedThreeImmobilizesInFight,omitempty"`
-	TakedownOnFirstTurret                     int32   `json:"takedownOnFirstTurret,omitempty"`
-	Takedowns                                 int32   `json:"takedowns,omitempty"`
-	TakedownsAfterGainingLevelAdvantage       int32   `json:"takedownsAfterGainingLevelAdvantage,omitempty"`
-	TakedownsBeforeJungleMinionSpawn          int32   `json:"takedownsBeforeJungleMinionSpawn,omitempty"`
-	TakedownsFirstXMinutes                    int32   `json:"takedownsFirstXMinutes,omitempty"`
-	TakedownsInAlcove                         int32   `json:"takedownsInAlcove,omitempty"`
-	TakedownsInEnemyFountain                  int32   `json:"takedownsInEnemyFountain,omitempty"`
-	TeamBaronKills                            int32   `json:"teamBaronKills,omitempty"`
-	TeamElderDragonKills                      int32   `json:"teamElderDragonKills,omitempty"`
-	TeamRiftHeraldKills                       int32   `json:"teamRiftHeraldKills,omitempty"`
-	TookLargeDamageSurvived                   int32   `json:"tookLargeDamageSurvived,omitempty"`
-	TurretPlatesTaken                         int32   `json:"turretPlatesTaken,omitempty"`
-	TurretTakedowns                           int32   `json:"turretTakedowns,omitempty"`
-	TurretsTakenWithRiftHerald                int32   `json:"turretsTakenWithRiftHerald,omitempty"`
-	TwentyMinionsIn3SecondsCount              int32   `json:"twentyMinionsIn3SecondsCount,omitempty"`
-	TwoWardsOneSweeperCount                   int32   `json:"twoWardsOneSweeperCount,omitempty"`
-	UnseenRecalls                             int32   `json:"unseenRecalls,omitempty"`
-	VoidMonsterKill                           int32   `json:"voidMonsterKill,omitempty"`
-	WardTakedowns                             int32   `json:"wardTakedowns,omitempty"`
-	WardTakedownsBefore20M                    int32   `json:"wardTakedownsBefore20M,omitempty"`
-	WardsGuarded                              int32   `json:"wardsGuarded,omitempty"`
-	X12AssistStreakCount                      int32   `json:"12AssistStreakCount,omitempty"`
+	// This is an offshoot of the OneStone challenge. The code checks if a spell with the same instance ID does the final point of damage to at least 2 Champions. It doesn't matter if they're enemies, but you cannot hurt your friends.
+	MultiKillOneSpell                   int32   `json:"multiKillOneSpell,omitempty"`
+	MultiTurretRiftHeraldCount          int32   `json:"multiTurretRiftHeraldCount,omitempty"`
+	Multikills                          int32   `json:"multikills,omitempty"`
+	MultikillsAfterAggressiveFlash      int32   `json:"multikillsAfterAggressiveFlash,omitempty"`
+	OuterTurretExecutesBefore10Minutes  int32   `json:"outerTurretExecutesBefore10Minutes,omitempty"`
+	OutnumberedKills                    int32   `json:"outnumberedKills,omitempty"`
+	OutnumberedNexusKill                int32   `json:"outnumberedNexusKill,omitempty"`
+	PerfectDragonSoulsTaken             int32   `json:"perfectDragonSoulsTaken,omitempty"`
+	PerfectGame                         int32   `json:"perfectGame,omitempty"`
+	PickKillWithAlly                    int32   `json:"pickKillWithAlly,omitempty"`
+	PoroExplosions                      int32   `json:"poroExplosions,omitempty"`
+	QuickCleanse                        int32   `json:"quickCleanse,omitempty"`
+	QuickFirstTurret                    int32   `json:"quickFirstTurret,omitempty"`
+	QuickSoloKills                      int32   `json:"quickSoloKills,omitempty"`
+	RiftHeraldTakedowns                 int32   `json:"riftHeraldTakedowns,omitempty"`
+	SaveAllyFromDeath                   int32   `json:"saveAllyFromDeath,omitempty"`
+	ScuttleCrabKills                    int32   `json:"scuttleCrabKills,omitempty"`
+	ShortestTimeToAceFromFirstTakedown  float32 `json:"shortestTimeToAceFromFirstTakedown,omitempty"`
+	SkillshotsDodged                    int32   `json:"skillshotsDodged,omitempty"`
+	SkillshotsHit                       int32   `json:"skillshotsHit,omitempty"`
+	SnowballsHit                        int32   `json:"snowballsHit,omitempty"`
+	SoloBaronKills                      int32   `json:"soloBaronKills,omitempty"`
+	SoloKills                           int32   `json:"soloKills,omitempty"`
+	StealthWardsPlaced                  int32   `json:"stealthWardsPlaced,omitempty"`
+	SurvivedSingleDigitHpCount          int32   `json:"survivedSingleDigitHpCount,omitempty"`
+	SurvivedThreeImmobilizesInFight     int32   `json:"survivedThreeImmobilizesInFight,omitempty"`
+	TakedownOnFirstTurret               int32   `json:"takedownOnFirstTurret,omitempty"`
+	Takedowns                           int32   `json:"takedowns,omitempty"`
+	TakedownsAfterGainingLevelAdvantage int32   `json:"takedownsAfterGainingLevelAdvantage,omitempty"`
+	TakedownsBeforeJungleMinionSpawn    int32   `json:"takedownsBeforeJungleMinionSpawn,omitempty"`
+	TakedownsFirstXMinutes              int32   `json:"takedownsFirstXMinutes,omitempty"`
+	TakedownsInAlcove                   int32   `json:"takedownsInAlcove,omitempty"`
+	TakedownsInEnemyFountain            int32   `json:"takedownsInEnemyFountain,omitempty"`
+	TeamBaronKills                      int32   `json:"teamBaronKills,omitempty"`
+	TeamElderDragonKills                int32   `json:"teamElderDragonKills,omitempty"`
+	TeamRiftHeraldKills                 int32   `json:"teamRiftHeraldKills,omitempty"`
+	TookLargeDamageSurvived             int32   `json:"tookLargeDamageSurvived,omitempty"`
+	TurretPlatesTaken                   int32   `json:"turretPlatesTaken,omitempty"`
+	TurretTakedowns                     int32   `json:"turretTakedowns,omitempty"`
+	// Any player who damages a tower that is destroyed within 30 seconds of a Rift Herald charge will receive credit. A player who does not damage the tower will not receive credit.
+	TurretsTakenWithRiftHerald   int32 `json:"turretsTakenWithRiftHerald,omitempty"`
+	TwentyMinionsIn3SecondsCount int32 `json:"twentyMinionsIn3SecondsCount,omitempty"`
+	TwoWardsOneSweeperCount      int32 `json:"twoWardsOneSweeperCount,omitempty"`
+	UnseenRecalls                int32 `json:"unseenRecalls,omitempty"`
+	VoidMonsterKill              int32 `json:"voidMonsterKill,omitempty"`
+	WardTakedowns                int32 `json:"wardTakedowns,omitempty"`
+	WardTakedownsBefore20M       int32 `json:"wardTakedownsBefore20M,omitempty"`
+	WardsGuarded                 int32 `json:"wardsGuarded,omitempty"`
+	X12AssistStreakCount         int32 `json:"12AssistStreakCount,omitempty"`
 }
 
 // match-v5.ChampionStatsDto
@@ -603,16 +611,8 @@ type MatchParticipantFrameV5DTO struct {
 
 // match-v5.ParticipantFramesDto
 type MatchParticipantFramesV5DTO struct {
-	X1  MatchParticipantFrameV5DTO `json:"1,omitempty"`
-	X10 MatchParticipantFrameV5DTO `json:"10,omitempty"`
-	X2  MatchParticipantFrameV5DTO `json:"2,omitempty"`
-	X3  MatchParticipantFrameV5DTO `json:"3,omitempty"`
-	X4  MatchParticipantFrameV5DTO `json:"4,omitempty"`
-	X5  MatchParticipantFrameV5DTO `json:"5,omitempty"`
-	X6  MatchParticipantFrameV5DTO `json:"6,omitempty"`
-	X7  MatchParticipantFrameV5DTO `json:"7,omitempty"`
-	X8  MatchParticipantFrameV5DTO `json:"8,omitempty"`
-	X9  MatchParticipantFrameV5DTO `json:"9,omitempty"`
+	// Key value mapping for each participant
+	X19 MatchParticipantFrameV5DTO `json:"1-9,omitempty"`
 }
 
 // match-v5.ParticipantTimeLineDto
@@ -635,67 +635,78 @@ type MatchParticipantV5DTO struct {
 	SummonerID         string `json:"summonerId,omitempty"`
 	SummonerName       string `json:"summonerName,omitempty"`
 	// Both individualPosition and teamPosition are computed by the game server and are different versions of the most likely position played by a player. The individualPosition is the best guess for which position the player actually played in isolation of anything else. The teamPosition is the best guess for which position the player actually played if we add the constraint that each team must have one top player, one jungle, one middle, etc. Generally the recommendation is to use the teamPosition field over the individualPosition field.
-	TeamPosition    string               `json:"teamPosition,omitempty"`
-	Perks           MatchPerksV5DTO      `json:"perks,omitempty"`
-	Challenges      MatchChallengesV5DTO `json:"challenges,omitempty"`
-	Missions        MatchMissionsV5DTO   `json:"missions,omitempty"`
-	AllInPings      int32                `json:"allInPings,omitempty"`
-	AssistMePings   int32                `json:"assistMePings,omitempty"`
-	Assists         int32                `json:"assists,omitempty"`
-	BaitPings       int32                `json:"baitPings,omitempty"`
-	BaronKills      int32                `json:"baronKills,omitempty"`
-	BasicPings      int32                `json:"basicPings,omitempty"`
-	BountyLevel     int32                `json:"bountyLevel,omitempty"`
-	ChampExperience int32                `json:"champExperience,omitempty"`
-	ChampLevel      int32                `json:"champLevel,omitempty"`
+	TeamPosition string               `json:"teamPosition,omitempty"`
+	Perks        MatchPerksV5DTO      `json:"perks,omitempty"`
+	Challenges   MatchChallengesV5DTO `json:"challenges,omitempty"`
+	Missions     MatchMissionsV5DTO   `json:"missions,omitempty"`
+	// Yellow crossed swords
+	AllInPings int32 `json:"allInPings,omitempty"`
+	// Green flag
+	AssistMePings int32 `json:"assistMePings,omitempty"`
+	Assists       int32 `json:"assists,omitempty"`
+	BaitPings     int32 `json:"baitPings,omitempty"`
+	BaronKills    int32 `json:"baronKills,omitempty"`
+	// https://github.com/RiotGames/developer-relations/issues/814
+	BasicPings      int32 `json:"basicPings,omitempty"`
+	BountyLevel     int32 `json:"bountyLevel,omitempty"`
+	ChampExperience int32 `json:"champExperience,omitempty"`
+	ChampLevel      int32 `json:"champLevel,omitempty"`
 	// Prior to patch 11.4, on Feb 18th, 2021, this field returned invalid championIds. We recommend determining the champion based on the championName field for matches played prior to patch 11.4.
 	ChampionID int32 `json:"championId,omitempty"`
 	// This field is currently only utilized for Kayn's transformations. (Legal values: 0 - None, 1 - Slayer, 2 - Assassin)
-	ChampionTransform              int32 `json:"championTransform,omitempty"`
-	CommandPings                   int32 `json:"commandPings,omitempty"`
-	ConsumablesPurchased           int32 `json:"consumablesPurchased,omitempty"`
-	DamageDealtToBuildings         int32 `json:"damageDealtToBuildings,omitempty"`
-	DamageDealtToObjectives        int32 `json:"damageDealtToObjectives,omitempty"`
-	DamageDealtToTurrets           int32 `json:"damageDealtToTurrets,omitempty"`
-	DamageSelfMitigated            int32 `json:"damageSelfMitigated,omitempty"`
-	DangerPings                    int32 `json:"dangerPings,omitempty"`
-	Deaths                         int32 `json:"deaths,omitempty"`
-	DetectorWardsPlaced            int32 `json:"detectorWardsPlaced,omitempty"`
-	DoubleKills                    int32 `json:"doubleKills,omitempty"`
-	DragonKills                    int32 `json:"dragonKills,omitempty"`
-	EnemyMissingPings              int32 `json:"enemyMissingPings,omitempty"`
-	EnemyVisionPings               int32 `json:"enemyVisionPings,omitempty"`
-	GetBackPings                   int32 `json:"getBackPings,omitempty"`
-	GoldEarned                     int32 `json:"goldEarned,omitempty"`
-	GoldSpent                      int32 `json:"goldSpent,omitempty"`
-	HoldPings                      int32 `json:"holdPings,omitempty"`
-	InhibitorKills                 int32 `json:"inhibitorKills,omitempty"`
-	InhibitorTakedowns             int32 `json:"inhibitorTakedowns,omitempty"`
-	InhibitorsLost                 int32 `json:"inhibitorsLost,omitempty"`
-	Item0                          int32 `json:"item0,omitempty"`
-	Item1                          int32 `json:"item1,omitempty"`
-	Item2                          int32 `json:"item2,omitempty"`
-	Item3                          int32 `json:"item3,omitempty"`
-	Item4                          int32 `json:"item4,omitempty"`
-	Item5                          int32 `json:"item5,omitempty"`
-	Item6                          int32 `json:"item6,omitempty"`
-	ItemsPurchased                 int32 `json:"itemsPurchased,omitempty"`
-	KillingSprees                  int32 `json:"killingSprees,omitempty"`
-	Kills                          int32 `json:"kills,omitempty"`
-	LargestCriticalStrike          int32 `json:"largestCriticalStrike,omitempty"`
-	LargestKillingSpree            int32 `json:"largestKillingSpree,omitempty"`
-	LargestMultiKill               int32 `json:"largestMultiKill,omitempty"`
-	LongestTimeSpentLiving         int32 `json:"longestTimeSpentLiving,omitempty"`
-	MagicDamageDealt               int32 `json:"magicDamageDealt,omitempty"`
-	MagicDamageDealtToChampions    int32 `json:"magicDamageDealtToChampions,omitempty"`
-	MagicDamageTaken               int32 `json:"magicDamageTaken,omitempty"`
-	NeedVisionPings                int32 `json:"needVisionPings,omitempty"`
-	NeutralMinionsKilled           int32 `json:"neutralMinionsKilled,omitempty"`
-	NexusKills                     int32 `json:"nexusKills,omitempty"`
-	NexusLost                      int32 `json:"nexusLost,omitempty"`
-	NexusTakedowns                 int32 `json:"nexusTakedowns,omitempty"`
-	ObjectivesStolen               int32 `json:"objectivesStolen,omitempty"`
-	ObjectivesStolenAssists        int32 `json:"objectivesStolenAssists,omitempty"`
+	ChampionTransform int32 `json:"championTransform,omitempty"`
+	// Blue generic ping (ALT+click)
+	CommandPings            int32 `json:"commandPings,omitempty"`
+	ConsumablesPurchased    int32 `json:"consumablesPurchased,omitempty"`
+	DamageDealtToBuildings  int32 `json:"damageDealtToBuildings,omitempty"`
+	DamageDealtToObjectives int32 `json:"damageDealtToObjectives,omitempty"`
+	DamageDealtToTurrets    int32 `json:"damageDealtToTurrets,omitempty"`
+	DamageSelfMitigated     int32 `json:"damageSelfMitigated,omitempty"`
+	// https://github.com/RiotGames/developer-relations/issues/870
+	DangerPings         int32 `json:"dangerPings,omitempty"`
+	Deaths              int32 `json:"deaths,omitempty"`
+	DetectorWardsPlaced int32 `json:"detectorWardsPlaced,omitempty"`
+	DoubleKills         int32 `json:"doubleKills,omitempty"`
+	DragonKills         int32 `json:"dragonKills,omitempty"`
+	// Yellow questionmark
+	EnemyMissingPings int32 `json:"enemyMissingPings,omitempty"`
+	// Red eyeball
+	EnemyVisionPings int32 `json:"enemyVisionPings,omitempty"`
+	// Yellow circle with horizontal line
+	GetBackPings                int32 `json:"getBackPings,omitempty"`
+	GoldEarned                  int32 `json:"goldEarned,omitempty"`
+	GoldSpent                   int32 `json:"goldSpent,omitempty"`
+	HoldPings                   int32 `json:"holdPings,omitempty"`
+	InhibitorKills              int32 `json:"inhibitorKills,omitempty"`
+	InhibitorTakedowns          int32 `json:"inhibitorTakedowns,omitempty"`
+	InhibitorsLost              int32 `json:"inhibitorsLost,omitempty"`
+	Item0                       int32 `json:"item0,omitempty"`
+	Item1                       int32 `json:"item1,omitempty"`
+	Item2                       int32 `json:"item2,omitempty"`
+	Item3                       int32 `json:"item3,omitempty"`
+	Item4                       int32 `json:"item4,omitempty"`
+	Item5                       int32 `json:"item5,omitempty"`
+	Item6                       int32 `json:"item6,omitempty"`
+	ItemsPurchased              int32 `json:"itemsPurchased,omitempty"`
+	KillingSprees               int32 `json:"killingSprees,omitempty"`
+	Kills                       int32 `json:"kills,omitempty"`
+	LargestCriticalStrike       int32 `json:"largestCriticalStrike,omitempty"`
+	LargestKillingSpree         int32 `json:"largestKillingSpree,omitempty"`
+	LargestMultiKill            int32 `json:"largestMultiKill,omitempty"`
+	LongestTimeSpentLiving      int32 `json:"longestTimeSpentLiving,omitempty"`
+	MagicDamageDealt            int32 `json:"magicDamageDealt,omitempty"`
+	MagicDamageDealtToChampions int32 `json:"magicDamageDealtToChampions,omitempty"`
+	MagicDamageTaken            int32 `json:"magicDamageTaken,omitempty"`
+	// Green ward
+	NeedVisionPings int32 `json:"needVisionPings,omitempty"`
+	// neutralMinionsKilled = mNeutralMinionsKilled, which is incremented on kills of kPet and kJungleMonster
+	NeutralMinionsKilled    int32 `json:"neutralMinionsKilled,omitempty"`
+	NexusKills              int32 `json:"nexusKills,omitempty"`
+	NexusLost               int32 `json:"nexusLost,omitempty"`
+	NexusTakedowns          int32 `json:"nexusTakedowns,omitempty"`
+	ObjectivesStolen        int32 `json:"objectivesStolen,omitempty"`
+	ObjectivesStolenAssists int32 `json:"objectivesStolenAssists,omitempty"`
+	// Blue arrow pointing at ground
 	OnMyWayPings                   int32 `json:"onMyWayPings,omitempty"`
 	ParticipantID                  int32 `json:"participantId,omitempty"`
 	PentaKills                     int32 `json:"pentaKills,omitempty"`
@@ -707,6 +718,8 @@ type MatchParticipantV5DTO struct {
 	PlayerAugment2                 int32 `json:"playerAugment2,omitempty"`
 	PlayerAugment3                 int32 `json:"playerAugment3,omitempty"`
 	PlayerAugment4                 int32 `json:"playerAugment4,omitempty"`
+	PlayerAugment5                 int32 `json:"playerAugment5,omitempty"`
+	PlayerAugment6                 int32 `json:"playerAugment6,omitempty"`
 	PlayerScore0                   int32 `json:"playerScore0,omitempty"`
 	PlayerScore1                   int32 `json:"playerScore1,omitempty"`
 	PlayerScore10                  int32 `json:"playerScore10,omitempty"`
@@ -721,6 +734,7 @@ type MatchParticipantV5DTO struct {
 	PlayerScore9                   int32 `json:"playerScore9,omitempty"`
 	PlayerSubteamID                int32 `json:"playerSubteamId,omitempty"`
 	ProfileIcon                    int32 `json:"profileIcon,omitempty"`
+	// Green minion
 	PushPings                      int32 `json:"pushPings,omitempty"`
 	QuadraKills                    int32 `json:"quadraKills,omitempty"`
 	SightWardsBoughtInGame         int32 `json:"sightWardsBoughtInGame,omitempty"`
@@ -743,34 +757,38 @@ type MatchParticipantV5DTO struct {
 	TotalDamageShieldedOnTeammates int32 `json:"totalDamageShieldedOnTeammates,omitempty"`
 	TotalDamageTaken               int32 `json:"totalDamageTaken,omitempty"`
 	TotalEnemyJungleMinionsKilled  int32 `json:"totalEnemyJungleMinionsKilled,omitempty"`
-	TotalHeal                      int32 `json:"totalHeal,omitempty"`
-	TotalHealsOnTeammates          int32 `json:"totalHealsOnTeammates,omitempty"`
-	TotalMinionsKilled             int32 `json:"totalMinionsKilled,omitempty"`
-	TotalTimeCcdealt               int32 `json:"totalTimeCCDealt,omitempty"`
-	TotalTimeSpentDead             int32 `json:"totalTimeSpentDead,omitempty"`
-	TotalUnitsHealed               int32 `json:"totalUnitsHealed,omitempty"`
-	TripleKills                    int32 `json:"tripleKills,omitempty"`
-	TrueDamageDealt                int32 `json:"trueDamageDealt,omitempty"`
-	TrueDamageDealtToChampions     int32 `json:"trueDamageDealtToChampions,omitempty"`
-	TrueDamageTaken                int32 `json:"trueDamageTaken,omitempty"`
-	TurretKills                    int32 `json:"turretKills,omitempty"`
-	TurretTakedowns                int32 `json:"turretTakedowns,omitempty"`
-	TurretsLost                    int32 `json:"turretsLost,omitempty"`
-	UnrealKills                    int32 `json:"unrealKills,omitempty"`
-	VisionClearedPings             int32 `json:"visionClearedPings,omitempty"`
-	VisionScore                    int32 `json:"visionScore,omitempty"`
-	VisionWardsBoughtInGame        int32 `json:"visionWardsBoughtInGame,omitempty"`
-	WardsKilled                    int32 `json:"wardsKilled,omitempty"`
-	WardsPlaced                    int32 `json:"wardsPlaced,omitempty"`
-	EligibleForProgression         bool  `json:"eligibleForProgression,omitempty"`
-	FirstBloodAssist               bool  `json:"firstBloodAssist,omitempty"`
-	FirstBloodKill                 bool  `json:"firstBloodKill,omitempty"`
-	FirstTowerAssist               bool  `json:"firstTowerAssist,omitempty"`
-	FirstTowerKill                 bool  `json:"firstTowerKill,omitempty"`
-	GameEndedInEarlySurrender      bool  `json:"gameEndedInEarlySurrender,omitempty"`
-	GameEndedInSurrender           bool  `json:"gameEndedInSurrender,omitempty"`
-	TeamEarlySurrendered           bool  `json:"teamEarlySurrendered,omitempty"`
-	Win                            bool  `json:"win,omitempty"`
+	// Whenever positive health is applied (which translates to all heals in the game but not things like regeneration), totalHeal is incremented by the amount of health received. This includes healing enemies, jungle monsters, yourself, etc
+	TotalHeal int32 `json:"totalHeal,omitempty"`
+	// Whenever positive health is applied (which translates to all heals in the game but not things like regeneration), totalHealsOnTeammates is incremented by the amount of health received.  This is post modified, so if you heal someone missing 5 health for 100 you will get +5 totalHealsOnTeammates
+	TotalHealsOnTeammates int32 `json:"totalHealsOnTeammates,omitempty"`
+	// totalMillionsKilled = mMinionsKilled, which is only incremented on kills of kTeamMinion, kMeleeLaneMinion, kSuperLaneMinion, kRangedLaneMinion and kSiegeLaneMinion
+	TotalMinionsKilled         int32 `json:"totalMinionsKilled,omitempty"`
+	TotalTimeCcdealt           int32 `json:"totalTimeCCDealt,omitempty"`
+	TotalTimeSpentDead         int32 `json:"totalTimeSpentDead,omitempty"`
+	TotalUnitsHealed           int32 `json:"totalUnitsHealed,omitempty"`
+	TripleKills                int32 `json:"tripleKills,omitempty"`
+	TrueDamageDealt            int32 `json:"trueDamageDealt,omitempty"`
+	TrueDamageDealtToChampions int32 `json:"trueDamageDealtToChampions,omitempty"`
+	TrueDamageTaken            int32 `json:"trueDamageTaken,omitempty"`
+	TurretKills                int32 `json:"turretKills,omitempty"`
+	TurretTakedowns            int32 `json:"turretTakedowns,omitempty"`
+	TurretsLost                int32 `json:"turretsLost,omitempty"`
+	UnrealKills                int32 `json:"unrealKills,omitempty"`
+	VisionClearedPings         int32 `json:"visionClearedPings,omitempty"`
+	VisionScore                int32 `json:"visionScore,omitempty"`
+	VisionWardsBoughtInGame    int32 `json:"visionWardsBoughtInGame,omitempty"`
+	WardsKilled                int32 `json:"wardsKilled,omitempty"`
+	WardsPlaced                int32 `json:"wardsPlaced,omitempty"`
+	EligibleForProgression     bool  `json:"eligibleForProgression,omitempty"`
+	FirstBloodAssist           bool  `json:"firstBloodAssist,omitempty"`
+	FirstBloodKill             bool  `json:"firstBloodKill,omitempty"`
+	FirstTowerAssist           bool  `json:"firstTowerAssist,omitempty"`
+	FirstTowerKill             bool  `json:"firstTowerKill,omitempty"`
+	// This is an offshoot of the OneStone challenge. The code checks if a spell with the same instance ID does the final point of damage to at least 2 Champions. It doesn't matter if they're enemies, but you cannot hurt your friends.
+	GameEndedInEarlySurrender bool `json:"gameEndedInEarlySurrender,omitempty"`
+	GameEndedInSurrender      bool `json:"gameEndedInSurrender,omitempty"`
+	TeamEarlySurrendered      bool `json:"teamEarlySurrendered,omitempty"`
+	Win                       bool `json:"win,omitempty"`
 }
 
 // match-v5.PerkStatsDto

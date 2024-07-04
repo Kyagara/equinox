@@ -10,7 +10,7 @@ import "strconv"
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 9fef246d3ece1da9515c8941f7a3c7cd57e330fc
+// Spec version = 8096d0e7127558ddf4df50a0227b4100b5d54a2f
 
 // Platform routes for League of Legends.
 type PlatformRoute string
@@ -30,6 +30,8 @@ const (
 	LA1 PlatformRoute = "la1"
 	// Latin America, South.
 	LA2 PlatformRoute = "la2"
+	// Middle East and North Africa.
+	ME1 PlatformRoute = "me1"
 	// North America.
 	NA1 PlatformRoute = "na1"
 	// Oceania.
@@ -68,6 +70,8 @@ func (route PlatformRoute) String() string {
 		return "la1"
 	case LA2:
 		return "la2"
+	case ME1:
+		return "me1"
 	case NA1:
 		return "na1"
 	case OC1:

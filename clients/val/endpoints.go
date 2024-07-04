@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 9fef246d3ece1da9515c8941f7a3c7cd57e330fc
+// Spec version = 8096d0e7127558ddf4df50a0227b4100b5d54a2f
 
 import (
 	"context"
@@ -19,6 +19,103 @@ import (
 	"github.com/Kyagara/equinox/v2/api"
 	"github.com/Kyagara/equinox/v2/internal"
 )
+
+// # Riot API Reference
+//
+// [val-console-match-v1]
+//
+// [val-console-match-v1]: https://developer.riotgames.com/apis#val-console-match-v1
+type ConsoleMatchV1 struct {
+	internal *internal.Client
+}
+
+// Get match by id
+//
+// # Parameters
+//   - route: Route to query.
+//   - matchId
+//
+// # Riot API Reference
+//
+// [val-console-match-v1.getMatch]
+//
+// [val-console-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#val-console-match-v1/GET_getMatch
+func (endpoint *ConsoleMatchV1) ByID(ctx context.Context, route PlatformRoute, matchId string) (*ConsoleMatchMatchV1DTO, error) {
+	logger := endpoint.internal.Logger("VAL_ConsoleMatchV1_ByID")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/match/console/v1/matches/", matchId}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-console-match-v1.getMatch", nil)
+	if err != nil {
+		return nil, err
+	}
+	var data ConsoleMatchMatchV1DTO
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Get matchlist for games played by puuid and platform type
+//
+// # Parameters
+//   - route: Route to query.
+//   - puuid
+//   - platformType
+//
+// # Riot API Reference
+//
+// [val-console-match-v1.getMatchlist]
+//
+// [val-console-match-v1.getMatchlist]: https://developer.riotgames.com/api-methods/#val-console-match-v1/GET_getMatchlist
+func (endpoint *ConsoleMatchV1) ListByPUUID(ctx context.Context, route PlatformRoute, puuid string, platformType string) (*ConsoleMatchMatchlistV1DTO, error) {
+	logger := endpoint.internal.Logger("VAL_ConsoleMatchV1_ListByPUUID")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/match/console/v1/matchlists/by-puuid/", puuid}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-console-match-v1.getMatchlist", nil)
+	if err != nil {
+		return nil, err
+	}
+	values := url.Values{}
+	if platformType != "" {
+		values.Set("platformType", platformType)
+	}
+	request.Request.URL.RawQuery = values.Encode()
+	var data ConsoleMatchMatchlistV1DTO
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Get recent matches
+//
+// # Implementation Notes
+//
+// Returns a list of match ids that have completed in the last 10 minutes for live regions and 12 hours for the esports routing value. NA/LATAM/BR share a match history deployment. As such, recent matches will return a combined list of matches from those three regions. Requests are load balanced so you may see some inconsistencies as matches are added/removed from the list.
+//
+// # Parameters
+//   - route: Route to query.
+//   - queue
+//
+// # Riot API Reference
+//
+// [val-console-match-v1.getRecent]
+//
+// [val-console-match-v1.getRecent]: https://developer.riotgames.com/api-methods/#val-console-match-v1/GET_getRecent
+func (endpoint *ConsoleMatchV1) Recent(ctx context.Context, route PlatformRoute, queue string) (*ConsoleMatchRecentMatchesV1DTO, error) {
+	logger := endpoint.internal.Logger("VAL_ConsoleMatchV1_Recent")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/match/console/v1/recent-matches/by-queue/", queue}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-console-match-v1.getRecent", nil)
+	if err != nil {
+		return nil, err
+	}
+	var data ConsoleMatchRecentMatchesV1DTO
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
 
 // # Riot API Reference
 //

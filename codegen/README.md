@@ -27,17 +27,18 @@ First, install `betteralign` and `goimports`:
 go install github.com/dkorunic/betteralign/cmd/betteralign@latest && go install golang.org/x/tools/cmd/goimports@latest`
 ```
 
-To generate code, run from the root of the `equinox` project:
-
+Initialize a `go.work` file in the root of the repository:
 ```bash
-go generate ./...
+go work init
+go work use .
+go work use codegen
 ```
 
-To update the specs, you can do either:
+To update and generate code, you can either:
 
 ```bash
 # from the root of equinox
-UPDATE_SPECS=1 go generate .
+UPDATE_SPECS=1 go generate
 # or from inside the codegen folder
-go run . -update
+UPDATE_SPECS=1 go run .
 ```

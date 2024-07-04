@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -41,6 +42,10 @@ func readJSONSpecsFiles(jsonFiles map[string]gjson.Result) error {
 	files, err := filepath.Glob(pattern)
 	if err != nil {
 		return err
+	}
+
+	if len(files) == 0 {
+		return fmt.Errorf("no specs found, make sure to use UPDATE_SPECS=1")
 	}
 
 	for _, f := range files {
