@@ -9,7 +9,7 @@ package api
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 9fef246d3ece1da9515c8941f7a3c7cd57e330fc
+// Spec version = 8096d0e7127558ddf4df50a0227b4100b5d54a2f
 
 import (
 	"errors"
@@ -159,6 +159,9 @@ var (
 		{"POST", "/lol/tournament/v5/providers", "tournament-v5.registerProviderData"},
 		{"POST", "/lol/tournament/v5/tournaments", "tournament-v5.registerTournament"},
 		{"PUT", "/lol/tournament/v5/codes/{tournamentCode}", "tournament-v5.updateCode"},
+		{"GET", "/val/match/console/v1/matches/{matchId}", "val-console-match-v1.getMatch"},
+		{"GET", "/val/match/console/v1/matchlists/by-puuid/{puuid}", "val-console-match-v1.getMatchlist"},
+		{"GET", "/val/match/console/v1/recent-matches/by-queue/{queue}", "val-console-match-v1.getRecent"},
 		{"GET", "/val/content/v1/contents", "val-content-v1.getContent"},
 		{"GET", "/val/match/v1/matches/{matchId}", "val-match-v1.getMatch"},
 		{"GET", "/val/match/v1/matchlists/by-puuid/{puuid}", "val-match-v1.getMatchlist"},
