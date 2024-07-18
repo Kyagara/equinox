@@ -7,7 +7,7 @@ require (
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/go-json-experiment/json v0.0.0-20240418180308-af2d5061e6c2
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/redis/go-redis/v9 v9.5.3
+	github.com/redis/go-redis/v9 v9.5.4
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
 )

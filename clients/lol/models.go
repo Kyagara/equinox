@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 8096d0e7127558ddf4df50a0227b4100b5d54a2f
+// Spec version = 54ad38717276da9ce06bc6da8b27008d59d109f2
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -85,7 +85,8 @@ type ChampionMasteryNextSeasonMilestonesV4DTO struct {
 	// Reward configuration.
 	RewardConfig ChampionMasteryRewardConfigV4DTO `json:"rewardConfig,omitempty"`
 	// Reward marks.
-	RewardMarks int32 `json:"rewardMarks,omitempty"`
+	RewardMarks        int32 `json:"rewardMarks,omitempty"`
+	TotalGamesRequires int32 `json:"totalGamesRequires,omitempty"`
 	// Bonus.
 	Bonus bool `json:"bonus,omitempty"`
 }
@@ -382,6 +383,16 @@ type MatchChallengesV5DTO struct {
 	StealthWardsPlaced                  int32   `json:"stealthWardsPlaced,omitempty"`
 	SurvivedSingleDigitHpCount          int32   `json:"survivedSingleDigitHpCount,omitempty"`
 	SurvivedThreeImmobilizesInFight     int32   `json:"survivedThreeImmobilizesInFight,omitempty"`
+	SwarmDefeatAatrox                   int32   `json:"SWARM_DefeatAatrox,omitempty"`
+	SwarmDefeatBriar                    int32   `json:"SWARM_DefeatBriar,omitempty"`
+	SwarmDefeatMiniBosses               int32   `json:"SWARM_DefeatMiniBosses,omitempty"`
+	SwarmEvolveWeapon                   int32   `json:"SWARM_EvolveWeapon,omitempty"`
+	SwarmHave3Passives                  int32   `json:"SWARM_Have3Passives,omitempty"`
+	SwarmKillEnemy                      int32   `json:"SWARM_KillEnemy,omitempty"`
+	SwarmPickupGold                     int32   `json:"SWARM_PickupGold,omitempty"`
+	SwarmReachLevel50                   int32   `json:"SWARM_ReachLevel50,omitempty"`
+	SwarmSurvive15Min                   int32   `json:"SWARM_Survive15Min,omitempty"`
+	SwarmWinWith5EvolvedWeapons         int32   `json:"SWARM_WinWith5EvolvedWeapons,omitempty"`
 	TakedownOnFirstTurret               int32   `json:"takedownOnFirstTurret,omitempty"`
 	Takedowns                           int32   `json:"takedowns,omitempty"`
 	TakedownsAfterGainingLevelAdvantage int32   `json:"takedownsAfterGainingLevelAdvantage,omitempty"`

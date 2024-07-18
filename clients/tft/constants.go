@@ -10,7 +10,7 @@ import "strconv"
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 8096d0e7127558ddf4df50a0227b4100b5d54a2f
+// Spec version = 54ad38717276da9ce06bc6da8b27008d59d109f2
 
 // Platform routes for Teamfight Tactics.
 type PlatformRoute string
