@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 54ad38717276da9ce06bc6da8b27008d59d109f2
+// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
 
 import (
 	"context"
@@ -110,6 +110,55 @@ func (endpoint *ConsoleMatchV1) Recent(ctx context.Context, route PlatformRoute,
 		return nil, err
 	}
 	var data ConsoleMatchRecentMatchesV1DTO
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
+
+// # Riot API Reference
+//
+// [val-console-ranked-v1]
+//
+// [val-console-ranked-v1]: https://developer.riotgames.com/apis#val-console-ranked-v1
+type ConsoleRankedV1 struct {
+	internal *internal.Client
+}
+
+// Get leaderboard for the competitive queue
+//
+// # Parameters
+//   - route: Route to query.
+//   - actId: Act ids can be found using the val-content API.
+//   - platformType
+//   - startIndex (optional): Defaults to 0.
+//   - size (optional): Defaults to 200. Valid values: 1 to 200.
+//
+// # Riot API Reference
+//
+// [val-console-ranked-v1.getLeaderboard]
+//
+// [val-console-ranked-v1.getLeaderboard]: https://developer.riotgames.com/api-methods/#val-console-ranked-v1/GET_getLeaderboard
+func (endpoint *ConsoleRankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, platformType string, startIndex int32, size int32) (*ConsoleRankedLeaderboardV1DTO, error) {
+	logger := endpoint.internal.Logger("VAL_ConsoleRankedV1_Leaderboard")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/console/ranked/v1/leaderboards/by-act/", actId}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-console-ranked-v1.getLeaderboard", nil)
+	if err != nil {
+		return nil, err
+	}
+	values := url.Values{}
+	if platformType != "" {
+		values.Set("platformType", platformType)
+	}
+	if size != -1 {
+		values.Set("size", strconv.FormatInt(int64(size), 10))
+	}
+	if startIndex != -1 {
+		values.Set("startIndex", strconv.FormatInt(int64(startIndex), 10))
+	}
+	request.Request.URL.RawQuery = values.Encode()
+	var data ConsoleRankedLeaderboardV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err

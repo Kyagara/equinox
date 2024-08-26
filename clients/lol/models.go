@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 54ad38717276da9ce06bc6da8b27008d59d109f2
+// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -871,6 +871,14 @@ type MatchV5DTO struct {
 	Metadata MatchMetadataV5DTO `json:"metadata,omitempty"`
 	// Match info.
 	Info MatchInfoV5DTO `json:"info,omitempty"`
+}
+
+// lol-rso-match-v1.MatchDto
+type RsoMatchMatchV1DTO struct {
+}
+
+// lol-rso-match-v1.TimelineDto
+type RsoMatchTimelineV1DTO struct {
 }
 
 // spectator-v5.BannedChampion

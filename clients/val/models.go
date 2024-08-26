@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 54ad38717276da9ce06bc6da8b27008d59d109f2
+// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
 
 // val-console-match-v1.AbilityCastsDto
 type ConsoleMatchAbilityCastsV1DTO struct {
@@ -195,6 +195,30 @@ type ConsoleMatchTeamV1DTO struct {
 	RoundsPlayed int32 `json:"roundsPlayed,omitempty"`
 	RoundsWon    int32 `json:"roundsWon,omitempty"`
 	Won          bool  `json:"won,omitempty"`
+}
+
+// val-console-ranked-v1.LeaderboardDto
+type ConsoleRankedLeaderboardV1DTO struct {
+	// The act id for the given leaderboard. Act ids can be found using the val-content API.
+	ActID string `json:"actId,omitempty"`
+	// The shard for the given leaderboard.
+	Shard   string                     `json:"shard,omitempty"`
+	Players []ConsoleRankedPlayerV1DTO `json:"players,omitempty"`
+	// The total number of players in the leaderboard.
+	TotalPlayers int64 `json:"totalPlayers,omitempty"`
+}
+
+// val-console-ranked-v1.PlayerDto
+type ConsoleRankedPlayerV1DTO struct {
+	// This field may be omitted if the player has been anonymized.
+	GameName string `json:"gameName,omitempty"`
+	// This field may be omitted if the player has been anonymized.
+	PUUID string `json:"puuid,omitempty"`
+	// This field may be omitted if the player has been anonymized.
+	TagLine         string `json:"tagLine,omitempty"`
+	LeaderboardRank int64  `json:"leaderboardRank,omitempty"`
+	NumberOfWins    int64  `json:"numberOfWins,omitempty"`
+	RankedRating    int64  `json:"rankedRating,omitempty"`
 }
 
 // val-content-v1.ActDto

@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 54ad38717276da9ce06bc6da8b27008d59d109f2
+// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
 
 import (
 	"context"
@@ -809,6 +809,133 @@ func (endpoint *MatchV5) Timeline(ctx context.Context, route api.RegionalRoute, 
 		return nil, err
 	}
 	var data MatchTimelineV5DTO
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
+
+// # Riot API Reference
+//
+// [lol-rso-match-v1]
+//
+// [lol-rso-match-v1]: https://developer.riotgames.com/apis#lol-rso-match-v1
+type RsoMatchV1 struct {
+	internal *internal.Client
+}
+
+// Get a match by match id
+//
+// # Parameters
+//   - route: Route to query.
+//   - accessToken: RSO access token.
+//   - matchId
+//
+// # Riot API Reference
+//
+// [lol-rso-match-v1.getMatch]
+//
+// [lol-rso-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#lol-rso-match-v1/GET_getMatch
+func (endpoint *RsoMatchV1) ByID(ctx context.Context, route api.RegionalRoute, accessToken string, matchId string) (*RsoMatchMatchV1DTO, error) {
+	logger := endpoint.internal.Logger("LOL_RsoMatchV1_ByID")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/rso-match/v1/matches/", matchId}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-rso-match-v1.getMatch", nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Request.Header = request.Request.Header.Clone()
+	request.Request.Header.Del("X-Riot-Token")
+	headerValue := []string{"Bearer ", accessToken}
+	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
+	var data RsoMatchMatchV1DTO
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
+
+// Get a list of match ids by player access token - Includes custom matches
+//
+// # Parameters
+//   - route: Route to query.
+//   - accessToken: RSO access token.
+//   - count (optional): Defaults to 20. Valid values: 0 to 100. Number of match ids to return.
+//   - start (optional): Defaults to 0. Start index.
+//   - type (optional): Filter the list of match ids by the type of match. This filter is mutually inclusive of the queue filter meaning any match ids returned must match both the queue and type filters.
+//   - queue (optional): Filter the list of match ids by a specific queue id. This filter is mutually inclusive of the type filter meaning any match ids returned must match both the queue and type filters.
+//   - endTime (optional): Epoch timestamp in seconds.
+//   - startTime (optional): Epoch timestamp in seconds. The matchlist started storing timestamps on June 16th, 2021. Any matches played before June 16th, 2021 won't be included in the results if the startTime filter is set.
+//
+// # Riot API Reference
+//
+// [lol-rso-match-v1.getMatchIds]
+//
+// [lol-rso-match-v1.getMatchIds]: https://developer.riotgames.com/api-methods/#lol-rso-match-v1/GET_getMatchIds
+func (endpoint *RsoMatchV1) MatchIds(ctx context.Context, route api.RegionalRoute, accessToken string, count int32, start int32, matchType string, queue int32, endTime int64, startTime int64) ([]string, error) {
+	logger := endpoint.internal.Logger("LOL_RsoMatchV1_MatchIds")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/rso-match/v1/matches/ids"}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-rso-match-v1.getMatchIds", nil)
+	if err != nil {
+		return nil, err
+	}
+	values := url.Values{}
+	if count != -1 {
+		values.Set("count", strconv.FormatInt(int64(count), 10))
+	}
+	if endTime != -1 {
+		values.Set("endTime", strconv.FormatInt(endTime, 10))
+	}
+	if matchType != "" {
+		values.Set("type", matchType)
+	}
+	if queue != -1 {
+		values.Set("queue", strconv.FormatInt(int64(queue), 10))
+	}
+	if start != -1 {
+		values.Set("start", strconv.FormatInt(int64(start), 10))
+	}
+	if startTime != -1 {
+		values.Set("startTime", strconv.FormatInt(startTime, 10))
+	}
+	request.Request.URL.RawQuery = values.Encode()
+	request.Request.Header = request.Request.Header.Clone()
+	request.Request.Header.Del("X-Riot-Token")
+	headerValue := []string{"Bearer ", accessToken}
+	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
+	var data []string
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+// Get a match timeline by match id
+//
+// # Parameters
+//   - route: Route to query.
+//   - accessToken: RSO access token.
+//   - matchId
+//
+// # Riot API Reference
+//
+// [lol-rso-match-v1.getTimeline]
+//
+// [lol-rso-match-v1.getTimeline]: https://developer.riotgames.com/api-methods/#lol-rso-match-v1/GET_getTimeline
+func (endpoint *RsoMatchV1) Timeline(ctx context.Context, route api.RegionalRoute, accessToken string, matchId string) (*RsoMatchTimelineV1DTO, error) {
+	logger := endpoint.internal.Logger("LOL_RsoMatchV1_Timeline")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/rso-match/v1/matches/", matchId, "/timeline"}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-rso-match-v1.getTimeline", nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Request.Header = request.Request.Header.Clone()
+	request.Request.Header.Del("X-Riot-Token")
+	headerValue := []string{"Bearer ", accessToken}
+	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
+	var data RsoMatchTimelineV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err

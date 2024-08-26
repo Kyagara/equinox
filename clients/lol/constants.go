@@ -10,7 +10,7 @@ import "strconv"
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 54ad38717276da9ce06bc6da8b27008d59d109f2
+// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
 
 // Platform routes for League of Legends.
 type PlatformRoute string
@@ -322,7 +322,7 @@ const (
 	ASCENSION_GAMEMODE GameMode = "ASCENSION"
 	// Blood Hunt Assassin games
 	ASSASSINATE_GAMEMODE GameMode = "ASSASSINATE"
-	// 2v2v2v2
+	// 2v2v2v2 Arena
 	CHERRY_GAMEMODE GameMode = "CHERRY"
 	// Classic Summoner's Rift and Twisted Treeline games
 	CLASSIC_GAMEMODE GameMode = "CLASSIC"
@@ -352,6 +352,8 @@ const (
 	SIEGE_GAMEMODE GameMode = "SIEGE"
 	// Star Guardian Invasion games
 	STARGUARDIAN_GAMEMODE GameMode = "STARGUARDIAN"
+	// Swarm
+	STRAWBERRY_GAMEMODE GameMode = "STRAWBERRY"
 	// Tutorial games
 	TUTORIAL_GAMEMODE GameMode = "TUTORIAL"
 	// Tutorial: Welcome to League.
@@ -406,6 +408,8 @@ func (gameMode GameMode) String() string {
 		return "SIEGE"
 	case STARGUARDIAN_GAMEMODE:
 		return "STARGUARDIAN"
+	case STRAWBERRY_GAMEMODE:
+		return "STRAWBERRY"
 	case TUTORIAL_GAMEMODE:
 		return "TUTORIAL"
 	case TUTORIAL_MODULE_1_GAMEMODE:
@@ -471,6 +475,10 @@ const (
 	//
 	// Original Summer variant
 	SUMMONERS_RIFT_ORIGINAL_SUMMER_VARIANT_MAP Map = 1
+	// Swarm
+	//
+	// Map for Swarm (`STRAWBERRY`). Team up with a friend or venture solo in this horde survival mode.
+	SWARM_MAP Map = 33
 	// The Crystal Scar
 	//
 	// Dominion map
@@ -517,6 +525,8 @@ func (gameMap Map) String() string {
 		return "2"
 	case SUMMONERS_RIFT_ORIGINAL_SUMMER_VARIANT_MAP:
 		return "1"
+	case SWARM_MAP:
+		return "33"
 	case THE_CRYSTAL_SCAR_MAP:
 		return "8"
 	case THE_PROVING_GROUNDS_MAP:
@@ -664,20 +674,32 @@ const (
 	//
 	// Co-op vs AI Beginner Bot games on Summoner's Rift
 	SUMMONERS_RIFT_CO_OP_VS_AI_BEGINNER_BOT_32_QUEUE Queue = 32
+	// # Deprecated
+	//
 	// Co-op vs. AI Beginner Bot games on Summoner's Rift
-	SUMMONERS_RIFT_CO_OP_VS_AI_BEGINNER_BOT_QUEUE Queue = 840
+	SUMMONERS_RIFT_CO_OP_VS_AI_BEGINNER_BOT_840_QUEUE Queue = 840
+	// Co-op vs. AI Beginner Bot games on Summoner's Rift
+	SUMMONERS_RIFT_CO_OP_VS_AI_BEGINNER_BOT_QUEUE Queue = 880
 	// # Deprecated
 	//
 	// Co-op vs AI Intermediate Bot games on Summoner's Rift
 	SUMMONERS_RIFT_CO_OP_VS_AI_INTERMEDIATE_BOT_33_QUEUE Queue = 33
+	// # Deprecated
+	//
 	// Co-op vs. AI Intermediate Bot games on Summoner's Rift
-	SUMMONERS_RIFT_CO_OP_VS_AI_INTERMEDIATE_BOT_QUEUE Queue = 850
+	SUMMONERS_RIFT_CO_OP_VS_AI_INTERMEDIATE_BOT_850_QUEUE Queue = 850
+	// Co-op vs. AI Intermediate Bot games on Summoner's Rift
+	SUMMONERS_RIFT_CO_OP_VS_AI_INTERMEDIATE_BOT_QUEUE Queue = 890
 	// # Deprecated
 	//
 	// Co-op vs AI Intro Bot games on Summoner's Rift
 	SUMMONERS_RIFT_CO_OP_VS_AI_INTRO_BOT_31_QUEUE Queue = 31
+	// # Deprecated
+	//
 	// Co-op vs. AI Intro Bot games on Summoner's Rift
-	SUMMONERS_RIFT_CO_OP_VS_AI_INTRO_BOT_QUEUE Queue = 830
+	SUMMONERS_RIFT_CO_OP_VS_AI_INTRO_BOT_830_QUEUE Queue = 830
+	// Co-op vs. AI Intro Bot games on Summoner's Rift
+	SUMMONERS_RIFT_CO_OP_VS_AI_INTRO_BOT_QUEUE Queue = 870
 	// # Deprecated
 	//
 	// Co-op vs AI games on Summoner's Rift
@@ -730,6 +752,14 @@ const (
 	SUMMONERS_RIFT_ULTIMATE_SPELLBOOK_QUEUE Queue = 1400
 	// Ultra Rapid Fire games on Summoner's Rift
 	SUMMONERS_RIFT_ULTRA_RAPID_FIRE_QUEUE Queue = 76
+	// Swarm duo (`STRAWBERRY` games) games on Swarm
+	SWARM_DUO_STRAWBERRY_GAMES_QUEUE Queue = 1820
+	// Swarm quad (`STRAWBERRY` games) games on Swarm
+	SWARM_QUAD_STRAWBERRY_GAMES_QUEUE Queue = 1840
+	// Swarm solo (`STRAWBERRY` games) games on Swarm
+	SWARM_SOLO_STRAWBERRY_GAMES_QUEUE Queue = 1810
+	// Swarm trio (`STRAWBERRY` games) games on Swarm
+	SWARM_TRIO_STRAWBERRY_GAMES_QUEUE Queue = 1830
 	// # Deprecated
 	//
 	// 3v3 Blind Pick games on Twisted Treeline
@@ -868,16 +898,22 @@ func (queue Queue) String() string {
 		return "700"
 	case SUMMONERS_RIFT_CO_OP_VS_AI_BEGINNER_BOT_32_QUEUE:
 		return "32"
-	case SUMMONERS_RIFT_CO_OP_VS_AI_BEGINNER_BOT_QUEUE:
+	case SUMMONERS_RIFT_CO_OP_VS_AI_BEGINNER_BOT_840_QUEUE:
 		return "840"
+	case SUMMONERS_RIFT_CO_OP_VS_AI_BEGINNER_BOT_QUEUE:
+		return "880"
 	case SUMMONERS_RIFT_CO_OP_VS_AI_INTERMEDIATE_BOT_33_QUEUE:
 		return "33"
-	case SUMMONERS_RIFT_CO_OP_VS_AI_INTERMEDIATE_BOT_QUEUE:
+	case SUMMONERS_RIFT_CO_OP_VS_AI_INTERMEDIATE_BOT_850_QUEUE:
 		return "850"
+	case SUMMONERS_RIFT_CO_OP_VS_AI_INTERMEDIATE_BOT_QUEUE:
+		return "890"
 	case SUMMONERS_RIFT_CO_OP_VS_AI_INTRO_BOT_31_QUEUE:
 		return "31"
-	case SUMMONERS_RIFT_CO_OP_VS_AI_INTRO_BOT_QUEUE:
+	case SUMMONERS_RIFT_CO_OP_VS_AI_INTRO_BOT_830_QUEUE:
 		return "830"
+	case SUMMONERS_RIFT_CO_OP_VS_AI_INTRO_BOT_QUEUE:
+		return "870"
 	case SUMMONERS_RIFT_CO_OP_VS_AI_QUEUE:
 		return "7"
 	case SUMMONERS_RIFT_CO_OP_VS_AI_ULTRA_RAPID_FIRE_QUEUE:
@@ -918,6 +954,14 @@ func (queue Queue) String() string {
 		return "1400"
 	case SUMMONERS_RIFT_ULTRA_RAPID_FIRE_QUEUE:
 		return "76"
+	case SWARM_DUO_STRAWBERRY_GAMES_QUEUE:
+		return "1820"
+	case SWARM_QUAD_STRAWBERRY_GAMES_QUEUE:
+		return "1840"
+	case SWARM_SOLO_STRAWBERRY_GAMES_QUEUE:
+		return "1810"
+	case SWARM_TRIO_STRAWBERRY_GAMES_QUEUE:
+		return "1830"
 	case TWISTED_TREELINE_3V3_BLIND_PICK_QUEUE:
 		return "460"
 	case TWISTED_TREELINE_3V3_NORMAL_QUEUE:

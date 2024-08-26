@@ -9,7 +9,7 @@ package api
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 54ad38717276da9ce06bc6da8b27008d59d109f2
+// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
 
 import (
 	"errors"
@@ -113,6 +113,9 @@ var (
 		{"GET", "/lol/challenges/v1/challenges/{challengeId}/leaderboards/by-level/{level}", "lol-challenges-v1.getChallengeLeaderboards"},
 		{"GET", "/lol/challenges/v1/challenges/{challengeId}/percentiles", "lol-challenges-v1.getChallengePercentiles"},
 		{"GET", "/lol/challenges/v1/player-data/{puuid}", "lol-challenges-v1.getPlayerData"},
+		{"GET", "/lol/rso-match/v1/matches/{matchId}", "lol-rso-match-v1.getMatch"},
+		{"GET", "/lol/rso-match/v1/matches/ids", "lol-rso-match-v1.getMatchIds"},
+		{"GET", "/lol/rso-match/v1/matches/{matchId}/timeline", "lol-rso-match-v1.getTimeline"},
 		{"GET", "/lol/status/v4/platform-data", "lol-status-v4.getPlatformData"},
 		{"POST", "/lor/deck/v1/decks/me", "lor-deck-v1.createDeck"},
 		{"GET", "/lor/deck/v1/decks/me", "lor-deck-v1.getDecks"},
@@ -162,6 +165,7 @@ var (
 		{"GET", "/val/match/console/v1/matches/{matchId}", "val-console-match-v1.getMatch"},
 		{"GET", "/val/match/console/v1/matchlists/by-puuid/{puuid}", "val-console-match-v1.getMatchlist"},
 		{"GET", "/val/match/console/v1/recent-matches/by-queue/{queue}", "val-console-match-v1.getRecent"},
+		{"GET", "/val/console/ranked/v1/leaderboards/by-act/{actId}", "val-console-ranked-v1.getLeaderboard"},
 		{"GET", "/val/content/v1/contents", "val-content-v1.getContent"},
 		{"GET", "/val/match/v1/matches/{matchId}", "val-match-v1.getMatch"},
 		{"GET", "/val/match/v1/matchlists/by-puuid/{puuid}", "val-match-v1.getMatchlist"},

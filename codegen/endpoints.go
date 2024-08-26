@@ -442,6 +442,9 @@ func getBodyType(operation gjson.Result, version string, endpointID string) stri
 
 func getNormalizedRoute(operation gjson.Result) string {
 	route := strcase.ToCamel(operation.Get("x-route-enum").String())
+	if route == "" {
+		return "api.Regional"
+	}
 	route = strings.ReplaceAll(route, "Regional", "api.Regional")
 	return strings.ReplaceAll(route, "ValPlatform", "Platform")
 }
