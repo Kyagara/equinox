@@ -67,8 +67,8 @@ func main() {
 ## Todo
 
 - Maybe the context usage throughout the project could be improved
-- Maybe add and move logging to the Cache and RateLimit interfaces, instead of passing them around
-- Maybe endpoint methods int32/int64 parameters should be changed to just int
+- Maybe add and move `Logger` to the `Cache` and `RateLimit` interfaces
+- Maybe endpoint methods `int32`/`int64` parameters should be changed to just `int`
 - Add checks for duration of tests that include any WaitN/any blocking
 - Add more integration tests
 - RateLimit
@@ -78,7 +78,7 @@ func main() {
 
 ## Versioning
 
-Breaking changes in the library itself (client reworks, removal/rename of internal methods) will require a major version (n.x.x) bump, fixes will occur in a patch (x.x.n).
+Breaking changes in the library itself (removal/rename of methods from `InternalClient`/`Cache`/`RateLimit`) will require a major version (n.x.x) bump, fixes will occur in a patch (x.x.n).
 
 The Riot API does not follow semver and changes often, breaking changes such as removal of endpoints methods or even entire endpoints will require a **minor** version (x.n.x) bump.
 
