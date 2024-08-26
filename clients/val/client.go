@@ -1,5 +1,6 @@
 // This package is used to interact with all VAL endpoints.
 //   - ConsoleMatchV1
+//   - ConsoleRankedV1
 //   - ContentV1
 //   - MatchV1
 //   - RankedV1
@@ -16,25 +17,27 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 54ad38717276da9ce06bc6da8b27008d59d109f2
+// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
 
 import "github.com/Kyagara/equinox/v2/internal"
 
 type Client struct {
-	ConsoleMatchV1 ConsoleMatchV1
-	ContentV1      ContentV1
-	MatchV1        MatchV1
-	RankedV1       RankedV1
-	StatusV1       StatusV1
+	ConsoleMatchV1  ConsoleMatchV1
+	ConsoleRankedV1 ConsoleRankedV1
+	ContentV1       ContentV1
+	MatchV1         MatchV1
+	RankedV1        RankedV1
+	StatusV1        StatusV1
 }
 
 // Creates a new VAL Client using the internal.Client provided.
 func NewVALClient(client *internal.Client) *Client {
 	return &Client{
-		ConsoleMatchV1: ConsoleMatchV1{internal: client},
-		ContentV1:      ContentV1{internal: client},
-		MatchV1:        MatchV1{internal: client},
-		RankedV1:       RankedV1{internal: client},
-		StatusV1:       StatusV1{internal: client},
+		ConsoleMatchV1:  ConsoleMatchV1{internal: client},
+		ConsoleRankedV1: ConsoleRankedV1{internal: client},
+		ContentV1:       ContentV1{internal: client},
+		MatchV1:         MatchV1{internal: client},
+		RankedV1:        RankedV1{internal: client},
+		StatusV1:        StatusV1{internal: client},
 	}
 }
