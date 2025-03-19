@@ -1,15 +1,15 @@
 module github.com/Kyagara/equinox/v2
 
-go 1.23
+go 1.24
 
 require (
-	github.com/alicebob/miniredis/v2 v2.33.0
+	github.com/alicebob/miniredis/v2 v2.34.0
 	github.com/allegro/bigcache/v3 v3.1.0
-	github.com/go-json-experiment/json v0.0.0-20240815175050-ebd3a8989ca1
+	github.com/go-json-experiment/json v0.0.0-20250223041408-d3c622f1b874
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/redis/go-redis/v9 v9.6.1
+	github.com/redis/go-redis/v9 v9.7.1
 	github.com/rs/zerolog v1.33.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 )
 
 require (
