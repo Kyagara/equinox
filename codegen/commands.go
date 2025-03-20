@@ -76,6 +76,12 @@ func Format() error {
 		return err
 	}
 
+	fmt.Printf("Running 'modernize'\n")
+	err = runCommand(exec.Command("go", "run", "golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest", "-fix", "../clients/..."))
+	if err != nil {
+		return err
+	}
+
 	fmt.Printf("Running 'gofmt'\n")
 	err = runCommand(exec.Command("gofmt", "-w", "../"))
 	if err != nil {
@@ -87,6 +93,7 @@ func Format() error {
 	if err != nil {
 		return err
 	}
+
 	return runCommand(exec.Command("betteralign", "--apply", "../..."))
 }
 
@@ -96,9 +103,11 @@ func runCommand(cmd *exec.Cmd) error {
 		if cmd.Args[0] == "betteralign" && strings.Contains(out, "struct with") {
 			return nil
 		}
+
 		fmt.Printf("Error executing command '%s'\nOutput:\n%s", cmd.String(), out)
 		return err
 	}
+
 	return nil
 }
 
@@ -145,6 +154,7 @@ func compileApi(specs map[string]gjson.Result, specVersion string) error {
 			return fmt.Errorf("error writing to file: %w", err)
 		}
 	}
+
 	return nil
 }
 
@@ -221,6 +231,7 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 			if err != nil {
 				return err
 			}
+
 			results[filename] = result
 		}
 

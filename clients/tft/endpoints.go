@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
+// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
 
 import (
 	"context"
@@ -101,7 +101,7 @@ func (endpoint *LeagueV1) ChallengerByQueue(ctx context.Context, route PlatformR
 // [tft-league-v1.getLeagueEntries]
 //
 // [tft-league-v1.getLeagueEntries]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueEntries
-func (endpoint *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, division string, queue string, page int32) ([]LeagueEntryV1DTO, error) {
+func (endpoint *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier Tier, division string, queue string, page int) ([]LeagueEntryV1DTO, error) {
 	logger := endpoint.internal.Logger("TFT_LeagueV1_Entries")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/entries/", tier.String(), "/", division}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getLeagueEntries", nil)
@@ -288,7 +288,7 @@ func (endpoint *MatchV1) ByID(ctx context.Context, route api.RegionalRoute, matc
 // [tft-match-v1.getMatchIdsByPUUID]
 //
 // [tft-match-v1.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#tft-match-v1/GET_getMatchIdsByPUUID
-func (endpoint *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, start int32, endTime int64, startTime int64, count int32) ([]string, error) {
+func (endpoint *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, start int, endTime int, startTime int, count int) ([]string, error) {
 	logger := endpoint.internal.Logger("TFT_MatchV1_ListByPUUID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/match/v1/matches/by-puuid/", puuid, "/ids"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-match-v1.getMatchIdsByPUUID", nil)
@@ -300,13 +300,13 @@ func (endpoint *MatchV1) ListByPUUID(ctx context.Context, route api.RegionalRout
 		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	if endTime != -1 {
-		values.Set("endTime", strconv.FormatInt(endTime, 10))
+		values.Set("endTime", strconv.FormatInt(int64(endTime), 10))
 	}
 	if start != -1 {
 		values.Set("start", strconv.FormatInt(int64(start), 10))
 	}
 	if startTime != -1 {
-		values.Set("startTime", strconv.FormatInt(startTime, 10))
+		values.Set("startTime", strconv.FormatInt(int64(startTime), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	data := make([]string, 0, 20)

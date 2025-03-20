@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
+// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
 
 import (
 	"context"
@@ -65,14 +65,14 @@ func (endpoint *ChallengesV1) AllConfigs(ctx context.Context, route PlatformRout
 // [lol-challenges-v1.getAllChallengePercentiles]
 //
 // [lol-challenges-v1.getAllChallengePercentiles]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getAllChallengePercentiles
-func (endpoint *ChallengesV1) AllPercentiles(ctx context.Context, route PlatformRoute) (map[int64]map[Tier]float64, error) {
+func (endpoint *ChallengesV1) AllPercentiles(ctx context.Context, route PlatformRoute) (map[int]map[Tier]float64, error) {
 	logger := endpoint.internal.Logger("LOL_ChallengesV1_AllPercentiles")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/percentiles"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-challenges-v1.getAllChallengePercentiles", nil)
 	if err != nil {
 		return nil, err
 	}
-	var data map[int64]map[Tier]float64
+	var data map[int]map[Tier]float64
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err
@@ -117,9 +117,9 @@ func (endpoint *ChallengesV1) ByPUUID(ctx context.Context, route PlatformRoute, 
 // [lol-challenges-v1.getChallengeConfigs]
 //
 // [lol-challenges-v1.getChallengeConfigs]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeConfigs
-func (endpoint *ChallengesV1) Configs(ctx context.Context, route PlatformRoute, challengeId int64) (*ChallengesChallengeConfigInfoV1DTO, error) {
+func (endpoint *ChallengesV1) Configs(ctx context.Context, route PlatformRoute, challengeId int) (*ChallengesChallengeConfigInfoV1DTO, error) {
 	logger := endpoint.internal.Logger("LOL_ChallengesV1_Configs")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(challengeId, 10), "/config"}
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(int64(challengeId), 10), "/config"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-challenges-v1.getChallengeConfigs", nil)
 	if err != nil {
 		return nil, err
@@ -145,9 +145,9 @@ func (endpoint *ChallengesV1) Configs(ctx context.Context, route PlatformRoute, 
 // [lol-challenges-v1.getChallengeLeaderboards]
 //
 // [lol-challenges-v1.getChallengeLeaderboards]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengeLeaderboards
-func (endpoint *ChallengesV1) Leaderboards(ctx context.Context, route PlatformRoute, challengeId int64, level Tier, limit int32) ([]ChallengesApexPlayerInfoV1DTO, error) {
+func (endpoint *ChallengesV1) Leaderboards(ctx context.Context, route PlatformRoute, challengeId int, level Tier, limit int) ([]ChallengesApexPlayerInfoV1DTO, error) {
 	logger := endpoint.internal.Logger("LOL_ChallengesV1_Leaderboards")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(challengeId, 10), "/leaderboards/by-level/", level.String()}
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(int64(challengeId), 10), "/leaderboards/by-level/", level.String()}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-challenges-v1.getChallengeLeaderboards", nil)
 	if err != nil {
 		return nil, err
@@ -176,9 +176,9 @@ func (endpoint *ChallengesV1) Leaderboards(ctx context.Context, route PlatformRo
 // [lol-challenges-v1.getChallengePercentiles]
 //
 // [lol-challenges-v1.getChallengePercentiles]: https://developer.riotgames.com/api-methods/#lol-challenges-v1/GET_getChallengePercentiles
-func (endpoint *ChallengesV1) Percentiles(ctx context.Context, route PlatformRoute, challengeId int64) (map[Tier]float64, error) {
+func (endpoint *ChallengesV1) Percentiles(ctx context.Context, route PlatformRoute, challengeId int) (map[Tier]float64, error) {
 	logger := endpoint.internal.Logger("LOL_ChallengesV1_Percentiles")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(challengeId, 10), "/percentiles"}
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/challenges/v1/challenges/", strconv.FormatInt(int64(challengeId), 10), "/percentiles"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-challenges-v1.getChallengePercentiles", nil)
 	if err != nil {
 		return nil, err
@@ -238,7 +238,7 @@ func (endpoint *ChampionMasteryV4) AllMasteriesByPUUID(ctx context.Context, rout
 // [champion-mastery-v4.getChampionMasteryByPUUID]
 //
 // [champion-mastery-v4.getChampionMasteryByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryByPUUID
-func (endpoint *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string, championId int32) (*ChampionMasteryV4DTO, error) {
+func (endpoint *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string, championId int) (*ChampionMasteryV4DTO, error) {
 	logger := endpoint.internal.Logger("LOL_ChampionMasteryV4_MasteryByPUUID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-puuid/", encryptedPUUID, "/by-champion/", strconv.FormatInt(int64(championId), 10)}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getChampionMasteryByPUUID", nil)
@@ -264,14 +264,14 @@ func (endpoint *ChampionMasteryV4) MasteryByPUUID(ctx context.Context, route Pla
 // [champion-mastery-v4.getChampionMasteryScoreByPUUID]
 //
 // [champion-mastery-v4.getChampionMasteryScoreByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScoreByPUUID
-func (endpoint *ChampionMasteryV4) MasteryScoreByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (int32, error) {
+func (endpoint *ChampionMasteryV4) MasteryScoreByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) (int, error) {
 	logger := endpoint.internal.Logger("LOL_ChampionMasteryV4_MasteryScoreByPUUID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/scores/by-puuid/", encryptedPUUID}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getChampionMasteryScoreByPUUID", nil)
 	if err != nil {
 		return 0, err
 	}
-	var data int32
+	var data int
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return 0, err
@@ -291,7 +291,7 @@ func (endpoint *ChampionMasteryV4) MasteryScoreByPUUID(ctx context.Context, rout
 // [champion-mastery-v4.getTopChampionMasteriesByPUUID]
 //
 // [champion-mastery-v4.getTopChampionMasteriesByPUUID]: https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getTopChampionMasteriesByPUUID
-func (endpoint *ChampionMasteryV4) TopMasteriesByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string, count int32) ([]ChampionMasteryV4DTO, error) {
+func (endpoint *ChampionMasteryV4) TopMasteriesByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string, count int) ([]ChampionMasteryV4DTO, error) {
 	logger := endpoint.internal.Logger("LOL_ChampionMasteryV4_TopMasteriesByPUUID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/champion-mastery/v4/champion-masteries/by-puuid/", encryptedPUUID, "/top"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "champion-mastery-v4.getTopChampionMasteriesByPUUID", nil)
@@ -365,7 +365,7 @@ type ClashV1 struct {
 // [clash-v1.getTournamentById]
 //
 // [clash-v1.getTournamentById]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getTournamentById
-func (endpoint *ClashV1) ByID(ctx context.Context, route PlatformRoute, tournamentId int32) (*ClashTournamentV1DTO, error) {
+func (endpoint *ClashV1) ByID(ctx context.Context, route PlatformRoute, tournamentId int) (*ClashTournamentV1DTO, error) {
 	logger := endpoint.internal.Logger("LOL_ClashV1_ByID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/clash/v1/tournaments/", strconv.FormatInt(int64(tournamentId), 10)}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "clash-v1.getTournamentById", nil)
@@ -406,25 +406,25 @@ func (endpoint *ClashV1) ByTeamID(ctx context.Context, route PlatformRoute, team
 	return &data, nil
 }
 
-// Get players by summoner ID.
+// Get players by puuid
 //
 // # Implementation Notes
 //
-// This endpoint returns a list of active Clash players for a given summoner ID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
+// This endpoint returns a list of active Clash players for a given PUUID. If a summoner registers for multiple tournaments at the same time (e.g., Saturday and Sunday) then both registrations would appear in this list.
 //
 // # Parameters
 //   - route: Route to query.
-//   - summonerId
+//   - puuid
 //
 // # Riot API Reference
 //
-// [clash-v1.getPlayersBySummoner]
+// [clash-v1.getPlayersByPUUID]
 //
-// [clash-v1.getPlayersBySummoner]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getPlayersBySummoner
-func (endpoint *ClashV1) SummonerEntriesBySummonerID(ctx context.Context, route PlatformRoute, summonerId string) ([]ClashPlayerV1DTO, error) {
-	logger := endpoint.internal.Logger("LOL_ClashV1_SummonerEntriesBySummonerID")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/clash/v1/players/by-summoner/", summonerId}
-	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "clash-v1.getPlayersBySummoner", nil)
+// [clash-v1.getPlayersByPUUID]: https://developer.riotgames.com/api-methods/#clash-v1/GET_getPlayersByPUUID
+func (endpoint *ClashV1) SummonerEntriesByPUUID(ctx context.Context, route PlatformRoute, puuid string) ([]ClashPlayerV1DTO, error) {
+	logger := endpoint.internal.Logger("LOL_ClashV1_SummonerEntriesByPUUID")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/clash/v1/players/by-puuid/", puuid}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "clash-v1.getPlayersByPUUID", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -510,7 +510,7 @@ type LeagueExpV4 struct {
 // [league-exp-v4.getLeagueEntries]
 //
 // [league-exp-v4.getLeagueEntries]: https://developer.riotgames.com/api-methods/#league-exp-v4/GET_getLeagueEntries
-func (endpoint *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue QueueType, tier Tier, division Division, page int32) ([]LeagueExpLeagueEntryV4DTO, error) {
+func (endpoint *LeagueExpV4) Entries(ctx context.Context, route PlatformRoute, queue QueueType, tier Tier, division Division, page int) ([]LeagueExpLeagueEntryV4DTO, error) {
 	logger := endpoint.internal.Logger("LOL_LeagueExpV4_Entries")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/league-exp/v4/entries/", queue.String(), "/", tier.String(), "/", division.String()}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "league-exp-v4.getLeagueEntries", nil)
@@ -605,7 +605,7 @@ func (endpoint *LeagueV4) ChallengerByQueue(ctx context.Context, route PlatformR
 // [league-v4.getLeagueEntries]
 //
 // [league-v4.getLeagueEntries]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueEntries
-func (endpoint *LeagueV4) Entries(ctx context.Context, route PlatformRoute, queue QueueType, tier Tier, division Division, page int32) ([]LeagueEntryV4DTO, error) {
+func (endpoint *LeagueV4) Entries(ctx context.Context, route PlatformRoute, queue QueueType, tier Tier, division Division, page int) ([]LeagueEntryV4DTO, error) {
 	logger := endpoint.internal.Logger("LOL_LeagueV4_Entries")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/league/v4/entries/", queue.String(), "/", tier.String(), "/", division.String()}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "league-v4.getLeagueEntries", nil)
@@ -617,6 +617,32 @@ func (endpoint *LeagueV4) Entries(ctx context.Context, route PlatformRoute, queu
 		values.Set("page", strconv.FormatInt(int64(page), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
+	var data []LeagueEntryV4DTO
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+// Get league entries in all queues for a given puuid
+//
+// # Parameters
+//   - route: Route to query.
+//   - encryptedPUUID
+//
+// # Riot API Reference
+//
+// [league-v4.getLeagueEntriesByPUUID]
+//
+// [league-v4.getLeagueEntriesByPUUID]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueEntriesByPUUID
+func (endpoint *LeagueV4) EntriesByPUUID(ctx context.Context, route PlatformRoute, encryptedPUUID string) ([]LeagueEntryV4DTO, error) {
+	logger := endpoint.internal.Logger("LOL_LeagueV4_EntriesByPUUID")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/league/v4/entries/by-puuid/", encryptedPUUID}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "league-v4.getLeagueEntriesByPUUID", nil)
+	if err != nil {
+		return nil, err
+	}
 	var data []LeagueEntryV4DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
@@ -755,7 +781,7 @@ func (endpoint *MatchV5) ByID(ctx context.Context, route api.RegionalRoute, matc
 // [match-v5.getMatchIdsByPUUID]
 //
 // [match-v5.getMatchIdsByPUUID]: https://developer.riotgames.com/api-methods/#match-v5/GET_getMatchIdsByPUUID
-func (endpoint *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, startTime int64, endTime int64, queue Queue, matchType string, start int32, count int32) ([]string, error) {
+func (endpoint *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRoute, puuid string, startTime int, endTime int, queue Queue, matchType string, start int, count int) ([]string, error) {
 	logger := endpoint.internal.Logger("LOL_MatchV5_ListByPUUID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/match/v5/matches/by-puuid/", puuid, "/ids"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "match-v5.getMatchIdsByPUUID", nil)
@@ -767,7 +793,7 @@ func (endpoint *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRout
 		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	if endTime != -1 {
-		values.Set("endTime", strconv.FormatInt(endTime, 10))
+		values.Set("endTime", strconv.FormatInt(int64(endTime), 10))
 	}
 	if matchType != "" {
 		values.Set("type", matchType)
@@ -779,7 +805,7 @@ func (endpoint *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRout
 		values.Set("start", strconv.FormatInt(int64(start), 10))
 	}
 	if startTime != -1 {
-		values.Set("startTime", strconv.FormatInt(startTime, 10))
+		values.Set("startTime", strconv.FormatInt(int64(startTime), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	data := make([]string, 0, 20)
@@ -837,7 +863,7 @@ type RsoMatchV1 struct {
 // [lol-rso-match-v1.getMatch]
 //
 // [lol-rso-match-v1.getMatch]: https://developer.riotgames.com/api-methods/#lol-rso-match-v1/GET_getMatch
-func (endpoint *RsoMatchV1) ByID(ctx context.Context, route api.RegionalRoute, accessToken string, matchId string) (*RsoMatchMatchV1DTO, error) {
+func (endpoint *RsoMatchV1) ByID(ctx context.Context, route api.RegionalRoute, accessToken string, matchId string) (*MatchV5DTO, error) {
 	logger := endpoint.internal.Logger("LOL_RsoMatchV1_ByID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/rso-match/v1/matches/", matchId}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-rso-match-v1.getMatch", nil)
@@ -848,7 +874,7 @@ func (endpoint *RsoMatchV1) ByID(ctx context.Context, route api.RegionalRoute, a
 	request.Request.Header.Del("X-Riot-Token")
 	headerValue := []string{"Bearer ", accessToken}
 	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
-	var data RsoMatchMatchV1DTO
+	var data MatchV5DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err
@@ -873,7 +899,7 @@ func (endpoint *RsoMatchV1) ByID(ctx context.Context, route api.RegionalRoute, a
 // [lol-rso-match-v1.getMatchIds]
 //
 // [lol-rso-match-v1.getMatchIds]: https://developer.riotgames.com/api-methods/#lol-rso-match-v1/GET_getMatchIds
-func (endpoint *RsoMatchV1) MatchIds(ctx context.Context, route api.RegionalRoute, accessToken string, count int32, start int32, matchType string, queue int32, endTime int64, startTime int64) ([]string, error) {
+func (endpoint *RsoMatchV1) MatchIds(ctx context.Context, route api.RegionalRoute, accessToken string, count int, start int, matchType string, queue int, endTime int, startTime int) ([]string, error) {
 	logger := endpoint.internal.Logger("LOL_RsoMatchV1_MatchIds")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/rso-match/v1/matches/ids"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-rso-match-v1.getMatchIds", nil)
@@ -885,7 +911,7 @@ func (endpoint *RsoMatchV1) MatchIds(ctx context.Context, route api.RegionalRout
 		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	if endTime != -1 {
-		values.Set("endTime", strconv.FormatInt(endTime, 10))
+		values.Set("endTime", strconv.FormatInt(int64(endTime), 10))
 	}
 	if matchType != "" {
 		values.Set("type", matchType)
@@ -897,7 +923,7 @@ func (endpoint *RsoMatchV1) MatchIds(ctx context.Context, route api.RegionalRout
 		values.Set("start", strconv.FormatInt(int64(start), 10))
 	}
 	if startTime != -1 {
-		values.Set("startTime", strconv.FormatInt(startTime, 10))
+		values.Set("startTime", strconv.FormatInt(int64(startTime), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	request.Request.Header = request.Request.Header.Clone()
@@ -924,7 +950,7 @@ func (endpoint *RsoMatchV1) MatchIds(ctx context.Context, route api.RegionalRout
 // [lol-rso-match-v1.getTimeline]
 //
 // [lol-rso-match-v1.getTimeline]: https://developer.riotgames.com/api-methods/#lol-rso-match-v1/GET_getTimeline
-func (endpoint *RsoMatchV1) Timeline(ctx context.Context, route api.RegionalRoute, accessToken string, matchId string) (*RsoMatchTimelineV1DTO, error) {
+func (endpoint *RsoMatchV1) Timeline(ctx context.Context, route api.RegionalRoute, accessToken string, matchId string) (*MatchTimelineV5DTO, error) {
 	logger := endpoint.internal.Logger("LOL_RsoMatchV1_Timeline")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/rso-match/v1/matches/", matchId, "/timeline"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "lol-rso-match-v1.getTimeline", nil)
@@ -935,7 +961,7 @@ func (endpoint *RsoMatchV1) Timeline(ctx context.Context, route api.RegionalRout
 	request.Request.Header.Del("X-Riot-Token")
 	headerValue := []string{"Bearer ", accessToken}
 	request.Request.Header.Set("Authorization", strings.Join(headerValue, ""))
-	var data RsoMatchTimelineV1DTO
+	var data MatchTimelineV5DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err
@@ -1201,7 +1227,7 @@ type TournamentStubV5 struct {
 // [tournament-stub-v5.createTournamentCode]
 //
 // [tournament-stub-v5.createTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_createTournamentCode
-func (endpoint *TournamentStubV5) CreateTournamentCode(ctx context.Context, route api.RegionalRoute, body *TournamentStubCodeParametersV5DTO, count int32, tournamentId int64) ([]string, error) {
+func (endpoint *TournamentStubV5) CreateTournamentCode(ctx context.Context, route api.RegionalRoute, body *TournamentStubCodeParametersV5DTO, count int, tournamentId int) ([]string, error) {
 	logger := endpoint.internal.Logger("LOL_TournamentStubV5_CreateTournamentCode")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament-stub/v5/codes"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodPost, urlComponents, "tournament-stub-v5.createTournamentCode", body)
@@ -1213,7 +1239,7 @@ func (endpoint *TournamentStubV5) CreateTournamentCode(ctx context.Context, rout
 		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	if tournamentId != -1 {
-		values.Set("tournamentId", strconv.FormatInt(tournamentId, 10))
+		values.Set("tournamentId", strconv.FormatInt(int64(tournamentId), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []string
@@ -1264,14 +1290,14 @@ func (endpoint *TournamentStubV5) LobbyEventsByCode(ctx context.Context, route a
 // [tournament-stub-v5.registerProviderData]
 //
 // [tournament-stub-v5.registerProviderData]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_registerProviderData
-func (endpoint *TournamentStubV5) RegisterProviderData(ctx context.Context, route api.RegionalRoute, body *TournamentStubProviderRegistrationParametersV5DTO) (int32, error) {
+func (endpoint *TournamentStubV5) RegisterProviderData(ctx context.Context, route api.RegionalRoute, body *TournamentStubProviderRegistrationParametersV5DTO) (int, error) {
 	logger := endpoint.internal.Logger("LOL_TournamentStubV5_RegisterProviderData")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament-stub/v5/providers"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodPost, urlComponents, "tournament-stub-v5.registerProviderData", body)
 	if err != nil {
 		return 0, err
 	}
-	var data int32
+	var data int
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return 0, err
@@ -1289,14 +1315,14 @@ func (endpoint *TournamentStubV5) RegisterProviderData(ctx context.Context, rout
 // [tournament-stub-v5.registerTournament]
 //
 // [tournament-stub-v5.registerTournament]: https://developer.riotgames.com/api-methods/#tournament-stub-v5/POST_registerTournament
-func (endpoint *TournamentStubV5) RegisterTournament(ctx context.Context, route api.RegionalRoute, body *TournamentStubRegistrationParametersV5DTO) (int32, error) {
+func (endpoint *TournamentStubV5) RegisterTournament(ctx context.Context, route api.RegionalRoute, body *TournamentStubRegistrationParametersV5DTO) (int, error) {
 	logger := endpoint.internal.Logger("LOL_TournamentStubV5_RegisterTournament")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament-stub/v5/tournaments"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodPost, urlComponents, "tournament-stub-v5.registerTournament", body)
 	if err != nil {
 		return 0, err
 	}
-	var data int32
+	var data int
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return 0, err
@@ -1351,7 +1377,7 @@ type TournamentV5 struct {
 // [tournament-v5.createTournamentCode]
 //
 // [tournament-v5.createTournamentCode]: https://developer.riotgames.com/api-methods/#tournament-v5/POST_createTournamentCode
-func (endpoint *TournamentV5) CreateTournamentCode(ctx context.Context, route api.RegionalRoute, body *TournamentCodeParametersV5DTO, tournamentId int64, count int32) ([]string, error) {
+func (endpoint *TournamentV5) CreateTournamentCode(ctx context.Context, route api.RegionalRoute, body *TournamentCodeParametersV5DTO, tournamentId int, count int) ([]string, error) {
 	logger := endpoint.internal.Logger("LOL_TournamentV5_CreateTournamentCode")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament/v5/codes"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodPost, urlComponents, "tournament-v5.createTournamentCode", body)
@@ -1363,7 +1389,7 @@ func (endpoint *TournamentV5) CreateTournamentCode(ctx context.Context, route ap
 		values.Set("count", strconv.FormatInt(int64(count), 10))
 	}
 	if tournamentId != -1 {
-		values.Set("tournamentId", strconv.FormatInt(tournamentId, 10))
+		values.Set("tournamentId", strconv.FormatInt(int64(tournamentId), 10))
 	}
 	request.Request.URL.RawQuery = values.Encode()
 	var data []string
@@ -1448,14 +1474,14 @@ func (endpoint *TournamentV5) LobbyEventsByCode(ctx context.Context, route api.R
 // [tournament-v5.registerProviderData]
 //
 // [tournament-v5.registerProviderData]: https://developer.riotgames.com/api-methods/#tournament-v5/POST_registerProviderData
-func (endpoint *TournamentV5) RegisterProviderData(ctx context.Context, route api.RegionalRoute, body *TournamentProviderRegistrationParametersV5DTO) (int32, error) {
+func (endpoint *TournamentV5) RegisterProviderData(ctx context.Context, route api.RegionalRoute, body *TournamentProviderRegistrationParametersV5DTO) (int, error) {
 	logger := endpoint.internal.Logger("LOL_TournamentV5_RegisterProviderData")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament/v5/providers"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodPost, urlComponents, "tournament-v5.registerProviderData", body)
 	if err != nil {
 		return 0, err
 	}
-	var data int32
+	var data int
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return 0, err
@@ -1473,14 +1499,14 @@ func (endpoint *TournamentV5) RegisterProviderData(ctx context.Context, route ap
 // [tournament-v5.registerTournament]
 //
 // [tournament-v5.registerTournament]: https://developer.riotgames.com/api-methods/#tournament-v5/POST_registerTournament
-func (endpoint *TournamentV5) RegisterTournament(ctx context.Context, route api.RegionalRoute, body *TournamentRegistrationParametersV5DTO) (int32, error) {
+func (endpoint *TournamentV5) RegisterTournament(ctx context.Context, route api.RegionalRoute, body *TournamentRegistrationParametersV5DTO) (int, error) {
 	logger := endpoint.internal.Logger("LOL_TournamentV5_RegisterTournament")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/tournament/v5/tournaments"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodPost, urlComponents, "tournament-v5.registerTournament", body)
 	if err != nil {
 		return 0, err
 	}
-	var data int32
+	var data int
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return 0, err

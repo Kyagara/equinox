@@ -153,7 +153,7 @@ func (division Division) String() string {
 }
 
 // Team IDs for {{ CurrentGameName }}.
-type Team int32
+type Team int
 
 // https://github.com/MingweiSamuel/Riven/blob/v/2.x.x/riven/src/consts/team.rs
 
@@ -212,7 +212,7 @@ const (
 {{- Stringer("gameMode", "GameMode", FilterTFT(GameModes, IsLOL)) }}
 
 // {{ CurrentGameName }} maps.
-type Map int64
+type Map int
 
 const (
 {{- NewConstants("Map", FilterTFT(Maps, IsLOL)) }}
@@ -221,11 +221,11 @@ const (
 {{- Stringer("gameMap", "Map", FilterTFT(Maps, IsLOL), true) }}
 
 // {{ CurrentGameName }} queues.
-type Queue int32
+type Queue int
 
 const (
 {{- NewConstants("Queue", FilterTFT(Queues, IsLOL)) }}
 )
 
-{{- Stringer("queue", "Queue", FilterTFT(Queues, IsLOL)) }}
+{{- Stringer("queue", "Queue", FilterTFT(Queues, IsLOL), true) }}
 {%- endif %}

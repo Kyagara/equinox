@@ -26,6 +26,13 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 	apiModels := make(map[string]Model, len(filteredEndpointGroups))
 	dtoCount := 0
 
+	// lol-rso-match uses the same return type as match-v5
+	for key := range filteredEndpointGroups {
+		if strings.HasPrefix(key, "lol-rso-match-") {
+			delete(filteredEndpointGroups, key)
+		}
+	}
+
 	for _, dtos := range filteredEndpointGroups {
 		for _, rawDTO := range dtos {
 			dtoCount++
@@ -39,10 +46,11 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 			schema := schema[rawDTO]
 
 			properties := schema.Get("properties").Map()
-			var sortedKeys []string
+			sortedKeys := make([]string, 0, len(properties))
 			for key := range properties {
 				sortedKeys = append(sortedKeys, key)
 			}
+
 			sort.Strings(sortedKeys)
 
 			props := make([]ModelProperty, 0, len(properties))
@@ -61,6 +69,7 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 						panic(fmt.Errorf("found another duplicate for property '%s', '%s'", propKey, name))
 					}
 				}
+
 				namesUsed = append(namesUsed, name)
 
 				props = append(props, ModelProperty{
@@ -123,9 +132,14 @@ func getDTOAndVersion(rawDTO string) (string, string) {
 		name = strings.Replace(name, "Tournament", "", 1)
 	}
 
+	if endpoint == "RsoMatch" && strings.HasPrefix(name, "Match") {
+		name = version + "DTO"
+	}
+
 	if !strings.HasPrefix(name, endpoint) {
 		name = endpoint + name
 	}
+
 	return name, version
 }
 

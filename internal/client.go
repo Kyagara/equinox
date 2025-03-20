@@ -258,7 +258,7 @@ func (c *Client) Do(ctx context.Context, equinoxReq api.EquinoxRequest) (*http.R
 	var httpErr error
 
 	// MaxRetries+1 to run this loop at least once
-	for i := 0; i < c.maxRetries+1; i++ {
+	for i := range c.maxRetries + 1 {
 		response, err := c.http.Do(equinoxReq.Request)
 		if err != nil {
 			// Stop if the http.Client itself returns any error

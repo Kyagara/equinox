@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
+// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
 
 import (
 	"context"
@@ -140,7 +140,7 @@ type ConsoleRankedV1 struct {
 // [val-console-ranked-v1.getLeaderboard]
 //
 // [val-console-ranked-v1.getLeaderboard]: https://developer.riotgames.com/api-methods/#val-console-ranked-v1/GET_getLeaderboard
-func (endpoint *ConsoleRankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, platformType string, startIndex int32, size int32) (*ConsoleRankedLeaderboardV1DTO, error) {
+func (endpoint *ConsoleRankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, platformType string, startIndex int, size int) (*ConsoleRankedLeaderboardV1DTO, error) {
 	logger := endpoint.internal.Logger("VAL_ConsoleRankedV1_Leaderboard")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/console/ranked/v1/leaderboards/by-act/", actId}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-console-ranked-v1.getLeaderboard", nil)
@@ -319,7 +319,7 @@ type RankedV1 struct {
 // [val-ranked-v1.getLeaderboard]
 //
 // [val-ranked-v1.getLeaderboard]: https://developer.riotgames.com/api-methods/#val-ranked-v1/GET_getLeaderboard
-func (endpoint *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, size int32, startIndex int32) (*RankedLeaderboardV1DTO, error) {
+func (endpoint *RankedV1) Leaderboard(ctx context.Context, route PlatformRoute, actId string, size int, startIndex int) (*RankedLeaderboardV1DTO, error) {
 	logger := endpoint.internal.Logger("VAL_RankedV1_Leaderboard")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/val/ranked/v1/leaderboards/by-act/", actId}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "val-ranked-v1.getLeaderboard", nil)

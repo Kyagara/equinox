@@ -13,6 +13,7 @@ func getMapKeys(endpointGroups map[string][]EndpointGroup) []string {
 	for key := range endpointGroups {
 		keys = append(keys, key)
 	}
+
 	return keys
 }
 
@@ -33,6 +34,7 @@ func readTemplateFiles(path string) (map[string][]byte, error) {
 		filename := filepath.Base(f)
 		templates[filename[:len(filename)-5]] = b
 	}
+
 	return templates, nil
 }
 

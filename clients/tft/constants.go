@@ -10,7 +10,7 @@ import "strconv"
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
+// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
 
 // Platform routes for Teamfight Tactics.
 type PlatformRoute string
@@ -38,13 +38,17 @@ const (
 	OC1 PlatformRoute = "oc1"
 	// Public Beta Environment, special beta testing platform. Located in North America.
 	PBE1 PlatformRoute = "pbe1"
-	// Philippines
+	// # Deprecated
+	//
+	// Philippines, moved into `sg2` on 2025-01-08.
 	PH2 PlatformRoute = "ph2"
 	// Russia
 	RU PlatformRoute = "ru"
-	// Singapore
+	// Singapore, Thailand, Philippines
 	SG2 PlatformRoute = "sg2"
-	// Thailand
+	// # Deprecated
+	//
+	// Thailand, moved into `sg2` on 2025-01-08.
 	TH2 PlatformRoute = "th2"
 	// Turkey
 	TR1 PlatformRoute = "tr1"
@@ -170,7 +174,7 @@ func (division Division) String() string {
 }
 
 // Team IDs for Teamfight Tactics.
-type Team int32
+type Team int
 
 // https://github.com/MingweiSamuel/Riven/blob/v/2.x.x/riven/src/consts/team.rs
 
@@ -275,7 +279,7 @@ func (gameMode GameMode) String() string {
 }
 
 // Teamfight Tactics maps.
-type Map int64
+type Map int
 
 const (
 	// Convergence
@@ -294,7 +298,7 @@ func (gameMap Map) String() string {
 }
 
 // Teamfight Tactics queues.
-type Queue int32
+type Queue int
 
 const (
 	// # Deprecated
@@ -315,6 +319,8 @@ const (
 	CONVERGENCE_TFT_CHONCCS_TREASURE_QUEUE Queue = 1210
 	// Teamfight Tactics games on Convergence
 	CONVERGENCE_TFT_QUEUE Queue = 1090
+	// Teamfight Tactics Revival: Festival of Beasts games on Convergence
+	CONVERGENCE_TFT_REVIVAL_FESTIVAL_OF_BEASTS_QUEUE Queue = 6100
 	// Teamfight Tactics Set 3.5 Revival games on Convergence
 	CONVERGENCE_TFT_SET_3_5_REVIVAL_QUEUE Queue = 6000
 	// Teamfight Tactics Simluation games on Convergence
@@ -341,6 +347,8 @@ func (queue Queue) String() string {
 		return "1210"
 	case CONVERGENCE_TFT_QUEUE:
 		return "1090"
+	case CONVERGENCE_TFT_REVIVAL_FESTIVAL_OF_BEASTS_QUEUE:
+		return "6100"
 	case CONVERGENCE_TFT_SET_3_5_REVIVAL_QUEUE:
 		return "6000"
 	case CONVERGENCE_TFT_SIMLUATION_QUEUE:
@@ -348,6 +356,6 @@ func (queue Queue) String() string {
 	case CONVERGENCE_TFT_TUTORIAL_QUEUE:
 		return "1110"
 	default:
-		return string(queue)
+		return strconv.FormatInt(int64(queue), 10)
 	}
 }

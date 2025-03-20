@@ -22,12 +22,12 @@ func BenchmarkDataMatchByID(b *testing.B) {
 
 	ctx := context.Background()
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		data, err := client.LOL.MatchV5.ByID(ctx, api.ASIA, "KR_7014499581")
 		if err != nil {
 			b.Fatal(err)
 		}
+
 		if data.Info.GameCreation != 1712161609888 {
 			b.Fatalf("GameCreation != 1712161609888, got: %d", data.Info.GameCreation)
 		}
@@ -46,12 +46,12 @@ func BenchmarkDataMatchTimeline(b *testing.B) {
 
 	ctx := context.Background()
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		data, err := client.LOL.MatchV5.Timeline(ctx, api.ASIA, "KR_7014499581")
 		if err != nil {
 			b.Fatal()
 		}
+
 		if data.Info.GameID != 7014499581 {
 			b.Fatalf("GameID != 7014499581, got %d", data.Info.GameID)
 		}
@@ -71,12 +71,12 @@ func BenchmarkDataVALContentAllLocales(b *testing.B) {
 
 	ctx := context.Background()
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		data, err := client.VAL.ContentV1.Content(ctx, val.NA, "")
 		if err != nil {
 			b.Fatal()
 		}
+
 		if data.Version != "release-08.08" {
 			b.Fatalf("Version != release-08.08, got %s", data.Version)
 		}

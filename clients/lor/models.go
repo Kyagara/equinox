@@ -8,7 +8,7 @@ package lor
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
+// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
 
 // lor-deck-v1.NewDeckDto
 type DeckNewDeckV1DTO struct {
@@ -41,7 +41,7 @@ type MatchInfoV1DTO struct {
 	GameVersion string             `json:"game_version,omitempty"`
 	Players     []MatchPlayerV1DTO `json:"players,omitempty"`
 	// Total turns taken by both players.
-	TotalTurnCount int32 `json:"total_turn_count,omitempty"`
+	TotalTurnCount int `json:"total_turn_count,omitempty"`
 }
 
 // lor-match-v1.MetadataDto
@@ -63,15 +63,15 @@ type MatchPlayerV1DTO struct {
 	PUUID       string   `json:"puuid,omitempty"`
 	Factions    []string `json:"factions,omitempty"`
 	// The order in which the players took turns.
-	OrderOfPlay int32 `json:"order_of_play,omitempty"`
+	OrderOfPlay int `json:"order_of_play,omitempty"`
 }
 
 // lor-match-v1.MatchDto
 type MatchV1DTO struct {
 	// Match metadata.
-	Metadata MatchMetadataV1DTO `json:"metadata,omitempty"`
+	Metadata MatchMetadataV1DTO `json:"metadata"`
 	// Match info.
-	Info MatchInfoV1DTO `json:"info,omitempty"`
+	Info MatchInfoV1DTO `json:"info"`
 }
 
 // lor-ranked-v1.LeaderboardDto
@@ -84,8 +84,8 @@ type RankedLeaderboardV1DTO struct {
 type RankedPlayerV1DTO struct {
 	Name string `json:"name,omitempty"`
 	// League points.
-	LP   int32 `json:"lp,omitempty"`
-	Rank int32 `json:"rank,omitempty"`
+	LP   int `json:"lp,omitempty"`
+	Rank int `json:"rank,omitempty"`
 }
 
 // lor-status-v1.ContentDto
@@ -111,7 +111,7 @@ type StatusUpdateV1DTO struct {
 	// (Legal values: riotclient, riotstatus, game)
 	PublishLocations []string             `json:"publish_locations,omitempty"`
 	Translations     []StatusContentV1DTO `json:"translations,omitempty"`
-	ID               int32                `json:"id,omitempty"`
+	ID               int                  `json:"id,omitempty"`
 	Publish          bool                 `json:"publish,omitempty"`
 }
 
@@ -128,5 +128,5 @@ type StatusV1DTO struct {
 	Platforms []string             `json:"platforms,omitempty"`
 	Titles    []StatusContentV1DTO `json:"titles,omitempty"`
 	Updates   []StatusUpdateV1DTO  `json:"updates,omitempty"`
-	ID        int32                `json:"id,omitempty"`
+	ID        int                  `json:"id,omitempty"`
 }
