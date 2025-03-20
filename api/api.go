@@ -9,7 +9,7 @@ package api
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
+// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
 
 import (
 	"errors"
@@ -95,7 +95,7 @@ var (
 		{"GET", "/lol/champion-mastery/v4/scores/by-puuid/{encryptedPUUID}", "champion-mastery-v4.getChampionMasteryScoreByPUUID"},
 		{"GET", "/lol/champion-mastery/v4/champion-masteries/by-puuid/{encryptedPUUID}/top", "champion-mastery-v4.getTopChampionMasteriesByPUUID"},
 		{"GET", "/lol/platform/v3/champion-rotations", "champion-v3.getChampionInfo"},
-		{"GET", "/lol/clash/v1/players/by-summoner/{summonerId}", "clash-v1.getPlayersBySummoner"},
+		{"GET", "/lol/clash/v1/players/by-puuid/{puuid}", "clash-v1.getPlayersByPUUID"},
 		{"GET", "/lol/clash/v1/teams/{teamId}", "clash-v1.getTeamById"},
 		{"GET", "/lol/clash/v1/tournaments/{tournamentId}", "clash-v1.getTournamentById"},
 		{"GET", "/lol/clash/v1/tournaments/by-team/{teamId}", "clash-v1.getTournamentByTeam"},
@@ -105,6 +105,7 @@ var (
 		{"GET", "/lol/league/v4/grandmasterleagues/by-queue/{queue}", "league-v4.getGrandmasterLeague"},
 		{"GET", "/lol/league/v4/leagues/{leagueId}", "league-v4.getLeagueById"},
 		{"GET", "/lol/league/v4/entries/{queue}/{tier}/{division}", "league-v4.getLeagueEntries"},
+		{"GET", "/lol/league/v4/entries/by-puuid/{encryptedPUUID}", "league-v4.getLeagueEntriesByPUUID"},
 		{"GET", "/lol/league/v4/entries/by-summoner/{encryptedSummonerId}", "league-v4.getLeagueEntriesForSummoner"},
 		{"GET", "/lol/league/v4/masterleagues/by-queue/{queue}", "league-v4.getMasterLeague"},
 		{"GET", "/lol/challenges/v1/challenges/config", "lol-challenges-v1.getAllChallengeConfigs"},

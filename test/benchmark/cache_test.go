@@ -26,12 +26,12 @@ func BenchmarkCacheDisabledSummonerByPUUID(b *testing.B) {
 
 	ctx := context.Background()
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 		if err != nil {
 			b.Fatal(err)
 		}
+
 		if data.ProfileIconID != 4933 {
 			b.Fatalf("ProfileIconID != 4933, got %d", data.ProfileIconID)
 		}
@@ -58,12 +58,12 @@ func BenchmarkCacheBigCacheSummonerByPUUID(b *testing.B) {
 
 	ctx := context.Background()
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 		if err != nil {
 			b.Fatal(err)
 		}
+
 		if data.ProfileIconID != 4933 {
 			b.Fatalf("ProfileIconID != 4933, got %d", data.ProfileIconID)
 		}
@@ -82,12 +82,12 @@ func BenchmarkCacheRedisSummonerByPUUID(b *testing.B) {
 
 	ctx := context.Background()
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		data, err := client.LOL.SummonerV4.ByPUUID(ctx, lol.KR, "puuid")
 		if err != nil {
 			b.Fatal(err)
 		}
+
 		if data.ProfileIconID != 4933 {
 			b.Fatalf("ProfileIconID != 4933, got %d", data.ProfileIconID)
 		}
@@ -117,12 +117,12 @@ func BenchmarkCacheGetKey(b *testing.B) {
 	// Random JWT I asked ChatGPT, its invalid, also around 300 characters longer than the access token I used for testing.
 	req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghij")
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		key, isRSO := cache.GetCacheKey(equinoxReq.URL, equinoxReq.Request.Header.Get("Authorization"))
 		if key != "http://example.com/path-ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7" {
 			b.Fatalf("key != http://example.com/path-ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7, got: %s", key)
 		}
+
 		if !isRSO {
 			b.Fatal("isRSO != true")
 		}

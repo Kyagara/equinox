@@ -13,13 +13,6 @@ import (
 )
 
 var (
-	nilValues = map[string]string{
-		"int32":   "0",
-		"int64":   "0",
-		"float32": "0",
-		"float64": "0",
-	}
-
 	methodNamesMapping = map[string]string{
 		"CurrentGameInfoBySummoner":   "CurrentGameBySummonerID",
 		"ChampionMasteryScoreByPUUID": "MasteryScoreByPUUID",
@@ -328,12 +321,7 @@ func formatRouteArgument(pathParams []gjson.Result, route string) string {
 			}
 
 			if paramType == "integer" {
-				format := schema.Get("format").String()
-				if format == "int64" {
-					newValue = fmt.Sprintf("strconv.FormatInt(%v, 10)", newValue)
-				} else {
-					newValue = fmt.Sprintf("strconv.FormatInt(int64(%v), 10)", newValue)
-				}
+				newValue = fmt.Sprintf("strconv.FormatInt(int64(%v), 10)", newValue)
 			}
 
 			counter++
@@ -346,6 +334,7 @@ func formatRouteArgument(pathParams []gjson.Result, route string) string {
 	if strings.HasSuffix(result, ", \"\"") {
 		result = result[:len(result)-3]
 	}
+
 	return result
 }
 
@@ -374,22 +363,16 @@ func formatAddQueryParam(params []gjson.Result) []string {
 		if prop.Get("x-enum").Exists() {
 			conversion = ""
 			end = ".String()"
+		} else if propType == "integer" {
+			conversion = "strconv.FormatInt(int64("
+			end = "), 10)"
 		} else {
-			format := prop.Get("format").String()
-			if format == "int32" {
-				conversion = "strconv.FormatInt(int64("
-				end = "), 10)"
-			} else if format == "int64" {
-				conversion = "strconv.FormatInt("
-				end = ", 10)"
-			} else {
-				conversion = "fmt.Sprint("
-				end = ")"
-			}
+			conversion = "fmt.Sprint("
+			end = ")"
 		}
 
 		value := name
-		if prop.Get("type").String() != "string" {
+		if propType != "string" {
 			value = fmt.Sprintf(`%s%s%s`, conversion, name, end)
 		}
 
@@ -397,17 +380,21 @@ func formatAddQueryParam(params []gjson.Result) []string {
     values.Set("%s", %s)
 }`, condition, queryName, value))
 	}
+
 	return queries
 }
 
 func normalizePropName(propName string) string {
 	out := propName
+
 	if digitRegex.MatchString(out) {
 		out = "X" + out
 	}
+
 	if out == "type" {
 		return "matchType"
 	}
+
 	return out
 }
 
@@ -418,7 +405,17 @@ func getReturnType(resp200 gjson.Result, version string, endpointID string) stri
 		version,
 	)
 
-	return cleanDTOPropType(jsonInfo, version, endpointID, returnType)
+	returnType = cleanDTOPropType(jsonInfo, version, endpointID, returnType)
+
+	if strings.HasPrefix(returnType, "RsoMatchMatch") {
+		returnType = "MatchV5DTO"
+	}
+
+	if strings.HasPrefix(returnType, "RsoMatchTimeline") {
+		returnType = "MatchTimelineV5DTO"
+	}
+
+	return returnType
 }
 
 func getBodyType(operation gjson.Result, version string, endpointID string) string {
@@ -431,12 +428,15 @@ func getBodyType(operation gjson.Result, version string, endpointID string) stri
 	endpointID = clientRegex.ReplaceAllString(endpointID, "")
 	endpointID = endpointID[:len(endpointID)-3]
 	endpointID = strcase.ToCamel(endpointID)
+
 	if endpointID == "TournamentStub" && strings.HasPrefix(body, "Tournament") {
 		body = strings.Replace(body, "Tournament", "", 1)
 	}
+
 	if !strings.HasPrefix(body, endpointID) {
 		body = endpointID + body
 	}
+
 	return body
 }
 
@@ -445,22 +445,24 @@ func getNormalizedRoute(operation gjson.Result) string {
 	if route == "" {
 		return "api.Regional"
 	}
+
 	route = strings.ReplaceAll(route, "Regional", "api.Regional")
 	return strings.ReplaceAll(route, "ValPlatform", "Platform")
 }
 
 func getNilValue(returnType string) string {
-	if returnType == "string" {
+	switch returnType {
+	case "string":
 		return `""`
-	}
-	if returnType == "bool" {
+	case "bool":
 		return `false`
+	case "int":
+		return "0"
+	case "float64":
+		return "0.0"
+	default:
+		return "nil"
 	}
-	val := nilValues[returnType]
-	if val == "" {
-		return `nil`
-	}
-	return val
 }
 
 func getMethodErrReturn(hasReturn bool, isPrimitiveType bool, nilValue string) string {

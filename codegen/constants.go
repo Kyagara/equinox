@@ -58,6 +58,7 @@ func getGenericConstants(table gjson.Result, constName string) map[string]Generi
 		deprecated := item.Get("x-deprecated").Bool()
 		value := name
 		isInteger := false
+
 		if slices.Contains([]string{"GameMode", "QueueType", "GameType"}, constName) {
 			if constName == "GameType" {
 				value = strings.Replace(value, "_GAME", "", 1)
@@ -67,6 +68,7 @@ func getGenericConstants(table gjson.Result, constName string) map[string]Generi
 			value = item.Get("x-value").String()
 			isInteger = true
 		}
+
 		name += "_" + strings.ToUpper(constName)
 		name = strings.Replace(name, "_DEPRECATED", "", 1)
 

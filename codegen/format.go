@@ -14,9 +14,7 @@ var (
 	goTypes = []string{
 		"bool",
 		"string",
-		"int32",
-		"int64",
-		"float32",
+		"int",
 		"float64",
 		"any",
 	}
@@ -53,6 +51,7 @@ func getEndpointGroup(clientName string, spec gjson.Result) map[string][]Endpoin
 			if clientName == "lol" && strings.Contains(endpointName, "tft") {
 				continue
 			}
+
 			endpoints[endpointName] = append(endpoints[endpointName], EndpointGroup{path, endpoint})
 		}
 	}
@@ -113,10 +112,11 @@ func getNormalizedClientName(clientName string) string {
 func formatEndpointName(endpointName string) string {
 	var name strings.Builder
 
-	for _, item := range strings.Split(endpointName, "-") {
+	for item := range strings.SplitSeq(endpointName, "-") {
 		if clientRegex.MatchString(item) {
 			continue
 		}
+
 		name.WriteString(strcase.ToCamel(item))
 	}
 
@@ -152,7 +152,7 @@ func stringifyType(prop gjson.Result) string {
 	enumType := prop.Get("x-enum").String()
 	if enumType != "" && enumType != "locale" {
 		if enumType == "champion" {
-			return prop.Get("format").String()
+			return "int"
 		}
 
 		return strcase.ToCamel(enumType)
@@ -169,16 +169,8 @@ func stringifyType(prop gjson.Result) string {
 		case "boolean":
 			return "bool"
 		case "integer":
-			if prop.Get("format").String() == "int32" {
-				return "int32"
-			}
-
-			return "int64"
+			return "int"
 		case "number":
-			if prop.Get("format").String() == "float" {
-				return "float32"
-			}
-
 			return "float64"
 		case "array":
 			return "[]" + stringifyType(prop.Get("items"))
@@ -193,6 +185,7 @@ func stringifyType(prop gjson.Result) string {
 
 			keyType := stringifyType(prop.Get("x-key"))
 			valueType := stringifyType(prop.Get("additionalProperties"))
+
 			return "map[" + keyType + "]" + valueType
 		default:
 			return propType
@@ -235,10 +228,12 @@ func cleanDTOPropType(prop gjson.Result, version string, endpoint string, propTy
 		if strings.Contains(propType, "map") {
 			match := mapTypeRegex.FindStringSubmatch(propType)
 			new := strings.Replace(propType, "]"+match[1], "]"+endpoint+match[1], 1)
-			// Replacing potential MatchMatchTimeline...
+
+			// Replacing potential MatchMatchTimeline
 			if strings.Contains(new, endpoint+endpoint) {
 				return strings.Replace(new, endpoint+endpoint, endpoint, 1)
 			}
+
 			return new
 		}
 
@@ -265,6 +260,7 @@ func filterTFT(table map[string]GenericConstant, removeTFT bool) map[string]Gene
 				break
 			}
 		}
+
 		n := strings.Replace(name, "TEAMFIGHT_TACTICS", "TFT", 1)
 		if removeTFT && !containsTFT {
 			newTable[n] = v
@@ -272,16 +268,17 @@ func filterTFT(table map[string]GenericConstant, removeTFT bool) map[string]Gene
 			newTable[n] = v
 		}
 	}
+
 	return newTable
 }
 
 func normalizeDescription(descriptionString string) string {
 	description := make([]string, 0, 4)
-	desc := strings.Split(descriptionString, "\n")
-	for _, s := range desc {
+	for s := range strings.SplitSeq(descriptionString, "\n") {
 		description = append(description, strings.TrimSpace(s))
 		description = append(description, "")
 	}
+
 	description = description[:len(description)-1]
 	return strings.Join(description, "\n// ")
 }

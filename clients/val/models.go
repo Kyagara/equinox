@@ -8,14 +8,14 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
+// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
 
 // val-console-match-v1.AbilityCastsDto
 type ConsoleMatchAbilityCastsV1DTO struct {
-	Ability1Casts int32 `json:"ability1Casts,omitempty"`
-	Ability2Casts int32 `json:"ability2Casts,omitempty"`
-	GrenadeCasts  int32 `json:"grenadeCasts,omitempty"`
-	UltimateCasts int32 `json:"ultimateCasts,omitempty"`
+	Ability1Casts int `json:"ability1Casts,omitempty"`
+	Ability2Casts int `json:"ability2Casts,omitempty"`
+	GrenadeCasts  int `json:"grenadeCasts,omitempty"`
+	UltimateCasts int `json:"ultimateCasts,omitempty"`
 }
 
 // val-console-match-v1.AbilityDto
@@ -36,19 +36,19 @@ type ConsoleMatchCoachV1DTO struct {
 type ConsoleMatchDamageV1DTO struct {
 	// PUUID
 	Receiver  string `json:"receiver,omitempty"`
-	Bodyshots int32  `json:"bodyshots,omitempty"`
-	Damage    int32  `json:"damage,omitempty"`
-	Headshots int32  `json:"headshots,omitempty"`
-	Legshots  int32  `json:"legshots,omitempty"`
+	Bodyshots int    `json:"bodyshots,omitempty"`
+	Damage    int    `json:"damage,omitempty"`
+	Headshots int    `json:"headshots,omitempty"`
+	Legshots  int    `json:"legshots,omitempty"`
 }
 
 // val-console-match-v1.EconomyDto
 type ConsoleMatchEconomyV1DTO struct {
 	Armor        string `json:"armor,omitempty"`
 	Weapon       string `json:"weapon,omitempty"`
-	LoadoutValue int32  `json:"loadoutValue,omitempty"`
-	Remaining    int32  `json:"remaining,omitempty"`
-	Spent        int32  `json:"spent,omitempty"`
+	LoadoutValue int    `json:"loadoutValue,omitempty"`
+	Remaining    int    `json:"remaining,omitempty"`
+	Spent        int    `json:"spent,omitempty"`
 }
 
 // val-console-match-v1.FinishingDamageDto
@@ -64,19 +64,19 @@ type ConsoleMatchKillV1DTO struct {
 	Killer string `json:"killer,omitempty"`
 	// PUUID
 	Victim          string                           `json:"victim,omitempty"`
-	FinishingDamage ConsoleMatchFinishingDamageV1DTO `json:"finishingDamage,omitempty"`
+	FinishingDamage ConsoleMatchFinishingDamageV1DTO `json:"finishingDamage"`
 	// List of PUUIDs
 	Assistants                []string                           `json:"assistants,omitempty"`
 	PlayerLocations           []ConsoleMatchPlayerLocationsV1DTO `json:"playerLocations,omitempty"`
-	VictimLocation            ConsoleMatchLocationV1DTO          `json:"victimLocation,omitempty"`
-	TimeSinceGameStartMillis  int32                              `json:"timeSinceGameStartMillis,omitempty"`
-	TimeSinceRoundStartMillis int32                              `json:"timeSinceRoundStartMillis,omitempty"`
+	VictimLocation            ConsoleMatchLocationV1DTO          `json:"victimLocation"`
+	TimeSinceGameStartMillis  int                                `json:"timeSinceGameStartMillis,omitempty"`
+	TimeSinceRoundStartMillis int                                `json:"timeSinceRoundStartMillis,omitempty"`
 }
 
 // val-console-match-v1.LocationDto
 type ConsoleMatchLocationV1DTO struct {
-	X int32 `json:"x,omitempty"`
-	Y int32 `json:"y,omitempty"`
+	X int `json:"x,omitempty"`
+	Y int `json:"y,omitempty"`
 }
 
 // val-console-match-v1.MatchInfoDto
@@ -88,8 +88,8 @@ type ConsoleMatchMatchInfoV1DTO struct {
 	ProvisioningFlowID string `json:"provisioningFlowId,omitempty"`
 	QueueID            string `json:"queueId,omitempty"`
 	SeasonID           string `json:"seasonId,omitempty"`
-	GameStartMillis    int64  `json:"gameStartMillis,omitempty"`
-	GameLengthMillis   int32  `json:"gameLengthMillis,omitempty"`
+	GameLengthMillis   int    `json:"gameLengthMillis,omitempty"`
+	GameStartMillis    int    `json:"gameStartMillis,omitempty"`
 	IsCompleted        bool   `json:"isCompleted,omitempty"`
 	IsRanked           bool   `json:"isRanked,omitempty"`
 }
@@ -100,14 +100,14 @@ type ConsoleMatchMatchV1DTO struct {
 	Players      []ConsoleMatchPlayerV1DTO      `json:"players,omitempty"`
 	RoundResults []ConsoleMatchRoundResultV1DTO `json:"roundResults,omitempty"`
 	Teams        []ConsoleMatchTeamV1DTO        `json:"teams,omitempty"`
-	MatchInfo    ConsoleMatchMatchInfoV1DTO     `json:"matchInfo,omitempty"`
+	MatchInfo    ConsoleMatchMatchInfoV1DTO     `json:"matchInfo"`
 }
 
 // val-console-match-v1.MatchlistEntryDto
 type ConsoleMatchMatchlistEntryV1DTO struct {
 	MatchID             string `json:"matchId,omitempty"`
 	QueueID             string `json:"queueId,omitempty"`
-	GameStartTimeMillis int64  `json:"gameStartTimeMillis,omitempty"`
+	GameStartTimeMillis int    `json:"gameStartTimeMillis,omitempty"`
 }
 
 // val-console-match-v1.MatchlistDto
@@ -119,29 +119,29 @@ type ConsoleMatchMatchlistV1DTO struct {
 // val-console-match-v1.PlayerLocationsDto
 type ConsoleMatchPlayerLocationsV1DTO struct {
 	PUUID       string                    `json:"puuid,omitempty"`
-	Location    ConsoleMatchLocationV1DTO `json:"location,omitempty"`
-	ViewRadians float32                   `json:"viewRadians,omitempty"`
+	Location    ConsoleMatchLocationV1DTO `json:"location"`
+	ViewRadians float64                   `json:"viewRadians,omitempty"`
 }
 
 // val-console-match-v1.PlayerRoundStatsDto
 type ConsoleMatchPlayerRoundStatsV1DTO struct {
-	Ability ConsoleMatchAbilityV1DTO  `json:"ability,omitempty"`
+	Ability ConsoleMatchAbilityV1DTO  `json:"ability"`
 	PUUID   string                    `json:"puuid,omitempty"`
 	Damage  []ConsoleMatchDamageV1DTO `json:"damage,omitempty"`
 	Kills   []ConsoleMatchKillV1DTO   `json:"kills,omitempty"`
-	Economy ConsoleMatchEconomyV1DTO  `json:"economy,omitempty"`
-	Score   int32                     `json:"score,omitempty"`
+	Economy ConsoleMatchEconomyV1DTO  `json:"economy"`
+	Score   int                       `json:"score,omitempty"`
 }
 
 // val-console-match-v1.PlayerStatsDto
 type ConsoleMatchPlayerStatsV1DTO struct {
-	AbilityCasts   ConsoleMatchAbilityCastsV1DTO `json:"abilityCasts,omitempty"`
-	Assists        int32                         `json:"assists,omitempty"`
-	Deaths         int32                         `json:"deaths,omitempty"`
-	Kills          int32                         `json:"kills,omitempty"`
-	PlaytimeMillis int32                         `json:"playtimeMillis,omitempty"`
-	RoundsPlayed   int32                         `json:"roundsPlayed,omitempty"`
-	Score          int32                         `json:"score,omitempty"`
+	AbilityCasts   ConsoleMatchAbilityCastsV1DTO `json:"abilityCasts"`
+	Assists        int                           `json:"assists,omitempty"`
+	Deaths         int                           `json:"deaths,omitempty"`
+	Kills          int                           `json:"kills,omitempty"`
+	PlaytimeMillis int                           `json:"playtimeMillis,omitempty"`
+	RoundsPlayed   int                           `json:"roundsPlayed,omitempty"`
+	Score          int                           `json:"score,omitempty"`
 }
 
 // val-console-match-v1.PlayerDto
@@ -154,15 +154,15 @@ type ConsoleMatchPlayerV1DTO struct {
 	PlayerTitle     string                       `json:"playerTitle,omitempty"`
 	TagLine         string                       `json:"tagLine,omitempty"`
 	TeamID          string                       `json:"teamId,omitempty"`
-	Stats           ConsoleMatchPlayerStatsV1DTO `json:"stats,omitempty"`
-	CompetitiveTier int32                        `json:"competitiveTier,omitempty"`
+	Stats           ConsoleMatchPlayerStatsV1DTO `json:"stats"`
+	CompetitiveTier int                          `json:"competitiveTier,omitempty"`
 }
 
 // val-console-match-v1.RecentMatchesDto
 type ConsoleMatchRecentMatchesV1DTO struct {
 	// A list of recent match ids.
 	MatchIDs    []string `json:"matchIds,omitempty"`
-	CurrentTime int64    `json:"currentTime,omitempty"`
+	CurrentTime int      `json:"currentTime,omitempty"`
 }
 
 // val-console-match-v1.RoundResultDto
@@ -179,11 +179,11 @@ type ConsoleMatchRoundResultV1DTO struct {
 	DefusePlayerLocations []ConsoleMatchPlayerLocationsV1DTO  `json:"defusePlayerLocations,omitempty"`
 	PlantPlayerLocations  []ConsoleMatchPlayerLocationsV1DTO  `json:"plantPlayerLocations,omitempty"`
 	PlayerStats           []ConsoleMatchPlayerRoundStatsV1DTO `json:"playerStats,omitempty"`
-	DefuseLocation        ConsoleMatchLocationV1DTO           `json:"defuseLocation,omitempty"`
-	PlantLocation         ConsoleMatchLocationV1DTO           `json:"plantLocation,omitempty"`
-	DefuseRoundTime       int32                               `json:"defuseRoundTime,omitempty"`
-	PlantRoundTime        int32                               `json:"plantRoundTime,omitempty"`
-	RoundNum              int32                               `json:"roundNum,omitempty"`
+	DefuseLocation        ConsoleMatchLocationV1DTO           `json:"defuseLocation"`
+	PlantLocation         ConsoleMatchLocationV1DTO           `json:"plantLocation"`
+	DefuseRoundTime       int                                 `json:"defuseRoundTime,omitempty"`
+	PlantRoundTime        int                                 `json:"plantRoundTime,omitempty"`
+	RoundNum              int                                 `json:"roundNum,omitempty"`
 }
 
 // val-console-match-v1.TeamDto
@@ -191,10 +191,10 @@ type ConsoleMatchTeamV1DTO struct {
 	// This is an arbitrary string. Red and Blue in bomb modes. The puuid of the player in deathmatch.
 	TeamID string `json:"teamId,omitempty"`
 	// Team points scored. Number of kills in deathmatch.
-	NumPoints    int32 `json:"numPoints,omitempty"`
-	RoundsPlayed int32 `json:"roundsPlayed,omitempty"`
-	RoundsWon    int32 `json:"roundsWon,omitempty"`
-	Won          bool  `json:"won,omitempty"`
+	NumPoints    int  `json:"numPoints,omitempty"`
+	RoundsPlayed int  `json:"roundsPlayed,omitempty"`
+	RoundsWon    int  `json:"roundsWon,omitempty"`
+	Won          bool `json:"won,omitempty"`
 }
 
 // val-console-ranked-v1.LeaderboardDto
@@ -205,7 +205,7 @@ type ConsoleRankedLeaderboardV1DTO struct {
 	Shard   string                     `json:"shard,omitempty"`
 	Players []ConsoleRankedPlayerV1DTO `json:"players,omitempty"`
 	// The total number of players in the leaderboard.
-	TotalPlayers int64 `json:"totalPlayers,omitempty"`
+	TotalPlayers int `json:"totalPlayers,omitempty"`
 }
 
 // val-console-ranked-v1.PlayerDto
@@ -216,15 +216,15 @@ type ConsoleRankedPlayerV1DTO struct {
 	PUUID string `json:"puuid,omitempty"`
 	// This field may be omitted if the player has been anonymized.
 	TagLine         string `json:"tagLine,omitempty"`
-	LeaderboardRank int64  `json:"leaderboardRank,omitempty"`
-	NumberOfWins    int64  `json:"numberOfWins,omitempty"`
-	RankedRating    int64  `json:"rankedRating,omitempty"`
+	LeaderboardRank int    `json:"leaderboardRank,omitempty"`
+	NumberOfWins    int    `json:"numberOfWins,omitempty"`
+	RankedRating    int    `json:"rankedRating,omitempty"`
 }
 
 // val-content-v1.ActDto
 type ContentActV1DTO struct {
 	// This field is excluded from the response when a locale is set
-	LocalizedNames ContentLocalizedNamesV1DTO `json:"localizedNames,omitempty"`
+	LocalizedNames ContentLocalizedNamesV1DTO `json:"localizedNames"`
 	ID             string                     `json:"id,omitempty"`
 	Name           string                     `json:"name,omitempty"`
 	ParentID       string                     `json:"parentId,omitempty"`
@@ -239,7 +239,7 @@ type ContentItemV1DTO struct {
 	AssetPath string `json:"assetPath,omitempty"`
 	ID        string `json:"id,omitempty"`
 	// This field is excluded from the response when a locale is set
-	LocalizedNames ContentLocalizedNamesV1DTO `json:"localizedNames,omitempty"`
+	LocalizedNames ContentLocalizedNamesV1DTO `json:"localizedNames"`
 	Name           string                     `json:"name,omitempty"`
 }
 
@@ -284,16 +284,15 @@ type ContentV1DTO struct {
 	Skins        []ContentItemV1DTO `json:"skins,omitempty"`
 	SprayLevels  []ContentItemV1DTO `json:"sprayLevels,omitempty"`
 	Sprays       []ContentItemV1DTO `json:"sprays,omitempty"`
-	// Unknown type, this is a placeholder subject to change.
-	Totems []string `json:"totems,omitempty"`
+	Totems       []ContentItemV1DTO `json:"totems,omitempty"`
 }
 
 // val-match-v1.AbilityCastsDto
 type MatchAbilityCastsV1DTO struct {
-	Ability1Casts int32 `json:"ability1Casts,omitempty"`
-	Ability2Casts int32 `json:"ability2Casts,omitempty"`
-	GrenadeCasts  int32 `json:"grenadeCasts,omitempty"`
-	UltimateCasts int32 `json:"ultimateCasts,omitempty"`
+	Ability1Casts int `json:"ability1Casts,omitempty"`
+	Ability2Casts int `json:"ability2Casts,omitempty"`
+	GrenadeCasts  int `json:"grenadeCasts,omitempty"`
+	UltimateCasts int `json:"ultimateCasts,omitempty"`
 }
 
 // val-match-v1.AbilityDto
@@ -314,19 +313,19 @@ type MatchCoachV1DTO struct {
 type MatchDamageV1DTO struct {
 	// PUUID
 	Receiver  string `json:"receiver,omitempty"`
-	Bodyshots int32  `json:"bodyshots,omitempty"`
-	Damage    int32  `json:"damage,omitempty"`
-	Headshots int32  `json:"headshots,omitempty"`
-	Legshots  int32  `json:"legshots,omitempty"`
+	Bodyshots int    `json:"bodyshots,omitempty"`
+	Damage    int    `json:"damage,omitempty"`
+	Headshots int    `json:"headshots,omitempty"`
+	Legshots  int    `json:"legshots,omitempty"`
 }
 
 // val-match-v1.EconomyDto
 type MatchEconomyV1DTO struct {
 	Armor        string `json:"armor,omitempty"`
 	Weapon       string `json:"weapon,omitempty"`
-	LoadoutValue int32  `json:"loadoutValue,omitempty"`
-	Remaining    int32  `json:"remaining,omitempty"`
-	Spent        int32  `json:"spent,omitempty"`
+	LoadoutValue int    `json:"loadoutValue,omitempty"`
+	Remaining    int    `json:"remaining,omitempty"`
+	Spent        int    `json:"spent,omitempty"`
 }
 
 // val-match-v1.FinishingDamageDto
@@ -348,8 +347,8 @@ type MatchInfoV1DTO struct {
 	QueueID            string         `json:"queueId,omitempty"`
 	Region             string         `json:"region,omitempty"`
 	SeasonID           string         `json:"seasonId,omitempty"`
-	GameStartMillis    int64          `json:"gameStartMillis,omitempty"`
-	GameLengthMillis   int32          `json:"gameLengthMillis,omitempty"`
+	GameLengthMillis   int            `json:"gameLengthMillis,omitempty"`
+	GameStartMillis    int            `json:"gameStartMillis,omitempty"`
 	IsCompleted        bool           `json:"isCompleted,omitempty"`
 	IsRanked           bool           `json:"isRanked,omitempty"`
 }
@@ -360,47 +359,47 @@ type MatchKillV1DTO struct {
 	Killer string `json:"killer,omitempty"`
 	// PUUID
 	Victim          string                    `json:"victim,omitempty"`
-	FinishingDamage MatchFinishingDamageV1DTO `json:"finishingDamage,omitempty"`
+	FinishingDamage MatchFinishingDamageV1DTO `json:"finishingDamage"`
 	// List of PUUIDs
 	Assistants                []string                    `json:"assistants,omitempty"`
 	PlayerLocations           []MatchPlayerLocationsV1DTO `json:"playerLocations,omitempty"`
-	VictimLocation            MatchLocationV1DTO          `json:"victimLocation,omitempty"`
-	TimeSinceGameStartMillis  int32                       `json:"timeSinceGameStartMillis,omitempty"`
-	TimeSinceRoundStartMillis int32                       `json:"timeSinceRoundStartMillis,omitempty"`
+	VictimLocation            MatchLocationV1DTO          `json:"victimLocation"`
+	TimeSinceGameStartMillis  int                         `json:"timeSinceGameStartMillis,omitempty"`
+	TimeSinceRoundStartMillis int                         `json:"timeSinceRoundStartMillis,omitempty"`
 }
 
 // val-match-v1.LocationDto
 type MatchLocationV1DTO struct {
-	X int32 `json:"x,omitempty"`
-	Y int32 `json:"y,omitempty"`
+	X int `json:"x,omitempty"`
+	Y int `json:"y,omitempty"`
 }
 
 // val-match-v1.PlayerLocationsDto
 type MatchPlayerLocationsV1DTO struct {
 	PUUID       string             `json:"puuid,omitempty"`
-	Location    MatchLocationV1DTO `json:"location,omitempty"`
-	ViewRadians float32            `json:"viewRadians,omitempty"`
+	Location    MatchLocationV1DTO `json:"location"`
+	ViewRadians float64            `json:"viewRadians,omitempty"`
 }
 
 // val-match-v1.PlayerRoundStatsDto
 type MatchPlayerRoundStatsV1DTO struct {
-	Ability MatchAbilityV1DTO  `json:"ability,omitempty"`
+	Ability MatchAbilityV1DTO  `json:"ability"`
 	PUUID   string             `json:"puuid,omitempty"`
 	Damage  []MatchDamageV1DTO `json:"damage,omitempty"`
 	Kills   []MatchKillV1DTO   `json:"kills,omitempty"`
-	Economy MatchEconomyV1DTO  `json:"economy,omitempty"`
-	Score   int32              `json:"score,omitempty"`
+	Economy MatchEconomyV1DTO  `json:"economy"`
+	Score   int                `json:"score,omitempty"`
 }
 
 // val-match-v1.PlayerStatsDto
 type MatchPlayerStatsV1DTO struct {
-	AbilityCasts   MatchAbilityCastsV1DTO `json:"abilityCasts,omitempty"`
-	Assists        int32                  `json:"assists,omitempty"`
-	Deaths         int32                  `json:"deaths,omitempty"`
-	Kills          int32                  `json:"kills,omitempty"`
-	PlaytimeMillis int32                  `json:"playtimeMillis,omitempty"`
-	RoundsPlayed   int32                  `json:"roundsPlayed,omitempty"`
-	Score          int32                  `json:"score,omitempty"`
+	AbilityCasts   MatchAbilityCastsV1DTO `json:"abilityCasts"`
+	Assists        int                    `json:"assists,omitempty"`
+	Deaths         int                    `json:"deaths,omitempty"`
+	Kills          int                    `json:"kills,omitempty"`
+	PlaytimeMillis int                    `json:"playtimeMillis,omitempty"`
+	RoundsPlayed   int                    `json:"roundsPlayed,omitempty"`
+	Score          int                    `json:"score,omitempty"`
 }
 
 // val-match-v1.PlayerDto
@@ -413,9 +412,9 @@ type MatchPlayerV1DTO struct {
 	PlayerTitle     string                `json:"playerTitle,omitempty"`
 	TagLine         string                `json:"tagLine,omitempty"`
 	TeamID          string                `json:"teamId,omitempty"`
-	Stats           MatchPlayerStatsV1DTO `json:"stats,omitempty"`
-	AccountLevel    int32                 `json:"accountLevel,omitempty"`
-	CompetitiveTier int32                 `json:"competitiveTier,omitempty"`
+	Stats           MatchPlayerStatsV1DTO `json:"stats"`
+	AccountLevel    int                   `json:"accountLevel,omitempty"`
+	CompetitiveTier int                   `json:"competitiveTier,omitempty"`
 	IsObserver      bool                  `json:"isObserver,omitempty"`
 }
 
@@ -423,7 +422,7 @@ type MatchPlayerV1DTO struct {
 type MatchRecentMatchesV1DTO struct {
 	// A list of recent match ids.
 	MatchIDs    []string `json:"matchIds,omitempty"`
-	CurrentTime int64    `json:"currentTime,omitempty"`
+	CurrentTime int      `json:"currentTime,omitempty"`
 }
 
 // val-match-v1.RoundResultDto
@@ -441,11 +440,11 @@ type MatchRoundResultV1DTO struct {
 	DefusePlayerLocations []MatchPlayerLocationsV1DTO  `json:"defusePlayerLocations,omitempty"`
 	PlantPlayerLocations  []MatchPlayerLocationsV1DTO  `json:"plantPlayerLocations,omitempty"`
 	PlayerStats           []MatchPlayerRoundStatsV1DTO `json:"playerStats,omitempty"`
-	DefuseLocation        MatchLocationV1DTO           `json:"defuseLocation,omitempty"`
-	PlantLocation         MatchLocationV1DTO           `json:"plantLocation,omitempty"`
-	DefuseRoundTime       int32                        `json:"defuseRoundTime,omitempty"`
-	PlantRoundTime        int32                        `json:"plantRoundTime,omitempty"`
-	RoundNum              int32                        `json:"roundNum,omitempty"`
+	DefuseLocation        MatchLocationV1DTO           `json:"defuseLocation"`
+	PlantLocation         MatchLocationV1DTO           `json:"plantLocation"`
+	DefuseRoundTime       int                          `json:"defuseRoundTime,omitempty"`
+	PlantRoundTime        int                          `json:"plantRoundTime,omitempty"`
+	RoundNum              int                          `json:"roundNum,omitempty"`
 }
 
 // val-match-v1.TeamDto
@@ -453,10 +452,10 @@ type MatchTeamV1DTO struct {
 	// This is an arbitrary string. Red and Blue in bomb modes. The puuid of the player in deathmatch.
 	TeamID string `json:"teamId,omitempty"`
 	// Team points scored. Number of kills in deathmatch.
-	NumPoints    int32 `json:"numPoints,omitempty"`
-	RoundsPlayed int32 `json:"roundsPlayed,omitempty"`
-	RoundsWon    int32 `json:"roundsWon,omitempty"`
-	Won          bool  `json:"won,omitempty"`
+	NumPoints    int  `json:"numPoints,omitempty"`
+	RoundsPlayed int  `json:"roundsPlayed,omitempty"`
+	RoundsWon    int  `json:"roundsWon,omitempty"`
+	Won          bool `json:"won,omitempty"`
 }
 
 // val-match-v1.MatchDto
@@ -465,14 +464,14 @@ type MatchV1DTO struct {
 	Players      []MatchPlayerV1DTO      `json:"players,omitempty"`
 	RoundResults []MatchRoundResultV1DTO `json:"roundResults,omitempty"`
 	Teams        []MatchTeamV1DTO        `json:"teams,omitempty"`
-	MatchInfo    MatchInfoV1DTO          `json:"matchInfo,omitempty"`
+	MatchInfo    MatchInfoV1DTO          `json:"matchInfo"`
 }
 
 // val-match-v1.MatchlistEntryDto
 type MatchlistEntryV1DTO struct {
 	MatchID             string `json:"matchId,omitempty"`
 	QueueID             string `json:"queueId,omitempty"`
-	GameStartTimeMillis int64  `json:"gameStartTimeMillis,omitempty"`
+	GameStartTimeMillis int    `json:"gameStartTimeMillis,omitempty"`
 }
 
 // val-match-v1.MatchlistDto
@@ -483,19 +482,19 @@ type MatchlistV1DTO struct {
 
 // val-ranked-v1.LeaderboardDto
 type RankedLeaderboardV1DTO struct {
-	TierDetails map[int64]RankedTierDetailV1DTO `json:"tierDetails,omitempty"`
+	TierDetails map[int]RankedTierDetailV1DTO `json:"tierDetails,omitempty"`
 	// The act id for the given leaderboard. Act ids can be found using the val-content API.
 	ActID string `json:"actId,omitempty"`
 	Query string `json:"query,omitempty"`
 	// The shard for the given leaderboard.
 	Shard                 string              `json:"shard,omitempty"`
 	Players               []RankedPlayerV1DTO `json:"players,omitempty"`
-	ImmortalStartingIndex int64               `json:"immortalStartingIndex,omitempty"`
-	ImmortalStartingPage  int64               `json:"immortalStartingPage,omitempty"`
-	StartIndex            int64               `json:"startIndex,omitempty"`
-	TopTierRrthreshold    int64               `json:"topTierRRThreshold,omitempty"`
+	ImmortalStartingIndex int                 `json:"immortalStartingIndex,omitempty"`
+	ImmortalStartingPage  int                 `json:"immortalStartingPage,omitempty"`
+	StartIndex            int                 `json:"startIndex,omitempty"`
+	TopTierRrthreshold    int                 `json:"topTierRRThreshold,omitempty"`
 	// The total number of players in the leaderboard.
-	TotalPlayers int64 `json:"totalPlayers,omitempty"`
+	TotalPlayers int `json:"totalPlayers,omitempty"`
 }
 
 // val-ranked-v1.PlayerDto
@@ -506,17 +505,17 @@ type RankedPlayerV1DTO struct {
 	PUUID string `json:"puuid,omitempty"`
 	// This field may be omitted if the player has been anonymized.
 	TagLine         string `json:"tagLine,omitempty"`
-	CompetitiveTier int64  `json:"competitiveTier,omitempty"`
-	LeaderboardRank int64  `json:"leaderboardRank,omitempty"`
-	NumberOfWins    int64  `json:"numberOfWins,omitempty"`
-	RankedRating    int64  `json:"rankedRating,omitempty"`
+	CompetitiveTier int    `json:"competitiveTier,omitempty"`
+	LeaderboardRank int    `json:"leaderboardRank,omitempty"`
+	NumberOfWins    int    `json:"numberOfWins,omitempty"`
+	RankedRating    int    `json:"rankedRating,omitempty"`
 }
 
 // val-ranked-v1.TierDetailDto
 type RankedTierDetailV1DTO struct {
-	RankedRatingThreshold int64 `json:"rankedRatingThreshold,omitempty"`
-	StartingIndex         int64 `json:"startingIndex,omitempty"`
-	StartingPage          int64 `json:"startingPage,omitempty"`
+	RankedRatingThreshold int `json:"rankedRatingThreshold,omitempty"`
+	StartingIndex         int `json:"startingIndex,omitempty"`
+	StartingPage          int `json:"startingPage,omitempty"`
 }
 
 // val-status-v1.ContentDto
@@ -542,7 +541,7 @@ type StatusUpdateV1DTO struct {
 	// (Legal values: riotclient, riotstatus, game)
 	PublishLocations []string             `json:"publish_locations,omitempty"`
 	Translations     []StatusContentV1DTO `json:"translations,omitempty"`
-	ID               int32                `json:"id,omitempty"`
+	ID               int                  `json:"id,omitempty"`
 	Publish          bool                 `json:"publish,omitempty"`
 }
 
@@ -559,5 +558,5 @@ type StatusV1DTO struct {
 	Platforms []string             `json:"platforms,omitempty"`
 	Titles    []StatusContentV1DTO `json:"titles,omitempty"`
 	Updates   []StatusUpdateV1DTO  `json:"updates,omitempty"`
-	ID        int32                `json:"id,omitempty"`
+	ID        int                  `json:"id,omitempty"`
 }

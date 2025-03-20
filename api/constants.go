@@ -8,7 +8,7 @@ package api
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
+// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
 
 // Regional routes, used in tournament services, Legends of Runeterra, and some other endpoints.
 type RegionalRoute string
@@ -24,6 +24,8 @@ const (
 	ASIA RegionalRoute = "asia"
 	// Special esports platform for `account-v1`. Do not confuse with the `esports` Valorant platform route.
 	ESPORTS RegionalRoute = "esports"
+	// Special Europe esports platform for `account-v1`. Do not confuse with the `esports` Valorant platform route.
+	ESPORTSEU RegionalRoute = "esportseu"
 	// Europe.
 	EUROPE RegionalRoute = "europe"
 	// South East Asia, used for LoR, LoL matches (`match-v5`), and TFT matches (`tft-match-v1`).
@@ -40,6 +42,8 @@ func (route RegionalRoute) String() string {
 		return "asia"
 	case ESPORTS:
 		return "esports"
+	case ESPORTSEU:
+		return "esportseu"
 	case EUROPE:
 		return "europe"
 	case SEA:

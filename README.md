@@ -68,7 +68,6 @@ func main() {
 
 - Maybe the context usage throughout the project could be improved
 - Maybe add and move `Logger` to the `Cache` and `RateLimit` interfaces
-- Maybe endpoint methods `int32`/`int64` parameters should be changed to just `int`
 - Add checks for duration of tests that include any WaitN/any blocking
 - Add more integration tests
 - RateLimit

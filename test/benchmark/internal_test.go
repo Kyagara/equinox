@@ -25,12 +25,12 @@ func BenchmarkInternalRequest(b *testing.B) {
 	ctx := context.Background()
 	urlComponents := []string{"https://", "kr", api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/puuid"}
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		equinoxReq, err := client.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
 		if err != nil {
 			b.Fatal(err)
 		}
+
 		if equinoxReq.URL != "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid" {
 			b.Fatalf("URL != https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/puuid, got: %s", equinoxReq.Request.URL.String())
 		}
@@ -62,12 +62,12 @@ func BenchmarkInternalExecute(b *testing.B) {
 
 	var data string
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		err = client.Execute(ctx, equinoxReq, &data)
 		if err != nil {
 			b.Fatal(err)
 		}
+
 		if data != "response" {
 			b.Fatalf("data != response, got: %s", data)
 		}
@@ -99,12 +99,12 @@ func BenchmarkInternalExecuteBytes(b *testing.B) {
 
 	res := []byte(`"response"`)
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		data, err := client.ExecuteBytes(ctx, equinoxReq)
 		if err != nil {
 			b.Fatal(err)
 		}
+
 		if !bytes.Equal(data, res) {
 			b.Fatal("data != response")
 		}

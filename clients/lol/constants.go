@@ -10,7 +10,7 @@ import "strconv"
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 3261d1c333d2269147205cdd87e62d64b898e005
+// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
 
 // Platform routes for League of Legends.
 type PlatformRoute string
@@ -38,13 +38,17 @@ const (
 	OC1 PlatformRoute = "oc1"
 	// Public Beta Environment, special beta testing platform. Located in North America.
 	PBE1 PlatformRoute = "pbe1"
-	// Philippines
+	// # Deprecated
+	//
+	// Philippines, moved into `sg2` on 2025-01-08.
 	PH2 PlatformRoute = "ph2"
 	// Russia
 	RU PlatformRoute = "ru"
-	// Singapore
+	// Singapore, Thailand, Philippines
 	SG2 PlatformRoute = "sg2"
-	// Thailand
+	// # Deprecated
+	//
+	// Thailand, moved into `sg2` on 2025-01-08.
 	TH2 PlatformRoute = "th2"
 	// Turkey
 	TR1 PlatformRoute = "tr1"
@@ -223,7 +227,7 @@ func (division Division) String() string {
 }
 
 // Team IDs for League of Legends.
-type Team int32
+type Team int
 
 // https://github.com/MingweiSamuel/Riven/blob/v/2.x.x/riven/src/consts/team.rs
 
@@ -354,6 +358,8 @@ const (
 	STARGUARDIAN_GAMEMODE GameMode = "STARGUARDIAN"
 	// Swarm
 	STRAWBERRY_GAMEMODE GameMode = "STRAWBERRY"
+	// Swiftplay Summoner's Rift
+	SWIFTPLAY_GAMEMODE GameMode = "SWIFTPLAY"
 	// Tutorial games
 	TUTORIAL_GAMEMODE GameMode = "TUTORIAL"
 	// Tutorial: Welcome to League.
@@ -410,6 +416,8 @@ func (gameMode GameMode) String() string {
 		return "STARGUARDIAN"
 	case STRAWBERRY_GAMEMODE:
 		return "STRAWBERRY"
+	case SWIFTPLAY_GAMEMODE:
+		return "SWIFTPLAY"
 	case TUTORIAL_GAMEMODE:
 		return "TUTORIAL"
 	case TUTORIAL_MODULE_1_GAMEMODE:
@@ -428,7 +436,7 @@ func (gameMode GameMode) String() string {
 }
 
 // League of Legends maps.
-type Map int64
+type Map int
 
 const (
 	// Arena
@@ -543,7 +551,7 @@ func (gameMap Map) String() string {
 }
 
 // League of Legends queues.
-type Queue int32
+type Queue int
 
 const (
 	// 2v2v2v2 `CHERRY` games on Arena
@@ -732,6 +740,8 @@ const (
 	SUMMONERS_RIFT_NEXUS_SIEGE_QUEUE Queue = 940
 	// Normal (Quickplay) games on Summoner's Rift
 	SUMMONERS_RIFT_NORMAL_QUICKPLAY_QUEUE Queue = 490
+	// Normal (Swiftplay) games on Summoner's Rift
+	SUMMONERS_RIFT_NORMAL_SWIFTPLAY_QUEUE Queue = 480
 	// # Deprecated
 	//
 	// One for All games on Summoner's Rift
@@ -936,6 +946,8 @@ func (queue Queue) String() string {
 		return "940"
 	case SUMMONERS_RIFT_NORMAL_QUICKPLAY_QUEUE:
 		return "490"
+	case SUMMONERS_RIFT_NORMAL_SWIFTPLAY_QUEUE:
+		return "480"
 	case SUMMONERS_RIFT_ONE_FOR_ALL_70_QUEUE:
 		return "70"
 	case SUMMONERS_RIFT_ONE_FOR_ALL_QUEUE:
@@ -987,6 +999,6 @@ func (queue Queue) String() string {
 	case VALORAN_CITY_PARK_STAR_GUARDIAN_INVASION_ONSLAUGHT_QUEUE:
 		return "990"
 	default:
-		return string(queue)
+		return strconv.FormatInt(int64(queue), 10)
 	}
 }
