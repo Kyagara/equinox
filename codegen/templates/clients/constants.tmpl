@@ -61,7 +61,7 @@ const (
     //
     {%- endif %}
     // {{ Details.Description|safe }}
-    {{ Details.TournamentRegion|upper }} TournamentRegion = "{{ Details.TournamentRegion|lower }}"
+    {{ Details.TournamentRegion }} TournamentRegion = "{{ Details.TournamentRegion }}"
 {%- endif %}
 {%- endfor %}
 )
@@ -70,8 +70,8 @@ func (route TournamentRegion) String() string {
 	switch route {
     {%- for Name, Details in LOL_TFT_Routes sorted %}
     {%- if Details.TournamentRegion %}
-    case {{ Details.TournamentRegion|upper }}:
-        return "{{ Details.TournamentRegion|lower }}"
+    case {{ Details.TournamentRegion }}:
+        return "{{ Details.TournamentRegion }}"
     {%- endif %}
     {%- endfor %}
     default:

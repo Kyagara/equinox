@@ -209,21 +209,21 @@ type GameType string
 
 const (
 	// Custom games
-	CUSTOM_GAME_GAMETYPE GameType = "CUSTOM"
+	CUSTOM_GAME_GAMETYPE GameType = "CUSTOM_GAME"
 	// all other games
-	MATCHED_GAME_GAMETYPE GameType = "MATCHED"
+	MATCHED_GAME_GAMETYPE GameType = "MATCHED_GAME"
 	// Tutorial games
-	TUTORIAL_GAME_GAMETYPE GameType = "TUTORIAL"
+	TUTORIAL_GAME_GAMETYPE GameType = "TUTORIAL_GAME"
 )
 
 func (gameType GameType) String() string {
 	switch gameType {
 	case CUSTOM_GAME_GAMETYPE:
-		return "CUSTOM"
+		return "CUSTOM_GAME"
 	case MATCHED_GAME_GAMETYPE:
-		return "MATCHED"
+		return "MATCHED_GAME"
 	case TUTORIAL_GAME_GAMETYPE:
-		return "TUTORIAL"
+		return "TUTORIAL_GAME"
 	default:
 		return string(gameType)
 	}
