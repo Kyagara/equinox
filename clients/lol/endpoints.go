@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
+// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
 
 import (
 	"context"
@@ -703,32 +703,6 @@ func (endpoint *LeagueV4) MasterByQueue(ctx context.Context, route PlatformRoute
 	return &data, nil
 }
 
-// Get league entries in all queues for a given summoner ID.
-//
-// # Parameters
-//   - route: Route to query.
-//   - encryptedSummonerId
-//
-// # Riot API Reference
-//
-// [league-v4.getLeagueEntriesForSummoner]
-//
-// [league-v4.getLeagueEntriesForSummoner]: https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueEntriesForSummoner
-func (endpoint *LeagueV4) SummonerEntries(ctx context.Context, route PlatformRoute, encryptedSummonerId string) ([]LeagueEntryV4DTO, error) {
-	logger := endpoint.internal.Logger("LOL_LeagueV4_SummonerEntries")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/league/v4/entries/by-summoner/", encryptedSummonerId}
-	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "league-v4.getLeagueEntriesForSummoner", nil)
-	if err != nil {
-		return nil, err
-	}
-	var data []LeagueEntryV4DTO
-	err = endpoint.internal.Execute(ctx, request, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
-}
-
 // # Riot API Reference
 //
 // [match-v5]
@@ -1102,32 +1076,6 @@ func (endpoint *SummonerV4) ByAccessToken(ctx context.Context, route PlatformRou
 	return &data, nil
 }
 
-// Get a summoner by account ID.
-//
-// # Parameters
-//   - route: Route to query.
-//   - encryptedAccountId
-//
-// # Riot API Reference
-//
-// [summoner-v4.getByAccountId]
-//
-// [summoner-v4.getByAccountId]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByAccountId
-func (endpoint *SummonerV4) ByAccountID(ctx context.Context, route PlatformRoute, encryptedAccountId string) (*SummonerV4DTO, error) {
-	logger := endpoint.internal.Logger("LOL_SummonerV4_ByAccountID")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-account/", encryptedAccountId}
-	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByAccountId", nil)
-	if err != nil {
-		return nil, err
-	}
-	var data SummonerV4DTO
-	err = endpoint.internal.Execute(ctx, request, &data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
-}
-
 // Get a summoner by PUUID.
 //
 // # Parameters
@@ -1169,32 +1117,6 @@ func (endpoint *SummonerV4) ByRSOPUUID(ctx context.Context, route PlatformRoute,
 	logger := endpoint.internal.Logger("LOL_SummonerV4_ByRSOPUUID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/fulfillment/v1/summoners/by-puuid/", rsoPUUID}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByRSOPUUID", nil)
-	if err != nil {
-		return nil, err
-	}
-	var data SummonerV4DTO
-	err = endpoint.internal.Execute(ctx, request, &data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Get a summoner by summoner ID.
-//
-// # Parameters
-//   - route: Route to query.
-//   - encryptedSummonerId: Summoner ID
-//
-// # Riot API Reference
-//
-// [summoner-v4.getBySummonerId]
-//
-// [summoner-v4.getBySummonerId]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getBySummonerId
-func (endpoint *SummonerV4) BySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*SummonerV4DTO, error) {
-	logger := endpoint.internal.Logger("LOL_SummonerV4_BySummonerID")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/", encryptedSummonerId}
-	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getBySummonerId", nil)
 	if err != nil {
 		return nil, err
 	}

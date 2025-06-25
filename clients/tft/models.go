@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
+// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
 
 // tft-league-v1.LeagueEntryDTO
 type LeagueEntryV1DTO struct {
@@ -23,8 +23,6 @@ type LeagueEntryV1DTO struct {
 	//
 	// (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
 	RatedTier string `json:"ratedTier,omitempty"`
-	// Player's encrypted summonerId.
-	SummonerID string `json:"summonerId,omitempty"`
 	// Not included for the RANKED_TFT_TURBO queueType.
 	Tier Tier `json:"tier,omitempty"`
 	// Not included for the RANKED_TFT_TURBO queueType.
@@ -50,10 +48,8 @@ type LeagueEntryV1DTO struct {
 // tft-league-v1.LeagueItemDTO
 type LeagueItemV1DTO struct {
 	// Player's encrypted puuid.
-	PUUID string   `json:"puuid,omitempty"`
-	Rank  Division `json:"rank,omitempty"`
-	// Player's encrypted summonerId.
-	SummonerID   string                `json:"summonerId,omitempty"`
+	PUUID        string                `json:"puuid,omitempty"`
+	Rank         Division              `json:"rank,omitempty"`
 	MiniSeries   LeagueMiniSeriesV1DTO `json:"miniSeries"`
 	LeaguePoints int                   `json:"leaguePoints,omitempty"`
 	// Second through eighth placement.
@@ -85,9 +81,10 @@ type LeagueMiniSeriesV1DTO struct {
 
 // tft-league-v1.TopRatedLadderEntryDto
 type LeagueTopRatedLadderEntryV1DTO struct {
+	// Player's encrypted puuid.
+	PUUID string `json:"puuid,omitempty"`
 	// (Legal values:  ORANGE,  PURPLE,  BLUE,  GREEN,  GRAY)
 	RatedTier                    string `json:"ratedTier,omitempty"`
-	SummonerID                   string `json:"summonerId,omitempty"`
 	PreviousUpdateLadderPosition int    `json:"previousUpdateLadderPosition,omitempty"`
 	RatedRating                  int    `json:"ratedRating,omitempty"`
 	// First placement.
@@ -105,7 +102,7 @@ type MatchCompanionV1DTO struct {
 // tft-match-v1.InfoDto
 type MatchInfoV1DTO struct {
 	EndOfGameResult string `json:"endOfGameResult,omitempty"`
-	// Game variation key. Game variations documented in TFT static data.
+	// Deprecated. Game variation key. Game variations documented in TFT static data.
 	GameVariation string `json:"game_variation,omitempty"`
 	// Game client version.
 	GameVersion    string                  `json:"game_version,omitempty"`
@@ -214,10 +211,12 @@ type MatchParticipantV1DTO struct {
 	Placement int `json:"placement,omitempty"`
 	// Number of players the participant eliminated.
 	PlayersEliminated int `json:"players_eliminated,omitempty"`
+	PveScore          int `json:"pve_score,omitempty"`
 	// The number of seconds before the participant was eliminated.
 	TimeEliminated float64 `json:"time_eliminated,omitempty"`
 	// Damage the participant dealt to other players.
 	TotalDamageToPlayers int  `json:"total_damage_to_players,omitempty"`
+	PveWonrun            bool `json:"pve_wonrun,omitempty"`
 	Win                  bool `json:"win,omitempty"`
 }
 
@@ -301,8 +300,6 @@ type SpectatorCurrentGameParticipantV5DTO struct {
 	// The encrypted puuid of this participant
 	PUUID  string `json:"puuid,omitempty"`
 	RiotID string `json:"riotId,omitempty"`
-	// The encrypted summoner ID of this participant
-	SummonerID string `json:"summonerId,omitempty"`
 	// List of Game Customizations
 	GameCustomizationObjects []SpectatorGameCustomizationObjectV5DTO `json:"gameCustomizationObjects,omitempty"`
 	// Perks/Runes Reforged Information
@@ -374,8 +371,6 @@ type SpectatorParticipantV5DTO struct {
 	// Encrypted puuid of this participant
 	PUUID  string `json:"puuid,omitempty"`
 	RiotID string `json:"riotId,omitempty"`
-	// Encrypted summoner ID of this participant
-	SummonerID string `json:"summonerId,omitempty"`
 	// The ID of the champion played by this participant
 	ChampionID int `json:"championId,omitempty"`
 	// The ID of the profile icon used by this participant
@@ -443,10 +438,6 @@ type StatusV1DTO struct {
 
 // tft-summoner-v1.SummonerDTO
 type SummonerV1DTO struct {
-	// Encrypted account ID. Max length 56 characters.
-	AccountID string `json:"accountId,omitempty"`
-	// Encrypted summoner ID. Max length 63 characters.
-	ID string `json:"id,omitempty"`
 	// Encrypted PUUID. Exact length of 78 characters.
 	PUUID string `json:"puuid,omitempty"`
 	// ID of the summoner icon associated with the summoner.

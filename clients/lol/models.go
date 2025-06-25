@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
+// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -140,9 +140,8 @@ type ClashPlayerV1DTO struct {
 	// (Legal values:  UNSELECTED,  FILL,  TOP,  JUNGLE,  MIDDLE,  BOTTOM,  UTILITY)
 	Position string `json:"position,omitempty"`
 	// (Legal values:  CAPTAIN,  MEMBER)
-	Role       string `json:"role,omitempty"`
-	SummonerID string `json:"summonerId,omitempty"`
-	TeamID     string `json:"teamId,omitempty"`
+	Role   string `json:"role,omitempty"`
+	TeamID string `json:"teamId,omitempty"`
 }
 
 // clash-v1.TeamDto
@@ -184,9 +183,7 @@ type LeagueEntryV4DTO struct {
 	PUUID     string    `json:"puuid,omitempty"`
 	QueueType QueueType `json:"queueType,omitempty"`
 	// The player's division within a tier.
-	Rank Division `json:"rank,omitempty"`
-	// Player's encrypted summonerId.
-	SummonerID   string                `json:"summonerId,omitempty"`
+	Rank         Division              `json:"rank,omitempty"`
 	Tier         Tier                  `json:"tier,omitempty"`
 	MiniSeries   LeagueMiniSeriesV4DTO `json:"miniSeries"`
 	LeaguePoints int                   `json:"leaguePoints,omitempty"`
@@ -234,10 +231,8 @@ type LeagueExpMiniSeriesV4DTO struct {
 // league-v4.LeagueItemDTO
 type LeagueItemV4DTO struct {
 	// Player's encrypted puuid.
-	PUUID string   `json:"puuid,omitempty"`
-	Rank  Division `json:"rank,omitempty"`
-	// Player's encrypted summonerId.
-	SummonerID   string                `json:"summonerId,omitempty"`
+	PUUID        string                `json:"puuid,omitempty"`
+	Rank         Division              `json:"rank,omitempty"`
 	MiniSeries   LeagueMiniSeriesV4DTO `json:"miniSeries"`
 	LeaguePoints int                   `json:"leaguePoints,omitempty"`
 	// Losing team on Summoners Rift.
@@ -687,7 +682,8 @@ type MatchParticipantV5DTO struct {
 	ChampExperience int `json:"champExperience,omitempty"`
 	ChampLevel      int `json:"champLevel,omitempty"`
 	// Prior to patch 11.4, on Feb 18th, 2021, this field returned invalid championIds. We recommend determining the champion based on the championName field for matches played prior to patch 11.4.
-	ChampionID int `json:"championId,omitempty"`
+	ChampionID     int `json:"championId,omitempty"`
+	ChampionSkinID int `json:"championSkinId,omitempty"`
 	// This field is currently only utilized for Kayn's transformations. (Legal values: 0 - None, 1 - Slayer, 2 - Assassin)
 	ChampionTransform int `json:"championTransform,omitempty"`
 	// Blue generic ping (ALT+click)
@@ -941,8 +937,6 @@ type SpectatorCurrentGameParticipantV5DTO struct {
 	// The encrypted puuid of this participant
 	PUUID  string `json:"puuid,omitempty"`
 	RiotID string `json:"riotId,omitempty"`
-	// The encrypted summoner ID of this participant
-	SummonerID string `json:"summonerId,omitempty"`
 	// List of Game Customizations
 	GameCustomizationObjects []SpectatorGameCustomizationObjectV5DTO `json:"gameCustomizationObjects,omitempty"`
 	// Perks/Runes Reforged Information
@@ -1016,8 +1010,6 @@ type SpectatorParticipantV5DTO struct {
 	// Encrypted puuid of this participant
 	PUUID  string `json:"puuid,omitempty"`
 	RiotID string `json:"riotId,omitempty"`
-	// Encrypted summoner ID of this participant
-	SummonerID string `json:"summonerId,omitempty"`
 	// The ID of the champion played by this participant
 	ChampionID int `json:"championId,omitempty"`
 	// The ID of the profile icon used by this participant
@@ -1087,10 +1079,6 @@ type StatusV4DTO struct {
 
 // summoner-v4.SummonerDTO
 type SummonerV4DTO struct {
-	// Encrypted account ID. Max length 56 characters.
-	AccountID string `json:"accountId,omitempty"`
-	// Encrypted summoner ID. Max length 63 characters.
-	ID string `json:"id,omitempty"`
 	// Encrypted PUUID. Exact length of 78 characters.
 	PUUID string `json:"puuid,omitempty"`
 	// ID of the summoner icon associated with the summoner.
@@ -1190,7 +1178,8 @@ type TournamentGamesV5DTO struct {
 	WinningTeam []TournamentTeamV5DTO `json:"winningTeam,omitempty"`
 	GameID      int                   `json:"gameId,omitempty"`
 	// Game Map ID
-	GameMap int `json:"gameMap,omitempty"`
+	GameMap   int `json:"gameMap,omitempty"`
+	StartTime int `json:"startTime,omitempty"`
 }
 
 // tournament-v5.LobbyEventV5DTO
@@ -1268,8 +1257,6 @@ type TournamentStubCodeV5DTO struct {
 	//
 	// (Legal values:  BR,  EUNE,  EUW,  JP,  LAN,  LAS,  NA,  OCE,  PBE,  RU,  TR,  KR)
 	Region TournamentRegion `json:"region,omitempty"`
-	// The spectator mode for the tournament code game.
-	Spectators string `json:"spectators,omitempty"`
 	// The puuids of the participants (Encrypted)
 	Participants []string `json:"participants,omitempty"`
 	// The tournament code's ID.

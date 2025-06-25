@@ -9,7 +9,7 @@ package api
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
+// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
 
 import (
 	"errors"
@@ -86,6 +86,7 @@ func StatusCodeToError(statusCode int) error {
 var (
 	// A slice containing all endpoints from the Riot API.
 	AllEndpoints = [][]string{
+		{"GET", "/riot/account/v1/region/by-game/{game}/by-puuid/{puuid}", "account-v1.getActiveRegion"},
 		{"GET", "/riot/account/v1/active-shards/by-game/{game}/by-puuid/{puuid}", "account-v1.getActiveShard"},
 		{"GET", "/riot/account/v1/accounts/me", "account-v1.getByAccessToken"},
 		{"GET", "/riot/account/v1/accounts/by-puuid/{puuid}", "account-v1.getByPuuid"},
@@ -106,7 +107,6 @@ var (
 		{"GET", "/lol/league/v4/leagues/{leagueId}", "league-v4.getLeagueById"},
 		{"GET", "/lol/league/v4/entries/{queue}/{tier}/{division}", "league-v4.getLeagueEntries"},
 		{"GET", "/lol/league/v4/entries/by-puuid/{encryptedPUUID}", "league-v4.getLeagueEntriesByPUUID"},
-		{"GET", "/lol/league/v4/entries/by-summoner/{encryptedSummonerId}", "league-v4.getLeagueEntriesForSummoner"},
 		{"GET", "/lol/league/v4/masterleagues/by-queue/{queue}", "league-v4.getMasterLeague"},
 		{"GET", "/lol/challenges/v1/challenges/config", "lol-challenges-v1.getAllChallengeConfigs"},
 		{"GET", "/lol/challenges/v1/challenges/percentiles", "lol-challenges-v1.getAllChallengePercentiles"},
@@ -133,24 +133,20 @@ var (
 		{"GET", "/lol/spectator/v5/active-games/by-summoner/{encryptedPUUID}", "spectator-v5.getCurrentGameInfoByPuuid"},
 		{"GET", "/lol/spectator/v5/featured-games", "spectator-v5.getFeaturedGames"},
 		{"GET", "/lol/summoner/v4/summoners/me", "summoner-v4.getByAccessToken"},
-		{"GET", "/lol/summoner/v4/summoners/by-account/{encryptedAccountId}", "summoner-v4.getByAccountId"},
 		{"GET", "/lol/summoner/v4/summoners/by-puuid/{encryptedPUUID}", "summoner-v4.getByPUUID"},
 		{"GET", "/fulfillment/v1/summoners/by-puuid/{rsoPUUID}", "summoner-v4.getByRSOPUUID"},
-		{"GET", "/lol/summoner/v4/summoners/{encryptedSummonerId}", "summoner-v4.getBySummonerId"},
 		{"GET", "/tft/league/v1/challenger", "tft-league-v1.getChallengerLeague"},
 		{"GET", "/tft/league/v1/grandmaster", "tft-league-v1.getGrandmasterLeague"},
 		{"GET", "/tft/league/v1/leagues/{leagueId}", "tft-league-v1.getLeagueById"},
 		{"GET", "/tft/league/v1/entries/{tier}/{division}", "tft-league-v1.getLeagueEntries"},
-		{"GET", "/tft/league/v1/entries/by-summoner/{summonerId}", "tft-league-v1.getLeagueEntriesForSummoner"},
+		{"GET", "/tft/league/v1/by-puuid/{puuid}", "tft-league-v1.getLeagueEntriesByPUUID"},
 		{"GET", "/tft/league/v1/master", "tft-league-v1.getMasterLeague"},
 		{"GET", "/tft/league/v1/rated-ladders/{queue}/top", "tft-league-v1.getTopRatedLadder"},
 		{"GET", "/tft/match/v1/matches/{matchId}", "tft-match-v1.getMatch"},
 		{"GET", "/tft/match/v1/matches/by-puuid/{puuid}/ids", "tft-match-v1.getMatchIdsByPUUID"},
 		{"GET", "/tft/status/v1/platform-data", "tft-status-v1.getPlatformData"},
 		{"GET", "/tft/summoner/v1/summoners/me", "tft-summoner-v1.getByAccessToken"},
-		{"GET", "/tft/summoner/v1/summoners/by-account/{encryptedAccountId}", "tft-summoner-v1.getByAccountId"},
 		{"GET", "/tft/summoner/v1/summoners/by-puuid/{encryptedPUUID}", "tft-summoner-v1.getByPUUID"},
-		{"GET", "/tft/summoner/v1/summoners/{encryptedSummonerId}", "tft-summoner-v1.getBySummonerId"},
 		{"POST", "/lol/tournament-stub/v5/codes", "tournament-stub-v5.createTournamentCode"},
 		{"GET", "/lol/tournament-stub/v5/lobby-events/by-code/{tournamentCode}", "tournament-stub-v5.getLobbyEventsByCode"},
 		{"GET", "/lol/tournament-stub/v5/codes/{tournamentCode}", "tournament-stub-v5.getTournamentCode"},

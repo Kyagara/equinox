@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
+// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
 
 import (
 	"context"
@@ -124,6 +124,32 @@ func (endpoint *LeagueV1) Entries(ctx context.Context, route PlatformRoute, tier
 	return data, nil
 }
 
+// Get league entries in all queues for a given puuid
+//
+// # Parameters
+//   - route: Route to query.
+//   - puuid
+//
+// # Riot API Reference
+//
+// [tft-league-v1.getLeagueEntriesByPUUID]
+//
+// [tft-league-v1.getLeagueEntriesByPUUID]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueEntriesByPUUID
+func (endpoint *LeagueV1) EntriesByPUUID(ctx context.Context, route PlatformRoute, puuid string) ([]LeagueEntryV1DTO, error) {
+	logger := endpoint.internal.Logger("TFT_LeagueV1_EntriesByPUUID")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/by-puuid/", puuid}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getLeagueEntriesByPUUID", nil)
+	if err != nil {
+		return nil, err
+	}
+	var data []LeagueEntryV1DTO
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 // Get the grandmaster league.
 //
 // # Parameters
@@ -184,32 +210,6 @@ func (endpoint *LeagueV1) MasterByQueue(ctx context.Context, route PlatformRoute
 		return nil, err
 	}
 	return &data, nil
-}
-
-// Get league entries for a given summoner ID.
-//
-// # Parameters
-//   - route: Route to query.
-//   - summonerId
-//
-// # Riot API Reference
-//
-// [tft-league-v1.getLeagueEntriesForSummoner]
-//
-// [tft-league-v1.getLeagueEntriesForSummoner]: https://developer.riotgames.com/api-methods/#tft-league-v1/GET_getLeagueEntriesForSummoner
-func (endpoint *LeagueV1) SummonerEntries(ctx context.Context, route PlatformRoute, summonerId string) ([]LeagueEntryV1DTO, error) {
-	logger := endpoint.internal.Logger("TFT_LeagueV1_SummonerEntries")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/league/v1/entries/by-summoner/", summonerId}
-	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-league-v1.getLeagueEntriesForSummoner", nil)
-	if err != nil {
-		return nil, err
-	}
-	var data []LeagueEntryV1DTO
-	err = endpoint.internal.Execute(ctx, request, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
 }
 
 // Get the top rated ladder for given queue
@@ -450,32 +450,6 @@ func (endpoint *SummonerV1) ByAccessToken(ctx context.Context, route PlatformRou
 	return &data, nil
 }
 
-// Get a summoner by account ID.
-//
-// # Parameters
-//   - route: Route to query.
-//   - encryptedAccountId
-//
-// # Riot API Reference
-//
-// [tft-summoner-v1.getByAccountId]
-//
-// [tft-summoner-v1.getByAccountId]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getByAccountId
-func (endpoint *SummonerV1) ByAccountID(ctx context.Context, route PlatformRoute, encryptedAccountId string) (*SummonerV1DTO, error) {
-	logger := endpoint.internal.Logger("TFT_SummonerV1_ByAccountID")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/by-account/", encryptedAccountId}
-	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getByAccountId", nil)
-	if err != nil {
-		return nil, err
-	}
-	var data SummonerV1DTO
-	err = endpoint.internal.Execute(ctx, request, &data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
-}
-
 // Get a summoner by PUUID.
 //
 // # Parameters
@@ -491,32 +465,6 @@ func (endpoint *SummonerV1) ByPUUID(ctx context.Context, route PlatformRoute, en
 	logger := endpoint.internal.Logger("TFT_SummonerV1_ByPUUID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/by-puuid/", encryptedPUUID}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getByPUUID", nil)
-	if err != nil {
-		return nil, err
-	}
-	var data SummonerV1DTO
-	err = endpoint.internal.Execute(ctx, request, &data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Get a summoner by summoner ID.
-//
-// # Parameters
-//   - route: Route to query.
-//   - encryptedSummonerId: Summoner ID
-//
-// # Riot API Reference
-//
-// [tft-summoner-v1.getBySummonerId]
-//
-// [tft-summoner-v1.getBySummonerId]: https://developer.riotgames.com/api-methods/#tft-summoner-v1/GET_getBySummonerId
-func (endpoint *SummonerV1) BySummonerID(ctx context.Context, route PlatformRoute, encryptedSummonerId string) (*SummonerV1DTO, error) {
-	logger := endpoint.internal.Logger("TFT_SummonerV1_BySummonerID")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/tft/summoner/v1/summoners/", encryptedSummonerId}
-	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "tft-summoner-v1.getBySummonerId", nil)
 	if err != nil {
 		return nil, err
 	}

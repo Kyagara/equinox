@@ -10,7 +10,7 @@ import "strconv"
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
+// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
 
 // Platform routes for Teamfight Tactics.
 type PlatformRoute string
@@ -321,10 +321,14 @@ const (
 	CONVERGENCE_TFT_QUEUE Queue = 1090
 	// Teamfight Tactics Revival: Festival of Beasts games on Convergence
 	CONVERGENCE_TFT_REVIVAL_FESTIVAL_OF_BEASTS_QUEUE Queue = 6100
+	// Teamfight Tactics Revival: Remix Rumble games on Convergence
+	CONVERGENCE_TFT_REVIVAL_REMIX_RUMBLE_QUEUE Queue = 6110
 	// Teamfight Tactics Set 3.5 Revival games on Convergence
 	CONVERGENCE_TFT_SET_3_5_REVIVAL_QUEUE Queue = 6000
 	// Teamfight Tactics Simluation games on Convergence
 	CONVERGENCE_TFT_SIMLUATION_QUEUE Queue = 1111
+	// Teamfight Tactics: Tocker's Trials games on Convergence
+	CONVERGENCE_TFT_TOCKERS_TRIALS_QUEUE Queue = 1220
 	// Teamfight Tactics Tutorial games on Convergence
 	CONVERGENCE_TFT_TUTORIAL_QUEUE Queue = 1110
 )
@@ -349,10 +353,14 @@ func (queue Queue) String() string {
 		return "1090"
 	case CONVERGENCE_TFT_REVIVAL_FESTIVAL_OF_BEASTS_QUEUE:
 		return "6100"
+	case CONVERGENCE_TFT_REVIVAL_REMIX_RUMBLE_QUEUE:
+		return "6110"
 	case CONVERGENCE_TFT_SET_3_5_REVIVAL_QUEUE:
 		return "6000"
 	case CONVERGENCE_TFT_SIMLUATION_QUEUE:
 		return "1111"
+	case CONVERGENCE_TFT_TOCKERS_TRIALS_QUEUE:
+		return "1220"
 	case CONVERGENCE_TFT_TUTORIAL_QUEUE:
 		return "1110"
 	default:
