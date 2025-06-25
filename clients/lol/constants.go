@@ -10,7 +10,7 @@ import "strconv"
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
+// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
 
 // Platform routes for League of Legends.
 type PlatformRoute string
@@ -326,6 +326,8 @@ const (
 	ASCENSION_GAMEMODE GameMode = "ASCENSION"
 	// Blood Hunt Assassin games
 	ASSASSINATE_GAMEMODE GameMode = "ASSASSINATE"
+	// Brawl
+	BRAWL_GAMEMODE GameMode = "BRAWL"
 	// 2v2v2v2 Arena
 	CHERRY_GAMEMODE GameMode = "CHERRY"
 	// Classic Summoner's Rift and Twisted Treeline games
@@ -384,6 +386,8 @@ func (gameMode GameMode) String() string {
 		return "ASCENSION"
 	case ASSASSINATE_GAMEMODE:
 		return "ASSASSINATE"
+	case BRAWL_GAMEMODE:
+		return "BRAWL"
 	case CHERRY_GAMEMODE:
 		return "CHERRY"
 	case CLASSIC_GAMEMODE:
@@ -487,6 +491,10 @@ const (
 	//
 	// Map for Swarm (`STRAWBERRY`). Team up with a friend or venture solo in this horde survival mode.
 	SWARM_MAP Map = 33
+	// The Bandlewood
+	//
+	// Map for Brawl (`BRAWL`). Work together with your team to escort minions into the enemy portal. No roles, no lanes, no pressure. Just a five-on-five brawl.
+	THE_BANDLEWOOD_MAP Map = 35
 	// The Crystal Scar
 	//
 	// Dominion map
@@ -535,6 +543,8 @@ func (gameMap Map) String() string {
 		return "1"
 	case SWARM_MAP:
 		return "33"
+	case THE_BANDLEWOOD_MAP:
+		return "35"
 	case THE_CRYSTAL_SCAR_MAP:
 		return "8"
 	case THE_PROVING_GROUNDS_MAP:
@@ -770,6 +780,8 @@ const (
 	SWARM_SOLO_STRAWBERRY_GAMES_QUEUE Queue = 1810
 	// Swarm trio (`STRAWBERRY` games) games on Swarm
 	SWARM_TRIO_STRAWBERRY_GAMES_QUEUE Queue = 1830
+	// Games on The Bandlewood
+	THE_BANDLEWOOD_QUEUE Queue = 2300
 	// # Deprecated
 	//
 	// 3v3 Blind Pick games on Twisted Treeline
@@ -974,6 +986,8 @@ func (queue Queue) String() string {
 		return "1810"
 	case SWARM_TRIO_STRAWBERRY_GAMES_QUEUE:
 		return "1830"
+	case THE_BANDLEWOOD_QUEUE:
+		return "2300"
 	case TWISTED_TREELINE_3V3_BLIND_PICK_QUEUE:
 		return "460"
 	case TWISTED_TREELINE_3V3_NORMAL_QUEUE:

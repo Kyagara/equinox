@@ -8,7 +8,7 @@ package riot
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
+// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
 
 import (
 	"context"
@@ -26,6 +26,33 @@ import (
 // [account-v1]: https://developer.riotgames.com/apis#account-v1
 type AccountV1 struct {
 	internal *internal.Client
+}
+
+// Get active region (lol and tft)
+//
+// # Parameters
+//   - route: Route to query.
+//   - puuid
+//   - game
+//
+// # Riot API Reference
+//
+// [account-v1.getActiveRegion]
+//
+// [account-v1.getActiveRegion]: https://developer.riotgames.com/api-methods/#account-v1/GET_getActiveRegion
+func (endpoint *AccountV1) ActiveRegion(ctx context.Context, route api.RegionalRoute, game string, puuid string) (*AccountRegionV1DTO, error) {
+	logger := endpoint.internal.Logger("Riot_AccountV1_ActiveRegion")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/riot/account/v1/region/by-game/", game, "/by-puuid/", puuid}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "account-v1.getActiveRegion", nil)
+	if err != nil {
+		return nil, err
+	}
+	var data AccountRegionV1DTO
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
 }
 
 // Get active shard for a player

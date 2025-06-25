@@ -8,7 +8,7 @@ package riot
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 996d171a2b79e9bb85c549f47b07c6ef2721fc8a
+// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
 
 // account-v1.ActiveShardDto
 type AccountActiveShardV1DTO struct {
@@ -17,11 +17,22 @@ type AccountActiveShardV1DTO struct {
 	PUUID       string `json:"puuid,omitempty"`
 }
 
+// account-v1.AccountRegionDTO
+type AccountRegionV1DTO struct {
+	// Game to lookup active region
+	Game string `json:"game,omitempty"`
+	// Player Universal Unique Identifier. Exact length of 78 characters. (Encrypted)
+	PUUID string `json:"puuid,omitempty"`
+	// Player active region
+	Region string `json:"region,omitempty"`
+}
+
 // account-v1.AccountDto
 type AccountV1DTO struct {
 	// This field may be excluded from the response if the account doesn't have a gameName.
 	GameName string `json:"gameName,omitempty"`
-	PUUID    string `json:"puuid,omitempty"`
+	// Encrypted PUUID. Exact length of 78 characters.
+	PUUID string `json:"puuid,omitempty"`
 	// This field may be excluded from the response if the account doesn't have a tagLine.
 	TagLine string `json:"tagLine,omitempty"`
 }
