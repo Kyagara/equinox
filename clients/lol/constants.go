@@ -106,49 +106,49 @@ type TournamentRegion string
 
 const (
 	// Brazil.
-	BR TournamentRegion = "br"
+	BR TournamentRegion = "BR"
 	// Europe, Northeast.
-	EUNE TournamentRegion = "eune"
+	EUNE TournamentRegion = "EUNE"
 	// Europe, West.
-	EUW TournamentRegion = "euw"
+	EUW TournamentRegion = "EUW"
 	// Japan.
-	JP TournamentRegion = "jp"
+	JP TournamentRegion = "JP"
 	// Latin America, North.
-	LAN TournamentRegion = "lan"
+	LAN TournamentRegion = "LAN"
 	// Latin America, South.
-	LAS TournamentRegion = "las"
+	LAS TournamentRegion = "LAS"
 	// North America.
-	NA TournamentRegion = "na"
+	NA TournamentRegion = "NA"
 	// Oceania.
-	OCE TournamentRegion = "oce"
+	OCE TournamentRegion = "OCE"
 	// Public Beta Environment, special beta testing platform. Located in North America.
-	PBE TournamentRegion = "pbe"
+	PBE TournamentRegion = "PBE"
 	// Turkey
-	TR TournamentRegion = "tr"
+	TR TournamentRegion = "TR"
 )
 
 func (route TournamentRegion) String() string {
 	switch route {
 	case BR:
-		return "br"
+		return "BR"
 	case EUNE:
-		return "eune"
+		return "EUNE"
 	case EUW:
-		return "euw"
+		return "EUW"
 	case JP:
-		return "jp"
+		return "JP"
 	case LAN:
-		return "lan"
+		return "LAN"
 	case LAS:
-		return "las"
+		return "LAS"
 	case NA:
-		return "na"
+		return "NA"
 	case OCE:
-		return "oce"
+		return "OCE"
 	case PBE:
-		return "pbe"
+		return "PBE"
 	case TR:
-		return "tr"
+		return "TR"
 	default:
 		return string(route)
 	}
@@ -262,21 +262,21 @@ type GameType string
 
 const (
 	// Custom games
-	CUSTOM_GAME_GAMETYPE GameType = "CUSTOM"
+	CUSTOM_GAME_GAMETYPE GameType = "CUSTOM_GAME"
 	// all other games
-	MATCHED_GAME_GAMETYPE GameType = "MATCHED"
+	MATCHED_GAME_GAMETYPE GameType = "MATCHED_GAME"
 	// Tutorial games
-	TUTORIAL_GAME_GAMETYPE GameType = "TUTORIAL"
+	TUTORIAL_GAME_GAMETYPE GameType = "TUTORIAL_GAME"
 )
 
 func (gameType GameType) String() string {
 	switch gameType {
 	case CUSTOM_GAME_GAMETYPE:
-		return "CUSTOM"
+		return "CUSTOM_GAME"
 	case MATCHED_GAME_GAMETYPE:
-		return "MATCHED"
+		return "MATCHED_GAME"
 	case TUTORIAL_GAME_GAMETYPE:
-		return "TUTORIAL"
+		return "TUTORIAL_GAME"
 	default:
 		return string(gameType)
 	}
@@ -295,7 +295,7 @@ const (
 	// 3v3 Ranked Flex games
 	RANKED_FLEX_TT_QUEUETYPE QueueType = "RANKED_FLEX_TT"
 	// 5v5 Ranked Solo games
-	RANKED_SOLO_5X5_QUEUETYPE QueueType = "RANKED_SOLO_5X5"
+	RANKED_SOLO_5X5_QUEUETYPE QueueType = "RANKED_SOLO_5x5"
 )
 
 func (queueType QueueType) String() string {
@@ -307,7 +307,7 @@ func (queueType QueueType) String() string {
 	case RANKED_FLEX_TT_QUEUETYPE:
 		return "RANKED_FLEX_TT"
 	case RANKED_SOLO_5X5_QUEUETYPE:
-		return "RANKED_SOLO_5X5"
+		return "RANKED_SOLO_5x5"
 	default:
 		return string(queueType)
 	}
