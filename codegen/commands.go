@@ -68,7 +68,7 @@ func Compile() error {
 	return compileClients(specs, specVersion)
 }
 
-// Formats the generated code with 'goimports', 'gofmt' and 'betteralign'
+// Formats the generated code with 'goimports', 'modernize', 'gofmt' and 'betteralign'
 func Format() error {
 	fmt.Printf("Running 'goimports'\n")
 	err := runCommand(exec.Command("goimports", "-w", "../"))
@@ -77,7 +77,7 @@ func Format() error {
 	}
 
 	fmt.Printf("Running 'modernize'\n")
-	err = runCommand(exec.Command("go", "run", "golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest", "-fix", "../clients/..."))
+	err = runCommand(exec.Command("modernize", "-fix", "../clients/..."))
 	if err != nil {
 		return err
 	}
