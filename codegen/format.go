@@ -261,11 +261,10 @@ func filterTFT(table map[string]GenericConstant, removeTFT bool) map[string]Gene
 			}
 		}
 
-		n := strings.Replace(name, "TEAMFIGHT_TACTICS", "TFT", 1)
 		if removeTFT && !containsTFT {
-			newTable[n] = v
+			newTable[name] = v
 		} else if !removeTFT && containsTFT {
-			newTable[n] = v
+			newTable[name] = v
 		}
 	}
 
