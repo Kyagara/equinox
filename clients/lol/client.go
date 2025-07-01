@@ -24,7 +24,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
+// Spec version = c5f59a3e27f5101b78b8c7eb9b3fb88318b4225d
 
 import "github.com/Kyagara/equinox/v2/internal"
 
