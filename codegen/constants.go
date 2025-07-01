@@ -23,8 +23,8 @@ type RouteConstant struct {
 
 type GenericConstant struct {
 	Value       string
-	IsInteger   bool
 	Description string
+	IsInteger   bool
 	Deprecated  bool
 }
 

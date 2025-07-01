@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
+// Spec version = c5f59a3e27f5101b78b8c7eb9b3fb88318b4225d
 
 // val-console-match-v1.AbilityCastsDto
 type ConsoleMatchAbilityCastsV1DTO struct {
@@ -502,7 +502,8 @@ type RankedPlayerV1DTO struct {
 	// This field may be omitted if the player has been anonymized.
 	GameName string `json:"gameName,omitempty"`
 	// This field may be omitted if the player has been anonymized.
-	PUUID string `json:"puuid,omitempty"`
+	PUUID  string `json:"puuid,omitempty"`
+	Prefix string `json:"prefix,omitempty"`
 	// This field may be omitted if the player has been anonymized.
 	TagLine         string `json:"tagLine,omitempty"`
 	CompetitiveTier int    `json:"competitiveTier,omitempty"`

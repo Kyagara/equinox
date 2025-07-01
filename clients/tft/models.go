@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
+// Spec version = c5f59a3e27f5101b78b8c7eb9b3fb88318b4225d
 
 // tft-league-v1.LeagueEntryDTO
 type LeagueEntryV1DTO struct {
@@ -103,6 +103,8 @@ type MatchCompanionV1DTO struct {
 type MatchInfoV1DTO struct {
 	EndOfGameResult string `json:"endOfGameResult,omitempty"`
 	// Deprecated. Game variation key. Game variations documented in TFT static data.
+	//
+	// Deprecated
 	GameVariation string `json:"game_variation,omitempty"`
 	// Game client version.
 	GameVersion    string                  `json:"game_version,omitempty"`
@@ -438,6 +440,10 @@ type StatusV1DTO struct {
 
 // tft-summoner-v1.SummonerDTO
 type SummonerV1DTO struct {
+	// Encrypted summoner ID. This field is deprecated and will be removed. Use `puuid` instead.
+	//
+	// Deprecated
+	ID string `json:"id,omitempty"`
 	// Encrypted PUUID. Exact length of 78 characters.
 	PUUID string `json:"puuid,omitempty"`
 	// ID of the summoner icon associated with the summoner.

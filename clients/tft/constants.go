@@ -10,7 +10,7 @@ import "strconv"
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
+// Spec version = c5f59a3e27f5101b78b8c7eb9b3fb88318b4225d
 
 // Platform routes for Teamfight Tactics.
 type PlatformRoute string
@@ -317,6 +317,8 @@ const (
 	CONVERGENCE_TEAMFIGHT_TACTICS_2V0_QUEUE Queue = 1092
 	// Teamfight Tactics (Choncc's Treasure) games on Convergence
 	CONVERGENCE_TEAMFIGHT_TACTICS_CHONCCS_TREASURE_QUEUE Queue = 1210
+	// Teamfight Tactics: Pengu's Party games on Convergence
+	CONVERGENCE_TEAMFIGHT_TACTICS_PENGUS_PARTY_QUEUE Queue = 6120
 	// Teamfight Tactics games on Convergence
 	CONVERGENCE_TEAMFIGHT_TACTICS_QUEUE Queue = 1090
 	// Teamfight Tactics Revival: Festival of Beasts games on Convergence
@@ -349,6 +351,8 @@ func (queue Queue) String() string {
 		return "1092"
 	case CONVERGENCE_TEAMFIGHT_TACTICS_CHONCCS_TREASURE_QUEUE:
 		return "1210"
+	case CONVERGENCE_TEAMFIGHT_TACTICS_PENGUS_PARTY_QUEUE:
+		return "6120"
 	case CONVERGENCE_TEAMFIGHT_TACTICS_QUEUE:
 		return "1090"
 	case CONVERGENCE_TEAMFIGHT_TACTICS_REVIVAL_FESTIVAL_OF_BEASTS_QUEUE:

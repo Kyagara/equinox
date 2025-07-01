@@ -61,6 +61,10 @@ func getAPIModels(filteredEndpointGroups map[string][]string, schema map[string]
 				name, fieldType := getModelField(prop, propKey, version, dtoSplit[0])
 				description := normalizeDescription(prop.Get("description").String())
 
+				if strings.Contains(strings.ToLower(description), "deprecated") {
+					description += "\n//\n// Deprecated"
+				}
+
 				if slices.Contains(namesUsed, name) {
 					name += "_"
 					fmt.Printf("Duplicate property name for property '%s' in '%s'. Renamed: '%s'\n", propKey, rawDTO, name)
@@ -152,9 +156,10 @@ func getModelField(prop gjson.Result, propKey string, version string, endpoint s
 		name = "X" + propKey
 	}
 
-	if name == "x" {
+	switch name {
+	case "x":
 		return "X", propType
-	} else if name == "y" {
+	case "y":
 		return "Y", propType
 	}
 

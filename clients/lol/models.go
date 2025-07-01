@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 22eaf104ffa026981e6ecbf9bd5d60054f12ddf9
+// Spec version = c5f59a3e27f5101b78b8c7eb9b3fb88318b4225d
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -183,7 +183,11 @@ type LeagueEntryV4DTO struct {
 	PUUID     string    `json:"puuid,omitempty"`
 	QueueType QueueType `json:"queueType,omitempty"`
 	// The player's division within a tier.
-	Rank         Division              `json:"rank,omitempty"`
+	Rank Division `json:"rank,omitempty"`
+	// Encrypted summoner ID. This field is deprecated and will be removed. Use `puuid` instead.
+	//
+	// Deprecated
+	SummonerID   string                `json:"summonerId,omitempty"`
 	Tier         Tier                  `json:"tier,omitempty"`
 	MiniSeries   LeagueMiniSeriesV4DTO `json:"miniSeries"`
 	LeaguePoints int                   `json:"leaguePoints,omitempty"`
@@ -231,8 +235,12 @@ type LeagueExpMiniSeriesV4DTO struct {
 // league-v4.LeagueItemDTO
 type LeagueItemV4DTO struct {
 	// Player's encrypted puuid.
-	PUUID        string                `json:"puuid,omitempty"`
-	Rank         Division              `json:"rank,omitempty"`
+	PUUID string   `json:"puuid,omitempty"`
+	Rank  Division `json:"rank,omitempty"`
+	// Encrypted summoner ID. This field is deprecated and will be removed. Use `puuid` instead.
+	//
+	// Deprecated
+	SummonerID   string                `json:"summonerId,omitempty"`
 	MiniSeries   LeagueMiniSeriesV4DTO `json:"miniSeries"`
 	LeaguePoints int                   `json:"leaguePoints,omitempty"`
 	// Losing team on Summoners Rift.
@@ -550,9 +558,10 @@ type MatchInfoV5DTO struct {
 	// Platform where the match was played.
 	PlatformID string `json:"platformId,omitempty"`
 	// Tournament code used to generate the match. This field was added to match-v5 in patch 11.13 on June 23rd, 2021.
-	TournamentCode string                  `json:"tournamentCode,omitempty"`
-	Participants   []MatchParticipantV5DTO `json:"participants,omitempty"`
-	Teams          []MatchTeamV5DTO        `json:"teams,omitempty"`
+	TournamentCode   string                  `json:"tournamentCode,omitempty"`
+	GameModeMutators []string                `json:"gameModeMutators,omitempty"`
+	Participants     []MatchParticipantV5DTO `json:"participants,omitempty"`
+	Teams            []MatchTeamV5DTO        `json:"teams,omitempty"`
 	// Unix timestamp for when the game is created on the game server (i.e., the loading screen).
 	GameCreation int `json:"gameCreation,omitempty"`
 	// Prior to patch 11.20, this field returns the game length in milliseconds calculated from gameEndTimestamp - gameStartTimestamp. Post patch 11.20, this field returns the max timePlayed of any participant in the game in seconds, which makes the behavior of this field consistent with that of match-v4. The best way to handling the change in this field is to treat the value as milliseconds if the gameEndTimestamp field isn't in the response and to treat the value as seconds if gameEndTimestamp is in the response.
@@ -659,6 +668,8 @@ type MatchParticipantV5DTO struct {
 	PUUID              string `json:"puuid,omitempty"`
 	RiotIDGameName     string `json:"riotIdGameName,omitempty"`
 	// Deprecated, use `riotIdGameName`. This field name was briefly used instead of `riotIdGameName`, prior to patch 14.5.
+	//
+	// Deprecated
 	RiotIDName    string `json:"riotIdName,omitempty"`
 	RiotIDTagline string `json:"riotIdTagline,omitempty"`
 	Role          string `json:"role,omitempty"`
@@ -1079,6 +1090,10 @@ type StatusV4DTO struct {
 
 // summoner-v4.SummonerDTO
 type SummonerV4DTO struct {
+	// Encrypted summoner ID. This field is deprecated and will be removed. Use `puuid` instead.
+	//
+	// Deprecated
+	ID string `json:"id,omitempty"`
 	// Encrypted PUUID. Exact length of 78 characters.
 	PUUID string `json:"puuid,omitempty"`
 	// ID of the summoner icon associated with the summoner.
