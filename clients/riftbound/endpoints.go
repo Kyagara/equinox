@@ -24,7 +24,7 @@ import (
 // [riftbound-content-v1]
 //
 // [riftbound-content-v1]: https://developer.riotgames.com/apis#riftbound-content-v1
-type RiftboundContentV1 struct {
+type ContentV1 struct {
 	internal *internal.Client
 }
 
@@ -39,8 +39,8 @@ type RiftboundContentV1 struct {
 // [riftbound-content-v1.getContent]
 //
 // [riftbound-content-v1.getContent]: https://developer.riotgames.com/api-methods/#riftbound-content-v1/GET_getContent
-func (endpoint *RiftboundContentV1) Content(ctx context.Context, route api.RegionalRoute, locale string) (*RiftboundContentV1DTO, error) {
-	logger := endpoint.internal.Logger("RIFTBOUND_RiftboundContentV1_Content")
+func (endpoint *ContentV1) Content(ctx context.Context, route api.RegionalRoute, locale string) (*ContentRiftboundContentV1DTO, error) {
+	logger := endpoint.internal.Logger("Riftbound_ContentV1_Content")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/riftbound/content/v1/contents"}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "riftbound-content-v1.getContent", nil)
 	if err != nil {
@@ -51,7 +51,7 @@ func (endpoint *RiftboundContentV1) Content(ctx context.Context, route api.Regio
 		values.Set("locale", locale)
 	}
 	request.Request.URL.RawQuery = values.Encode()
-	var data RiftboundContentV1DTO
+	var data ContentRiftboundContentV1DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err

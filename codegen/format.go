@@ -21,7 +21,7 @@ var (
 
 	digitRegex   = regexp.MustCompile(`^\d`)
 	versionRegex = regexp.MustCompile(`v.*\d`)
-	clientRegex  = regexp.MustCompile("(?i)(lor|riot|val|lol|tft)")
+	clientRegex  = regexp.MustCompile("(?i)(lor|riot|val|lol|tft|riftbound)")
 	mapTypeRegex = regexp.MustCompile(`\](.+)`)
 )
 
@@ -96,15 +96,20 @@ func getFullName(clientName string) string {
 		return "Valorant"
 	case "lor":
 		return "Legends of Runeterra"
+	case "riftbound":
+		return "Riftbound"
 	}
 
 	return getNormalizedClientName(clientName)
 }
 
 func getNormalizedClientName(clientName string) string {
-	if clientName == "riot" {
+	switch clientName {
+	case "riot":
 		return "Riot"
-	} else {
+	case "riftbound":
+		return "Riftbound"
+	default:
 		return strings.ToUpper(clientName)
 	}
 }

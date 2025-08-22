@@ -11,14 +11,14 @@ package riftbound
 // Spec version = e2d9f6306aaed7b541fdaffb1d10711073291f6e
 
 // riftbound-content-v1.CardArtDTO
-type RiftboundContentCardArtV1DTO struct {
+type ContentCardArtV1DTO struct {
 	Artist       string `json:"artist,omitempty"`
 	FullUrl      string `json:"fullURL,omitempty"`
 	ThumbnailUrl string `json:"thumbnailURL,omitempty"`
 }
 
 // riftbound-content-v1.CardStatsDTO
-type RiftboundContentCardStatsV1DTO struct {
+type ContentCardStatsV1DTO struct {
 	Cost   int `json:"cost,omitempty"`
 	Energy int `json:"energy,omitempty"`
 	Might  int `json:"might,omitempty"`
@@ -26,11 +26,11 @@ type RiftboundContentCardStatsV1DTO struct {
 }
 
 // riftbound-content-v1.CardDTO
-type RiftboundContentCardV1DTO struct {
-	Art         RiftboundContentCardArtV1DTO `json:"art"`
-	Description string                       `json:"description,omitempty"`
-	Faction     string                       `json:"faction,omitempty"`
-	FlavorText  string                       `json:"flavorText,omitempty"`
+type ContentCardV1DTO struct {
+	Art         ContentCardArtV1DTO `json:"art"`
+	Description string              `json:"description,omitempty"`
+	Faction     string              `json:"faction,omitempty"`
+	FlavorText  string              `json:"flavorText,omitempty"`
 	// Card ID
 	ID string `json:"id,omitempty"`
 	// Card Name
@@ -38,29 +38,29 @@ type RiftboundContentCardV1DTO struct {
 	Rarity string `json:"rarity,omitempty"`
 	Set    string `json:"set,omitempty"`
 	// Card Type
-	Type            string                         `json:"type,omitempty"`
-	Keywords        []string                       `json:"keywords,omitempty"`
-	Tags            []string                       `json:"tags,omitempty"`
-	Stats           RiftboundContentCardStatsV1DTO `json:"stats"`
-	CollectorNumber int                            `json:"collectorNumber,omitempty"`
-}
-
-// riftbound-content-v1.SetDTO
-type RiftboundContentSetV1DTO struct {
-	// Set ID
-	ID string `json:"id,omitempty"`
-	// Set Name
-	Name  string                      `json:"name,omitempty"`
-	Cards []RiftboundContentCardV1DTO `json:"cards,omitempty"`
+	Type            string                `json:"type,omitempty"`
+	Keywords        []string              `json:"keywords,omitempty"`
+	Tags            []string              `json:"tags,omitempty"`
+	Stats           ContentCardStatsV1DTO `json:"stats"`
+	CollectorNumber int                   `json:"collectorNumber,omitempty"`
 }
 
 // riftbound-content-v1.RiftboundContentDTO
-type RiftboundContentV1DTO struct {
+type ContentRiftboundContentV1DTO struct {
 	// Game Name
 	Game string `json:"game,omitempty"`
 	// ISO Timestamp of content last update
 	LastUpdated string `json:"lastUpdated,omitempty"`
 	// Content version
-	Version string                     `json:"version,omitempty"`
-	Sets    []RiftboundContentSetV1DTO `json:"sets,omitempty"`
+	Version string            `json:"version,omitempty"`
+	Sets    []ContentSetV1DTO `json:"sets,omitempty"`
+}
+
+// riftbound-content-v1.SetDTO
+type ContentSetV1DTO struct {
+	// Set ID
+	ID string `json:"id,omitempty"`
+	// Set Name
+	Name  string             `json:"name,omitempty"`
+	Cards []ContentCardV1DTO `json:"cards,omitempty"`
 }

@@ -33,6 +33,7 @@ func TestNewEquinoxClient(t *testing.T) {
 	require.NotEmpty(t, client.TFT)
 	require.NotEmpty(t, client.VAL)
 	require.NotEmpty(t, client.Riot)
+	require.NotEmpty(t, client.Riftbound)
 }
 
 func TestNewCustomClient(t *testing.T) {

@@ -1,5 +1,5 @@
-// This package is used to interact with all RIFTBOUND endpoints.
-//   - RiftboundContentV1
+// This package is used to interact with all Riftbound endpoints.
+//   - ContentV1
 //
 // Note: this package is automatically generated.
 package riftbound
@@ -17,12 +17,12 @@ package riftbound
 import "github.com/Kyagara/equinox/v2/internal"
 
 type Client struct {
-	RiftboundContentV1 RiftboundContentV1
+	ContentV1 ContentV1
 }
 
-// Creates a new RIFTBOUND Client using the internal.Client provided.
-func NewRIFTBOUNDClient(client *internal.Client) *Client {
+// Creates a new Riftbound Client using the internal.Client provided.
+func NewRiftboundClient(client *internal.Client) *Client {
 	return &Client{
-		RiftboundContentV1: RiftboundContentV1{internal: client},
+		ContentV1: ContentV1{internal: client},
 	}
 }

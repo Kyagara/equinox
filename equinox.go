@@ -11,6 +11,7 @@ import (
 	"github.com/Kyagara/equinox/v2/cache"
 	"github.com/Kyagara/equinox/v2/clients/lol"
 	"github.com/Kyagara/equinox/v2/clients/lor"
+	"github.com/Kyagara/equinox/v2/clients/riftbound"
 	"github.com/Kyagara/equinox/v2/clients/riot"
 	"github.com/Kyagara/equinox/v2/clients/tft"
 	"github.com/Kyagara/equinox/v2/clients/val"
@@ -29,6 +30,7 @@ type Equinox struct {
 	TFT       *tft.Client
 	VAL       *val.Client
 	LOR       *lor.Client
+	Riftbound *riftbound.Client
 }
 
 // Returns an equinox client with the default configuration:
@@ -69,6 +71,7 @@ func NewCustomClient(config api.EquinoxConfig, httpClient *http.Client, cache *c
 		TFT:       tft.NewTFTClient(client),
 		VAL:       val.NewVALClient(client),
 		LOR:       lor.NewLORClient(client),
+		Riftbound: riftbound.NewRiftboundClient(client),
 	}
 	return equinox, nil
 }

@@ -223,7 +223,7 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 
 		// Compiling templates
 		for filename, template := range templates {
-			if filename == "constants" && (clientName == "riot" || clientName == "lor") {
+			if filename == "constants" && (clientName == "riot" || clientName == "lor" || clientName == "riftbound") {
 				continue
 			}
 
