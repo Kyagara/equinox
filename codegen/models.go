@@ -144,6 +144,10 @@ func getDTOAndVersion(rawDTO string) (string, string) {
 		name = endpoint + name
 	}
 
+	if !strings.HasSuffix(name, version+"DTO") {
+		name = name + version + "DTO"
+	}
+
 	return name, version
 }
 
@@ -192,6 +196,12 @@ func getModelField(prop gjson.Result, propKey string, version string, endpoint s
 
 	name = strings.Replace(name, "Ids", "IDs", 1)
 	name = strings.Replace(name, "Tft", "TFT", 1)
+
+	if strings.Contains(propType, "ChallengePoint") {
+		if !strings.HasSuffix(propType, version+"DTO") {
+			propType = propType + version + "DTO"
+		}
+	}
 
 	return name, propType
 }

@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = c5f59a3e27f5101b78b8c7eb9b3fb88318b4225d
+// Spec version = e2d9f6306aaed7b541fdaffb1d10711073291f6e
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -31,9 +31,10 @@ type ChallengesChallengeConfigInfoV1DTO struct {
 	Leaderboard    bool   `json:"leaderboard,omitempty"`
 }
 
-// lol-challenges-v1.ChallengeInfo
+// lol-challenges-v1.ChallengeInfoDto
 type ChallengesChallengeInfoV1DTO struct {
-	Level          Tier    `json:"level,omitempty"`
+	// (Legal values:  NONE,  IRON,  BRONZE,  SILVER,  GOLD,  PLATINUM,  DIAMOND,  MASTER,  GRANDMASTER,  CHALLENGER,  HIGHEST_NOT_LEADERBOARD_ONLY,  HIGHEST,  LOWEST)
+	Level          string  `json:"level,omitempty"`
 	AchievedTime   int     `json:"achievedTime,omitempty"`
 	ChallengeID    int     `json:"challengeId,omitempty"`
 	Percentile     float64 `json:"percentile,omitempty"`
@@ -42,8 +43,8 @@ type ChallengesChallengeInfoV1DTO struct {
 	Value          float64 `json:"value,omitempty"`
 }
 
-// lol-challenges-v1.ChallengePoints
-type ChallengesChallengePointsV1DTO struct {
+// lol-challenges-v1.ChallengePointDto
+type ChallengesChallengePointV1DTO struct {
 	Level      Tier    `json:"level,omitempty"`
 	Current    int     `json:"current,omitempty"`
 	Max        int     `json:"max,omitempty"`
@@ -54,7 +55,7 @@ type ChallengesChallengePointsV1DTO struct {
 type ChallengesLevelV1DTO struct {
 }
 
-// lol-challenges-v1.PlayerClientPreferences
+// lol-challenges-v1.PlayerClientPreferencesDto
 type ChallengesPlayerClientPreferencesV1DTO struct {
 	BannerAccent             string `json:"bannerAccent,omitempty"`
 	CrestBorder              string `json:"crestBorder,omitempty"`
@@ -65,10 +66,10 @@ type ChallengesPlayerClientPreferencesV1DTO struct {
 
 // lol-challenges-v1.PlayerInfoDto
 type ChallengesPlayerInfoV1DTO struct {
-	CategoryPoints map[string]ChallengesChallengePointsV1DTO `json:"categoryPoints,omitempty"`
-	Challenges     []ChallengesChallengeInfoV1DTO            `json:"challenges,omitempty"`
-	Preferences    ChallengesPlayerClientPreferencesV1DTO    `json:"preferences"`
-	TotalPoints    ChallengesChallengePointsV1DTO            `json:"totalPoints"`
+	CategoryPoints map[string]ChallengesChallengePointV1DTO `json:"categoryPoints,omitempty"`
+	Challenges     []ChallengesChallengeInfoV1DTO           `json:"challenges,omitempty"`
+	Preferences    ChallengesPlayerClientPreferencesV1DTO   `json:"preferences"`
+	TotalPoints    ChallengesChallengePointV1DTO            `json:"totalPoints"`
 }
 
 // lol-challenges-v1.State

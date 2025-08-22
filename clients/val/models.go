@@ -8,7 +8,7 @@ package val
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = c5f59a3e27f5101b78b8c7eb9b3fb88318b4225d
+// Spec version = e2d9f6306aaed7b541fdaffb1d10711073291f6e
 
 // val-console-match-v1.AbilityCastsDto
 type ConsoleMatchAbilityCastsV1DTO struct {
@@ -200,10 +200,12 @@ type ConsoleMatchTeamV1DTO struct {
 // val-console-ranked-v1.LeaderboardDto
 type ConsoleRankedLeaderboardV1DTO struct {
 	// The act id for the given leaderboard. Act ids can be found using the val-content API.
-	ActID string `json:"actId,omitempty"`
-	// The shard for the given leaderboard.
-	Shard   string                     `json:"shard,omitempty"`
+	ActID   string                     `json:"actId,omitempty"`
 	Players []ConsoleRankedPlayerV1DTO `json:"players,omitempty"`
+	Query   string                     `json:"query,omitempty"`
+	// The shard for the given leaderboard.
+	Shard       string                   `json:"shard,omitempty"`
+	TierDetails []ConsoleRankedTierV1DTO `json:"tierDetails,omitempty"`
 	// The total number of players in the leaderboard.
 	TotalPlayers int `json:"totalPlayers,omitempty"`
 }
@@ -219,6 +221,10 @@ type ConsoleRankedPlayerV1DTO struct {
 	LeaderboardRank int    `json:"leaderboardRank,omitempty"`
 	NumberOfWins    int    `json:"numberOfWins,omitempty"`
 	RankedRating    int    `json:"rankedRating,omitempty"`
+}
+
+// val-console-ranked-v1.TierDto
+type ConsoleRankedTierV1DTO struct {
 }
 
 // val-content-v1.ActDto

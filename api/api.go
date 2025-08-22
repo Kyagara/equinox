@@ -9,7 +9,7 @@ package api
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = c5f59a3e27f5101b78b8c7eb9b3fb88318b4225d
+// Spec version = e2d9f6306aaed7b541fdaffb1d10711073291f6e
 
 import (
 	"errors"
@@ -128,13 +128,13 @@ var (
 		{"GET", "/lol/match/v5/matches/{matchId}", "match-v5.getMatch"},
 		{"GET", "/lol/match/v5/matches/by-puuid/{puuid}/ids", "match-v5.getMatchIdsByPUUID"},
 		{"GET", "/lol/match/v5/matches/{matchId}/timeline", "match-v5.getTimeline"},
+		{"GET", "/riftbound/content/v1/contents", "riftbound-content-v1.getContent"},
 		{"GET", "/lol/spectator/tft/v5/active-games/by-puuid/{encryptedPUUID}", "spectator-tft-v5.getCurrentGameInfoByPuuid"},
 		{"GET", "/lol/spectator/tft/v5/featured-games", "spectator-tft-v5.getFeaturedGames"},
 		{"GET", "/lol/spectator/v5/active-games/by-summoner/{encryptedPUUID}", "spectator-v5.getCurrentGameInfoByPuuid"},
 		{"GET", "/lol/spectator/v5/featured-games", "spectator-v5.getFeaturedGames"},
 		{"GET", "/lol/summoner/v4/summoners/me", "summoner-v4.getByAccessToken"},
 		{"GET", "/lol/summoner/v4/summoners/by-puuid/{encryptedPUUID}", "summoner-v4.getByPUUID"},
-		{"GET", "/fulfillment/v1/summoners/by-puuid/{rsoPUUID}", "summoner-v4.getByRSOPUUID"},
 		{"GET", "/tft/league/v1/challenger", "tft-league-v1.getChallengerLeague"},
 		{"GET", "/tft/league/v1/grandmaster", "tft-league-v1.getGrandmasterLeague"},
 		{"GET", "/tft/league/v1/leagues/{leagueId}", "tft-league-v1.getLeagueById"},

@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = c5f59a3e27f5101b78b8c7eb9b3fb88318b4225d
+// Spec version = e2d9f6306aaed7b541fdaffb1d10711073291f6e
 
 import (
 	"context"
@@ -1091,32 +1091,6 @@ func (endpoint *SummonerV4) ByPUUID(ctx context.Context, route PlatformRoute, en
 	logger := endpoint.internal.Logger("LOL_SummonerV4_ByPUUID")
 	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/summoner/v4/summoners/by-puuid/", encryptedPUUID}
 	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByPUUID", nil)
-	if err != nil {
-		return nil, err
-	}
-	var data SummonerV4DTO
-	err = endpoint.internal.Execute(ctx, request, &data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Get a summoner by its RSO encrypted PUUID.
-//
-// # Parameters
-//   - route: Route to query.
-//   - rsoPUUID: Summoner ID
-//
-// # Riot API Reference
-//
-// [summoner-v4.getByRSOPUUID]
-//
-// [summoner-v4.getByRSOPUUID]: https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByRSOPUUID
-func (endpoint *SummonerV4) ByRSOPUUID(ctx context.Context, route PlatformRoute, rsoPUUID string) (*SummonerV4DTO, error) {
-	logger := endpoint.internal.Logger("LOL_SummonerV4_ByRSOPUUID")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/fulfillment/v1/summoners/by-puuid/", rsoPUUID}
-	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "summoner-v4.getByRSOPUUID", nil)
 	if err != nil {
 		return nil, err
 	}
