@@ -5,9 +5,9 @@ go 1.24
 require (
 	github.com/alicebob/miniredis/v2 v2.35.0
 	github.com/allegro/bigcache/v3 v3.1.0
-	github.com/go-json-experiment/json v0.0.0-20250517221953-25912455fbc8
-	github.com/jarcoal/httpmock v1.4.0
-	github.com/redis/go-redis/v9 v9.11.0
+	github.com/go-json-experiment/json v0.0.0-20250813233538-9b1f9ea2e11b
+	github.com/jarcoal/httpmock v1.4.1
+	github.com/redis/go-redis/v9 v9.12.1
 	github.com/rs/zerolog v1.34.0
 	github.com/stretchr/testify v1.10.0
 )
