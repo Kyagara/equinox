@@ -14,7 +14,7 @@ import (
 var (
 	updateFlag = flag.Bool("update", false, "Update all specs.")
 
-	clients = []string{"riot", "lol", "tft", "val", "lor"}
+	clients = []string{"riot", "lol", "tft", "val", "lor", "riftbound"}
 
 	// Current specs
 	specs = make(map[string]gjson.Result, len(SPECS_URLS))

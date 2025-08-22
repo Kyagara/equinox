@@ -162,6 +162,11 @@ func compileClients(specs map[string]gjson.Result, specVersion string) error {
 	for _, clientName := range clients {
 		fmt.Printf("Generating '%s' client\n", clientName)
 
+		err := os.MkdirAll(fmt.Sprintf("../clients/%s", clientName), 0777)
+		if err != nil {
+			return err
+		}
+
 		schemas := specs["spec"].Get("components.schemas")
 
 		preamble := preamble(clientName, specVersion)
