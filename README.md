@@ -20,10 +20,11 @@
   - Teamfight Tactics
   - Valorant
   - Legends of Runeterra
-- Rate limit (Internal)
+  - Riftbound
+- Rate limit
 - Caching with [BigCache](https://github.com/allegro/bigcache) or [Redis](https://github.com/go-redis/redis)
 - Logging with [zerolog](https://github.com/rs/zerolog)
-- Exponential backoff
+- Retries with exponential backoff
 
 > [!NOTE]
 > equinox currently uses the proposed [jsonv2](https://github.com/go-json-experiment/json), read more about it [here](https://github.com/golang/go/discussions/63397).
@@ -31,8 +32,6 @@
 Check the [Wiki](https://github.com/Kyagara/equinox/wiki) for more information about the library.
 
 ## Example
-
-> For a slightly more advanced example, check out [lol-match-crawler](https://github.com/Kyagara/lol-match-crawler).
 
 ```go
 package main
@@ -68,8 +67,8 @@ func main() {
 
 - Maybe the context usage throughout the project could be improved
 - Maybe add and move `Logger` to the `Cache` and `RateLimit` interfaces
-- Add checks for duration of tests that include any WaitN/any blocking
-- Add more integration tests
+- Add checks for duration in tests that include any WaitN/any blocking
+- Add more tests against the live Riot API
 - RateLimit
   - Add Redis store, using a lua script
   - Maybe add more options (presets?) to customize the rate limiter
