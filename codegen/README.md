@@ -24,10 +24,11 @@ Changes includes all libraries used, such as pongo2 for templating, strcase for 
 First, install `betteralign` and `goimports`:
 
 ```bash
-go install github.com/dkorunic/betteralign/cmd/betteralign@latest && go install golang.org/x/tools/cmd/goimports@latest`
+go install github.com/dkorunic/betteralign/cmd/betteralign@latest && go install golang.org/x/tools/cmd/goimports@latest && go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest
 ```
 
 Initialize a `go.work` file in the root of the repository:
+
 ```bash
 go work init
 go work use .

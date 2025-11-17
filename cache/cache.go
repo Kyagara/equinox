@@ -112,26 +112,15 @@ func (c *Cache) Clear(ctx context.Context) error {
 	return c.store.Clear(ctx)
 }
 
-// Returns the Cache key for the provided URL and a bool indicating if the key has an accessToken hash. Most of the time this will just return the URL.
+// Helper that returns a cache key from the request URL and optional Authorization header.
+//
+// `url` is the full request URL (including scheme, host, path, and query string).
+// Any query parameters that affect the response should be left in the URL.
+//
+// `authHeader` is the value of the HTTP `Authorization` header, if present.
+//
+// Returns the full request url with a '-<hash>' appended at the end if an authHeader was provided.
 func GetCacheKey(url string, authHeader string) (string, bool) {
-	// I plan to use xxhash instead of sha256 in the future since it is already imported by `go-redis`.
-	//
-	// Issues with this:
-	// 	- I want to keep the Cache accessible to other clients without having to add hashing to them just to access the Cache.
-	//	- I don't know about xxhash support in other languages.
-	//	- Some operations(in go) use unsafe, can be avoided but it would be slower.
-	//
-	// Cache keys should be URLs with the exception of the hashed portion included in methods requiring `accessToken`, meaning,
-	// you would need to hash something to get the Cache key ONLY for those methods.
-	//
-	// Example:
-	//
-	// "https://asia.api.riotgames.com/riot/account/v1/accounts/me-ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7"
-	//
-	//	- URL = "https://asia.api.riotgames.com/riot/account/v1/accounts/me"
-	//	- Separator = "-"
-	//	- Hash of an accessToken = "ec2cc2a7cbc79c8d8def89cb9b9a1bccf4c2efc56a9c8063f9f4ae806f08c4d7"
-
 	if authHeader == "" {
 		return url, false
 	}
