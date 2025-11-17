@@ -15,5 +15,10 @@ coverage:
 
 # Make comments less noisy
 comment:
-    layout: 'files'
+    layout: "files"
     require_changes: yes
+
+ignore:
+    - "api/**"
+    - "clients/**"
+    - "test/**"
