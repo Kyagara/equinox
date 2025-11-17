@@ -8,7 +8,7 @@ package tft
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = e2d9f6306aaed7b541fdaffb1d10711073291f6e
+// Spec version = 8fe5cbba355b369122ba6fca976ce8337698b578
 
 // tft-league-v1.LeagueEntryDTO
 type LeagueEntryV1DTO struct {
@@ -299,7 +299,7 @@ type SpectatorCurrentGameInfoV5DTO struct {
 
 // spectator-tft-v5.CurrentGameParticipant
 type SpectatorCurrentGameParticipantV5DTO struct {
-	// The encrypted puuid of this participant
+	// The encrypted puuid of this participant. null when the player is anonym.
 	PUUID  string `json:"puuid,omitempty"`
 	RiotID string `json:"riotId,omitempty"`
 	// List of Game Customizations
@@ -318,42 +318,6 @@ type SpectatorCurrentGameParticipantV5DTO struct {
 	TeamID Team `json:"teamId,omitempty"`
 }
 
-// spectator-tft-v5.FeaturedGameInfo
-type SpectatorFeaturedGameInfoV5DTO struct {
-	// The game mode
-	//
-	// (Legal values:  TFT)
-	GameMode GameMode `json:"gameMode,omitempty"`
-	// The game type
-	//
-	// (Legal values:  MATCHED)
-	GameType GameType `json:"gameType,omitempty"`
-	// The observer information
-	Observers SpectatorObserverV5DTO `json:"observers"`
-	// The ID of the platform on which the game is being played
-	PlatformID string `json:"platformId,omitempty"`
-	// Banned champion information
-	BannedChampions []SpectatorBannedChampionV5DTO `json:"bannedChampions,omitempty"`
-	// The participant information
-	Participants []SpectatorParticipantV5DTO `json:"participants,omitempty"`
-	// The ID of the game
-	GameID int `json:"gameId,omitempty"`
-	// The amount of time in seconds that has passed since the game started
-	GameLength int `json:"gameLength,omitempty"`
-	// The queue type (queue types are documented on the Game Constants page)
-	GameQueueConfigID Queue `json:"gameQueueConfigId,omitempty"`
-	// The ID of the map
-	MapID Map `json:"mapId,omitempty"`
-}
-
-// spectator-tft-v5.FeaturedGames
-type SpectatorFeaturedGamesV5DTO struct {
-	// The list of featured games
-	GameList []SpectatorFeaturedGameInfoV5DTO `json:"gameList,omitempty"`
-	// The suggested interval to wait before requesting FeaturedGames again
-	ClientRefreshInterval int `json:"clientRefreshInterval,omitempty"`
-}
-
 // spectator-tft-v5.GameCustomizationObject
 type SpectatorGameCustomizationObjectV5DTO struct {
 	// Category identifier for Game Customization
@@ -366,23 +330,6 @@ type SpectatorGameCustomizationObjectV5DTO struct {
 type SpectatorObserverV5DTO struct {
 	// Key used to decrypt the spectator grid game data for playback
 	EncryptionKey string `json:"encryptionKey,omitempty"`
-}
-
-// spectator-tft-v5.Participant
-type SpectatorParticipantV5DTO struct {
-	// Encrypted puuid of this participant
-	PUUID  string `json:"puuid,omitempty"`
-	RiotID string `json:"riotId,omitempty"`
-	// The ID of the champion played by this participant
-	ChampionID int `json:"championId,omitempty"`
-	// The ID of the profile icon used by this participant
-	ProfileIconID int `json:"profileIconId,omitempty"`
-	// The ID of the first summoner spell used by this participant
-	Spell1ID int `json:"spell1Id,omitempty"`
-	// The ID of the second summoner spell used by this participant
-	Spell2ID int `json:"spell2Id,omitempty"`
-	// The team ID of this participant, indicating the participant's team
-	TeamID Team `json:"teamId,omitempty"`
 }
 
 // spectator-tft-v5.Perks

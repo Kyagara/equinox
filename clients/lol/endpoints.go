@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = e2d9f6306aaed7b541fdaffb1d10711073291f6e
+// Spec version = 8fe5cbba355b369122ba6fca976ce8337698b578
 
 import (
 	"context"
@@ -971,31 +971,6 @@ func (endpoint *SpectatorV5) CurrentGameInfoByPUUID(ctx context.Context, route P
 		return nil, err
 	}
 	var data SpectatorCurrentGameInfoV5DTO
-	err = endpoint.internal.Execute(ctx, request, &data)
-	if err != nil {
-		return nil, err
-	}
-	return &data, nil
-}
-
-// Get list of featured games.
-//
-// # Parameters
-//   - route: Route to query.
-//
-// # Riot API Reference
-//
-// [spectator-v5.getFeaturedGames]
-//
-// [spectator-v5.getFeaturedGames]: https://developer.riotgames.com/api-methods/#spectator-v5/GET_getFeaturedGames
-func (endpoint *SpectatorV5) Featured(ctx context.Context, route PlatformRoute) (*SpectatorFeaturedGamesV5DTO, error) {
-	logger := endpoint.internal.Logger("LOL_SpectatorV5_Featured")
-	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/spectator/v5/featured-games"}
-	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "spectator-v5.getFeaturedGames", nil)
-	if err != nil {
-		return nil, err
-	}
-	var data SpectatorFeaturedGamesV5DTO
 	err = endpoint.internal.Execute(ctx, request, &data)
 	if err != nil {
 		return nil, err
