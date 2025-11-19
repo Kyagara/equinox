@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 8fe5cbba355b369122ba6fca976ce8337698b578
+// Spec version = eab2eb8a2511a4d0acfafed305cf02fddd843c59
 
 // lol-challenges-v1.ApexPlayerInfoDto
 type ChallengesApexPlayerInfoV1DTO struct {
@@ -699,12 +699,13 @@ type MatchParticipantV5DTO struct {
 	// This field is currently only utilized for Kayn's transformations. (Legal values: 0 - None, 1 - Slayer, 2 - Assassin)
 	ChampionTransform int `json:"championTransform,omitempty"`
 	// Blue generic ping (ALT+click)
-	CommandPings            int `json:"commandPings,omitempty"`
-	ConsumablesPurchased    int `json:"consumablesPurchased,omitempty"`
-	DamageDealtToBuildings  int `json:"damageDealtToBuildings,omitempty"`
-	DamageDealtToObjectives int `json:"damageDealtToObjectives,omitempty"`
-	DamageDealtToTurrets    int `json:"damageDealtToTurrets,omitempty"`
-	DamageSelfMitigated     int `json:"damageSelfMitigated,omitempty"`
+	CommandPings              int `json:"commandPings,omitempty"`
+	ConsumablesPurchased      int `json:"consumablesPurchased,omitempty"`
+	DamageDealtToBuildings    int `json:"damageDealtToBuildings,omitempty"`
+	DamageDealtToEpicMonsters int `json:"damageDealtToEpicMonsters,omitempty"`
+	DamageDealtToObjectives   int `json:"damageDealtToObjectives,omitempty"`
+	DamageDealtToTurrets      int `json:"damageDealtToTurrets,omitempty"`
+	DamageSelfMitigated       int `json:"damageSelfMitigated,omitempty"`
 	// https://github.com/RiotGames/developer-relations/issues/870
 	DangerPings         int `json:"dangerPings,omitempty"`
 	Deaths              int `json:"deaths,omitempty"`
@@ -868,6 +869,13 @@ type MatchPerksV5DTO struct {
 type MatchPositionV5DTO struct {
 	X int `json:"x,omitempty"`
 	Y int `json:"y,omitempty"`
+}
+
+// match-v5.ReplayDTO
+type MatchReplayV5DTO struct {
+	MatchFileUrls []string `json:"matchFileURLs,omitempty"`
+	// Total of replay files
+	Total int `json:"total,omitempty"`
 }
 
 // match-v5.TeamDto

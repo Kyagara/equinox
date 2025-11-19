@@ -8,7 +8,7 @@ package lol
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 8fe5cbba355b369122ba6fca976ce8337698b578
+// Spec version = eab2eb8a2511a4d0acfafed305cf02fddd843c59
 
 import (
 	"context"
@@ -788,6 +788,32 @@ func (endpoint *MatchV5) ListByPUUID(ctx context.Context, route api.RegionalRout
 		return nil, err
 	}
 	return data, nil
+}
+
+// Get player replays
+//
+// # Parameters
+//   - route: Route to query.
+//   - puuid
+//
+// # Riot API Reference
+//
+// [match-v5.getReplay]
+//
+// [match-v5.getReplay]: https://developer.riotgames.com/api-methods/#match-v5/GET_getReplay
+func (endpoint *MatchV5) Replay(ctx context.Context, route api.RegionalRoute, puuid string) (*MatchReplayV5DTO, error) {
+	logger := endpoint.internal.Logger("LOL_MatchV5_Replay")
+	urlComponents := []string{"https://", route.String(), api.RIOT_API_BASE_URL_FORMAT, "/lol/match/v5/matches/by-puuid/", puuid, "/replays"}
+	request, err := endpoint.internal.Request(ctx, logger, http.MethodGet, urlComponents, "match-v5.getReplay", nil)
+	if err != nil {
+		return nil, err
+	}
+	var data MatchReplayV5DTO
+	err = endpoint.internal.Execute(ctx, request, &data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
 }
 
 // Get a match timeline by match id

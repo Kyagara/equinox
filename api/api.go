@@ -9,7 +9,7 @@ package api
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 8fe5cbba355b369122ba6fca976ce8337698b578
+// Spec version = eab2eb8a2511a4d0acfafed305cf02fddd843c59
 
 import (
 	"errors"
@@ -127,6 +127,7 @@ var (
 		{"GET", "/lor/status/v1/platform-data", "lor-status-v1.getPlatformData"},
 		{"GET", "/lol/match/v5/matches/{matchId}", "match-v5.getMatch"},
 		{"GET", "/lol/match/v5/matches/by-puuid/{puuid}/ids", "match-v5.getMatchIdsByPUUID"},
+		{"GET", "/lol/match/v5/matches/by-puuid/{puuid}/replays", "match-v5.getReplay"},
 		{"GET", "/lol/match/v5/matches/{matchId}/timeline", "match-v5.getTimeline"},
 		{"GET", "/riftbound/content/v1/contents", "riftbound-content-v1.getContent"},
 		{"GET", "/lol/spectator/tft/v5/active-games/by-puuid/{encryptedPUUID}", "spectator-tft-v5.getCurrentGameInfoByPuuid"},

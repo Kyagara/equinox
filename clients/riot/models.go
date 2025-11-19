@@ -8,7 +8,7 @@ package riot
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 8fe5cbba355b369122ba6fca976ce8337698b578
+// Spec version = eab2eb8a2511a4d0acfafed305cf02fddd843c59
 
 // account-v1.ActiveShardDto
 type AccountActiveShardV1DTO struct {

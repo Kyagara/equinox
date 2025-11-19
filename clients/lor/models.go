@@ -8,7 +8,7 @@ package lor
 //                                           //
 ///////////////////////////////////////////////
 
-// Spec version = 8fe5cbba355b369122ba6fca976ce8337698b578
+// Spec version = eab2eb8a2511a4d0acfafed305cf02fddd843c59
 
 // lor-deck-v1.NewDeckDto
 type DeckNewDeckV1DTO struct {
