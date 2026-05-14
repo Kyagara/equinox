@@ -161,6 +161,31 @@ func TestRequests(t *testing.T) {
 	})
 }
 
+func TestPerClientRiotToken(t *testing.T) {
+	t.Parallel()
+
+	cfgA := util.NewTestEquinoxConfig()
+	cfgA.Key = "RGAPI-AAA"
+	clientA, err := internal.NewInternalClient(cfgA, nil, nil, nil)
+	require.NoError(t, err)
+
+	cfgB := util.NewTestEquinoxConfig()
+	cfgB.Key = "RGAPI-BBB"
+	clientB, err := internal.NewInternalClient(cfgB, nil, nil, nil)
+	require.NoError(t, err)
+
+	ctx := context.Background()
+	urlComponents := []string{"https://", "", "cool.and.real.api", "/get"}
+
+	reqA, err := clientA.Request(ctx, clientA.Logger("client_endpoint_method_a"), http.MethodGet, urlComponents, "", nil)
+	require.NoError(t, err)
+	reqB, err := clientB.Request(ctx, clientB.Logger("client_endpoint_method_b"), http.MethodGet, urlComponents, "", nil)
+	require.NoError(t, err)
+
+	require.Equal(t, "RGAPI-AAA", reqA.Request.Header.Get("X-Riot-Token"))
+	require.Equal(t, "RGAPI-BBB", reqB.Request.Header.Get("X-Riot-Token"))
+}
+
 func TestExecutes(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
