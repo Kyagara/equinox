@@ -26,12 +26,6 @@ var (
 	ErrKeyNotProvided = errors.New("api key not provided")
 )
 
-var (
-	apiHeaders = http.Header{
-		"X-Riot-Token": {""},
-	}
-)
-
 type Client struct {
 	http               *http.Client
 	cache              *cache.Cache
@@ -77,7 +71,6 @@ func NewInternalClient(config api.EquinoxConfig, h *http.Client, c *cache.Cache,
 		IsRetryEnabled:     config.Retry.MaxRetries > 0,
 	}
 
-	apiHeaders.Set("X-Riot-Token", config.Key)
 	return client, nil
 }
 
@@ -107,7 +100,7 @@ func (c *Client) Request(ctx context.Context, logger zerolog.Logger, httpMethod 
 		return api.EquinoxRequest{}, err
 	}
 
-	request.Header = apiHeaders
+	request.Header.Set("X-Riot-Token", c.key)
 
 	equinoxReq := api.EquinoxRequest{
 		Logger:   logger,

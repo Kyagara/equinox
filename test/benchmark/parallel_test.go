@@ -104,7 +104,7 @@ func BenchmarkParallelRedisCachedSummonerByPUUID(b *testing.B) {
 	})
 }
 
-// This endpoint method clones apiHeaders and adds a new Authorization header.
+// This endpoint method sets an Authorization header on the request.
 func BenchmarkParallelSummonerByAccessToken(b *testing.B) {
 	b.ReportAllocs()
 	httpmock.Activate()
